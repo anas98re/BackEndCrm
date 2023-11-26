@@ -8,7 +8,7 @@ use App\Http\Requests\Updateactivity_typeRequest;
 
 class ActivityTypeController extends Controller
 {
-    /**
+    /**php artisan module:make MobileApp
      * Display a listing of the resource.
      */
     public function index()
