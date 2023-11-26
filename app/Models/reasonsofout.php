@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class reasonsofout extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'id_reason',
+        'name_reason',
+        'type'
+    ];
 }

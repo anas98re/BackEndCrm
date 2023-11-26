@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class regoin extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'id_regoin',
+        'name_regoin',
+        'fk_country'
+    ];
 }

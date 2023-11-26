@@ -5,7 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Todo extends Model
+class testt extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'id',
+        'created_at',
+        'email',
+        'nameUser'
+    ];
 }
