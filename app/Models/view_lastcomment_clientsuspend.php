@@ -9,6 +9,8 @@ class view_lastcomment_clientsuspend extends Model
 {
     use HasFactory;
 
+    protected $table = 'view_lastcomment_clientsuspend';
+
     protected $fillable = [
         'id_clients',
         'date_create',

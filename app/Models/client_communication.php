@@ -9,6 +9,8 @@ class client_communication extends Model
 {
     use HasFactory;
 
+    protected $table = 'client_communication';
+
     protected $fillable = [
         'id_communication',
         'fk_client',

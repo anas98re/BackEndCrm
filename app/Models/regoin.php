@@ -9,6 +9,8 @@ class regoin extends Model
 {
     use HasFactory;
 
+    protected $table = 'regoin';
+
     protected $fillable = [
         'id_regoin',
         'name_regoin',

@@ -9,6 +9,8 @@ class series_accept extends Model
 {
     use HasFactory;
 
+    protected $table = 'series_accept';
+
     protected $fillable = [
         'id_series',
         'name_series',

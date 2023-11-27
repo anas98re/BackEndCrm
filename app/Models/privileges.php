@@ -9,6 +9,8 @@ class privileges extends Model
 {
     use HasFactory;
 
+    protected $table = 'privileges';
+
     protected $fillable = [
         'id_privilege',
         'name_privilege',

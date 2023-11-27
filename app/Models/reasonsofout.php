@@ -9,6 +9,8 @@ class reasonsofout extends Model
 {
     use HasFactory;
 
+    protected $table = 'reasonsofout';
+
     protected $fillable = [
         'id_reason',
         'name_reason',

@@ -9,6 +9,8 @@ class temp_part extends Model
 {
     use HasFactory;
 
+    protected $table = 'temp_part';
+
     protected $fillable = [
         'id_temp',
         'fk_part',

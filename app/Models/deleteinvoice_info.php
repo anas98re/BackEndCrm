@@ -9,6 +9,8 @@ class deleteinvoice_info extends Model
 {
     use HasFactory;
 
+    protected $table = 'deleteinvoice_info';
+
     protected $fillable = [
         'id_info',
         'fkinvoice',

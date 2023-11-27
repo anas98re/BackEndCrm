@@ -9,6 +9,8 @@ class temp_client_transfer extends Model
 {
     use HasFactory;
 
+    protected $table = 'temp_client_transfer';
+
     protected $fillable = [
         'id_temp_client_transfer',
         'fk_usertransfer',

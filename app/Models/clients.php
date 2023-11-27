@@ -9,6 +9,8 @@ class clients extends Model
 {
     use HasFactory;
 
+    protected $table = 'clients';
+
     protected $fillable = [
         'idclients_date',
         'date_client_visit',

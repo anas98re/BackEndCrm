@@ -9,6 +9,8 @@ class tickets_old extends Model
 {
     use HasFactory;
 
+    protected $table = 'tickets_old';
+
     protected $fillable = [
         'id_ticket',
         'fk_client',

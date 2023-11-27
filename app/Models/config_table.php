@@ -9,6 +9,8 @@ class config_table extends Model
 {
     use HasFactory;
 
+    protected $table = 'config_table';
+
     protected $fillable = [
         'id_config',
         'name_config',

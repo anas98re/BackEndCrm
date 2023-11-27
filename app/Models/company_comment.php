@@ -9,6 +9,8 @@ class company_comment extends Model
 {
     use HasFactory;
 
+    protected $table = 'company_comment';
+
     protected $fillable = [
         'id_comment_company',
         'fk_user',

@@ -9,6 +9,8 @@ class series_invoiceaccept extends Model
 {
     use HasFactory;
 
+    protected $table = 'series_invoiceaccept';
+
     protected $fillable = [
         'idApprove_series',
         'fk_user',

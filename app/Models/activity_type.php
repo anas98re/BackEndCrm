@@ -9,6 +9,8 @@ class activity_type extends Model
 {
     use HasFactory;
 
+    protected $table = 'activity_type';
+
     protected $fillable = [
         'id_activity_type',
         'name_activity_type'

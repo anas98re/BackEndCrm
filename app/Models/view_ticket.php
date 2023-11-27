@@ -9,6 +9,8 @@ class view_ticket extends Model
 {
     use HasFactory;
 
+    protected $table = 'view_ticket';
+
     protected $fillable = [
         'fk_client',
         'type_problem',

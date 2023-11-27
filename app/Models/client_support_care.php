@@ -9,6 +9,8 @@ class client_support_care extends Model
 {
     use HasFactory;
 
+    protected $table = 'client_support_care';
+
     protected $fillable = [
         'id_client_supportCare',
         'fk_idclient',

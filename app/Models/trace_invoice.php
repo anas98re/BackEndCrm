@@ -9,6 +9,8 @@ class trace_invoice extends Model
 {
     use HasFactory;
 
+    protected $table = 'trace_invoice';
+
     protected $fillable = [
         'idR_invoice',
         'fk_user',

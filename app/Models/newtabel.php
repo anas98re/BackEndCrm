@@ -9,6 +9,8 @@ class newtabel extends Model
 {
     use HasFactory;
 
+    protected $table = 'newtabel';
+
     protected $fillable = [
         'id_prod',
         'nameUser',

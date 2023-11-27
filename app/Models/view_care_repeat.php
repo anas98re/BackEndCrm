@@ -9,6 +9,8 @@ class view_care_repeat extends Model
 {
     use HasFactory;
 
+    protected $table = 'view_care_repeat';
+
     protected $fillable = [
         'use_system',
         'rate',

@@ -9,6 +9,8 @@ class target extends Model
 {
     use HasFactory;
 
+    protected $table = 'target';
+
     protected $fillable = [
         'id_target',
         'type_target',
