@@ -18,6 +18,11 @@ class RegisterController extends Controller
         return response()->json(['success']);
     }
 
+    public function login()
+    {
+        
+    }
+
 
     public function register(Request $request)
     {
