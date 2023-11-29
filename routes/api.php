@@ -27,5 +27,7 @@ Route::middleware('auth:sanctum','verified')->group(function () {
 
 });
 
+Route::post('addEmailFromAdmin',[RegisterController::class,'addEmailFromAdmin']);
 Route::post('checkEmail',[RegisterController::class,'checkEmail']);
+Route::post('login',[RegisterController::class,'login']);
 Route::post('updatePermissions',[PrivgLevelUserController::class,'updatePermissions']);
