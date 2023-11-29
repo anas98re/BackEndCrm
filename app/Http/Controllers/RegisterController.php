@@ -29,9 +29,8 @@ class RegisterController extends Controller
             $User->mobile = $request->mobile;
             $User->type_level = $request->type_level;
             $User->save();
-            return response()->json(['message' => 'success', 'data' => $User], 200);
-
             DB::commit();
+            return response()->json(['message' => 'success', 'data' => $User], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
@@ -57,9 +56,8 @@ class RegisterController extends Controller
                 $user->save();
                 Mail::to($request->email)->send(new VerificationCodeEmail($code));
 
-                return $this->sendResponse([$user->email], 'Done');
-
                 DB::commit();
+                return $this->sendResponse([$user->email], 'Done');
             }
 
             return $this->sendUnauthenticated(['Error'], 'Unauthenticated');
