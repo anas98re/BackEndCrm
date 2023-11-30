@@ -8,6 +8,7 @@ use App\Http\Requests\Registeration\RegisterationRequest;
 use App\Mail\VerificationCodeEmail;
 use App\Models\User;
 use App\Models\users;
+use App\Services\RegisterationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -19,6 +20,12 @@ use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
+    private $MyService;
+
+    public function __construct(RegisterationService $MyService)
+    {
+        $this->MyService = $MyService;
+    }
     public function addEmailFromAdmin(AddEmailFromAdminRequest $request)
     {
         try {
@@ -44,10 +51,10 @@ class RegisterController extends Controller
 
             $existingEmail = User::where('email', $request->email)->exists();
             if ($existingEmail) {
-                $code = Str::random(6);
+                $code = Str::random(5);
                 $existingCode = User::where('code_verfiy', $code)->exists();
                 while ($existingCode) {
-                    $code = Str::random(6);
+                    $code = Str::random(5);
                     $existingCode = User::where('code_verfiy', $code)->exists();
                 }
                 $user = User::where('email', $request->email)->first();
@@ -68,7 +75,7 @@ class RegisterController extends Controller
     }
 
 
-    public function login(RegisterationRequest $request)
+    public function login1(RegisterationRequest $request)
     {
         $User = User::where('code_verfiy', $request->code_verfiy)
             ->where('email', $request->email)
@@ -77,13 +84,22 @@ class RegisterController extends Controller
             $UserData = User::where('code_verfiy', $request->code_verfiy)
                 ->where('email', $request->email)
                 ->first();
-            $success['nameUser'] = $UserData->nameUser;
-            $success['remember_token'] = $UserData->createToken('anas')->plainTextToken;
-            $success['email'] = $request->email;
 
-            return $this->sendResponse([$success], 'signed in Done');
+            $remember_token = $UserData->createToken('anas')->plainTextToken;
+
+            $response = [
+                'data' => $UserData,
+                'token' => $remember_token,
+                'message' => 'signed in Done'
+            ];
+            return response()->json($response, 200);
         }
         return $this->sendUnauthenticated(['Error'], 'Unauthenticated');
+    }
+
+    public function login(RegisterationRequest $request)
+    {
+        return $this->MyService->login($request);       
     }
 
 
@@ -97,5 +113,15 @@ class RegisterController extends Controller
         $success['id_user'] = $user->id_user;
         $success['email'] = $user->email;
         return response()->json([$success]);
+    }
+
+    public function test(Request $request)
+    {
+        return $user = auth()->user();
+        $string = "hi h#o#$%&*w are %you$";
+        $replacedString = str_replace(' ', '_', $string);
+        $finalString = preg_replace('/[^A-Za-z0-9_]/', '', $replacedString);
+
+        echo $finalString;
     }
 }
