@@ -77,18 +77,18 @@ class RegisterController extends Controller
 
     public function login1(RegisterationRequest $request)
     {
-        $User = User::where('code_verfiy', $request->code_verfiy)
+          ->first();
+
+            $remember_token = $UserData->createToken('anas')->plainTextToken;
+
+            $response = [
+               $User = User::where('code_verfiy', $request->code_verfiy)
             ->where('email', $request->email)
             ->exists();
         if ($User) {
             $UserData = User::where('code_verfiy', $request->code_verfiy)
                 ->where('email', $request->email)
-                ->first();
-
-            $remember_token = $UserData->createToken('anas')->plainTextToken;
-
-            $response = [
-                'data' => $UserData,
+               'data' => $UserData,
                 'token' => $remember_token,
                 'message' => 'signed in Done'
             ];
@@ -99,7 +99,7 @@ class RegisterController extends Controller
 
     public function login(RegisterationRequest $request)
     {
-        return $this->MyService->login($request);       
+        return $this->MyService->login($request);
     }
 
 

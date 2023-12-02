@@ -14,7 +14,7 @@ class PrivgLevelUserController extends Controller
     {
         $updatedData = [];
         $data = $request->all();
-        for ($i = 0; $i < count($data); $i++) {
+        for ($i = 0; $i < count($request->id_privg_user); $i++) {
             DB::table('privg_level_user')
                 ->where('id_privg_user', $data['id_privg_user'][$i])
                 ->update(['is_check' => $data['is_check'][$i]]);
