@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\PrivgLevelUserController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,4 +32,7 @@ Route::post('addEmailFromAdmin',[RegisterController::class,'addEmailFromAdmin'])
 Route::post('checkEmail',[RegisterController::class,'checkEmail']);
 Route::post('login',[RegisterController::class,'login']);
 Route::post('updatePermissions',[PrivgLevelUserController::class,'updatePermissions']);
+
+
+Route::get('getinvoiceTask',[TaskController::class,'getinvoiceTask']);
 
