@@ -5,14 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class taskStatus extends Model
+class statuse_task_fraction extends Model
 {
     use HasFactory;
-    
-    protected $table = 'task_statuses';
+
+    protected $table = 'statuse_task_fraction';
 
     protected $fillable = [
-        'name',
+        'changed_date',
+        'task_statuse_id',
+        'task_id',
+        'changed_by',
         'type',
         'priority'
     ];

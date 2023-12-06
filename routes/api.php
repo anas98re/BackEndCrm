@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\PrivgLevelUserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TaskController;
@@ -26,6 +27,19 @@ Route::post('register',[RegisterController::class,'register']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('test',[RegisterController::class,'test']);
+
+    //Tasks
+    Route::post('addTask',[TaskController::class,'addTask']);
+    Route::post('addGroup',[GroupController::class,'addGroup']);
+    Route::post('assignTaskToEmployee/{id}',[TaskController::class,'assignTaskToEmployee']);
+    Route::post('changeStatuseTask/{id}',[TaskController::class,'changeStatuseTask']);
+    Route::get('viewTasksByIdAssigned/{id}',[TaskController::class,'viewTasksByIdAssigned']);
+    Route::get('viewTaskByIdTask/{id}',[TaskController::class,'viewTaskByIdTask']);
+    Route::get('viewAllTasksByStatus/{statusName}',[TaskController::class,'viewAllTasksByStatus']);
+    Route::get('viewAllTasks',[TaskController::class,'viewAllTasks']);
+    Route::post('viewAllTasksByDateTimeCrated',[TaskController::class,'viewAllTasksByDateTimeCrated']);
+    Route::post('filterTaskesByAll',[TaskController::class,'filterTaskesByAll']);
+
 });
 
 Route::post('addEmailFromAdmin',[RegisterController::class,'addEmailFromAdmin']);

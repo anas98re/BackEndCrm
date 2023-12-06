@@ -16,13 +16,12 @@ return new class extends Migration
             $table->enum(
                 'name',
                 [
-                    'Pending', 'Completed', 'Testing', 'InProgress',
-                    'InReview', 'Accepted', 'Rejected', 'Blocked'
+                    'Open','Pending', 'Completed', 'Testing', 'InProgress',
+                    'InReview', 'Accepted', 'Rejected', 'Blocked','Closed'
                 ]
             )
                 ->default('InProgress');
-            $table->enum('type', ['Task', 'Bug', 'Feature'])->default('Task');
-            $table->enum('priority', ['Low', 'Medium', 'High'])->default('Medium');
+            
             $table->timestamps();
         });
     }

@@ -5,16 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class taskStatus extends Model
+class attachment extends Model
 {
     use HasFactory;
-    
-    protected $table = 'task_statuses';
+
+    protected $table = 'Attachments';
 
     protected $fillable = [
-        'name',
-        'type',
-        'priority'
+        'create_date',
+        'file_path',
+        'task_id',
+        'created_by'
     ];
 
 }
