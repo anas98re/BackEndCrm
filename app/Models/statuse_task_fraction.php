@@ -13,7 +13,7 @@ class statuse_task_fraction extends Model
 
     protected $fillable = [
         'changed_date',
-        'task_statuse_id',
+        '   ',
         'task_id',
         'changed_by',
         'type',

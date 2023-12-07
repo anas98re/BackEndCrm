@@ -83,9 +83,19 @@ class TaskController extends Controller
     public function filterTaskesByAll(Request $request)
     {
         $data = $this->MyService->filterTaskesByAll($request);
-        return ($data) ?
+        return (
+            $data ?
             $this->sendResponse($data, 'These are all tasks with filters') :
-            $this->sendError($data, 'Not Found');
+            $this->sendError($data, 'Not Found')
+        );
+    }
+
+    public function changeTaskGroup(Request $request,$id)
+    {
+        $data = $this->MyService->changeTaskGroup($request, $id);
+        return ($data) ?
+            $this->sendResponse($data, 'Done Updated Group') :
+            $this->sendError($data, 'Error');
     }
 
 }

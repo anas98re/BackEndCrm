@@ -21,7 +21,7 @@ return new class extends Migration
 
             $table->enum('type', ['Task', 'Bug', 'Feature'])->default('Task');
             $table->enum('priority', ['Low', 'Medium', 'High'])->default('Medium');
-            
+
             $table->foreign('task_statuse_id')->references('id')->on('task_statuses')->onDelete('set null');
             $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
             // $table->foreign('changed_by')->references('id_user')->on('users')->onDelete('set null');

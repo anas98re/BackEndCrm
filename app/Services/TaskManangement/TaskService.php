@@ -19,6 +19,12 @@ use SebastianBergmann\Type\VoidType;
 
 class TaskService extends JsonResponeService
 {
+    private $queriesService;
+    public function __construct(queriesService $queriesService)
+    {
+        $this->queriesService = $queriesService;
+    }
+
     public function addTask(TaskRequest $request)
     {
         try {
@@ -76,8 +82,17 @@ class TaskService extends JsonResponeService
     public function assignTaskToEmployee(Request $request, $id)
     {
         $task = task::find($id);
-        $task->assigned_to = $request->assigned_to;
-        $task->save();
+        if (count($request->assigned_to) == 1) {
+            $task->assigned_to = $request->assigned_to[0];
+            $task->save();
+        } else {
+            for ($i = 1; $i < count($request->assigned_to); $i++) {
+                $task_collaborator = new task_collaborator();
+                $task_collaborator->collaborator_employee_id = $request->assigned_to[$i];
+                $task_collaborator->task_id = $task->id;
+                $task_collaborator->save();
+            }
+        }
         return true;
     }
 
@@ -138,6 +153,18 @@ class TaskService extends JsonResponeService
         return $tasks;
     }
 
+
+    public function filterTaskesByAll($request)
+    {
+        $task = new Task();
+        $dataFilter = $task->filterTaskesByAll($request);
+        return (
+            count($dataFilter) > 0 ?
+            $dataFilter :
+            false
+        );
+    }
+
     public function viewAllTasks()
     {
         $tasks = task::all();
@@ -147,44 +174,12 @@ class TaskService extends JsonResponeService
         return $tasks;
     }
 
-
-    public function filterTaskesByAll($request)
+    public function changeTaskGroup($request, $id)
     {
-        $tasks = DB::table('tasks');
-
-        $filters = [
-            'status_name' => ['task_statuses.name', '='],
-            'id' => ['tasks.id', '='],
-            'assigned_by' => ['assigned_by', '='],
-            'assigned_to' => ['assigned_to', '='],
-            'created_by' => ['created_by', '='],
-            'date_time_created' => ['dateTimeCreated', '='],
-            'start_date_from' => ['start_date', '>='],
-            'start_date_to' => ['start_date', '<='],
-        ];
-
-        foreach ($filters as $key => $conditions) {
-            if ($request->has($key) && !empty($request->input($key))) {
-                $column = $conditions[0];
-                $operator = $conditions[1];
-                $value = $request->input($key);
-
-                if ($key === 'status_name') {
-                    $tasks->join('statuse_task_fraction', 'tasks.id', '=', 'statuse_task_fraction.task_id')
-                        ->join('task_statuses', 'statuse_task_fraction.task_statuse_id', '=', 'task_statuses.id')
-                        ->where($column, $operator, $value);
-                } elseif ($key === 'start_date_from') {
-                    $tasks->whereDate($column, $operator, $value);
-                } elseif ($key === 'start_date_to') {
-                    $tasks->whereDate($column, $operator, $value);
-                } else {
-                    $tasks->where($column, $operator, $value);
-                }
-            }
-        }
-
-        $tasks = $tasks->get();
-
-        return $tasks;
+        $task = task::find($id);
+        $task->update([
+            'group_id' => $request->group_id
+        ]);
+        return ($task ? true : false);
     }
 }
