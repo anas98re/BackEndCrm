@@ -98,4 +98,20 @@ class TaskController extends Controller
             $this->sendError($data, 'Error');
     }
 
+    public function addAttachmentsToTask(Request $request, $id)
+    {
+        $data = $this->MyService->addAttachmentsToTask($request, $id);
+        return ($data) ?
+            $this->sendResponse($data, 'Done Added Attachments To Task') :
+            $this->sendError($data, 'Error');
+    }
+
+    public function addCommentToTask(Request $request, $id)
+    {
+        $data = $this->MyService->addCommentToTask($request, $id);
+        return ($data) ?
+            $this->sendResponse($data, 'Done Added comment To Task') :
+            $this->sendError($data, 'Error');
+    }
+
 }

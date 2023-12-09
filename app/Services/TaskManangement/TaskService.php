@@ -8,9 +8,11 @@ use App\Models\attachment;
 use App\Models\statuse_task_fraction;
 use App\Models\task;
 use App\Models\task_collaborator;
+use App\Models\task_comment;
 use App\Models\taskStatus;
 use App\Models\User;
 use App\Services\JsonResponeService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
@@ -167,7 +169,8 @@ class TaskService extends JsonResponeService
 
     public function viewAllTasks()
     {
-        $tasks = task::all();
+        // User::paginate(15);
+        $tasks = task::paginate(2);
         if (!$tasks) {
             return false;
         }
@@ -181,5 +184,30 @@ class TaskService extends JsonResponeService
             'group_id' => $request->group_id
         ]);
         return ($task ? true : false);
+    }
+
+    public function addAttachmentsToTask($request, $id)
+    {
+        $task = task::find($id);
+        $attachment = new attachment();
+        $filePath = $request->file_path->store('public/Files');
+        $attachment->file_path = $filePath;
+        $attachment->task_id = $task->id;
+        $attachment->create_date = $task->start_date;
+        $attachment->created_by = auth('sanctum')->user()->id_user;
+        $attachment->save();
+        return ($attachment ? true : false);
+    }
+
+    public function addCommentToTask($request, $id)
+    {
+        $task = task::find($id);
+        $comment = new task_comment();
+        $comment->CommentText = $request->CommentText;
+        $comment->comment_date = Carbon::now();
+        $comment->commented_by = auth('sanctum')->user()->id_user;
+        $comment->task_id = $task->id;
+        $comment->save();
+        return ($comment ? true : false);
     }
 }

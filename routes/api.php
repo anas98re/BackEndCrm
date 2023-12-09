@@ -40,6 +40,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('viewAllTasksByDateTimeCrated',[TaskController::class,'viewAllTasksByDateTimeCrated']);
     Route::post('filterTaskesByAll',[TaskController::class,'filterTaskesByAll']);
     Route::post('changeTaskGroup/{id}',[TaskController::class,'changeTaskGroup']);
+    Route::post('addAttachmentsToTask/{id}',[TaskController::class,'addAttachmentsToTask']);
+    Route::post('addCommentToTask/{id}',[TaskController::class,'addCommentToTask']);
 
 });
 
