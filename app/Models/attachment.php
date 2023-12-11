@@ -9,7 +9,7 @@ class attachment extends Model
 {
     use HasFactory;
 
-    protected $table = 'Attachments';
+    protected $table = 'task_attachments';
 
     protected $fillable = [
         'create_date',

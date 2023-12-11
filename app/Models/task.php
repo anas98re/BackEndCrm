@@ -12,6 +12,7 @@ class task extends Model
     protected $fillable = [
         'title',
         'description',
+        'created_by',
         'assigned_by',
         'assigned_to',
         'client_id',
@@ -29,7 +30,7 @@ class task extends Model
 
     public function taskStatuses()
     {
-        return $this->belongsToMany(TaskStatus::class, 'statuse_task_fraction', 'task_id', 'task_statuse_id');
+        return $this->belongsToMany(taskStatus::class, 'statuse_task_fraction', 'task_id', 'task_statuse_id');
     }
 
     public function assignedByUser()

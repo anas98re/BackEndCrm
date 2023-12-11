@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('Attachments', function (Blueprint $table) {
+        Schema::create('task_attachments', function (Blueprint $table) {
             $table->id();
             $table->dateTime('create_date')->nullable();
             $table->string('file_path')->nullable();
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('task_id')->references('id')->on('tasks')->onDelete('cascade');
-            // $table->foreign('commented_by')->references('id_user')->on('users')->onDelete('set null');
+            // $table->foreign('created_by')->references('id_user')->on('users')->onDelete('set null');
         });
     }
 

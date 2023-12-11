@@ -30,6 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //Tasks
     Route::post('addTask',[TaskController::class,'addTask']);
+    Route::post('editTask/{id}',[TaskController::class,'editTask']);
     Route::post('addGroup',[GroupController::class,'addGroup']);
     Route::post('assignTaskToEmployee/{id}',[TaskController::class,'assignTaskToEmployee']);
     Route::post('changeStatuseTask/{id}',[TaskController::class,'changeStatuseTask']);
@@ -42,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('changeTaskGroup/{id}',[TaskController::class,'changeTaskGroup']);
     Route::post('addAttachmentsToTask/{id}',[TaskController::class,'addAttachmentsToTask']);
     Route::post('addCommentToTask/{id}',[TaskController::class,'addCommentToTask']);
+    Route::get('viewCommentsByTaskId/{id}',[TaskController::class,'viewCommentsByTaskId']);
 
 });
 

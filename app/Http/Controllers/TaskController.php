@@ -22,7 +22,17 @@ class TaskController extends Controller
     public function addTask(TaskRequest $request)
     {
         $data = $this->MyService->addTask($request);
-        return $this->sendResponse($data, 'Done');
+        return ($data) ?
+            $this->sendResponse($data, 'Added Done') :
+            $this->sendError($data, 'Error');
+    }
+
+    public function editTask(Request $request, $id)
+    {
+        $data = $this->MyService->editTask($request, $id);
+        return ($data) ?
+            $this->sendResponse($data, 'Updated Done') :
+            $this->sendError($data, 'Error');
     }
 
     public function assignTaskToEmployee(Request $request, $id)
@@ -111,6 +121,14 @@ class TaskController extends Controller
         $data = $this->MyService->addCommentToTask($request, $id);
         return ($data) ?
             $this->sendResponse($data, 'Done Added comment To Task') :
+            $this->sendError($data, 'Error');
+    }
+
+    public function viewCommentsByTaskId($id)
+    {
+        $data = $this->MyService->viewCommentsByTaskId($id);
+        return ($data) ?
+            $this->sendResponse($data, 'These are all comments for this Task') :
             $this->sendError($data, 'Error');
     }
 
