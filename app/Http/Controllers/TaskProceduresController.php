@@ -7,6 +7,7 @@ use App\Http\Requests\StoretaskStatusRequest;
 use App\Http\Requests\UpdatetaskStatusRequest;
 use App\Models\task;
 use App\Models\users;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -21,10 +22,10 @@ class TaskProceduresController extends Controller
                 ->where('type_level', 14)->first();
 
             $task = new task();
-            $task->title = $request->title;
-            $task->description = $request->description;
+            $task->title = 'approve Admin To add Invoice';
+            $task->description = 'you have to approve';
             $task->invoice_id = $request->invoice_id;
-            $task->public_Type = $request->public_Type;
+            $task->public_Type = 'approveAdmin';
             $task->assigend_department_from  = 2;
             $task->assigned_to  = $assigned_to->id_user;
             $task->save();
@@ -35,5 +36,19 @@ class TaskProceduresController extends Controller
             throw $th;
             DB::rollBack();
         }
+    }
+
+    public function closeTaskApproveAdminAfterAddInvoice(Request $request)
+    {
+        $task = task::where('invoice_id', $request->idInvoice)->first();
+        $task->actual_delivery_date = Carbon::now();
+        DB::table('statuse_task_fraction')
+            ->where('task_id', $task->id)
+            ->update([
+                'task_statuse_id' => 4,
+                'changed_date' => Carbon::now(),
+                'changed_by' => $request->iduser_approve
+            ]);
+        return true;
     }
 }

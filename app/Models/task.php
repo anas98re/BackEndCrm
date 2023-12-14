@@ -32,7 +32,8 @@ class task extends Model
         'completion_percentage',
         'recurring',
         'recurring_type',
-        'Number_Of_Recurring'
+        'Number_Of_Recurring',
+        'actual_delivery_date'
     ];
 
     public function taskStatuses()
