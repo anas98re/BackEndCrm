@@ -10,7 +10,7 @@ class users extends Model
     use HasFactory;
 
     protected $table = 'users';
-    
+
     protected $primaryKey = 'id_user';
 
     protected $fillable = [
@@ -21,7 +21,7 @@ class users extends Model
         'code_verfiy',
         'fk_country',
         'type_administration',
-        'type_level',
+        '~',
         'fk_regoin',
         'img_image',
         'img_thumbnail',
@@ -34,4 +34,9 @@ class users extends Model
         'email_pluse',
         'maincity_fk'
     ];
+
+    public function managements()
+    {
+        return $this->hasMany(managements::class, 'assigned_by', 'id_user');
+    }
 }

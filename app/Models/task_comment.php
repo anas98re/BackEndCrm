@@ -25,6 +25,6 @@ class task_comment extends Model
 
     public function tasks()
     {
-        return $this->belongsTo(Task::class, 'task_id', 'id')->select('id', 'title','description');
+        return $this->belongsTo(task::class, 'task_id', 'id')->select('id', 'title','description');
     }
 }

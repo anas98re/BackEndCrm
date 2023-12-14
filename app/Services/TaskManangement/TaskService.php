@@ -10,7 +10,9 @@ use App\Models\task;
 use App\Models\task_collaborator;
 use App\Models\task_comment;
 use App\Models\taskStatus;
+use App\Models\tsks_group;
 use App\Models\User;
+use App\Models\users;
 use App\Services\JsonResponeService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -18,6 +20,8 @@ use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\Sanctum;
 use PhpParser\Node\Stmt\TryCatch;
 use SebastianBergmann\Type\VoidType;
+use Carbon\CarbonInterval;
+use DateTime;
 
 class TaskService extends JsonResponeService
 {
@@ -26,6 +30,8 @@ class TaskService extends JsonResponeService
     {
         $this->queriesService = $queriesService;
     }
+
+    
 
     public function addTask(TaskRequest $request)
     {
@@ -36,10 +42,64 @@ class TaskService extends JsonResponeService
             $task->title = $request->title;
             $task->created_by = auth('sanctum')->user()->id_user;
 
-            if ($request->has('assigned_to')) {
-                $task->assigned_by = auth('sanctum')->user()->id_user;
-                $task->assigned_to = $request->assigned_to;
+
+            if ($request->hasAny(['assigned_to', 'assigned_department_to', 'assigend_region_to'])) {
+                $currentRequestFromThese = array_intersect_key(
+                    $request->all(),
+                    array_flip(['assigned_to', 'assigned_department_to', 'assigend_region_to'])
+                );
+                switch ($currentRequestFromThese) {
+                    case 'assigned_to':
+                        switch ($request->assignment_type_from) {
+                            case 'user':
+                                $task->assigned_by = auth('sanctum')->user()->id_user;
+                                break;
+                            case 'department':
+                                $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                $task->assigend_department_from = $currentData->type_administration;
+                                break;
+                            case 'region':
+                                $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                $task->assigend_region_from = $currentData->fk_regoin;
+                                break;
+                        }
+                        $task->assigned_to = $request->assigned_to;
+                        break;
+                    case 'assigned_department_to':
+                        switch ($request->assignment_type_from) {
+                            case 'user':
+                                $task->assigned_by = auth('sanctum')->user()->id_user;
+                                break;
+                            case 'department':
+                                $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                $task->assigend_department_from = $currentData->type_administration;
+                                break;
+                            case 'region':
+                                $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                $task->assigend_region_from = $currentData->fk_regoin;
+                                break;
+                        }
+                        $task->assigned_department_to = $request->assigned_department_to;
+                        break;
+                    default:
+                        switch ($request->assignment_type_from) {
+                            case 'user':
+                                $task->assigned_by = auth('sanctum')->user()->id_user;
+                                break;
+                            case 'department':
+                                $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                $task->assigend_department_from = $currentData->type_administration;
+                                break;
+                            case 'region':
+                                $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                $task->assigend_region_from = $currentData->fk_regoin;
+                                break;
+                        }
+                        $task->assigend_region_to = $request->assigend_region_to;
+                }
             }
+
+
 
             $task->client_id = $request->client_id;
             $task->description = $request->description;
@@ -48,6 +108,57 @@ class TaskService extends JsonResponeService
             $task->start_date = $request->start_date;
             $task->deadline = $request->deadline;
             $task->hours = $request->hours;
+
+            /////////////////////////////////// To calucate the hours from deadline
+            // $startDateTime = Carbon::parse($request->start_date);
+            // $time = $startDateTime->format('H:i:s');
+            // $startTimeMonth = $startDateTime->format('y:m:d');
+            // $endDateTime = Carbon::parse($request->deadline);
+            // $EndTimeMonth = $endDateTime->format('y:m:d');
+            // return   $diffHours = $startDateTime->diffInHours($endDateTime);
+            // $diffDays = $startDateTime->diffInDays($endDateTime);
+
+            // return $totalDuration = ($diffDays * 9) + $diffHours;
+            // $time1 = new DateTime('17:00:00');
+            // $time2 = new DateTime($time);
+            // $diff = $time1->diff($time2);
+            // $totalHours = $diff->h;
+            // $totalMinutes = $diff->i;
+
+            // return $stayTimeFromDay = $totalHours . ':' . sprintf('%02d', $totalMinutes); // Format minutes with leading zero if necessary
+
+            // $totalMinutes = ($diff->h * 60) + $diff->i;
+            // $totalDuration = floor(($totalMinutes * 9) / 60); // Use floor() to round down to the nearest whole number of hours
+
+            // return $totalDuration . ':' . sprintf('%02d', (($totalMinutes * 9) % 60)); // Format minutes with leading zero if necessary
+
+
+            // $currentDateTime = $startDateTime;
+
+            // while ($currentDateTime < $endDateTime) {
+            //     if ($currentDateTime->isFriday()) {
+            //         $currentDateTime->addDay();
+            //         continue;
+            //     }
+
+            //     if (
+            //         $currentDateTime->isBefore($currentDateTime->copy()->setTime(8, 30))
+            //         || $currentDateTime->isAfter($currentDateTime->copy()->setTime(17, 0))
+            //     ) {
+            //         $currentDateTime->addDay();
+            //         continue;
+            //     }
+
+            //     $hours += $currentDateTime->diffInHours($endDateTime);
+            //     $currentDateTime->addDay();
+            // }
+
+            // return $hours;
+
+
+
+            ///////////////////////////////////////////
+
             $task->recurring = $request->recurring;
             $task->recurring_type = $request->recurring_type;
             $task->Number_Of_Recurring = $request->Number_Of_Recurring;
@@ -301,5 +412,10 @@ class TaskService extends JsonResponeService
             ->makeHidden(['task_id', 'commented_by']);
 
         return ($comments ? $comments : false);
+    }
+
+    public function getGroupsInfo()
+    {
+        return tsks_group::select('id', 'groupName')->get();
     }
 }

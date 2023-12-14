@@ -18,6 +18,13 @@ class task extends Model
         'client_id',
         'invoice_id',
         'group_id',
+        'fk_region',
+        'assigend_department_from',
+        'assigend_department_to',
+        'assigend_region_from',
+        'assigend_region_to',
+        'assignment_type_from',
+        'assignment_type_to',
         'public_Type',
         'start_date',
         'deadline',
@@ -30,17 +37,78 @@ class task extends Model
 
     public function taskStatuses()
     {
-        return $this->belongsToMany(taskStatus::class, 'statuse_task_fraction', 'task_id', 'task_statuse_id');
+        return $this->belongsToMany(
+            taskStatus::class,
+            'statuse_task_fraction',
+            'task_id',
+            'task_statuse_id'
+        )
+            ->withPivot('changed_by')
+            ->join('users', 'statuse_task_fraction.changed_by', '=', 'users.id_user')
+            ->select('task_statuses.*', 'users.nameUser as name_user');
     }
 
     public function assignedByUser()
     {
-        return $this->belongsTo(User::class, 'assigned_by', 'id_user');
+        return $this->belongsTo(User::class, 'assigned_by', 'id_user')
+            ->select('id_user', 'nameUser', 'img_image', 'fk_regoin', 'type_administration')
+            ->join('regoin', 'users.fk_regoin', '=', 'regoin.id_regoin')
+            ->join('managements', 'users.type_administration', '=', 'managements.idmange')
+            ->select(
+                'users.id_user',
+                'users.nameUser',
+                'users.img_image',
+                'users.fk_regoin',
+                'users.type_administration',
+                'regoin.name_regoin',
+                'managements.name_mange'
+            );
     }
 
     public function assignedToUser()
     {
-        return $this->belongsTo(User::class, 'assigned_to', 'id_user');
+        return $this->belongsTo(User::class, 'assigned_to', 'id_user')
+            ->join('regoin', 'users.fk_regoin', '=', 'regoin.id_regoin')
+            ->join('managements', 'users.type_administration', '=', 'managements.idmange')
+            ->select(
+                'users.id_user',
+                'users.nameUser',
+                'users.img_image',
+                'users.fk_regoin',
+                'users.type_administration',
+                'regoin.name_regoin',
+                'managements.name_mange'
+            );
+    }
+
+    public function createByUser()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id_user');
+    }
+
+    public function managements()
+    {
+        return $this->belongsTo(managements::class, 'assigend_department_to', 'idmange');
+    }
+
+    public function managementsFrom()
+    {
+        return $this->belongsTo(managements::class, 'assigend_department_from', 'idmange');
+    }
+
+    public function regions()
+    {
+        return $this->belongsTo(regoin::class, 'fk_region', 'id_regoin');
+    }
+
+    public function regionsTo()
+    {
+        return $this->belongsTo(regoin::class, 'assigend_region_to', 'id_regoin');
+    }
+
+    public function regionsFrom()
+    {
+        return $this->belongsTo(regoin::class, 'assigend_region_from', 'id_regoin');
     }
 
     public function Filter($filters)
@@ -91,8 +159,8 @@ class task extends Model
             'assignedToUser', 'taskGroup',
             'Clients', 'invoices'
         ])
-        ->leftJoin('statuse_task_fraction', 'tasks.id', '=', 'statuse_task_fraction.task_id')
-        ->leftJoin('task_statuses', 'statuse_task_fraction.task_statuse_id', '=', 'task_statuses.id');
+            ->leftJoin('statuse_task_fraction', 'tasks.id', '=', 'statuse_task_fraction.task_id')
+            ->leftJoin('task_statuses', 'statuse_task_fraction.task_statuse_id', '=', 'task_statuses.id');
 
         $filters = [
             'status_name' => ['task_statuses.name', '='],
@@ -142,14 +210,19 @@ class task extends Model
 
     public function taskGroup()
     {
-        return $this->belongsTo(tsks_group::class, 'group_id');
+        return $this->belongsTo(tsks_group::class, 'group_id')
+            ->select('id', 'groupName');;
     }
+
     public function Clients()
     {
-        return $this->belongsTo(clients::class, 'client_id', 'id_clients');
+        return $this->belongsTo(clients::class, 'client_id', 'id_clients')
+            ->select('id_clients', 'name_enterprise', 'ismarketing');
     }
+
     public function invoices()
     {
-        return $this->belongsTo(client_invoice::class, 'invoice_id', 'id_invoice');
+        return $this->belongsTo(client_invoice::class, 'invoice_id', 'id_invoice')
+            ->select('id_invoice', 'stateclient');
     }
 }

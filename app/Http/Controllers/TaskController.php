@@ -6,6 +6,7 @@ use App\Models\task;
 use App\Http\Requests\StoretaskRequest;
 use App\Http\Requests\TaskManagementRequests\TaskRequest;
 use App\Http\Requests\UpdatetaskRequest;
+use App\Http\Resources\TaskResource;
 use App\Models\client_invoice;
 use App\Services\TaskManangement\TaskService;
 use Illuminate\Http\Request;
@@ -95,7 +96,7 @@ class TaskController extends Controller
         $data = $this->MyService->filterTaskesByAll($request);
         return (
             $data ?
-            $this->sendResponse($data, 'These are all tasks with filters') :
+            $this->sendResponse(TaskResource::collection($data), 'These are all tasks with filters') :
             $this->sendError($data, 'Not Found')
         );
     }
@@ -129,6 +130,14 @@ class TaskController extends Controller
         $data = $this->MyService->viewCommentsByTaskId($id);
         return ($data) ?
             $this->sendResponse($data, 'These are all comments for this Task') :
+            $this->sendError($data, 'Error');
+    }
+
+    public function getGroupsInfo()
+    {
+        $data = $this->MyService->getGroupsInfo();
+        return ($data) ?
+            $this->sendResponse($data, 'These are all groups') :
             $this->sendError($data, 'Error');
     }
 

@@ -4,6 +4,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\PrivgLevelUserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TaskProceduresController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('register',[RegisterController::class,'register']);
 
+Route::post('insertPrivelgeToAllLevel',[PrivgLevelUserController::class,'insertPrivelgeToAllLevel']);
+Route::post('addTaskToApproveAdminAfterAddInvoice',[TaskProceduresController::class,'addTaskToApproveAdminAfterAddInvoice']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('test',[RegisterController::class,'test']);
 
@@ -44,6 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('addAttachmentsToTask/{id}',[TaskController::class,'addAttachmentsToTask']);
     Route::post('addCommentToTask/{id}',[TaskController::class,'addCommentToTask']);
     Route::get('viewCommentsByTaskId/{id}',[TaskController::class,'viewCommentsByTaskId']);
+    Route::get('getGroupsInfo',[TaskController::class,'getGroupsInfo']);
 
 });
 
