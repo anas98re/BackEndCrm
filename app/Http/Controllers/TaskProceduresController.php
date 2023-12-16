@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\taskStatus;
 use App\Http\Requests\StoretaskStatusRequest;
 use App\Http\Requests\UpdatetaskStatusRequest;
+use App\Models\statuse_task_fraction;
 use App\Models\task;
 use App\Models\users;
 use Carbon\Carbon;
@@ -29,6 +30,14 @@ class TaskProceduresController extends Controller
             $task->assigend_department_from  = 2;
             $task->assigned_to  = $assigned_to->id_user;
             $task->save();
+
+            // if ($task) {
+            //     $taskStatuse = taskStatus::where('name', 'Open')->first();
+            //     $statuse_task_fraction = new statuse_task_fraction();
+            //     $statuse_task_fraction->task_id = $task->id;
+            //     $statuse_task_fraction->task_statuse_id = $taskStatuse->id;
+            //     $statuse_task_fraction->save();
+            // }
 
             DB::commit();
             return $task;

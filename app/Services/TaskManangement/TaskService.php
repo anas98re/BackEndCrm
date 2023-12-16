@@ -31,7 +31,7 @@ class TaskService extends JsonResponeService
         $this->queriesService = $queriesService;
     }
 
-    
+
 
     public function addTask(TaskRequest $request)
     {
@@ -43,59 +43,63 @@ class TaskService extends JsonResponeService
             $task->created_by = auth('sanctum')->user()->id_user;
 
 
-            if ($request->hasAny(['assigned_to', 'assigned_department_to', 'assigend_region_to'])) {
+            if ($request->hasAny(['assigned_to', 'assigend_department_to', 'assigend_region_to'])) {
                 $currentRequestFromThese = array_intersect_key(
                     $request->all(),
-                    array_flip(['assigned_to', 'assigned_department_to', 'assigend_region_to'])
+                    array_flip(['assigned_to', 'assigend_department_to', 'assigend_region_to'])
                 );
-                switch ($currentRequestFromThese) {
-                    case 'assigned_to':
-                        switch ($request->assignment_type_from) {
-                            case 'user':
-                                $task->assigned_by = auth('sanctum')->user()->id_user;
-                                break;
-                            case 'department':
-                                $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
-                                $task->assigend_department_from = $currentData->type_administration;
-                                break;
-                            case 'region':
-                                $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
-                                $task->assigend_region_from = $currentData->fk_regoin;
-                                break;
-                        }
-                        $task->assigned_to = $request->assigned_to;
-                        break;
-                    case 'assigned_department_to':
-                        switch ($request->assignment_type_from) {
-                            case 'user':
-                                $task->assigned_by = auth('sanctum')->user()->id_user;
-                                break;
-                            case 'department':
-                                $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
-                                $task->assigend_department_from = $currentData->type_administration;
-                                break;
-                            case 'region':
-                                $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
-                                $task->assigend_region_from = $currentData->fk_regoin;
-                                break;
-                        }
-                        $task->assigned_department_to = $request->assigned_department_to;
-                        break;
-                    default:
-                        switch ($request->assignment_type_from) {
-                            case 'user':
-                                $task->assigned_by = auth('sanctum')->user()->id_user;
-                                break;
-                            case 'department':
-                                $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
-                                $task->assigend_department_from = $currentData->type_administration;
-                                break;
-                            case 'region':
-                                $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
-                                $task->assigend_region_from = $currentData->fk_regoin;
-                                break;
-                        }
-                        $task->assigend_region_to = $request->assigend_region_to;
+
+                foreach ($currentRequestFromThese as $key => $value) {
+                    switch ($key) {
+                        case 'assigned_to':
+                            switch ($request->assignment_type_from) {
+                                case 'user':
+                                    $task->assigned_by = auth('sanctum')->user()->id_user;
+                                    break;
+                                case 'department':
+                                    $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                    $task->assigend_department_from = $currentData->type_administration;
+                                    break;
+                                case 'region':
+                                    $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                    $task->assigend_region_from = $currentData->fk_regoin;
+                                    break;
+                            }
+                            $task->assigned_to = $value;
+                            break;
+                        case 'assigend_department_to':
+                            switch ($request->assignment_type_from) {
+                                case 'user':
+                                    $task->assigned_by = auth('sanctum')->user()->id_user;
+                                    break;
+                                case 'department':
+                                    $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                    $task->assigend_department_from = $currentData->type_administration;
+                                    break;
+                                case 'region':
+                                    $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                    $task->assigend_region_from = $currentData->fk_regoin;
+                                    break;
+                            }
+                            $task->assigend_department_to = $value;
+                            break;
+                        case 'assigend_region_to':
+                            switch ($request->assignment_type_from) {
+                                case 'user':
+                                    $task->assigned_by = auth('sanctum')->user()->id_user;
+                                    break;
+                                case 'department':
+                                    $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                    $task->assigend_department_from = $currentData->type_administration;
+                                    break;
+                                case 'region':
+                                    $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                    $task->assigend_region_from = $currentData->fk_regoin;
+                                    break;
+                            }
+                            $task->assigend_region_to = $value;
+                            break;
+                    }
                 }
             }
 
