@@ -31,13 +31,13 @@ class TaskProceduresController extends Controller
             $task->assigned_to  = $assigned_to->id_user;
             $task->save();
 
-            // if ($task) {
-            //     $taskStatuse = taskStatus::where('name', 'Open')->first();
-            //     $statuse_task_fraction = new statuse_task_fraction();
-            //     $statuse_task_fraction->task_id = $task->id;
-            //     $statuse_task_fraction->task_statuse_id = $taskStatuse->id;
-            //     $statuse_task_fraction->save();
-            // }
+            if ($task) {
+                $taskStatuse = taskStatus::where('name', 'Open')->first();
+                $statuse_task_fraction = new statuse_task_fraction();
+                $statuse_task_fraction->task_id = $task->id;
+                $statuse_task_fraction->task_statuse_id = $taskStatuse->id;
+                $statuse_task_fraction->save();
+            }
 
             DB::commit();
             return $task;
@@ -49,15 +49,28 @@ class TaskProceduresController extends Controller
 
     public function closeTaskApproveAdminAfterAddInvoice(Request $request)
     {
-        $task = task::where('invoice_id', $request->idInvoice)->first();
-        $task->actual_delivery_date = Carbon::now();
-        DB::table('statuse_task_fraction')
-            ->where('task_id', $task->id)
-            ->update([
-                'task_statuse_id' => 4,
-                'changed_date' => Carbon::now(),
-                'changed_by' => $request->iduser_approve
+        try {
+            DB::beginTransaction();
+            DB::table('client_communication')->insert([
+                'fk_client' => $request->id_clients,
+                'type_communcation' => 'ترحيب',
+                'id_invoice' => $request->idInvoice
             ]);
-        return true;
+            $task = task::where('invoice_id', $request->idInvoice)->first();
+            $task->actual_delivery_date = Carbon::now();
+            $task->save();
+            DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)
+                ->update([
+                    'task_statuse_id' => 4,
+                    'changed_date' => Carbon::now(),
+                    'changed_by' => $request->iduser_approve
+                ]);
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
     }
 }

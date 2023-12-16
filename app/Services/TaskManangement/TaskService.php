@@ -164,6 +164,7 @@ class TaskService extends JsonResponeService
             ///////////////////////////////////////////
 
             $task->recurring = $request->recurring;
+            $task->dateTimeCreated = Carbon::now();
             $task->recurring_type = $request->recurring_type;
             $task->Number_Of_Recurring = $request->Number_Of_Recurring;
             $task->save();
@@ -366,7 +367,8 @@ class TaskService extends JsonResponeService
     public function viewAllTasks()
     {
         // User::paginate(15);
-        $tasks = task::paginate(2);
+        // $tasks = task::paginate(2);
+        $tasks = task::all();
         if (!$tasks) {
             return false;
         }

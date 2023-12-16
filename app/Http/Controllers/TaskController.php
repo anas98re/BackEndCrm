@@ -87,7 +87,7 @@ class TaskController extends Controller
     {
         $data = $this->MyService->viewAllTasks();
         return ($data) ?
-            $this->sendResponse($data, 'These are all tasks') :
+        $this->sendResponse(TaskResource::collection($data), 'These are all tasks with filters') :
             $this->sendError($data, 'Not Found');
     }
 
