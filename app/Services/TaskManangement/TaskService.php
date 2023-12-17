@@ -111,58 +111,13 @@ class TaskService extends JsonResponeService
             $task->group_id = $request->group_id;
             $task->start_date = $request->start_date;
             $task->deadline = $request->deadline;
-            $task->hours = $request->hours;
-
-            /////////////////////////////////// To calucate the hours from deadline
-            // $startDateTime = Carbon::parse($request->start_date);
-            // $time = $startDateTime->format('H:i:s');
-            // $startTimeMonth = $startDateTime->format('y:m:d');
-            // $endDateTime = Carbon::parse($request->deadline);
-            // $EndTimeMonth = $endDateTime->format('y:m:d');
-            // return   $diffHours = $startDateTime->diffInHours($endDateTime);
-            // $diffDays = $startDateTime->diffInDays($endDateTime);
-
-            // return $totalDuration = ($diffDays * 9) + $diffHours;
-            // $time1 = new DateTime('17:00:00');
-            // $time2 = new DateTime($time);
-            // $diff = $time1->diff($time2);
-            // $totalHours = $diff->h;
-            // $totalMinutes = $diff->i;
-
-            // return $stayTimeFromDay = $totalHours . ':' . sprintf('%02d', $totalMinutes); // Format minutes with leading zero if necessary
-
-            // $totalMinutes = ($diff->h * 60) + $diff->i;
-            // $totalDuration = floor(($totalMinutes * 9) / 60); // Use floor() to round down to the nearest whole number of hours
-
-            // return $totalDuration . ':' . sprintf('%02d', (($totalMinutes * 9) % 60)); // Format minutes with leading zero if necessary
 
 
-            // $currentDateTime = $startDateTime;
+            // To calucate the hours from deadline
+            $resultOfHouresWithoutFriday = $this->queriesService
+                ->calucateTheHoursFromDeadline($request->start_date, $request->deadline);
 
-            // while ($currentDateTime < $endDateTime) {
-            //     if ($currentDateTime->isFriday()) {
-            //         $currentDateTime->addDay();
-            //         continue;
-            //     }
-
-            //     if (
-            //         $currentDateTime->isBefore($currentDateTime->copy()->setTime(8, 30))
-            //         || $currentDateTime->isAfter($currentDateTime->copy()->setTime(17, 0))
-            //     ) {
-            //         $currentDateTime->addDay();
-            //         continue;
-            //     }
-
-            //     $hours += $currentDateTime->diffInHours($endDateTime);
-            //     $currentDateTime->addDay();
-            // }
-
-            // return $hours;
-
-
-
-            ///////////////////////////////////////////
-
+            $task->hours = $resultOfHouresWithoutFriday;
             $task->recurring = $request->recurring;
             $task->dateTimeCreated = Carbon::now();
             $task->recurring_type = $request->recurring_type;
