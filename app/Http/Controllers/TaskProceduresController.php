@@ -88,16 +88,28 @@ class TaskProceduresController extends Controller
 
     public function closeWelcomeTaskAfterUpdateCommunication(Request $request)
     {
-        $task = task::where('id_communication', $request->id_communication)->first();
-        $task->actual_delivery_date = Carbon::now();
-        $task->save();
-        DB::table('statuse_task_fraction')
-            ->where('task_id', $task->id)
-            ->update([
-                'task_statuse_id' => 4,
-                'changed_date' => Carbon::now(),
-                'changed_by' => $request->iduser_updateed
-        ]);
-        return true;
+        try {
+            DB::beginTransaction();
+            $task = task::where('id_communication', $request->id_communication)->first();
+            $task->actual_delivery_date = Carbon::now();
+            $task->save();
+            DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)
+                ->update([
+                    'task_statuse_id' => 4,
+                    'changed_date' => Carbon::now(),
+                    'changed_by' => $request->iduser_updateed
+                ]);
+            $this->MyService->afterCommunicateWithClient(
+                $request->idInvoice,
+                $request->id_communication,
+                $request->iduser_updateed,
+            );
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
     }
 }

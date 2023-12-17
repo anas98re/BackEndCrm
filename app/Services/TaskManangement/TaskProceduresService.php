@@ -45,4 +45,35 @@ class TaskProceduresService extends JsonResponeService
             DB::rollBack();
         }
     }
+
+    public function afterCommunicateWithClient($idInvoice, $iduser_updateed, $id_communication)
+    {
+        try {
+            DB::beginTransaction();
+
+            $task = new task();
+            $task->title = 'for communicate install 2';
+            $task->description = 'you should to install 2';
+            $task->invoice_id = $idInvoice;
+            $task->assign_to_user = $iduser_updateed;
+            $task->id_communication = $id_communication;
+            $task->public_Type = 'com_install_2';
+            $task->assigend_department_from  = 4;
+            $task->save();
+
+            if ($task) {
+                $taskStatuse = taskStatus::where('name', 'Open')->first();
+                $statuse_task_fraction = new statuse_task_fraction();
+                $statuse_task_fraction->task_id = $task->id;
+                $statuse_task_fraction->task_statuse_id = $taskStatuse->id;
+                $statuse_task_fraction->save();
+            }
+
+            DB::commit();
+            return $task;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
 }

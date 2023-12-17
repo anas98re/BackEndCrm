@@ -290,25 +290,41 @@ class TaskService extends JsonResponeService
 
     public function changeStatuseTask(Request $request, $id)
     {
-        $task = task::find($id);
-        if ($request->task_statuse_id == 4) {
-            $task->actual_delivery_date = Carbon::now();
-            $task->save();
+        try {
+            DB::beginTransaction();
+            $task = task::find($id);
+            if ($request->task_statuse_id == 4) {
+                $task->actual_delivery_date = Carbon::now();
+                $task->save();
+            }
+            if ($request->task_statuse_id == 8) {
+                $task->recive_date = Carbon::now();
+                $task->save();
+            }
+            $updatedData = DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)
+                ->first();
+
+            if ($request->task_statuse_id != 4 && $updatedData->task_statuse_id == 4) {
+                $task->actual_delivery_date = null;
+                $task->save();
+            }
+
+            $updatedData = DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)
+                ->update([
+                    'task_statuse_id' => $request->task_statuse_id,
+                    'changed_by' => auth('sanctum')->user()->id_user
+                ]);
+            DB::commit();
+            if (!$updatedData) {
+                return false;
+            }
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
         }
-        if ($request->task_statuse_id == 8) {
-            $task->recive_date = Carbon::now();
-            $task->save();
-        }
-        $updatedData = DB::table('statuse_task_fraction')
-            ->where('task_id', $task->id)
-            ->update([
-                'task_statuse_id' => $request->task_statuse_id,
-                'changed_by' => auth('sanctum')->user()->id_user
-            ]);
-        if (!$updatedData) {
-            return false;
-        }
-        return true;
     }
 
     public function viewTasksByIdAssigned($id)
