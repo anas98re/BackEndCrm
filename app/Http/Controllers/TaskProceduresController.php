@@ -103,10 +103,45 @@ class TaskProceduresController extends Controller
             $this->MyService->afterCommunicateWithClient(
                 $request->idInvoice,
                 $request->id_communication,
-                $request->iduser_updateed,
+                $request->iduser_updateed
             );
             DB::commit();
             return true;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
+
+    public function afterInstallClient(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $welcomed_user_id = DB::table('client_communication')
+                ->where('fk_client', $request->fkIdClient)
+                ->where('id_communication', $request->id_communication)
+                ->first();
+            $task = new task();
+            $task->title = 'for communicate install 1';
+            $task->description = 'you should to install 1';
+            $task->invoice_id = $request->idInvoice;
+            $task->id_communication  = $request->id_communication;
+            $task->client_id  = $request->fkIdClient;
+            $task->public_Type = 'com_install_1';
+            $task->assigend_department_from  = 3;
+            $task->assigned_to  = $welcomed_user_id->fk_user;
+            $task->save();
+
+            if ($task) {
+                $taskStatuse = taskStatus::where('name', 'Open')->first();
+                $statuse_task_fraction = new statuse_task_fraction();
+                $statuse_task_fraction->task_id = $task->id;
+                $statuse_task_fraction->task_statuse_id = $taskStatuse->id;
+                $statuse_task_fraction->save();
+            }
+
+            DB::commit();
+            return $task;
         } catch (\Throwable $th) {
             throw $th;
             DB::rollBack();

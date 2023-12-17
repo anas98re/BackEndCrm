@@ -46,7 +46,7 @@ class TaskProceduresService extends JsonResponeService
         }
     }
 
-    public function afterCommunicateWithClient($idInvoice, $iduser_updateed, $id_communication)
+    public function afterCommunicateWithClient($idInvoice, $id_communication, $iduser_updateed)
     {
         try {
             DB::beginTransaction();
@@ -55,7 +55,7 @@ class TaskProceduresService extends JsonResponeService
             $task->title = 'for communicate install 2';
             $task->description = 'you should to install 2';
             $task->invoice_id = $idInvoice;
-            $task->assign_to_user = $iduser_updateed;
+            $task->assigned_to = $iduser_updateed;
             $task->id_communication = $id_communication;
             $task->public_Type = 'com_install_2';
             $task->assigend_department_from  = 4;

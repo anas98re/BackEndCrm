@@ -30,6 +30,7 @@ Route::post('insertPrivelgeToAllLevel',[PrivgLevelUserController::class,'insertP
 Route::post('addTaskToApproveAdminAfterAddInvoice',[TaskProceduresController::class,'addTaskToApproveAdminAfterAddInvoice']);
 Route::post('closeTaskApproveAdminAfterAddInvoice',[TaskProceduresController::class,'closeTaskApproveAdminAfterAddInvoice']);
 Route::post('closeWelcomeTaskAfterUpdateCommunication',[TaskProceduresController::class,'closeWelcomeTaskAfterUpdateCommunication']);
+Route::post('afterInstallClient',[TaskProceduresController::class,'afterInstallClient']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('test',[RegisterController::class,'test']);

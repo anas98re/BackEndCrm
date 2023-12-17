@@ -35,6 +35,7 @@ class task extends Model
         'recurring',
         'recurring_type',
         'Number_Of_Recurring',
+        'id_communication',
         'actual_delivery_date'
     ];
 
