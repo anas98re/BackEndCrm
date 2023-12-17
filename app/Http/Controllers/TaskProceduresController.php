@@ -8,12 +8,19 @@ use App\Http\Requests\UpdatetaskStatusRequest;
 use App\Models\statuse_task_fraction;
 use App\Models\task;
 use App\Models\users;
+use App\Services\TaskManangement\TaskProceduresService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class TaskProceduresController extends Controller
 {
+    private $MyService;
+
+    public function __construct(TaskProceduresService $MyService)
+    {
+        $this->MyService = $MyService;
+    }
     public function addTaskToApproveAdminAfterAddInvoice(Request $request)
     {
         try {
@@ -51,7 +58,7 @@ class TaskProceduresController extends Controller
     {
         try {
             DB::beginTransaction();
-            DB::table('client_communication')->insert([
+            $client_communication = DB::table('client_communication')->insertGetId([
                 'fk_client' => $request->id_clients,
                 'type_communcation' => 'ترحيب',
                 'id_invoice' => $request->idInvoice
@@ -66,11 +73,30 @@ class TaskProceduresController extends Controller
                     'changed_date' => Carbon::now(),
                     'changed_by' => $request->iduser_approve
                 ]);
+            $this->MyService->addTaskAfterApproveInvoice(
+                $request->idInvoice,
+                $request->id_clients,
+                $client_communication
+            );
             DB::commit();
             return true;
         } catch (\Throwable $th) {
             throw $th;
             DB::rollBack();
         }
+    }
+
+    public function closeWelcomeTaskAfterUpdateCommunication(Request $request)
+    {
+        $task = task::where('id_communication', $request->id_communication)->first();
+        $task->actual_delivery_date = Carbon::now();
+        $task->save();
+        DB::table('statuse_task_fraction')
+            ->where('task_id', $task->id)
+            ->update([
+                'task_statuse_id' => 4,
+                'changed_date' => Carbon::now(),
+                'changed_by' => $request->iduser_approve
+            ]);
     }
 }

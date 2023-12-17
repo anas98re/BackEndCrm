@@ -87,7 +87,7 @@ class TaskController extends Controller
     {
         $data = $this->MyService->viewAllTasks();
         return ($data) ?
-        $this->sendResponse(TaskResource::collection($data), 'These are all tasks with filters') :
+            $this->sendResponse(TaskResource::collection($data), 'These are all tasks with filters') :
             $this->sendError($data, 'Not Found');
     }
 
@@ -101,7 +101,7 @@ class TaskController extends Controller
         );
     }
 
-    public function changeTaskGroup(Request $request,$id)
+    public function changeTaskGroup(Request $request, $id)
     {
         $data = $this->MyService->changeTaskGroup($request, $id);
         return ($data) ?
@@ -140,5 +140,4 @@ class TaskController extends Controller
             $this->sendResponse($data, 'These are all groups') :
             $this->sendError($data, 'Error');
     }
-
 }

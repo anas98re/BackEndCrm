@@ -26,6 +26,8 @@ class task extends Model
         'assignment_type_from',
         'assignment_type_to',
         'public_Type',
+        'main_type_task',
+        'recive_date',
         'start_date',
         'deadline',
         'hours',
