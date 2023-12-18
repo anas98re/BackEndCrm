@@ -7,6 +7,7 @@ use App\Http\Requests\StoretaskRequest;
 use App\Http\Requests\TaskManagementRequests\TaskRequest;
 use App\Http\Requests\UpdatetaskRequest;
 use App\Http\Resources\TaskResource;
+use App\Http\Resources\TaskResourceForFilter;
 use App\Models\client_invoice;
 use App\Services\TaskManangement\TaskService;
 use Illuminate\Http\Request;
@@ -55,7 +56,7 @@ class TaskController extends Controller
     {
         $data = $this->MyService->viewTasksByIdAssigned($id);
         return ($data) ?
-            $this->sendResponse($data, 'These are tasks assigned by this user') :
+            $this->sendResponse(TaskResource::collection($data), 'These are tasks assigned by this user') :
             $this->sendError($data, 'Not Found');
     }
 
@@ -63,7 +64,7 @@ class TaskController extends Controller
     {
         $data = $this->MyService->viewTaskByIdTask($id);
         return ($data) ?
-            $this->sendResponse($data, 'This is the task') :
+        $this->sendResponse(new TaskResource($data), 'This is the task') :
             $this->sendError($data, 'Not Found');
     }
 
@@ -96,7 +97,7 @@ class TaskController extends Controller
         $data = $this->MyService->filterTaskesByAll($request);
         return (
             $data ?
-            $this->sendResponse(TaskResource::collection($data), 'These are all tasks with filters') :
+            $this->sendResponse(TaskResourceForFilter::collection($data), 'These are all tasks with filters') :
             $this->sendError($data, 'Not Found')
         );
     }

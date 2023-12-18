@@ -4,13 +4,13 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TaskResource extends JsonResource
+class TaskResourceForFilter extends JsonResource
 {
     public function toArray($request)
     {
 
         return [
-            'id' => $this->id,
+            'id' => $this->task_id,
             'title' => $this->title,
             'description' => $this->description,
             'public_Type' => $this->public_Type,
@@ -41,9 +41,6 @@ class TaskResource extends JsonResource
             'created_by' => $this->createByUser->nameUser ?? '',
             'name_regoin' => $this->regions->name_regoin ?? '',
             'task_statuses' => $this->taskStatuses,
-            // 'task_statuses' => [
-            //     'task_statuse_id' => $this->task_statuses->task_statuse_id ?? '',
-            // ],
             'assignedByUser' => [
                 'id_user' => $this->assignedByUser->id_user ?? '',
                 'nameUser' => $this->assignedByUser->nameUser ?? '',

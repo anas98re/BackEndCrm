@@ -42,7 +42,6 @@ class TaskService extends JsonResponeService
             $task->title = $request->title;
             $task->created_by = auth('sanctum')->user()->id_user;
 
-
             if ($request->hasAny(['assigned_to', 'assigend_department_to', 'assigend_region_to'])) {
                 $currentRequestFromThese = array_intersect_key(
                     $request->all(),
@@ -103,21 +102,18 @@ class TaskService extends JsonResponeService
                 }
             }
 
-
-
             $task->client_id = $request->client_id;
             $task->description = $request->description;
             $task->invoice_id = $request->invoice_id;
             $task->group_id = $request->group_id;
-            $task->start_date = $request->start_date;
+            $task->start_date = $request->input('start_date') ?? Carbon::now();
             $task->deadline = $request->deadline;
-
 
             // To calucate the hours from deadline
             $resultOfHouresWithoutFriday = $this->queriesService
                 ->calucateTheHoursFromDeadline($request->start_date, $request->deadline);
-
             $task->hours = $resultOfHouresWithoutFriday;
+
             $task->recurring = $request->recurring;
             $task->dateTimeCreated = Carbon::now();
             $task->recurring_type = $request->recurring_type;
@@ -165,26 +161,42 @@ class TaskService extends JsonResponeService
 
             $task = task::find($id);
             $task->title = $request->title;
-            if ($request->has('assigned_to')) {
-                $task->assigned_by = auth('sanctum')->user()->id_user;
-                $task->assigned_to = $request->assigned_to;
+            if ($request->hasAny(['assigned_to', 'assigend_department_to', 'assigend_region_to'])) {
+                $currentRequestFromThese = array_intersect_key(
+                    $request->all(),
+                    array_flip(['assigned_to', 'assigend_department_to', 'assigend_region_to'])
+                );
+
+                foreach ($currentRequestFromThese as $key => $value) {
+                    switch ($key) {
+                        case 'assigned_to':
+                            $task->assigned_to = $value;
+                            $task->assigend_department_to = $task->assigend_region_to = null;
+                            break;
+                        case 'assigend_department_to':
+                            $task->assigend_department_to = $value;
+                            $task->assigned_to = $task->assigend_region_to = null;
+                            break;
+                        case 'assigend_region_to':
+                            $task->assigend_region_to = $value;
+                            $task->assigned_to = $task->assigend_department_to = null;
+                            break;
+                    }
+                }
             }
             $task->client_id = $request->client_id;
             $task->description = $request->description;
             $task->invoice_id = $request->invoice_id;
             $task->group_id = $request->group_id;
-            if ($request->has('start_date')) {
-                $task->start_date = $request->start_date;
-            } else {
-                $task->start_date = Carbon::now();
-            }
+            $task->start_date = $request->input('start_date') ;
             $task->deadline = $request->deadline;
-            $task->hours = $request->hours;
-            if ($request->has('recurring')) {
-                $task->recurring = $request->recurring;
-            } else {
-                $task->recurring = 0;
-            }
+
+            // To update the hours from deadline
+            $resultOfHouresWithoutFriday = $this->queriesService
+                ->calucateTheHoursFromDeadline($request->start_date, $request->deadline);
+            $task->hours = $resultOfHouresWithoutFriday;
+
+            $task->recurring = $request->input('recurring', 0);
             $task->recurring_type = $request->recurring_type;
             $task->Number_Of_Recurring = $request->Number_Of_Recurring;
             $task->save();
@@ -206,13 +218,25 @@ class TaskService extends JsonResponeService
                 $attachment->save();
             }
 
-            if ($request->has('collaborator_employee_id')) { // If we want add any collaborator employees to the task..
-                $task_collaborator = task_collaborator::where('task_id', $task->id)->delete();
-                for ($i = 0; $i < count($request->collaborator_employee_id); $i++) {
-                    $task_collaborator = new task_collaborator();
-                    $task_collaborator->collaborator_employee_id = $request->collaborator_employee_id[$i];
-                    $task_collaborator->task_id = $task->id;
-                    $task_collaborator->save();
+            if ($request->has('collaborator_employee_id')) { // If we want to add any collaborator employees to the task...
+                $existingCollaborators = task_collaborator::where('task_id', $task->id)->pluck('collaborator_employee_id')->toArray();
+                $newCollaborators = $request->collaborator_employee_id;
+
+                // Find the collaborators to be added (newCollaborators - existingCollaborators)
+                $collaboratorsToAdd = array_diff($newCollaborators, $existingCollaborators);
+
+                // Find the collaborators to be removed (existingCollaborators - newCollaborators)
+                $collaboratorsToRemove = array_diff($existingCollaborators, $newCollaborators);
+
+                // Remove the collaborators to be removed
+                // task_collaborator::where('task_id', $task->id)->whereIn('collaborator_employee_id', $collaboratorsToRemove)->delete();
+
+                // Add the collaborators to be added
+                foreach ($collaboratorsToAdd as $collaborator) {
+                    $taskCollaborator = new task_collaborator();
+                    $taskCollaborator->collaborator_employee_id = $collaborator;
+                    $taskCollaborator->task_id = $task->id;
+                    $taskCollaborator->save();
                 }
             }
 
@@ -223,6 +247,7 @@ class TaskService extends JsonResponeService
             DB::rollBack();
         }
     }
+
 
     public function assignTaskToEmployee(Request $request, $id)
     {

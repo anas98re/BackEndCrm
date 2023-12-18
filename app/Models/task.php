@@ -115,6 +115,11 @@ class task extends Model
         return $this->belongsTo(regoin::class, 'assigend_region_from', 'id_regoin');
     }
 
+    public function communicationClient()
+    {
+        return $this->belongsTo(client_communication::class, 'id_communication', 'id_communication');
+    }
+
     public function Filter($filters)
     {
         // return $this->taskStatuses();
