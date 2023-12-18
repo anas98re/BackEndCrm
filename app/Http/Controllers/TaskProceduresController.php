@@ -147,4 +147,34 @@ class TaskProceduresController extends Controller
             DB::rollBack();
         }
     }
+
+    public function addTaskApproveFinanceAfterApproveSales(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $task = new task();
+            $task->title = 'ApproveFinance';
+            $task->description = 'you should to approve';
+            $task->invoice_id = $request->invoice_id;
+            $task->public_Type = 'ApproveFinance)';
+            $task->assigend_department_from  = 2;
+            $task->assigend_department_to  = 5;
+            $task->save();
+
+            if ($task) {
+                $taskStatuse = taskStatus::where('name', 'Open')->first();
+                $statuse_task_fraction = new statuse_task_fraction();
+                $statuse_task_fraction->task_id = $task->id;
+                $statuse_task_fraction->task_statuse_id = $taskStatuse->id;
+                $statuse_task_fraction->save();
+            }
+
+            DB::commit();
+            return $task;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
 }
