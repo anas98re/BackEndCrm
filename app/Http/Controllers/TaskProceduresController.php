@@ -156,8 +156,9 @@ class TaskProceduresController extends Controller
             $task = new task();
             $task->title = 'ApproveFinance';
             $task->description = 'you should to approve';
-            $task->invoice_id = $request->invoice_id;
-            $task->public_Type = 'ApproveFinance)';
+            $task->invoice_id = $request->idInvoice;
+            $task->client_id = $request->id_clients;
+            $task->public_Type = 'ApproveFinance';
             $task->assigend_department_from  = 2;
             $task->assigend_department_to  = 5;
             $task->save();
@@ -172,6 +173,30 @@ class TaskProceduresController extends Controller
 
             DB::commit();
             return $task;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
+
+    public function closeTaskApproveFinanceAfterApproveSales(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $task = task::where('invoice_id', $request->idInvoice)
+                ->where('public_Type', 'ApproveFinance')->first();
+            $task->actual_delivery_date = Carbon::now();
+            $task->save();
+            DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)
+                ->update([
+                    'task_statuse_id' => 4,
+                    'changed_date' => Carbon::now(),
+                    'changed_by' => $request->iduser_FApprove
+                ]);
+
+            DB::commit();
+            return true;
         } catch (\Throwable $th) {
             throw $th;
             DB::rollBack();
