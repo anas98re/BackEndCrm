@@ -171,9 +171,13 @@ class task extends Model
             ->leftJoin('statuse_task_fraction', 'tasks.id', '=', 'statuse_task_fraction.task_id')
             ->leftJoin('task_statuses', 'statuse_task_fraction.task_statuse_id', '=', 'task_statuses.id');
 
-        $filters = [
+            $filters = [
             'status_name' => ['task_statuses.name', '='],
             'id' => ['tasks.id', '='],
+            'assigend_department_from' => ['assigend_department_from', '='],
+            'assigend_department_to' => ['assigend_department_to', '='],
+            'assigend_region_from' => ['assigend_region_from', '='],
+            'assigend_region_to' => ['assigend_region_to', '='],
             'assigned_by' => ['assigned_by', '='],
             'assigned_to' => ['assigned_to', '='],
             'created_by' => ['created_by', '='],
