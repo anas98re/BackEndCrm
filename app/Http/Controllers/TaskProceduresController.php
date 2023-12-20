@@ -64,21 +64,29 @@ class TaskProceduresController extends Controller
                 'type_communcation' => 'ترحيب',
                 'id_invoice' => $request->idInvoice
             ]);
-            $task = task::where('invoice_id', $request->idInvoice)->first();
-            $task->actual_delivery_date = Carbon::now();
-            $task->save();
-            DB::table('statuse_task_fraction')
-                ->where('task_id', $task->id)
-                ->update([
-                    'task_statuse_id' => 4,
-                    'changed_date' => Carbon::now(),
-                    'changed_by' => $request->iduser_approve
-                ]);
-            $this->MyService->addTaskAfterApproveInvoice(
-                $request->idInvoice,
-                $request->id_clients,
-                $client_communication
-            );
+            $task = task::where('invoice_id', $request->idInvoice)
+                ->where('public_Type', 'approveAdmin')
+                ->first();
+            $statuse_task_fraction = DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)->first();
+            if ($statuse_task_fraction->task_statuse_id == 1) {
+                $task->actual_delivery_date = Carbon::now();
+                $task->save();
+                DB::table('statuse_task_fraction')
+                    ->where('task_id', $task->id)
+                    ->update([
+                        'task_statuse_id' => 4,
+                        'changed_date' => Carbon::now(),
+                        'changed_by' => $request->iduser_approve
+                    ]);
+                $this->MyService->addTaskAfterApproveInvoice(
+                    $request->idInvoice,
+                    $request->id_clients,
+                    $client_communication
+                );
+            } else {
+                return;
+            }
             DB::commit();
             return true;
         } catch (\Throwable $th) {
@@ -201,15 +209,21 @@ class TaskProceduresController extends Controller
             DB::beginTransaction();
             $task = task::where('invoice_id', $request->idInvoice)
                 ->where('public_Type', 'ApproveFinance')->first();
-            $task->actual_delivery_date = Carbon::now();
-            $task->save();
-            DB::table('statuse_task_fraction')
-                ->where('task_id', $task->id)
-                ->update([
-                    'task_statuse_id' => 4,
-                    'changed_date' => Carbon::now(),
-                    'changed_by' => $request->iduser_FApprove
-                ]);
+            $statuse_task_fraction = DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)->first();
+            if ($statuse_task_fraction->task_statuse_id == 1) {
+                $task->actual_delivery_date = Carbon::now();
+                $task->save();
+                DB::table('statuse_task_fraction')
+                    ->where('task_id', $task->id)
+                    ->update([
+                        'task_statuse_id' => 4,
+                        'changed_date' => Carbon::now(),
+                        'changed_by' => $request->iduser_FApprove
+                    ]);
+            } else {
+                return;
+            }
 
             DB::commit();
             return true;
@@ -259,16 +273,21 @@ class TaskProceduresController extends Controller
             DB::beginTransaction();
             $task = task::where('invoice_id', $request->idInvoice)
                 ->where('public_Type', 'AddVisitDate')->first();
-            $task->actual_delivery_date = Carbon::now();
-            $task->save();
-            DB::table('statuse_task_fraction')
-                ->where('task_id', $task->id)
-                ->update([
-                    'task_statuse_id' => 4,
-                    'changed_date' => Carbon::now(),
-                    'changed_by' => $request->iduser_FApprove
-                ]);
-
+            $statuse_task_fraction = DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)->first();
+            if ($statuse_task_fraction->task_statuse_id == 1) {
+                $task->actual_delivery_date = Carbon::now();
+                $task->save();
+                DB::table('statuse_task_fraction')
+                    ->where('task_id', $task->id)
+                    ->update([
+                        'task_statuse_id' => 4,
+                        'changed_date' => Carbon::now(),
+                        'changed_by' => $request->iduser_FApprove
+                    ]);
+            } else {
+                return;
+            }
             DB::commit();
             return true;
         } catch (\Throwable $th) {
