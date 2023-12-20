@@ -91,21 +91,29 @@ class TaskProceduresController extends Controller
     {
         try {
             DB::beginTransaction();
-            $task = task::where('id_communication', $request->id_communication)->first();
-            $task->actual_delivery_date = Carbon::now();
-            $task->save();
-            DB::table('statuse_task_fraction')
-                ->where('task_id', $task->id)
-                ->update([
-                    'task_statuse_id' => 4,
-                    'changed_date' => Carbon::now(),
-                    'changed_by' => $request->iduser_updateed
-                ]);
-            $this->MyService->afterCommunicateWithClient(
-                $request->idInvoice,
-                $request->id_communication,
-                $request->iduser_updateed
-            );
+            $task = task::where('id_communication', $request->id_communication)
+                ->where('public_Type', 'welcome')
+                ->first();
+            $statuse_task_fraction = DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)->first();
+            if ($statuse_task_fraction->task_statuse_id == 1) {
+                $task->actual_delivery_date = Carbon::now();
+                $task->save();
+                DB::table('statuse_task_fraction')
+                    ->where('task_id', $task->id)
+                    ->update([
+                        'task_statuse_id' => 4,
+                        'changed_date' => Carbon::now(),
+                        'changed_by' => $request->iduser_updateed
+                    ]);
+                $this->MyService->afterCommunicateWithClient(
+                    $request->idInvoice,
+                    $request->id_communication,
+                    $request->iduser_updateed
+                );
+            } else {
+                return;
+            }
             DB::commit();
             return true;
         } catch (\Throwable $th) {
@@ -250,7 +258,7 @@ class TaskProceduresController extends Controller
         try {
             DB::beginTransaction();
             $task = task::where('invoice_id', $request->idInvoice)
-                ->where('public_Type', 'AddVisitDate)')->first();
+                ->where('public_Type', 'AddVisitDate')->first();
             $task->actual_delivery_date = Carbon::now();
             $task->save();
             DB::table('statuse_task_fraction')
@@ -261,6 +269,38 @@ class TaskProceduresController extends Controller
                     'changed_by' => $request->iduser_FApprove
                 ]);
 
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
+
+    public function closeTaskafterCommunicateWithClient(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $task = task::where('invoice_id', $request->idInvoice)
+                ->where('id_communication', $request->id_communication)
+                ->where('public_Type', 'com_install_2')
+                ->first();
+            $statuse_task_fraction = DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)->first();
+            if ($statuse_task_fraction->task_statuse_id == 1) {
+                $task->actual_delivery_date = Carbon::now();
+                $task->save();
+
+                DB::table('statuse_task_fraction')
+                    ->where('task_id', $task->id)
+                    ->update([
+                        'task_statuse_id' => 4,
+                        'changed_date' => Carbon::now(),
+                        'changed_by' => $request->iduser_updateed
+                    ]);
+            } else {
+                return;
+            }
             DB::commit();
             return true;
         } catch (\Throwable $th) {
