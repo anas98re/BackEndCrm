@@ -33,6 +33,8 @@ Route::post('closeWelcomeTaskAfterUpdateCommunication',[TaskProceduresController
 Route::post('afterInstallClient',[TaskProceduresController::class,'afterInstallClient']);
 Route::post('addTaskApproveFinanceAfterApproveSales',[TaskProceduresController::class,'addTaskApproveFinanceAfterApproveSales']);
 Route::post('closeTaskApproveFinanceAfterApproveSales',[TaskProceduresController::class,'closeTaskApproveFinanceAfterApproveSales']);
+Route::post('addTaskAddVisitDateAfterApproveInvoice',[TaskProceduresController::class,'addTaskAddVisitDateAfterApproveInvoice']);
+Route::post('closeTaskAddVisitDateAfterApproveInvoice',[TaskProceduresController::class,'closeTaskAddVisitDateAfterApproveInvoice']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('test',[RegisterController::class,'test']);

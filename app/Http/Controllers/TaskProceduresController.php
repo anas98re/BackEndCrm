@@ -21,6 +21,7 @@ class TaskProceduresController extends Controller
     {
         $this->MyService = $MyService;
     }
+
     public function addTaskToApproveAdminAfterAddInvoice(Request $request)
     {
         try {
@@ -28,24 +29,24 @@ class TaskProceduresController extends Controller
 
             $assigned_to = users::where('fk_regoin', $request->fk_regoin)
                 ->where('type_level', 14)->first();
+            $existingTask = Task::where('invoice_id', $request->invoice_id)
+                ->where('public_Type', 'approveAdmin')
+                ->first();
 
-            $task = new task();
-            $task->title = 'approve Admin To add Invoice';
-            $task->description = 'you have to approve';
-            $task->invoice_id = $request->invoice_id;
-            $task->public_Type = 'approveAdmin';
-            $task->assigend_department_from  = 2;
-            $task->assigned_to  = $assigned_to->id_user;
-            $task->save();
+            if (!$existingTask) {
+                $task = new task();
+                $task->title = 'approve Admin To add Invoice';
+                $task->description = 'you have to approve';
+                $task->invoice_id = $request->invoice_id;
+                $task->public_Type = 'approveAdmin';
+                $task->assigend_department_from  = 2;
+                $task->assigned_to  = $assigned_to->id_user;
+                $task->save();
 
-            if ($task) {
-                $taskStatuse = taskStatus::where('name', 'Open')->first();
-                $statuse_task_fraction = new statuse_task_fraction();
-                $statuse_task_fraction->task_id = $task->id;
-                $statuse_task_fraction->task_statuse_id = $taskStatuse->id;
-                $statuse_task_fraction->save();
+                !empty($task) ? $this->MyService->addTaskStatus($task) : null;
+            } else {
+                $task = null;
             }
-
             DB::commit();
             return $task;
         } catch (\Throwable $th) {
@@ -117,27 +118,32 @@ class TaskProceduresController extends Controller
     {
         try {
             DB::beginTransaction();
-            $welcomed_user_id = DB::table('client_communication')
-                ->where('fk_client', $request->fkIdClient)
-                ->where('id_communication', $request->id_communication)
+            $client_id = DB::table('client_invoice')->where('id_invoice', $request->idInvoice)
                 ->first();
-            $task = new task();
-            $task->title = 'for communicate install 1';
-            $task->description = 'you should to install 1';
-            $task->invoice_id = $request->idInvoice;
-            $task->id_communication  = $request->id_communication;
-            $task->client_id  = $request->fkIdClient;
-            $task->public_Type = 'com_install_1';
-            $task->assigend_department_from  = 3;
-            $task->assigned_to  = $welcomed_user_id->fk_user;
-            $task->save();
+            $welcomed_user_id = DB::table('client_communication')
+                ->where('fk_client', $client_id->fk_idClient)
+                ->where('type_communcation', 'ترحيب')
+                ->first();
+            $existingTask = Task::where('invoice_id', $request->idInvoice)
+                ->where('client_id', $client_id->fk_idClient)
+                ->where('public_Type', 'com_install_1')
+                ->first();
 
-            if ($task) {
-                $taskStatuse = taskStatus::where('name', 'Open')->first();
-                $statuse_task_fraction = new statuse_task_fraction();
-                $statuse_task_fraction->task_id = $task->id;
-                $statuse_task_fraction->task_statuse_id = $taskStatuse->id;
-                $statuse_task_fraction->save();
+            if (!$existingTask) {
+                $task = new task();
+                $task->title = 'for communicate install 1';
+                $task->description = 'you should to install 1';
+                $task->invoice_id = $request->idInvoice;
+                $task->id_communication  = $welcomed_user_id->id_communication;
+                $task->client_id  = $client_id->fk_idClient;
+                $task->public_Type = 'com_install_1';
+                $task->assigend_department_from  = 3;
+                $task->assigned_to  = $welcomed_user_id->fk_user;
+                $task->save();
+
+                !empty($task) ? $this->MyService->addTaskStatus($task) : null;
+            } else {
+                $task = null;
             }
 
             DB::commit();
@@ -153,22 +159,24 @@ class TaskProceduresController extends Controller
         try {
             DB::beginTransaction();
 
-            $task = new task();
-            $task->title = 'ApproveFinance';
-            $task->description = 'you should to approve';
-            $task->invoice_id = $request->idInvoice;
-            $task->client_id = $request->id_clients;
-            $task->public_Type = 'ApproveFinance';
-            $task->assigend_department_from  = 2;
-            $task->assigend_department_to  = 5;
-            $task->save();
+            $existingTask = Task::where('invoice_id', $request->idInvoice)
+                ->where('client_id', $request->id_clients)
+                ->where('public_Type', 'ApproveFinance')
+                ->first();
 
-            if ($task) {
-                $taskStatuse = taskStatus::where('name', 'Open')->first();
-                $statuse_task_fraction = new statuse_task_fraction();
-                $statuse_task_fraction->task_id = $task->id;
-                $statuse_task_fraction->task_statuse_id = $taskStatuse->id;
-                $statuse_task_fraction->save();
+            if (!$existingTask) {
+                $task = new task();
+                $task->title = 'ApproveFinance';
+                $task->description = 'you should to approve';
+                $task->invoice_id = $request->idInvoice;
+                $task->client_id = $request->id_clients;
+                $task->public_Type = 'ApproveFinance';
+                $task->assigend_department_from  = 2;
+                $task->assigend_department_to  = 5;
+                $task->save();
+                !empty($task) ? $this->MyService->addTaskStatus($task) : null;
+            } else {
+                $task = null;
             }
 
             DB::commit();
@@ -185,6 +193,64 @@ class TaskProceduresController extends Controller
             DB::beginTransaction();
             $task = task::where('invoice_id', $request->idInvoice)
                 ->where('public_Type', 'ApproveFinance')->first();
+            $task->actual_delivery_date = Carbon::now();
+            $task->save();
+            DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)
+                ->update([
+                    'task_statuse_id' => 4,
+                    'changed_date' => Carbon::now(),
+                    'changed_by' => $request->iduser_FApprove
+                ]);
+
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
+
+    public function addTaskAddVisitDateAfterApproveInvoice(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $existingTask = Task::where('invoice_id', $request->idInvoice)
+                ->where('client_id', $request->id_clients)
+                ->where('public_Type', 'AddVisitDate')
+                ->first();
+
+            if (!$existingTask) {
+                $task = new task();
+                $task->title = 'AddVisitDate';
+                $task->description = 'you should to approve';
+                $task->invoice_id = $request->idInvoice;
+                $task->client_id = $request->id_clients;
+                $task->public_Type = 'AddVisitDate';
+                $task->assigend_department_from  = 2;
+                $task->assigend_department_to  = 3;
+                $task->save();
+                !empty($task) ? $this->MyService->addTaskStatus($task) : null;
+            } else {
+                $task = null;
+            }
+
+
+            DB::commit();
+            return $task;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
+
+    public function closeTaskAddVisitDateAfterApproveInvoice(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $task = task::where('invoice_id', $request->idInvoice)
+                ->where('public_Type', 'AddVisitDate)')->first();
             $task->actual_delivery_date = Carbon::now();
             $task->save();
             DB::table('statuse_task_fraction')

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class task extends Model
 {
@@ -163,50 +164,50 @@ class task extends Model
 
     public function filterTaskesByAll($request)
     {
-        $tasks = Task::with([
-            'taskStatuses', 'assignedByUser',
-            'assignedToUser', 'taskGroup',
-            'Clients', 'invoices'
-        ])
-            ->leftJoin('statuse_task_fraction', 'tasks.id', '=', 'statuse_task_fraction.task_id')
-            ->leftJoin('task_statuses', 'statuse_task_fraction.task_statuse_id', '=', 'task_statuses.id');
+            $tasks = Task::with([
+                'taskStatuses', 'assignedByUser',
+                'assignedToUser', 'taskGroup',
+                'Clients', 'invoices'
+            ])
+                ->leftJoin('statuse_task_fraction', 'tasks.id', '=', 'statuse_task_fraction.task_id')
+                ->leftJoin('task_statuses', 'statuse_task_fraction.task_statuse_id', '=', 'task_statuses.id');
 
             $filters = [
-            'status_name' => ['task_statuses.name', '='],
-            'id' => ['tasks.id', '='],
-            'assigend_department_from' => ['assigend_department_from', '='],
-            'assigend_department_to' => ['assigend_department_to', '='],
-            'assigend_region_from' => ['assigend_region_from', '='],
-            'assigend_region_to' => ['assigend_region_to', '='],
-            'assigned_by' => ['assigned_by', '='],
-            'assigned_to' => ['assigned_to', '='],
-            'created_by' => ['created_by', '='],
-            'date_time_created' => ['dateTimeCreated', '='],
-            'start_date_from' => ['start_date', '>='],
-            'start_date_to' => ['start_date', '<='],
-        ];
+                'status_name' => ['task_statuses.name', '='],
+                'id' => ['tasks.id', '='],
+                'assigend_department_from' => ['assigend_department_from', '='],
+                'assigend_department_to' => ['assigend_department_to', '='],
+                'assigend_region_from' => ['assigend_region_from', '='],
+                'assigend_region_to' => ['assigend_region_to', '='],
+                'assigned_by' => ['assigned_by', '='],
+                'assigned_to' => ['assigned_to', '='],
+                'created_by' => ['created_by', '='],
+                'date_time_created' => ['dateTimeCreated', '='],
+                'start_date_from' => ['start_date', '>='],
+                'start_date_to' => ['start_date', '<='],
+            ];
 
-        foreach ($filters as $key => $conditions) {
-            if ($request->has($key) && !empty($request->input($key))) {
-                $column = $conditions[0];
-                $operator = $conditions[1];
-                $value = $request->input($key);
+            foreach ($filters as $key => $conditions) {
+                if ($request->has($key) && !empty($request->input($key))) {
+                    $column = $conditions[0];
+                    $operator = $conditions[1];
+                    $value = $request->input($key);
 
-                if ($key === 'status_name') {
-                    $tasks->where($column, $operator, $value);
-                } elseif ($key === 'start_date_from') {
-                    $tasks->whereDate($column, $operator, $value);
-                } elseif ($key === 'start_date_to') {
-                    $tasks->whereDate($column, $operator, $value);
-                } else {
-                    $tasks->where($column, $operator, $value);
+                    if ($key === 'status_name') {
+                        $tasks->where($column, $operator, $value);
+                    } elseif ($key === 'start_date_from') {
+                        $tasks->whereDate($column, $operator, $value);
+                    } elseif ($key === 'start_date_to') {
+                        $tasks->whereDate($column, $operator, $value);
+                    } else {
+                        $tasks->where($column, $operator, $value);
+                    }
                 }
             }
-        }
 
-        $tasks = $tasks->get();
+            $tasks = $tasks->get();
 
-        return ($tasks ? $tasks : 'NotFound');
+            return ($tasks ? $tasks : 'NotFound');
     }
 
     // ...
