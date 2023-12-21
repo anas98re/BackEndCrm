@@ -327,4 +327,66 @@ class TaskProceduresController extends Controller
             DB::rollBack();
         }
     }
+
+    public function addTaskafterAddPaymentToTheInvoiceForReviewInvoice(Request $request) // 16
+    {
+        try {
+            DB::beginTransaction();
+
+            $existingTask = Task::where('invoice_id', $request->idInvoice)
+                ->where('public_Type', 'AddPayment')
+                ->first();
+
+            if (!$existingTask) {
+                $task = new task();
+                $task->title = 'review invoice after AddPayment';
+                $task->description = 'you should to review';
+                $task->invoice_id = $request->idInvoice;
+                $task->public_Type = 'AddPayment';
+                $task->assigend_department_from  = 2;
+                $task->assigend_department_to  = 5;
+                $task->save();
+                !empty($task) ? $this->MyService->addTaskStatus($task) : null;
+            } else {
+                $task = null;
+            }
+
+            DB::commit();
+            return $task;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
+
+    public function closeTaskafterAddPaymentToTheInvoiceForReviewInvoice(Request $request) // 16
+    {
+        try {
+            DB::beginTransaction();
+            $task = task::where('invoice_id', $request->idInvoice)
+                ->where('public_Type', 'AddPayment')
+                ->first();
+            $statuse_task_fraction = DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)->first();
+            if ($statuse_task_fraction->task_statuse_id == 1) {
+                $task->actual_delivery_date = Carbon::now();
+                $task->save();
+
+                DB::table('statuse_task_fraction')
+                    ->where('task_id', $task->id)
+                    ->update([
+                        'task_statuse_id' => 4,
+                        'changed_date' => Carbon::now(),
+                        'changed_by' => $request->iduser_updateed
+                    ]);
+            } else {
+                return;
+            }
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
 }

@@ -36,6 +36,7 @@ Route::post('closeTaskApproveFinanceAfterApproveSales',[TaskProceduresController
 Route::post('addTaskAddVisitDateAfterApproveInvoice',[TaskProceduresController::class,'addTaskAddVisitDateAfterApproveInvoice']);
 Route::post('closeTaskAddVisitDateAfterApproveInvoice',[TaskProceduresController::class,'closeTaskAddVisitDateAfterApproveInvoice']);
 Route::post('closeTaskafterCommunicateWithClient',[TaskProceduresController::class,'closeTaskafterCommunicateWithClient']);
+Route::post('addTaskafterAddPaymentToTheInvoiceForReviewInvoice',[TaskProceduresController::class,'addTaskafterAddPaymentToTheInvoiceForReviewInvoice']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
