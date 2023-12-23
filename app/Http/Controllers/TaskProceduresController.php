@@ -359,7 +359,7 @@ class TaskProceduresController extends Controller
         }
     }
 
-    public function closeTaskafterAddPaymentToTheInvoiceForReviewInvoice(Request $request) // 16
+    public function closeTaskafterAddPaymentToTheInvoiceForReviewInvoice(Request $request) // 16, not run
     {
         try {
             DB::beginTransaction();
@@ -387,6 +387,122 @@ class TaskProceduresController extends Controller
         } catch (\Throwable $th) {
             throw $th;
             DB::rollBack();
+        }
+    }
+
+    public function addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days(Request $request)
+    {
+        $params = [];
+        if ($request->has('fk_user')) {
+            $val = $request->input('fk_user');
+            $params[] = "u.fk_user = $val";
+        }
+
+        if ($request->has('fk_regoin')) {
+            $val = $request->input('fk_regoin');
+            $params[] = "r.id_regoin = $val";
+        }
+
+        if ($request->has('fk_country')) {
+            $val = $request->input('fk_country');
+            $params[] = "c.id_country = $val";
+        }
+
+        if ($request->has('ismarketing')) {
+            $params[] = "u.ismarketing = 1";
+        }
+
+        $index = 0;
+        $index1 = 0;
+        $selectArray = [];
+        $sql = "
+    SELECT
+        clcomm.date_comment AS dateCommentClient,
+        u.*, c.nameCountry, r.name_regoin, us.nameUser, r.fk_country
+    FROM
+        clients u
+    LEFT JOIN
+        regoin r ON r.id_regoin = u.fk_regoin
+    LEFT JOIN
+        country c ON c.id_country = r.fk_country
+    INNER JOIN
+        users us ON us.id_user = u.fk_user
+    LEFT JOIN
+        users uuserss ON uuserss.id_user = u.user_add
+    LEFT JOIN
+        client_comment clcomm ON clcomm.fk_client = u.id_clients
+    WHERE
+        " . implode(' AND ', $params) . "
+        AND date_comment IN (
+            SELECT
+                MAX(date_comment)
+            FROM
+                client_comment cl
+            WHERE
+                cl.fk_client = u.id_clients
+        )
+    GROUP BY
+        u.id_clients
+    ORDER BY
+        dateCommentClient ASC";
+
+        try {
+            $result = DB::select($sql);
+            $arrJson = [];
+            $arrJsonProduct = [];
+
+            if (count($result) > 0) {
+                foreach ($result as $row) {
+                    $clientArray = [];
+                    $clientArray[$index]['id_clients'] = $row->id_clients;
+                    $clientArray[$index]['name_client'] = $row->name_client;
+                    $clientArray[$index]['name_enterprise'] = $row->name_enterprise;
+                    $clientArray[$index]['type_job'] = $row->type_job;
+                    $clientArray[$index]['fk_regoin'] = $row->fk_regoin;
+                    $clientArray[$index]['date_create'] = $row->date_create;
+                    $clientArray[$index]['type_client'] = $row->type_client;
+                    $clientArray[$index]['fk_user'] = $row->fk_user;
+                    $clientArray[$index]['name_regoin'] = $row->name_regoin;
+                    $clientArray[$index]['nameUser'] = $row->nameUser;
+                    $arrJson[$index1]["client_obj"] = $clientArray;
+                    $arrJson[$index1]["dateCommentClient"] = $row->dateCommentClient;
+
+                    $date1 = now()->timezone('Asia/Riyadh')->format('Y-m-d H:i:s');
+                    $date2 = $row->dateCommentClient;
+
+                    if ($date2 != null) {
+                        $timestamp1 = date('Y-m-d', strtotime($date1));
+                        $timestamp2 = date('Y-m-d', strtotime($date2));
+                        $difference = strtotime($timestamp2) - strtotime($timestamp1);
+
+                        $days = floor($difference / (24 * 60 * 60));
+                        $days = abs($days);
+                        $hour = $days;
+                    } else {
+                        $hour = -1;
+                    }
+
+                    $arrJson[$index1]['hoursLastComment'] = $hour . '';
+                    $index1++;
+                    $index = 0;
+                }
+            }
+
+            $resJson = [
+                "result" => "success",
+                "code" => 200,
+                "message" => $arrJson
+            ];
+
+            return response()->json($resJson);
+        } catch (\Throwable $e) {
+            $resJson = [
+                "result" => "error",
+                "code" => 400,
+                "message" => $e->getMessage()
+            ];
+
+            return response()->json($resJson);
         }
     }
 }

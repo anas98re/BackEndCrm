@@ -37,6 +37,10 @@ class users extends Model
 
     public function managements()
     {
-        return $this->hasMany(managements::class, 'assigned_by', 'id_user');
+        return $this->belongsTo(managements::class, 'type_administration', 'idmange');
+    }
+    public function regions()
+    {
+        return $this->belongsTo(regoin::class, 'fk_regoin', 'id_regoin');
     }
 }

@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Redis;
 
 class RegisterController extends Controller
 {
@@ -123,5 +123,11 @@ class RegisterController extends Controller
         $finalString = preg_replace('/[^A-Za-z0-9_]/', '', $replacedString);
 
         echo $finalString;
+    }
+
+    public function getUsersByTypeAdministrationAndRegion(Request $request)
+    {
+        $users = $this->MyService->getUsersByTypeAdministrationAndRegion($request);
+        return (count($users) > 0 ? $users : response()->json(['not_found']));
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Registeration\RegisterationRequest;
 use App\Models\disease;
 use App\Models\User;
+use App\Models\users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -31,7 +32,7 @@ class RegisterationService extends Controller
         $sql = "SELECT u.*, c.nameCountry, r.name_regoin, ll.name_level, c.currency, uus.nameUser as nameuserAdd, ms.name_mange, us1.nameUser as nameuserupdate
         FROM users u
         LEFT JOIN country c ON c.id_country = u.fk_country
-        LEFT JOIN regoin r ON r.id_regoin = u.fk_regoin 
+        LEFT JOIN regoin r ON r.id_regoin = u.fk_regoin
         INNER JOIN level ll ON u.type_level = ll.id_level
         INNER JOIN managements ms ON ms.idmange = u.type_administration
         INNER JOIN users uus ON u.fkuserAdd = uus.id_user
@@ -70,5 +71,42 @@ class RegisterationService extends Controller
         $arrJson[] = $remember_token;
 
         return response()->json($arrJson, 200);
+    }
+
+    public function getUsersByTypeAdministrationAndRegion($request)
+    {
+        $users = users::query()->with(
+            'managements:idmange,name_mange',
+            'regions:name_regoin,id_regoin'
+        )
+            ->select(
+                'id_user',
+                'type_administration',
+                'fk_regoin',
+                'nameUser'
+            );
+
+        $filters = [
+            'type_administration' => ['type_administration', 'in'],
+            'fk_regoin' => ['fk_regoin', 'in'],
+        ];
+
+        foreach ($filters as $key => $filter) {
+            if ($request->has($key) && !empty($request->input($key))) {
+                $value = $request->input($key);
+                $column = $filter[0];
+                $operator = $filter[1];
+
+                if (is_array($value)) {
+                    $users->whereIn($column, $value);
+                } else {
+                    $values = explode(',', $value);
+                    $users->whereIn($column, $values);
+                }
+            }
+        }
+
+
+        return $users->get();
     }
 }

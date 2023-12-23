@@ -37,6 +37,10 @@ Route::post('addTaskAddVisitDateAfterApproveInvoice',[TaskProceduresController::
 Route::post('closeTaskAddVisitDateAfterApproveInvoice',[TaskProceduresController::class,'closeTaskAddVisitDateAfterApproveInvoice']);
 Route::post('closeTaskafterCommunicateWithClient',[TaskProceduresController::class,'closeTaskafterCommunicateWithClient']);
 Route::post('addTaskafterAddPaymentToTheInvoiceForReviewInvoice',[TaskProceduresController::class,'addTaskafterAddPaymentToTheInvoiceForReviewInvoice']);
+Route::post('addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days',[TaskProceduresController::class,'addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days']);
+
+
+Route::post('getUsersByTypeAdministrationAndRegion',[RegisterController::class,'getUsersByTypeAdministrationAndRegion']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
