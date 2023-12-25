@@ -7,6 +7,7 @@ use App\Http\Requests\StoretaskStatusRequest;
 use App\Http\Requests\UpdatetaskStatusRequest;
 use App\Models\client_comment;
 use App\Models\clients;
+use App\Models\notifiaction;
 use App\Models\statuse_task_fraction;
 use App\Models\task;
 use App\Models\users;
@@ -505,23 +506,59 @@ class TaskProceduresController extends Controller
                 "code" => 200,
                 "message" => $arrJson
             ];
-            // return count($result);
-            $idClients = $resJson['message'][0]['client_obj'][0]['id_clients'];
-            $client = client_comment::where('fk_client', $idClients)->update(['name_enterprise' => 'hi']);
-            $user = DB::table('user_token')->where('fkuser',330)
-                ->first();
 
+            if (count($result) > 0) {
 
-            Notification::send(
-                    null,
-                    new SendNotification(
-                        'Hi anas',
-                        'dsad',
-                        'you should to ...',
-                        [$user->token]
-                    )
-                );
+                $clients = $resJson['message'][0]['client_obj'];
+                $count = count($clients);
+                $fk_users = [];
+                for ($i = 0; $i < $count; $i++) {
+                    $fk_users = $clients[$i]['fk_user'];
+                }
+                $fk_users;
 
+                // $user = DB::table('user_token')->where('fkuser', 330)
+                //     ->first();
+                if (is_array($fk_users) || is_object($fk_users)) { //if fk_users have more then element
+                    foreach ($fk_users as $fk_user) {
+                        $userToken = DB::table('user_token')->where('fkuser', $fk_user)
+                            ->first();
+                        Notification::send(
+                            null,
+                            new SendNotification(
+                                'Hi anas',
+                                'dsad',
+                                'you should to ...',
+                                [$userToken]
+                            )
+                        );
+                        notifiaction::create([
+                            'message' => 'dsad',
+                            'type_notify' => 'checkComment',
+                            'to_user' => $fk_user,
+                            'isread' => 0
+                        ]);
+                    }
+                } else { //if fk_users has one elelment
+                    $userToken = DB::table('user_token')->where('fkuser', $fk_users)
+                        ->first();
+                    Notification::send(
+                        null,
+                        new SendNotification(
+                            'Hi anas',
+                            'dsad',
+                            'you should to ...',
+                            [$userToken]
+                        )
+                    );
+                    notifiaction::create([
+                        'message' => 'dsad',
+                        'type_notify' => 'checkComment',
+                        'to_user' => $fk_users,
+                        'isread' => 0
+                    ]);
+                }
+            }
             return response()->json($resJson);
         } catch (\Throwable $e) {
             $resJson = [

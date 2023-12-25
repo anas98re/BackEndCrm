@@ -10,6 +10,7 @@ class notifiaction extends Model
     use HasFactory;
 
     protected $table = 'notifiaction';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_notify',
