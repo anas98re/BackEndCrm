@@ -5,13 +5,17 @@ namespace App\Http\Controllers;
 use App\Models\taskStatus;
 use App\Http\Requests\StoretaskStatusRequest;
 use App\Http\Requests\UpdatetaskStatusRequest;
+use App\Models\client_comment;
+use App\Models\clients;
 use App\Models\statuse_task_fraction;
 use App\Models\task;
 use App\Models\users;
+use App\Notifications\SendNotification;
 use App\Services\TaskManangement\TaskProceduresService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class TaskProceduresController extends Controller
 {
@@ -393,59 +397,67 @@ class TaskProceduresController extends Controller
     public function addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days(Request $request)
     {
         $params = [];
-        if ($request->has('fk_user')) {
-            $val = $request->input('fk_user');
-            $params[] = "u.fk_user = $val";
-        }
+        // if ($request->has('fk_user')) {
+        //     $val = $request->input('fk_user');
+        //     $params[] = "u.fk_user = $val";
+        // }
 
-        if ($request->has('fk_regoin')) {
-            $val = $request->input('fk_regoin');
-            $params[] = "r.id_regoin = $val";
-        }
+        // if ($request->has('fk_regoin')) {
+        //     $val = $request->input('fk_regoin');
+        //     $params[] = "r.id_regoin = $val";
+        // }
 
-        if ($request->has('fk_country')) {
-            $val = $request->input('fk_country');
-            $params[] = "c.id_country = $val";
-        }
+        // if ($request->has('fk_country')) {
+        //     $val = $request->input('fk_country');
+        //     $params[] = "c.id_country = $val";
+        // }
 
-        if ($request->has('ismarketing')) {
-            $params[] = "u.ismarketing = 1";
-        }
-
+        // if ($request->has('ismarketing')) {
+        //     $params[] = "u.ismarketing = 1";
+        // }
+        $params[] = "c.id_country = 1";
         $index = 0;
         $index1 = 0;
         $selectArray = [];
-        $sql = "
-    SELECT
-        clcomm.date_comment AS dateCommentClient,
-        u.*, c.nameCountry, r.name_regoin, us.nameUser, r.fk_country
-    FROM
-        clients u
-    LEFT JOIN
-        regoin r ON r.id_regoin = u.fk_regoin
-    LEFT JOIN
-        country c ON c.id_country = r.fk_country
-    INNER JOIN
-        users us ON us.id_user = u.fk_user
-    LEFT JOIN
-        users uuserss ON uuserss.id_user = u.user_add
-    LEFT JOIN
-        client_comment clcomm ON clcomm.fk_client = u.id_clients
-    WHERE
-        " . implode(' AND ', $params) . "
-        AND date_comment IN (
-            SELECT
-                MAX(date_comment)
-            FROM
-                client_comment cl
-            WHERE
-                cl.fk_client = u.id_clients
-        )
-    GROUP BY
-        u.id_clients
-    ORDER BY
-        dateCommentClient ASC";
+        DB::statement("SET sql_mode = ''");
 
+        $sql = "
+        SELECT
+            clcomm.date_comment AS dateCommentClient,
+            u.*, c.nameCountry, r.name_regoin, us.nameUser, r.fk_country
+        FROM
+            clients u
+        LEFT JOIN
+            regoin r ON r.id_regoin = u.fk_regoin
+        LEFT JOIN
+            country c ON c.id_country = r.fk_country
+        INNER JOIN
+            users us ON us.id_user = u.fk_user
+        LEFT JOIN
+            users uuserss ON uuserss.id_user = u.user_add
+        LEFT JOIN
+            client_comment clcomm ON clcomm.fk_client = u.id_clients
+        WHERE
+            " . implode(' AND ', $params) . "
+            AND (clcomm.date_comment = (
+                    SELECT
+                        MAX(date_comment)
+                    FROM
+                        client_comment cl
+                    WHERE
+                        cl.fk_client = u.id_clients
+                ) OR clcomm.date_comment IS NULL)
+            AND u.type_client = 'تفاوض'
+            AND u.date_create >= '2023-11-01'
+            AND (
+                (u.ismarketing = 1 AND DATEDIFF(clcomm.date_comment, u.date_create) > 5)
+                OR
+                (u.ismarketing != 1 AND DATEDIFF(clcomm.date_comment, u.date_create) > 3)
+            )
+        GROUP BY
+            u.id_clients
+        ORDER BY
+            dateCommentClient ASC";
         try {
             $result = DB::select($sql);
             $arrJson = [];
@@ -493,6 +505,22 @@ class TaskProceduresController extends Controller
                 "code" => 200,
                 "message" => $arrJson
             ];
+            // return count($result);
+            $idClients = $resJson['message'][0]['client_obj'][0]['id_clients'];
+            $client = client_comment::where('fk_client', $idClients)->update(['name_enterprise' => 'hi']);
+            $user = DB::table('user_token')->where('fkuser',330)
+                ->first();
+
+
+            Notification::send(
+                    null,
+                    new SendNotification(
+                        'Hi anas',
+                        'dsad',
+                        'you should to ...',
+                        [$user->token]
+                    )
+                );
 
             return response()->json($resJson);
         } catch (\Throwable $e) {

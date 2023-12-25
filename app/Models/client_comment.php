@@ -10,6 +10,7 @@ class client_comment extends Model
     use HasFactory;
 
     protected $table = 'client_comment';
+    protected $primaryKey = 'id_comment';
 
     protected $fillable = [
         'id_comment',
