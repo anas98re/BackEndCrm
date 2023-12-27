@@ -12,6 +12,7 @@ use App\Models\statuse_task_fraction;
 use App\Models\task;
 use App\Models\users;
 use App\Notifications\SendNotification;
+use App\Services\TaskManangement\queriesService;
 use App\Services\TaskManangement\TaskProceduresService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,10 +22,12 @@ use Illuminate\Support\Facades\Notification;
 class TaskProceduresController extends Controller
 {
     private $MyService;
+    private $MyQueriesService;
 
-    public function __construct(TaskProceduresService $MyService)
+    public function __construct(TaskProceduresService $MyService, queriesService $MyQueriesService)
     {
         $this->MyService = $MyService;
+        $this->MyQueriesService = $MyQueriesService;
     }
 
     public function addTaskToApproveAdminAfterAddInvoice(Request $request)
@@ -397,73 +400,29 @@ class TaskProceduresController extends Controller
 
     public function addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days(Request $request)
     {
-        $params = [];
-        // if ($request->has('fk_user')) {
-        //     $val = $request->input('fk_user');
-        //     $params[] = "u.fk_user = $val";
-        // }
-
-        // if ($request->has('fk_regoin')) {
-        //     $val = $request->input('fk_regoin');
-        //     $params[] = "r.id_regoin = $val";
-        // }
-
-        // if ($request->has('fk_country')) {
-        //     $val = $request->input('fk_country');
-        //     $params[] = "c.id_country = $val";
-        // }
-
-        // if ($request->has('ismarketing')) {
-        //     $params[] = "u.ismarketing = 1";
-        // }
-        $params[] = "c.id_country = 1";
         $index = 0;
         $index1 = 0;
-        $selectArray = [];
-        DB::statement("SET sql_mode = ''");
 
-        $sql = "
-        SELECT
-            clcomm.date_comment AS dateCommentClient,
-            u.*, c.nameCountry, r.name_regoin, us.nameUser, r.fk_country
-        FROM
-            clients u
-        LEFT JOIN
-            regoin r ON r.id_regoin = u.fk_regoin
-        LEFT JOIN
-            country c ON c.id_country = r.fk_country
-        INNER JOIN
-            users us ON us.id_user = u.fk_user
-        LEFT JOIN
-            users uuserss ON uuserss.id_user = u.user_add
-        LEFT JOIN
-            client_comment clcomm ON clcomm.fk_client = u.id_clients
-        WHERE
-            " . implode(' AND ', $params) . "
-            AND (clcomm.date_comment = (
-                    SELECT
-                        MAX(date_comment)
-                    FROM
-                        client_comment cl
-                    WHERE
-                        cl.fk_client = u.id_clients
-                ) OR clcomm.date_comment IS NULL)
-            AND u.type_client = 'تفاوض'
-            AND u.date_create >= '2023-11-01'
-            AND (
-                (u.ismarketing = 1 AND DATEDIFF(clcomm.date_comment, u.date_create) > 5)
-                OR
-                (u.ismarketing != 1 AND DATEDIFF(clcomm.date_comment, u.date_create) > 3)
-            )
-        GROUP BY
-            u.id_clients
-        ORDER BY
-            dateCommentClient ASC";
+        $query = $this->MyQueriesService->getClientsThatIsNoUpdateToTheLatestClientUpdatesFor5Days();
+
         try {
-            $result = DB::select($sql);
+            $result = $query->get();
+            $idUsersForClients = [];
+            $id_regoinsForClients = [];
+
+            foreach ($result as $userID) {
+                $idUsersForClients[] = $userID->fk_user; // Extract the id_user value and add it to the array
+            }
+            foreach ($result as $regionId) {
+                $id_regoinsForClients[] = $regionId->fk_regoin; // Extract the fk_regoin value and add it to the array
+            }
+
+
             $arrJson = [];
             $arrJsonProduct = [];
 
+            $usersAll = [];
+            $clientArray1 = [];
             if (count($result) > 0) {
                 foreach ($result as $row) {
                     $clientArray = [];
@@ -472,6 +431,7 @@ class TaskProceduresController extends Controller
                     $clientArray[$index]['name_enterprise'] = $row->name_enterprise;
                     $clientArray[$index]['type_job'] = $row->type_job;
                     $clientArray[$index]['fk_regoin'] = $row->fk_regoin;
+                    $clientArray1[] = $row->id_clients;
                     $clientArray[$index]['date_create'] = $row->date_create;
                     $clientArray[$index]['type_client'] = $row->type_client;
                     $clientArray[$index]['fk_user'] = $row->fk_user;
@@ -498,67 +458,112 @@ class TaskProceduresController extends Controller
                     $arrJson[$index1]['hoursLastComment'] = $hour . '';
                     $index1++;
                     $index = 0;
+
+                    DB::table('clients as u')
+                        ->where('u.id_clients', $row->id_clients)
+                        ->update([
+                            'is_comments_check' => 1
+                        ]);
+                }
+
+                $duplicates = array_count_values($id_regoinsForClients);
+                $elementOfRegions = [];
+                $countRegions = [];
+                foreach ($duplicates as $element => $count) {
+                    $elementOfRegions[] = $element;
+                    $countRegions[] = $count;
+                }
+
+                $privgLevelUsers = DB::table('privg_level_user')
+                    ->where('fk_privileg', 175)
+                    ->where('is_check', 1)
+                    ->get();
+                $typeLevel = [];
+                foreach ($privgLevelUsers as $level) {
+                    $typeLevel[] = $level->fk_level;
+                }
+
+                $BranchSupervisorsToTheRequiredLevel =
+                    $this->MyQueriesService->BranchSupervisorsToTheRequiredLevel($elementOfRegions, $typeLevel);
+
+
+                $xIDs = [];
+                foreach ($BranchSupervisorsToTheRequiredLevel as $el) {
+                    $xIDs[] = $el->id_user;
+                }
+
+                $array_count_values_USERS = array_count_values($xIDs);
+                $array_count_values_ID_USERS_For_Clients = array_count_values($idUsersForClients);
+
+
+                // Sending notifications to employees responsible for clients
+                foreach ($array_count_values_ID_USERS_For_Clients as $key => $value) {
+                    $userToken = DB::table('user_token')->where('fkuser', $key)
+                        ->where('token', '!=', null)
+                        ->first();
+
+                    $message = 'لديك ? عملاء لم يُعلّق لهم منذ خمس أيام';
+                    $messageWithPlaceholder = str_replace('?', $value, $message);
+                    if ($userToken) {
+                        Notification::send(
+                            null,
+                            new SendNotification(
+                                'Hi anas',
+                                'dsad',
+                                $messageWithPlaceholder,
+                                [$userToken->token]
+                            )
+                        );
+
+                        notifiaction::create([
+                            'message' => $messageWithPlaceholder,
+                            'type_notify' => 'checkComment',
+                            'to_user' => $key,
+                            'isread' => 0,
+                            'from_user' => 330,
+                            'dateNotify' => Carbon::now()
+                        ]);
+                    }
+                }
+                //-----------------------------------------------------------
+                // Sending notifications to Branch Supervisor responsible for clients
+                foreach ($array_count_values_USERS as $key => $value) {
+                    $userToken = DB::table('user_token')->where('fkuser', $key)
+                        ->where('token', '!=', null)
+                        ->first();
+
+                    $message = 'لديك ? عملاء في فرعك لم يُعلّق لهم منذ خمس أيام';
+                    $messageWithPlaceholder = str_replace('?', $value, $message);
+                    if ($userToken) {
+                        Notification::send(
+                            null,
+                            new SendNotification(
+                                'Hi anas',
+                                'dsad',
+                                $messageWithPlaceholder,
+                                [$userToken->token]
+                            )
+                        );
+
+                        notifiaction::create([
+                            'message' => $messageWithPlaceholder,
+                            'type_notify' => 'checkComment',
+                            'to_user' => $key,
+                            'isread' => 0,
+                            'from_user' => 330,
+                            'dateNotify' => Carbon::now()
+                        ]);
+                    }
                 }
             }
-
             $resJson = [
                 "result" => "success",
                 "code" => 200,
                 "message" => $arrJson
             ];
 
-            if (count($result) > 0) {
 
-                $clients = $resJson['message'][0]['client_obj'];
-                $count = count($clients);
-                $fk_users = [];
-                for ($i = 0; $i < $count; $i++) {
-                    $fk_users = $clients[$i]['fk_user'];
-                }
-                $fk_users;
-
-                // $user = DB::table('user_token')->where('fkuser', 330)
-                //     ->first();
-                if (is_array($fk_users) || is_object($fk_users)) { //if fk_users have more then element
-                    foreach ($fk_users as $fk_user) {
-                        $userToken = DB::table('user_token')->where('fkuser', $fk_user)
-                            ->first();
-                        Notification::send(
-                            null,
-                            new SendNotification(
-                                'Hi anas',
-                                'dsad',
-                                'you should to ...',
-                                [$userToken]
-                            )
-                        );
-                        notifiaction::create([
-                            'message' => 'dsad',
-                            'type_notify' => 'checkComment',
-                            'to_user' => $fk_user,
-                            'isread' => 0
-                        ]);
-                    }
-                } else { //if fk_users has one elelment
-                    $userToken = DB::table('user_token')->where('fkuser', $fk_users)
-                        ->first();
-                    Notification::send(
-                        null,
-                        new SendNotification(
-                            'Hi anas',
-                            'dsad',
-                            'you should to ...',
-                            [$userToken]
-                        )
-                    );
-                    notifiaction::create([
-                        'message' => 'dsad',
-                        'type_notify' => 'checkComment',
-                        'to_user' => $fk_users,
-                        'isread' => 0
-                    ]);
-                }
-            }
+            // return count($result);
             return response()->json($resJson);
         } catch (\Throwable $e) {
             $resJson = [
@@ -571,3 +576,52 @@ class TaskProceduresController extends Controller
         }
     }
 }
+// [
+//     [
+//         {
+//             "id_user": 5,
+
+//             "maincity_fk": null
+//         },
+//         {
+//             "id_user": 14,
+
+//             "maincity_fk": null
+//         },
+//         {
+//             "id_user": 141,
+
+//             "maincity_fk": null
+//         },
+//     ]
+// ]
+
+// {
+//     "5": 5,
+//     "14": 5,
+//     "141": 5,
+//     "273": 5,
+//     "294": 5,
+//     "320": 1,
+//     "322": 1,
+//     "323": 1,
+//     "325": 1,
+//     "326": 1,
+//     "328": 1,
+//     "329": 1,
+//     "331": 1
+// }
+
+// {
+//     "59": 2,
+//     "271": 5,
+//     "8": 1,
+//     "55": 3,
+//     "163": 10,
+//     "278": 3,
+//     "160": 2,
+//     "208": 18,
+//     "43": 7,
+//     "10": 3,
+//     "204": 1
+// }

@@ -98,7 +98,7 @@ class TaskController extends Controller
         return (
             $data ?
             $this->sendResponse(TaskResourceForFilter::collection($data), 'These are all tasks with filters') :
-            $this->sendError($data, 'Not Found')
+            $this->sendResponse($data, 'Not Found')
         );
     }
 

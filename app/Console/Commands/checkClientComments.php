@@ -3,13 +3,26 @@
 namespace App\Console\Commands;
 
 use App\Models\client_comment;
+use App\Models\notifiaction;
 use App\Notifications\SendNotification;
+use App\Services\TaskManangement\queriesService;
+use App\Services\TaskManangement\TaskProceduresService;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 
 class checkClientComments extends Command
 {
+    private $MyService;
+    private $MyQueriesService;
+
+    public function __construct(TaskProceduresService $MyService, queriesService $MyQueriesService)
+    {
+        $this->MyService = $MyService;
+        $this->MyQueriesService = $MyQueriesService;
+        parent::__construct();
+    }
     /**
      * The name and signature of the console command.
      *
@@ -29,58 +42,29 @@ class checkClientComments extends Command
      */
     public function handle()
     {
-        $params = [];
-
-        $params[] = "c.id_country = 1";
-
         $index = 0;
         $index1 = 0;
-        $selectArray = [];
-        DB::statement("SET sql_mode = ''");
 
-        $sql = "
-        SELECT
-            clcomm.date_comment AS dateCommentClient,
-            u.*, c.nameCountry, r.name_regoin, us.nameUser, r.fk_country
-        FROM
-            clients u
-        LEFT JOIN
-            regoin r ON r.id_regoin = u.fk_regoin
-        LEFT JOIN
-            country c ON c.id_country = r.fk_country
-        INNER JOIN
-            users us ON us.id_user = u.fk_user
-        LEFT JOIN
-            users uuserss ON uuserss.id_user = u.user_add
-        LEFT JOIN
-            client_comment clcomm ON clcomm.fk_client = u.id_clients
-        WHERE
-            " . implode(' AND ', $params) . "
-            AND (clcomm.date_comment = (
-                    SELECT
-                        MAX(date_comment)
-                    FROM
-                        client_comment cl
-                    WHERE
-                        cl.fk_client = u.id_clients
-                ) OR clcomm.date_comment IS NULL)
-            AND u.type_client = 'تفاوض'
-            AND u.date_create >= '2023-11-01'
-            AND (
-                (u.ismarketing = 1 AND DATEDIFF(clcomm.date_comment, u.date_create) > 5)
-                OR
-                (u.ismarketing != 1 AND DATEDIFF(clcomm.date_comment, u.date_create) > 3)
-            )
-        GROUP BY
-            u.id_clients
-        ORDER BY
-            dateCommentClient ASC";
+        $query = $this->MyQueriesService->getClientsThatIsNoUpdateToTheLatestClientUpdatesFor5Days();
 
         try {
-            $result = DB::select($sql);
+            $result = $query->get();
+            $idUsersForClients = [];
+            $id_regoinsForClients = [];
+
+            foreach ($result as $userID) {
+                $idUsersForClients[] = $userID->fk_user; // Extract the id_user value and add it to the array
+            }
+            foreach ($result as $regionId) {
+                $id_regoinsForClients[] = $regionId->fk_regoin; // Extract the fk_regoin value and add it to the array
+            }
+
+
             $arrJson = [];
             $arrJsonProduct = [];
 
+            $usersAll = [];
+            $clientArray1 = [];
             if (count($result) > 0) {
                 foreach ($result as $row) {
                     $clientArray = [];
@@ -89,6 +73,7 @@ class checkClientComments extends Command
                     $clientArray[$index]['name_enterprise'] = $row->name_enterprise;
                     $clientArray[$index]['type_job'] = $row->type_job;
                     $clientArray[$index]['fk_regoin'] = $row->fk_regoin;
+                    $clientArray1[] = $row->id_clients;
                     $clientArray[$index]['date_create'] = $row->date_create;
                     $clientArray[$index]['type_client'] = $row->type_client;
                     $clientArray[$index]['fk_user'] = $row->fk_user;
@@ -115,31 +100,114 @@ class checkClientComments extends Command
                     $arrJson[$index1]['hoursLastComment'] = $hour . '';
                     $index1++;
                     $index = 0;
+
+                    DB::table('clients as u')
+                        ->where('u.id_clients', $row->id_clients)
+                        ->update([
+                            'is_comments_check' => 1
+                        ]);
+                }
+
+                $duplicates = array_count_values($id_regoinsForClients);
+                $elementOfRegions = [];
+                $countRegions = [];
+                foreach ($duplicates as $element => $count) {
+                    $elementOfRegions[] = $element;
+                    $countRegions[] = $count;
+                }
+
+                $privgLevelUsers = DB::table('privg_level_user')
+                    ->where('fk_privileg', 175)
+                    ->where('is_check', 1)
+                    ->get();
+                $typeLevel = [];
+                foreach ($privgLevelUsers as $level) {
+                    $typeLevel[] = $level->fk_level;
+                }
+
+                $BranchSupervisorsToTheRequiredLevel =
+                    $this->MyQueriesService->BranchSupervisorsToTheRequiredLevel($elementOfRegions, $typeLevel);
+
+
+                $xIDs = [];
+                foreach ($BranchSupervisorsToTheRequiredLevel as $el) {
+                    $xIDs[] = $el->id_user;
+                }
+
+                $array_count_values_USERS = array_count_values($xIDs);
+                $array_count_values_ID_USERS_For_Clients = array_count_values($idUsersForClients);
+
+
+                // Sending notifications to employees responsible for clients
+                foreach ($array_count_values_ID_USERS_For_Clients as $key => $value) {
+                    $userToken = DB::table('user_token')->where('fkuser', $key)
+                        ->where('token', '!=', null)
+                        ->first();
+
+                    $message = 'لديك ? عملاء لم يُعلّق لهم منذ خمس أيام';
+                    $messageWithPlaceholder = str_replace('?', $value, $message);
+                    if ($userToken) {
+                        Notification::send(
+                            null,
+                            new SendNotification(
+                                'Hi anas',
+                                'dsad',
+                                $messageWithPlaceholder,
+                                [$userToken->token]
+                            )
+                        );
+
+                        notifiaction::create([
+                            'message' => $messageWithPlaceholder,
+                            'type_notify' => 'checkComment',
+                            'to_user' => $key,
+                            'isread' => 0,
+                            'from_user' => 330,
+                            'dateNotify' => Carbon::now()
+                        ]);
+                    }
+                }
+                //-----------------------------------------------------------
+                // Sending notifications to Branch Supervisor responsible for clients
+                foreach ($array_count_values_USERS as $key => $value) {
+                    $userToken = DB::table('user_token')->where('fkuser', $key)
+                        ->where('token', '!=', null)
+                        ->first();
+
+                    $message = 'لديك ? عملاء في فرعك لم يُعلّق لهم منذ خمس أيام';
+                    $messageWithPlaceholder = str_replace('?', $value, $message);
+                    if ($userToken) {
+                        Notification::send(
+                            null,
+                            new SendNotification(
+                                'Hi anas',
+                                'dsad',
+                                $messageWithPlaceholder,
+                                [$userToken->token]
+                            )
+                        );
+
+                        notifiaction::create([
+                            'message' => $messageWithPlaceholder,
+                            'type_notify' => 'checkComment',
+                            'to_user' => $key,
+                            'isread' => 0,
+                            'from_user' => 330,
+                            'dateNotify' => Carbon::now()
+                        ]);
+                    }
                 }
             }
-
             $resJson = [
                 "result" => "success",
                 "code" => 200,
                 "message" => $arrJson
             ];
-            // return count($result);
-            $idClients = $resJson['message'][0]['client_obj'][0]['id_clients'];
-            $client = client_comment::where('fk_client', $idClients)->update(['name_enterprise' => 'hi 3']);
 
-            foreach ($idClients as $idClients) {
-                Notification::send(
-                    null,
-                    new SendNotification(
-                        'Hi ' . $idClients->name . ',',
-                        'dsad',
-                        'A patient has been found for you to treat, go and check your patients',
-                        [$idClients->fcm_token]
-                    )
-                );
-            }
-            // return response()->json($resJson);
-        }catch (\Throwable $e) {
+
+            // return count($result);
+            return response()->json($resJson);
+        } catch (\Throwable $e) {
             $resJson = [
                 "result" => "error",
                 "code" => 400,
