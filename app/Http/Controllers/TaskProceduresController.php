@@ -516,15 +516,15 @@ class TaskProceduresController extends Controller
 
                         if ($userToken) {
                             $message = implode("\n", $RegionNamesAndDuplicates);
-                            Notification::send(
-                                null,
-                                new SendNotification(
-                                    'Hi anas',
-                                    'dsad',
-                                    $message,
-                                    [$userToken->token]
-                                )
-                            );
+                            // Notification::send(
+                            //     null,
+                            //     new SendNotification(
+                            //         'Hi anas',
+                            //         'dsad',
+                            //         $message,
+                            //         [$userToken->token]
+                            //     )
+                            // );
 
                             notifiaction::create([
                                 'message' => $message,
@@ -532,7 +532,7 @@ class TaskProceduresController extends Controller
                                 'to_user' => $key,
                                 'isread' => 0,
                                 'from_user' => 330,
-                                'dateNotify' => Carbon::now()
+                                'dateNotify' => Carbon::now('Asia/Riyadh')
                             ]);
                         }
                     } else {
@@ -545,15 +545,15 @@ class TaskProceduresController extends Controller
                         $messageWithCount = str_replace('?', $theRepeate, $message);
                         $messageWithRegion = str_replace('!', $IsUser14->name_regoin, $messageWithCount);
                         if ($userToken) {
-                            Notification::send(
-                                null,
-                                new SendNotification(
-                                    'Hi anas',
-                                    'dsad',
-                                    $messageWithRegion,
-                                    [$userToken->token]
-                                )
-                            );
+                            // Notification::send(
+                            //     null,
+                            //     new SendNotification(
+                            //         'Hi anas',
+                            //         'dsad',
+                            //         $messageWithRegion,
+                            //         [$userToken->token]
+                            //     )
+                            // );
 
                             notifiaction::create([
                                 'message' => $messageWithRegion,
@@ -561,7 +561,7 @@ class TaskProceduresController extends Controller
                                 'to_user' => $IsUser14->id_user,
                                 'isread' => 0,
                                 'from_user' => 330,
-                                'dateNotify' => Carbon::now()
+                                'dateNotify' => Carbon::now('Asia/Riyadh')
                             ]);
                         }
                     }
@@ -586,15 +586,15 @@ class TaskProceduresController extends Controller
                     $messageWithCount = str_replace('?', $theRepeate, $message);
                     $messageWithRegion = str_replace('!', $value->name_regoin, $messageWithCount);
                     if ($userToken) {
-                        Notification::send(
-                            null,
-                            new SendNotification(
-                                'Hi anas',
-                                'dsad',
-                                $messageWithRegion,
-                                [$userToken->token]
-                            )
-                        );
+                        // Notification::send(
+                        //     null,
+                        //     new SendNotification(
+                        //         'Hi anas',
+                        //         'dsad',
+                        //         $messageWithRegion,
+                        //         [$userToken->token]
+                        //     )
+                        // );
 
                         notifiaction::create([
                             'message' => $messageWithRegion,
@@ -602,7 +602,7 @@ class TaskProceduresController extends Controller
                             'to_user' => $value->id_user,
                             'isread' => 0,
                             'from_user' => 330,
-                            'dateNotify' => Carbon::now()
+                            'dateNotify' => Carbon::now('Asia/Riyadh')
                         ]);
                     }
                 }
@@ -616,15 +616,15 @@ class TaskProceduresController extends Controller
                     $message = 'لديك ? عملاء لم يُعلّق لهم ';
                     $messageWithPlaceholder = str_replace('?', $value, $message);
                     if ($userToken) {
-                        Notification::send(
-                            null,
-                            new SendNotification(
-                                'Hi anas',
-                                'dsad',
-                                $messageWithPlaceholder,
-                                [$userToken->token]
-                            )
-                        );
+                        // Notification::send(
+                        //     null,
+                        //     new SendNotification(
+                        //         'Hi anas',
+                        //         'dsad',
+                        //         $messageWithPlaceholder,
+                        //         [$userToken->token]
+                        //     )
+                        // );
 
                         notifiaction::create([
                             'message' => $messageWithPlaceholder,
@@ -632,7 +632,7 @@ class TaskProceduresController extends Controller
                             'to_user' => $key,
                             'isread' => 0,
                             'from_user' => 330,
-                            'dateNotify' => Carbon::now()
+                            'dateNotify' => Carbon::now('Asia/Riyadh')
                         ]);
                     }
                 }
