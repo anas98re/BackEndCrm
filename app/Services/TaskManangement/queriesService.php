@@ -64,17 +64,26 @@ class queriesService extends JsonResponeService
             ->where(function ($query) {
                 $query->where(function ($q) {
                     $q->where('u.ismarketing', '=', 1)
-                        ->whereRaw('DATEDIFF(clcomm.date_comment, u.date_create) > 5');
+                        ->whereRaw('DATEDIFF(clcomm.date_comment, NOW()) > 3');
                 })
                     ->orWhere(function ($q) {
                         $q->where('u.ismarketing', '!=', 1)
-                            ->whereRaw('DATEDIFF(clcomm.date_comment, u.date_create) > 3');
+                            ->whereRaw('DATEDIFF(clcomm.date_comment, NOW()) > 5');
+                    })
+                    ->orWhere(function ($q) {
+                        $q->where('u.ismarketing', '=', 1)
+                            ->WhereRaw('DATEDIFF(NOW(), u.date_create) > 3');
+                    })
+                    ->orWhere(function ($q) {
+                        $q->where('u.ismarketing', '!=', 1)
+                            ->WhereRaw('DATEDIFF(NOW(), u.date_create) > 5');
                     });
             })
             ->orderBy('dateCommentClient', 'ASC');
 
         return $query;
     }
+
 
     public function BranchSupervisorsToTheRequiredLevel($elementOfRegions, $typeLevel)
     {
@@ -96,5 +105,32 @@ class queriesService extends JsonResponeService
         }
 
         return $users;
+    }
+
+    public function getRegionNamesAndDuplicates($duplicates)
+    {
+        $regionNames = DB::table('regoin')
+            ->whereIn('id_regoin', array_keys($duplicates))
+            ->pluck('name_regoin', 'id_regoin')
+            ->toArray();
+
+        $duplicatesWithName = [];
+
+        foreach ($duplicates as $regionId => $count) {
+            $regionName = $regionNames[$regionId];
+            $duplicatesWithName[$regionName] = $count;
+        }
+        $duplicatesWithName;
+
+        $message = 'هناك ? عميل في ! لم يُعلّق لهم';
+        $messageRegionWithPlaceholder = [];
+
+        foreach ($duplicatesWithName as $region => $count) {
+            $messageWithCount = str_replace('?', $count, $message);
+            $messageWithRegion = str_replace('!', $region, $messageWithCount);
+            $messageRegionWithPlaceholder[] = $messageWithRegion;
+        }
+
+        return $messageRegionWithPlaceholder;
     }
 }

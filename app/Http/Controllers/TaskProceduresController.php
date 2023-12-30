@@ -8,6 +8,7 @@ use App\Http\Requests\UpdatetaskStatusRequest;
 use App\Models\client_comment;
 use App\Models\clients;
 use App\Models\notifiaction;
+use App\Models\regoin;
 use App\Models\statuse_task_fraction;
 use App\Models\task;
 use App\Models\users;
@@ -406,6 +407,11 @@ class TaskProceduresController extends Controller
         $query = $this->MyQueriesService->getClientsThatIsNoUpdateToTheLatestClientUpdatesFor5Days();
 
         try {
+            // return 1;
+            // we have three types of send notifications
+            // 1: send notification to fk user that in the client row
+            // 2: send notification to fk_region = 14 -> number of clients in every region(brunch) and region(brunch) name.
+            // 3: send notification to (مشرف المبيعات) type_level = 14 -> number of clients in his region(brunch) and region(brunch) name.
             $result = $query->get();
             $idUsersForClients = [];
             $id_regoinsForClients = [];
@@ -459,11 +465,11 @@ class TaskProceduresController extends Controller
                     $index1++;
                     $index = 0;
 
-                    DB::table('clients as u')
-                        ->where('u.id_clients', $row->id_clients)
-                        ->update([
-                            'is_comments_check' => 1
-                        ]);
+                    // DB::table('clients as u')
+                    //     ->where('u.id_clients', $row->id_clients)
+                    //     ->update([
+                    //         'is_comments_check' => 1
+                    //     ]);
                 }
 
                 $duplicates = array_count_values($id_regoinsForClients);
@@ -495,6 +501,111 @@ class TaskProceduresController extends Controller
                 $array_count_values_USERS = array_count_values($xIDs);
                 $array_count_values_ID_USERS_For_Clients = array_count_values($idUsersForClients);
 
+                // Sending notifications to responsible for all (regions)brunches
+                $RegionNamesAndDuplicates = $this->MyQueriesService->getRegionNamesAndDuplicates($duplicates);
+                foreach ($array_count_values_USERS as $key => $value) {
+                    $IsUser14 = users::where('id_user', $key)
+                    ->join('regoin', 'users.fk_regoin', '=', 'regoin.id_regoin')
+                    ->select('users.id_user', 'regoin.name_regoin', 'regoin.id_regoin')
+                    ->first();
+                    $userToken = DB::table('user_token')->where('fkuser', $key)
+                        ->where('token', '!=', null)
+                        ->first();
+                    if ($IsUser14->id_regoin == 14) {
+
+
+                        if ($userToken) {
+                            $message = implode("\n", $RegionNamesAndDuplicates);
+                            Notification::send(
+                                null,
+                                new SendNotification(
+                                    'Hi anas',
+                                    'dsad',
+                                    $message,
+                                    [$userToken->token]
+                                )
+                            );
+
+                            notifiaction::create([
+                                'message' => $message,
+                                'type_notify' => 'checkComment',
+                                'to_user' => $key,
+                                'isread' => 0,
+                                'from_user' => 330,
+                                'dateNotify' => Carbon::now()
+                            ]);
+                        }
+                    } else {
+                        foreach ($duplicates as $d => $dValue) {
+                            if ($IsUser14->id_regoin == $d) {
+                                $theRepeate = $dValue;
+                            }
+                        }
+                        $message = 'هناك ? عميل في ! لم يُعلّق لهم ';
+                        $messageWithCount = str_replace('?', $theRepeate, $message);
+                        $messageWithRegion = str_replace('!', $IsUser14->name_regoin, $messageWithCount);
+                        if ($userToken) {
+                            Notification::send(
+                                null,
+                                new SendNotification(
+                                    'Hi anas',
+                                    'dsad',
+                                    $messageWithRegion,
+                                    [$userToken->token]
+                                )
+                            );
+
+                            notifiaction::create([
+                                'message' => $messageWithRegion,
+                                'type_notify' => 'checkComment',
+                                'to_user' => $IsUser14->id_user,
+                                'isread' => 0,
+                                'from_user' => 330,
+                                'dateNotify' => Carbon::now()
+                            ]);
+                        }
+                    }
+                }
+
+                // Sending notifications to Branch supervisors
+                $BranchSupervisors = users::where('type_level', 14)
+                    ->whereIn('fk_regoin', $elementOfRegions)
+                    ->join('regoin', 'users.fk_regoin', '=', 'regoin.id_regoin')
+                    ->select('users.id_user', 'regoin.name_regoin', 'regoin.id_regoin')
+                    ->get();
+                foreach ($BranchSupervisors as $key => $value) {
+                    $userToken = DB::table('user_token')->where('fkuser', $value->id_user)
+                        ->where('token', '!=', null)
+                        ->first();
+                    foreach ($duplicates as $d => $dValue) {
+                        if ($value->id_regoin == $d) {
+                            $theRepeate = $dValue;
+                        }
+                    }
+                    $message = 'لديك ? عميل في ! لم يُعلّق لهم ';
+                    $messageWithCount = str_replace('?', $theRepeate, $message);
+                    $messageWithRegion = str_replace('!', $value->name_regoin, $messageWithCount);
+                    if ($userToken) {
+                        Notification::send(
+                            null,
+                            new SendNotification(
+                                'Hi anas',
+                                'dsad',
+                                $messageWithRegion,
+                                [$userToken->token]
+                            )
+                        );
+
+                        notifiaction::create([
+                            'message' => $messageWithRegion,
+                            'type_notify' => 'checkComment',
+                            'to_user' => $value->id_user,
+                            'isread' => 0,
+                            'from_user' => 330,
+                            'dateNotify' => Carbon::now()
+                        ]);
+                    }
+                }
 
                 // Sending notifications to employees responsible for clients
                 foreach ($array_count_values_ID_USERS_For_Clients as $key => $value) {
@@ -502,7 +613,7 @@ class TaskProceduresController extends Controller
                         ->where('token', '!=', null)
                         ->first();
 
-                    $message = 'لديك ? عملاء لم يُعلّق لهم منذ خمس أيام';
+                    $message = 'لديك ? عملاء لم يُعلّق لهم ';
                     $messageWithPlaceholder = str_replace('?', $value, $message);
                     if ($userToken) {
                         Notification::send(
@@ -526,35 +637,7 @@ class TaskProceduresController extends Controller
                     }
                 }
                 //-----------------------------------------------------------
-                // Sending notifications to Branch Supervisor responsible for clients
-                foreach ($array_count_values_USERS as $key => $value) {
-                    $userToken = DB::table('user_token')->where('fkuser', $key)
-                        ->where('token', '!=', null)
-                        ->first();
 
-                    $message = 'لديك ? عملاء في فرعك لم يُعلّق لهم منذ خمس أيام';
-                    $messageWithPlaceholder = str_replace('?', $value, $message);
-                    if ($userToken) {
-                        Notification::send(
-                            null,
-                            new SendNotification(
-                                'Hi anas',
-                                'dsad',
-                                $messageWithPlaceholder,
-                                [$userToken->token]
-                            )
-                        );
-
-                        notifiaction::create([
-                            'message' => $messageWithPlaceholder,
-                            'type_notify' => 'checkComment',
-                            'to_user' => $key,
-                            'isread' => 0,
-                            'from_user' => 330,
-                            'dateNotify' => Carbon::now()
-                        ]);
-                    }
-                }
             }
             $resJson = [
                 "result" => "success",
