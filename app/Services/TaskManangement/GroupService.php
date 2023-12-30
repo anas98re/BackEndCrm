@@ -18,7 +18,7 @@ class GroupService extends JsonResponeService
             DB::beginTransaction();
 
             $tsks_group = new tsks_group();
-            $tsks_group->created_by = auth('sanctum')->user()->id_user;
+            $tsks_group->created_by = $request->id_user;
             $tsks_group->groupName = $request->groupName;
             $tsks_group->description = $request->description;
             $tsks_group->save();

@@ -40,7 +40,7 @@ class TaskService extends JsonResponeService
 
             $task = new Task();
             $task->title = $request->title;
-            $task->created_by = auth('sanctum')->user()->id_user;
+            $task->created_by = $request->id_user;
 
             if ($request->hasAny(['assigned_to', 'assigend_department_to', 'assigend_region_to'])) {
                 $currentRequestFromThese = array_intersect_key(
@@ -53,14 +53,14 @@ class TaskService extends JsonResponeService
                         case 'assigned_to':
                             switch ($request->assignment_type_from) {
                                 case 'user':
-                                    $task->assigned_by = auth('sanctum')->user()->id_user;
+                                    $task->assigned_by = $request->id_user;
                                     break;
                                 case 'department':
-                                    $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                    $currentData = users::where('id_user', $request->id_user)->first();
                                     $task->assigend_department_from = $currentData->type_administration;
                                     break;
                                 case 'region':
-                                    $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                    $currentData = users::where('id_user', $request->id_user)->first();
                                     $task->assigend_region_from = $currentData->fk_regoin;
                                     break;
                             }
@@ -69,14 +69,14 @@ class TaskService extends JsonResponeService
                         case 'assigend_department_to':
                             switch ($request->assignment_type_from) {
                                 case 'user':
-                                    $task->assigned_by = auth('sanctum')->user()->id_user;
+                                    $task->assigned_by = $request->id_user;
                                     break;
                                 case 'department':
-                                    $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                    $currentData = users::where('id_user', $request->id_user)->first();
                                     $task->assigend_department_from = $currentData->type_administration;
                                     break;
                                 case 'region':
-                                    $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                    $currentData = users::where('id_user', $request->id_user)->first();
                                     $task->assigend_region_from = $currentData->fk_regoin;
                                     break;
                             }
@@ -85,14 +85,14 @@ class TaskService extends JsonResponeService
                         case 'assigend_region_to':
                             switch ($request->assignment_type_from) {
                                 case 'user':
-                                    $task->assigned_by = auth('sanctum')->user()->id_user;
+                                    $task->assigned_by = $request->id_user;
                                     break;
                                 case 'department':
-                                    $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                    $currentData = users::where('id_user', $request->id_user)->first();
                                     $task->assigend_department_from = $currentData->type_administration;
                                     break;
                                 case 'region':
-                                    $currentData = users::where('id_user', auth('sanctum')->user()->id_user)->first();
+                                    $currentData = users::where('id_user', $request->id_user)->first();
                                     $task->assigend_region_from = $currentData->fk_regoin;
                                     break;
                             }
@@ -133,7 +133,7 @@ class TaskService extends JsonResponeService
                 $attachment->file_path = $request->file_path;
                 $attachment->task_id = $task->id;
                 $attachment->create_date = $request->start_date;
-                $attachment->created_by = auth('sanctum')->user()->id_user;
+                $attachment->created_by = $request->id_user;
                 $attachment->save();
             }
 
@@ -214,7 +214,7 @@ class TaskService extends JsonResponeService
                 $attachment->file_path = $request->file_path;
                 $attachment->task_id = $task->id;
                 $attachment->create_date = $request->start_date;
-                $attachment->created_by = auth('sanctum')->user()->id_user;
+                $attachment->created_by = $request->id_user;
                 $attachment->save();
             }
 
@@ -252,7 +252,7 @@ class TaskService extends JsonResponeService
     public function assignTaskToEmployee(Request $request, $id)
     {
         $task = task::find($id);
-        $task->assigned_by = auth('sanctum')->user()->id_user;
+        $task->assigned_by = $request->id_user;
         $task->save();
         if (count($request->assigned_to) == 1) {
             $task->assigned_to = $request->assigned_to[0];
@@ -294,7 +294,7 @@ class TaskService extends JsonResponeService
                 ->where('task_id', $task->id)
                 ->update([
                     'task_statuse_id' => $request->task_statuse_id,
-                    'changed_by' => auth('sanctum')->user()->id_user
+                    'changed_by' => $request->id_user
                 ]);
             DB::commit();
             if (!$updatedData) {
@@ -396,7 +396,7 @@ class TaskService extends JsonResponeService
         $attachment->file_path = $filePath;
         $attachment->task_id = $task->id;
         $attachment->create_date = $task->start_date;
-        $attachment->created_by = auth('sanctum')->user()->id_user;
+        $attachment->created_by = $request->id_user;
         $attachment->save();
         return ($attachment ? true : false);
     }
@@ -407,7 +407,7 @@ class TaskService extends JsonResponeService
         $comment = new task_comment();
         $comment->CommentText = $request->CommentText;
         $comment->comment_date = Carbon::now();
-        $comment->commented_by = auth('sanctum')->user()->id_user;
+        $comment->commented_by = $request->id_user;
         $comment->task_id = $task->id;
         $comment->save();
         return ($comment ? true : false);
