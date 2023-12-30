@@ -520,7 +520,7 @@ class TaskProceduresController extends Controller
                                 null,
                                 new SendNotification(
                                     'Hi anas',
-                                    'dsad',
+                                    'cls',
                                     $message,
                                     [$userToken->token]
                                 )
@@ -531,6 +531,7 @@ class TaskProceduresController extends Controller
                                 'type_notify' => 'checkComment',
                                 'to_user' => $key,
                                 'isread' => 0,
+                                'data' =>'cls',
                                 'from_user' => 330,
                                 'dateNotify' => Carbon::now('Asia/Riyadh')
                             ]);
@@ -549,7 +550,7 @@ class TaskProceduresController extends Controller
                                 null,
                                 new SendNotification(
                                     'Hi anas',
-                                    'dsad',
+                                    'cls',
                                     $messageWithRegion,
                                     [$userToken->token]
                                 )
@@ -560,6 +561,7 @@ class TaskProceduresController extends Controller
                                 'type_notify' => 'checkComment',
                                 'to_user' => $IsUser14->id_user,
                                 'isread' => 0,
+                                'data' =>'cls',
                                 'from_user' => 330,
                                 'dateNotify' => Carbon::now('Asia/Riyadh')
                             ]);
@@ -590,7 +592,7 @@ class TaskProceduresController extends Controller
                             null,
                             new SendNotification(
                                 'Hi anas',
-                                'dsad',
+                                'cls',
                                 $messageWithRegion,
                                 [$userToken->token]
                             )
@@ -601,6 +603,7 @@ class TaskProceduresController extends Controller
                             'type_notify' => 'checkComment',
                             'to_user' => $value->id_user,
                             'isread' => 0,
+                            'data' =>'cls',
                             'from_user' => 330,
                             'dateNotify' => Carbon::now('Asia/Riyadh')
                         ]);
@@ -620,7 +623,7 @@ class TaskProceduresController extends Controller
                             null,
                             new SendNotification(
                                 'Hi anas',
-                                'dsad',
+                                'cls',
                                 $messageWithPlaceholder,
                                 [$userToken->token]
                             )
@@ -631,6 +634,7 @@ class TaskProceduresController extends Controller
                             'type_notify' => 'checkComment',
                             'to_user' => $key,
                             'isread' => 0,
+                            'data' =>'cls',
                             'from_user' => 330,
                             'dateNotify' => Carbon::now('Asia/Riyadh')
                         ]);

@@ -34,6 +34,7 @@ class SendNotification extends Notification
         return (new FirebaseMessage)
                     ->withTitle($this->title)
                     ->withBody($this->body)
+                    ->withAdditionalData($this->data)
                     ->asNotification($this->fcmTokens);
     }
 
