@@ -128,7 +128,7 @@ class queriesService extends JsonResponeService
         foreach ($duplicatesWithName as $region => $count) {
             $messageWithCount = str_replace('?', $count, $message);
             $messageWithRegion = str_replace('!', $region, $messageWithCount);
-            $messageWithDate = $messageWithRegion . ' منذ تاريخ % حتى الان';
+            $messageWithDate = $messageWithRegion . 'تم الاحصاء منذ تاريخ % الى الان';
             $messageRegionWithPlaceholder[] = str_replace('%', $Date, $messageWithDate);
         }
 
