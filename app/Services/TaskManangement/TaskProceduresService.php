@@ -41,6 +41,7 @@ class TaskProceduresService extends JsonResponeService
                 $task->client_id = $id_clients;
                 $task->id_communication = $client_communication;
                 $task->public_Type = 'welcome';
+                $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 2;
                 $task->assigend_department_to  = 2;
                 $task->save();
@@ -75,6 +76,7 @@ class TaskProceduresService extends JsonResponeService
                 $task->assigned_to = $iduser_updateed;
                 $task->id_communication = $id_communication;
                 $task->public_Type = 'com_install_2';
+                $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 4;
                 $task->save();
 

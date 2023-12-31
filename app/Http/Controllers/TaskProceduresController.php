@@ -48,6 +48,7 @@ class TaskProceduresController extends Controller
                 $task->description = 'you have to approve';
                 $task->invoice_id = $request->invoice_id;
                 $task->public_Type = 'approveAdmin';
+                $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 2;
                 $task->assigned_to  = $assigned_to->id_user;
                 $task->save();
@@ -162,6 +163,7 @@ class TaskProceduresController extends Controller
                 $task->id_communication  = $welcomed_user_id->id_communication;
                 $task->client_id  = $client_id->fk_idClient;
                 $task->public_Type = 'com_install_1';
+                $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 3;
                 $task->assigned_to  = $welcomed_user_id->fk_user;
                 $task->save();
@@ -196,6 +198,7 @@ class TaskProceduresController extends Controller
                 $task->invoice_id = $request->idInvoice;
                 $task->client_id = $request->id_clients;
                 $task->public_Type = 'ApproveFinance';
+                $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 2;
                 $task->assigend_department_to  = 5;
                 $task->save();
@@ -259,6 +262,7 @@ class TaskProceduresController extends Controller
                 $task->invoice_id = $request->idInvoice;
                 $task->client_id = $request->id_clients;
                 $task->public_Type = 'AddVisitDate';
+                $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 2;
                 $task->assigend_department_to  = 3;
                 $task->save();
@@ -352,6 +356,7 @@ class TaskProceduresController extends Controller
                 $task->description = 'you should to review';
                 $task->invoice_id = $request->idInvoice;
                 $task->public_Type = 'AddPayment';
+                $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 2;
                 $task->assigend_department_to  = 5;
                 $task->save();
@@ -407,11 +412,7 @@ class TaskProceduresController extends Controller
         $query = $this->MyQueriesService->getClientsThatIsNoUpdateToTheLatestClientUpdatesFor5Days();
 
         try {
-            // return 1;
-            // we have three types of send notifications
-            // 1: send notification to fk user that in the client row
-            // 2: send notification to fk_region = 14 -> number of clients in every region(brunch) and region(brunch) name.
-            // 3: send notification to (مشرف المبيعات) type_level = 14 -> number of clients in his region(brunch) and region(brunch) name.
+            
             $result = $query->get();
             $idUsersForClients = [];
             $id_regoinsForClients = [];

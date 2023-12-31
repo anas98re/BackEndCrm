@@ -103,6 +103,8 @@ class TaskService extends JsonResponeService
             }
 
             $task->client_id = $request->client_id;
+            $task->public_Type = $request->public_Type;
+            $task->main_type_task = $request->main_type_task;
             $task->description = $request->description;
             $task->invoice_id = $request->invoice_id;
             $task->group_id = $request->group_id;
@@ -185,6 +187,8 @@ class TaskService extends JsonResponeService
                 }
             }
             $task->client_id = $request->client_id;
+            $task->public_Type = $request->public_Type;
+            $task->main_type_task = $request->main_type_task;
             $task->description = $request->description;
             $task->invoice_id = $request->invoice_id;
             $task->group_id = $request->group_id;
