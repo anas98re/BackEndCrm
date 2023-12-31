@@ -6,6 +6,7 @@ use App\Models\taskStatus;
 use App\Http\Requests\StoretaskStatusRequest;
 use App\Http\Requests\UpdatetaskStatusRequest;
 use App\Models\client_comment;
+use App\Models\client_invoice;
 use App\Models\clients;
 use App\Models\notifiaction;
 use App\Models\regoin;
@@ -42,10 +43,15 @@ class TaskProceduresController extends Controller
                 ->where('public_Type', 'approveAdmin')
                 ->first();
 
+            $invoice = client_invoice::where('id_invoice', $request->invoice_id)->first();
+            $client = clients::where('id_clients', $invoice->fk_idClient)->first();
+            $message = 'يوجد فاتورة للعميل ( ? ) بانتظار الموافقة';
+            $messageDescription = str_replace('?', $client->name_enterprise, $message);
+
             if (!$existingTask) {
                 $task = new task();
-                $task->title = 'approve Admin To add Invoice';
-                $task->description = 'you have to approve';
+                $task->title = 'موافقة المشرف';
+                $task->description = $messageDescription;
                 $task->invoice_id = $request->invoice_id;
                 $task->public_Type = 'approveAdmin';
                 $task->main_type_task = 'ProccessAuto';
@@ -154,11 +160,13 @@ class TaskProceduresController extends Controller
                 ->where('client_id', $client_id->fk_idClient)
                 ->where('public_Type', 'com_install_1')
                 ->first();
-
+            $client = clients::where('id_clients', $client_id->fk_idClient)->first();
+            $message = 'عميل مشترك ( ? ) يحتاج لتواصل الجودة الأول له';
+            $messageDescription = str_replace('?', $client->name_enterprise, $message);
             if (!$existingTask) {
                 $task = new task();
-                $task->title = 'for communicate install 1';
-                $task->description = 'you should to install 1';
+                $task->title = 'تواصل جودة اول';
+                $task->description = $messageDescription;
                 $task->invoice_id = $request->idInvoice;
                 $task->id_communication  = $welcomed_user_id->id_communication;
                 $task->client_id  = $client_id->fk_idClient;
@@ -191,10 +199,15 @@ class TaskProceduresController extends Controller
                 ->where('public_Type', 'ApproveFinance')
                 ->first();
 
+            $invoice = client_invoice::where('id_invoice', $request->idInvoice)->first();
+            $client = clients::where('id_clients', $invoice->fk_idClient)->first();
+            $message = 'يوجد فاتورة للعميل ( ? ) بانتظار الموافقة';
+            $messageDescription = str_replace('?', $client->name_enterprise, $message);
+
             if (!$existingTask) {
                 $task = new task();
-                $task->title = 'ApproveFinance';
-                $task->description = 'you should to approve';
+                $task->title = 'موافقة المالية';
+                $task->description = $messageDescription;
                 $task->invoice_id = $request->idInvoice;
                 $task->client_id = $request->id_clients;
                 $task->public_Type = 'ApproveFinance';
@@ -255,10 +268,14 @@ class TaskProceduresController extends Controller
                 ->where('public_Type', 'AddVisitDate')
                 ->first();
 
+            $invoice = client_invoice::where('id_invoice', $request->idInvoice)->first();
+            $client = clients::where('id_clients', $invoice->fk_idClient)->first();
+            $message = 'جدولة زيارة للعميل ( ? )';
+            $messageDescription = str_replace('?', $client->name_enterprise, $message);
             if (!$existingTask) {
                 $task = new task();
-                $task->title = 'AddVisitDate';
-                $task->description = 'you should to approve';
+                $task->title = 'موعد لزيارة العميل';
+                $task->description = $messageDescription;
                 $task->invoice_id = $request->idInvoice;
                 $task->client_id = $request->id_clients;
                 $task->public_Type = 'AddVisitDate';
@@ -350,10 +367,14 @@ class TaskProceduresController extends Controller
                 ->where('public_Type', 'AddPayment')
                 ->first();
 
+            $invoice = client_invoice::where('id_invoice', $request->idInvoice)->first();
+            $client = clients::where('id_clients', $invoice->fk_idClient)->first();
+            $message = 'مراجعة فاتورة العميل ( ? ) بعد ان تم إضافة دفعة جديدة لها';
+            $messageDescription = str_replace('?', $client->name_enterprise, $message);
             if (!$existingTask) {
                 $task = new task();
-                $task->title = 'review invoice after AddPayment';
-                $task->description = 'you should to review';
+                $task->title = 'مراجعة فاتورة';
+                $task->description = $messageDescription;
                 $task->invoice_id = $request->idInvoice;
                 $task->public_Type = 'AddPayment';
                 $task->main_type_task = 'ProccessAuto';
@@ -412,7 +433,7 @@ class TaskProceduresController extends Controller
         $query = $this->MyQueriesService->getClientsThatIsNoUpdateToTheLatestClientUpdatesFor5Days();
 
         try {
-            
+
             $result = $query->get();
             $idUsersForClients = [];
             $id_regoinsForClients = [];
@@ -506,9 +527,9 @@ class TaskProceduresController extends Controller
                 $RegionNamesAndDuplicates = $this->MyQueriesService->getRegionNamesAndDuplicates($duplicates);
                 foreach ($array_count_values_USERS as $key => $value) {
                     $IsUser14 = users::where('id_user', $key)
-                    ->join('regoin', 'users.fk_regoin', '=', 'regoin.id_regoin')
-                    ->select('users.id_user', 'regoin.name_regoin', 'regoin.id_regoin')
-                    ->first();
+                        ->join('regoin', 'users.fk_regoin', '=', 'regoin.id_regoin')
+                        ->select('users.id_user', 'regoin.name_regoin', 'regoin.id_regoin')
+                        ->first();
                     $userToken = DB::table('user_token')->where('fkuser', $key)
                         ->where('token', '!=', null)
                         ->first();
@@ -520,7 +541,7 @@ class TaskProceduresController extends Controller
                             Notification::send(
                                 null,
                                 new SendNotification(
-                                    'Hi anas',
+                                    'تعليقات العملاء',
                                     'cls',
                                     $message,
                                     [$userToken->token]
@@ -532,7 +553,7 @@ class TaskProceduresController extends Controller
                                 'type_notify' => 'checkComment',
                                 'to_user' => $key,
                                 'isread' => 0,
-                                'data' =>'cls',
+                                'data' => 'cls',
                                 'from_user' => 330,
                                 'dateNotify' => Carbon::now('Asia/Riyadh')
                             ]);
@@ -550,7 +571,7 @@ class TaskProceduresController extends Controller
                             Notification::send(
                                 null,
                                 new SendNotification(
-                                    'Hi anas',
+                                    'تعليقات العملاء',
                                     'cls',
                                     $messageWithRegion,
                                     [$userToken->token]
@@ -562,7 +583,7 @@ class TaskProceduresController extends Controller
                                 'type_notify' => 'checkComment',
                                 'to_user' => $IsUser14->id_user,
                                 'isread' => 0,
-                                'data' =>'cls',
+                                'data' => 'cls',
                                 'from_user' => 330,
                                 'dateNotify' => Carbon::now('Asia/Riyadh')
                             ]);
@@ -592,7 +613,7 @@ class TaskProceduresController extends Controller
                         Notification::send(
                             null,
                             new SendNotification(
-                                'Hi anas',
+                                'تعليقات العملاء',
                                 'cls',
                                 $messageWithRegion,
                                 [$userToken->token]
@@ -604,7 +625,7 @@ class TaskProceduresController extends Controller
                             'type_notify' => 'checkComment',
                             'to_user' => $value->id_user,
                             'isread' => 0,
-                            'data' =>'cls',
+                            'data' => 'cls',
                             'from_user' => 330,
                             'dateNotify' => Carbon::now('Asia/Riyadh')
                         ]);
@@ -623,7 +644,7 @@ class TaskProceduresController extends Controller
                         Notification::send(
                             null,
                             new SendNotification(
-                                'Hi anas',
+                                'تعليقات العملاء',
                                 'cls',
                                 $messageWithPlaceholder,
                                 [$userToken->token]
@@ -635,11 +656,15 @@ class TaskProceduresController extends Controller
                             'type_notify' => 'checkComment',
                             'to_user' => $key,
                             'isread' => 0,
-                            'data' =>'cls',
+                            'data' => 'cls',
                             'from_user' => 330,
                             'dateNotify' => Carbon::now('Asia/Riyadh')
                         ]);
                     }
+                    $this->MyService->addTaskToEmployeesResponsibleForClients(
+                        $key,
+                        $value
+                    );
                 }
                 //-----------------------------------------------------------
 

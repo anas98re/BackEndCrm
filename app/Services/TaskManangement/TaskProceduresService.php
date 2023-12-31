@@ -4,11 +4,14 @@ namespace App\Services\TaskManangement;
 
 use App\Http\Requests\TaskManagementRequests\GroupRequest;
 use App\Http\Requests\TaskManagementRequests\TaskRequest;
+use App\Models\client_invoice;
+use App\Models\clients;
 use App\Models\statuse_task_fraction;
 use App\Models\task;
 use App\Models\taskStatus;
 use App\Models\tsks_group;
 use App\Services\JsonResponeService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 
@@ -32,11 +35,14 @@ class TaskProceduresService extends JsonResponeService
                 ->where('client_id', $id_clients)
                 ->where('public_Type', 'welcome')
                 ->first();
-
+            $invoice = client_invoice::where('id_invoice', $idInvoice)->first();
+            $client = clients::where('id_clients', $invoice->fk_idClient)->first();
+            $message = 'عميل مشترك ( ? ) يحتاج للترحيب به';
+            $messageDescription = str_replace('?', $client->name_enterprise, $message);
             if (!$existingTask) {
                 $task = new task();
-                $task->title = 'welcome to clients';
-                $task->description = 'you should to welcome';
+                $task->title = 'الترحيب بالعميل';
+                $task->description = $messageDescription;
                 $task->invoice_id = $idInvoice;
                 $task->client_id = $id_clients;
                 $task->id_communication = $client_communication;
@@ -68,10 +74,15 @@ class TaskProceduresService extends JsonResponeService
                 ->where('public_Type', 'com_install_2')
                 ->first();
 
+            $invoice = client_invoice::where('id_invoice', $idInvoice)->first();
+            $client = clients::where('id_clients', $invoice->fk_idClient)->first();
+            $message = 'عميل مشترك ( ? ) يحتاج لتواصل جودة ثاني';
+            $messageDescription = str_replace('?', $client->name_enterprise, $message);
+
             if (!$existingTask) {
                 $task = new task();
-                $task->title = 'for communicate install 2';
-                $task->description = 'you should to install 2';
+                $task->title = 'تواصل جودة ثاني';
+                $task->description = $messageDescription;
                 $task->invoice_id = $idInvoice;
                 $task->assigned_to = $iduser_updateed;
                 $task->id_communication = $id_communication;
@@ -90,5 +101,24 @@ class TaskProceduresService extends JsonResponeService
             throw $th;
             DB::rollBack();
         }
+    }
+
+    public function addTaskToEmployeesResponsibleForClients($key, $value)
+    {
+        $message = 'لديك ? عملاء لم يُعلّق لهم ';
+        $messageWithPlaceholder = str_replace('?', $value, $message);
+
+        $task = new task();
+        $task->title = 'تعليقات العملاء';
+        $task->description = $messageWithPlaceholder;
+        $task->assigned_to = $key;
+        $task->public_Type = 'checkComments';
+        $task->main_type_task = 'ProccessAuto';
+        $task->assigend_department_from  = 4;
+        $task->dateTimeCreated  = Carbon::now('Asia/Riyadh');
+
+        $task->save();
+
+        !empty($task) ? $this->addTaskStatus($task) : null;
     }
 }

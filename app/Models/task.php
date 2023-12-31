@@ -34,6 +34,7 @@ class task extends Model
         'hours',
         'completion_percentage',
         'recurring',
+        'dateTimeCreated',
         'recurring_type',
         'Number_Of_Recurring',
         'id_communication',
