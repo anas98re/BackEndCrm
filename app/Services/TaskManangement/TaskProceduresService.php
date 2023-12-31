@@ -114,7 +114,7 @@ class TaskProceduresService extends JsonResponeService
         $task->assigned_to = $key;
         $task->public_Type = 'checkComments';
         $task->main_type_task = 'ProccessAuto';
-        $task->assigend_department_from  = 4;
+        $task->assigend_department_from  = 2;
         $task->dateTimeCreated  = Carbon::now('Asia/Riyadh');
 
         $task->save();
