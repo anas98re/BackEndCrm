@@ -60,7 +60,7 @@ class queriesService extends JsonResponeService
             })
             ->where('u.is_comments_check', '=', 0)
             ->where('u.type_client', '=', 'تفاوض')
-            ->where('u.date_create', '>=', Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString())
+            ->where('u.date_create', '>=', Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString())// get date which is the first day of the previous month.
             ->where(function ($query) {
                 $query->where(function ($q) {
                     $q->where('u.ismarketing', '=', 1)
