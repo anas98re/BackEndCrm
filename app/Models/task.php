@@ -171,8 +171,9 @@ class task extends Model
                 'Clients', 'invoices'
             ])
                 ->leftJoin('statuse_task_fraction', 'tasks.id', '=', 'statuse_task_fraction.task_id')
-                ->leftJoin('task_statuses', 'statuse_task_fraction.task_statuse_id', '=', 'task_statuses.id');
-
+                ->leftJoin('task_statuses', 'statuse_task_fraction.task_statuse_id', '=', 'task_statuses.id')
+                ->leftJoin('clients', 'tasks.client_id', '=', 'clients.id_clients');
+                
             $filters = [
                 'status_name' => ['task_statuses.name', '='],
                 'id' => ['tasks.id', '='],
@@ -186,6 +187,7 @@ class task extends Model
                 'date_time_created' => ['dateTimeCreated', '='],
                 'start_date_from' => ['start_date', '>='],
                 'start_date_to' => ['start_date', '<='],
+                'name_enterprise' => ['clients.name_enterprise', '='],
             ];
 
             foreach ($filters as $key => $conditions) {
