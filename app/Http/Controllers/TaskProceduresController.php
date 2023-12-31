@@ -429,6 +429,7 @@ class TaskProceduresController extends Controller
     {
         $index = 0;
         $index1 = 0;
+        $Date = Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
 
         $query = $this->MyQueriesService->getClientsThatIsNoUpdateToTheLatestClientUpdatesFor5Days();
 
@@ -566,19 +567,21 @@ class TaskProceduresController extends Controller
                         $message = 'هناك ? عميل في ! لم يُعلّق لهم ';
                         $messageWithCount = str_replace('?', $theRepeate, $message);
                         $messageWithRegion = str_replace('!', $IsUser14->name_regoin, $messageWithCount);
+                        $messageWithDate = $messageWithRegion . ' منذ تاريخ % حتى الان';
+                        $messageRegionWithPlaceholder = str_replace('%', $Date, $messageWithDate);
                         if ($userToken) {
                             Notification::send(
                                 null,
                                 new SendNotification(
                                     'تعليقات العملاء',
                                     'cls',
-                                    $messageWithRegion,
+                                    $messageRegionWithPlaceholder,
                                     [$userToken->token]
                                 )
                             );
 
                             notifiaction::create([
-                                'message' => $messageWithRegion,
+                                'message' => $messageRegionWithPlaceholder,
                                 'type_notify' => 'checkComment',
                                 'to_user' => $IsUser14->id_user,
                                 'isread' => 0,
@@ -606,21 +609,24 @@ class TaskProceduresController extends Controller
                         }
                     }
                     $message = 'لديك ? عميل في ! لم يُعلّق لهم ';
+
                     $messageWithCount = str_replace('?', $theRepeate, $message);
                     $messageWithRegion = str_replace('!', $value->name_regoin, $messageWithCount);
+                    $messageWithDate = $messageWithRegion . ' منذ تاريخ % حتى الان';
+                    $messageRegionWithPlaceholder = str_replace('%', $Date, $messageWithDate);
                     if ($userToken) {
                         Notification::send(
                             null,
                             new SendNotification(
                                 'تعليقات العملاء',
                                 'cls',
-                                $messageWithRegion,
+                                $messageRegionWithPlaceholder,
                                 [$userToken->token]
                             )
                         );
 
                         notifiaction::create([
-                            'message' => $messageWithRegion,
+                            'message' => $messageRegionWithPlaceholder,
                             'type_notify' => 'checkComment',
                             'to_user' => $value->id_user,
                             'isread' => 0,
@@ -639,19 +645,21 @@ class TaskProceduresController extends Controller
 
                     $message = 'لديك ? عملاء لم يُعلّق لهم ';
                     $messageWithPlaceholder = str_replace('?', $value, $message);
+                    $messageWithDate = $messageWithPlaceholder . ' منذ تاريخ % حتى الان';
+                    $messageRegionWithPlaceholder = str_replace('%', $Date, $messageWithDate);
                     if ($userToken) {
                         Notification::send(
                             null,
                             new SendNotification(
                                 'تعليقات العملاء',
                                 'cls',
-                                $messageWithPlaceholder,
+                                $messageRegionWithPlaceholder,
                                 [$userToken->token]
                             )
                         );
 
                         notifiaction::create([
-                            'message' => $messageWithPlaceholder,
+                            'message' => $messageRegionWithPlaceholder,
                             'type_notify' => 'checkComment',
                             'to_user' => $key,
                             'isread' => 0,
@@ -662,7 +670,8 @@ class TaskProceduresController extends Controller
                     }
                     $this->MyService->addTaskToEmployeesResponsibleForClients(
                         $key,
-                        $value
+                        $value,
+                        $Date
                     );
                 }
                 //-----------------------------------------------------------

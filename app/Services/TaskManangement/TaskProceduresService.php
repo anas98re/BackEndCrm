@@ -103,14 +103,16 @@ class TaskProceduresService extends JsonResponeService
         }
     }
 
-    public function addTaskToEmployeesResponsibleForClients($key, $value)
+    public function addTaskToEmployeesResponsibleForClients($key, $value, $Date)
     {
         $message = 'لديك ? عملاء لم يُعلّق لهم ';
         $messageWithPlaceholder = str_replace('?', $value, $message);
+        $messageWithDate = $messageWithPlaceholder . ' منذ تاريخ % حتى الان';
+        $messageRegionWithPlaceholder = str_replace('%', $Date, $messageWithDate);
 
         $task = new task();
         $task->title = 'تعليقات العملاء';
-        $task->description = $messageWithPlaceholder;
+        $task->description = $messageRegionWithPlaceholder;
         $task->assigned_to = $key;
         $task->public_Type = 'checkComments';
         $task->main_type_task = 'ProccessAuto';

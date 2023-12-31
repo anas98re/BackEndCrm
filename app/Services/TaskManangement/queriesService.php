@@ -124,11 +124,12 @@ class queriesService extends JsonResponeService
 
         $message = 'هناك ? عميل في ! لم يُعلّق لهم';
         $messageRegionWithPlaceholder = [];
-
+        $Date = Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
         foreach ($duplicatesWithName as $region => $count) {
             $messageWithCount = str_replace('?', $count, $message);
             $messageWithRegion = str_replace('!', $region, $messageWithCount);
-            $messageRegionWithPlaceholder[] = $messageWithRegion;
+            $messageWithDate = $messageWithRegion . ' منذ تاريخ % حتى الان';
+            $messageRegionWithPlaceholder[] = str_replace('%', $Date, $messageWithDate);
         }
 
         return $messageRegionWithPlaceholder;
