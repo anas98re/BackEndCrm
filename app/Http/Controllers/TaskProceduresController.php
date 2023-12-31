@@ -433,7 +433,6 @@ class TaskProceduresController extends Controller
         $query = $this->MyQueriesService->getClientsThatIsNoUpdateToTheLatestClientUpdatesFor5Days();
 
         try {
-
             $result = $query->get();
             $idUsersForClients = [];
             $id_regoinsForClients = [];

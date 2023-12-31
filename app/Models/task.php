@@ -165,52 +165,57 @@ class task extends Model
 
     public function filterTaskesByAll($request)
     {
-            $tasks = Task::with([
-                'taskStatuses', 'assignedByUser',
-                'assignedToUser', 'taskGroup',
-                'Clients', 'invoices'
-            ])
-                ->leftJoin('statuse_task_fraction', 'tasks.id', '=', 'statuse_task_fraction.task_id')
-                ->leftJoin('task_statuses', 'statuse_task_fraction.task_statuse_id', '=', 'task_statuses.id')
-                ->leftJoin('clients', 'tasks.client_id', '=', 'clients.id_clients');
-                
-            $filters = [
-                'status_name' => ['task_statuses.name', '='],
-                'id' => ['tasks.id', '='],
-                'assigend_department_from' => ['assigend_department_from', '='],
-                'assigend_department_to' => ['assigend_department_to', '='],
-                'assigend_region_from' => ['assigend_region_from', '='],
-                'assigend_region_to' => ['assigend_region_to', '='],
-                'assigned_by' => ['assigned_by', '='],
-                'assigned_to' => ['assigned_to', '='],
-                'created_by' => ['created_by', '='],
-                'date_time_created' => ['dateTimeCreated', '='],
-                'start_date_from' => ['start_date', '>='],
-                'start_date_to' => ['start_date', '<='],
-                'name_enterprise' => ['clients.name_enterprise', '='],
-            ];
+        $tasks = Task::with([
+            'taskStatuses', 'assignedByUser',
+            'assignedToUser', 'taskGroup',
+            'Clients', 'invoices'
+        ])
+            ->leftJoin('statuse_task_fraction', 'tasks.id', '=', 'statuse_task_fraction.task_id')
+            ->leftJoin('task_statuses', 'statuse_task_fraction.task_statuse_id', '=', 'task_statuses.id')
+            ->leftJoin('clients', 'tasks.client_id', '=', 'clients.id_clients');
 
-            foreach ($filters as $key => $conditions) {
-                if ($request->has($key) && !empty($request->input($key))) {
-                    $column = $conditions[0];
-                    $operator = $conditions[1];
-                    $value = $request->input($key);
+        $filters = [
+            'status_name' => ['task_statuses.name', '='],
+            'id' => ['tasks.id', '='],
+            'assigend_department_from' => ['assigend_department_from', '='],
+            'assigend_department_to' => ['assigend_department_to', '='],
+            'assigend_region_from' => ['assigend_region_from', '='],
+            'assigend_region_to' => ['assigend_region_to', '='],
+            'assigned_by' => ['assigned_by', '='],
+            'assigned_to' => ['assigned_to', '='],
+            'created_by' => ['created_by', '='],
+            'date_time_created' => ['dateTimeCreated', '='],
+            'start_date_from' => ['start_date', '>='],
+            'start_date_to' => ['start_date', '<='],
+            'name_enterprise' => ['clients.name_enterprise', '='],
+        ];
 
-                    if ($key === 'status_name') {
-                        $tasks->where($column, $operator, $value);
-                    } elseif ($key === 'start_date_from') {
-                        $tasks->whereDate($column, $operator, $value);
-                    } elseif ($key === 'start_date_to') {
-                        $tasks->whereDate($column, $operator, $value);
-                    } else {
-                        $tasks->where($column, $operator, $value);
-                    }
+        // $searchTerm = $request->input('name_enterprise');
+        // if (!empty($searchTerm)) {
+        //     $tasks->orderByRaw("SOUNDEX(clients.name_enterprise) = SOUNDEX('$searchTerm') desc");
+        // }
+
+        foreach ($filters as $key => $conditions) {
+            if ($request->has($key) && !empty($request->input($key))) {
+                $column = $conditions[0];
+                $operator = $conditions[1];
+                $value = $request->input($key);
+
+                if ($key === 'status_name') {
+                    $tasks->where($column, $operator, $value);
+                } elseif ($key === 'start_date_from') {
+                    $tasks->whereDate($column, $operator, $value);
+                } elseif ($key === 'start_date_to') {
+                    $tasks->whereDate($column, $operator, $value);
+                } else {
+                    $tasks->where($column, $operator, $value);
                 }
             }
+        }
 
-            $tasks = $tasks->get();
+        $tasks = $tasks->get();
 
-            return ($tasks ? $tasks : 'NotFound');
+        return ($tasks ? $tasks : 'NotFound');
     }
 
     // ...
