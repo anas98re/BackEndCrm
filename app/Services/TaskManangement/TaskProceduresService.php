@@ -105,9 +105,9 @@ class TaskProceduresService extends JsonResponeService
 
     public function addTaskToEmployeesResponsibleForClients($key, $value, $Date)
     {
-        $message = ' ,لديك ? عملاء لم يُعلّق لهم ';
+        $message = ' لديك ? عملاء لم يُعلّق لهم ';
         $messageWithPlaceholder = str_replace('?', $value, $message);
-        $messageWithDate = $messageWithPlaceholder . 'تم الاحصاء منذ تاريخ % الى الان';
+        $messageWithDate = $messageWithPlaceholder . ' [منذ تاريخ % لتاريخ اليوم]';
         $messageRegionWithPlaceholder = str_replace('%', $Date, $messageWithDate);
 
         $task = new task();

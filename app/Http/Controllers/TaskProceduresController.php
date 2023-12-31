@@ -564,10 +564,10 @@ class TaskProceduresController extends Controller
                                 $theRepeate = $dValue;
                             }
                         }
-                        $message1 = ' ،هناك ? عميل في ! لم يُعلّق لهم ';
+                        $message1 = ' هناك ? عميل في ! لم يُعلّق لهم';
                         $messageWithCount1 = str_replace('?', $theRepeate, $message1);
                         $messageWithRegion1 = str_replace('!', $IsUser14->name_regoin, $messageWithCount1);
-                        $messageWithDate1 = $messageWithRegion1 . ' منذ تاريخ % لتاريخ اليوم';
+                        $messageWithDate1 = $messageWithRegion1 . ' [منذ تاريخ % لتاريخ اليوم]';
                         $messageRegionWithPlaceholder1 = str_replace('%', $Date, $messageWithDate1);
                         if ($userToken) {
                             Notification::send(
@@ -608,11 +608,11 @@ class TaskProceduresController extends Controller
                             $theRepeate = $dValue;
                         }
                     }
-                    $message2 = ' ،لديك ? عميل في ! لم يُعلّق لهم ';
+                    $message2 = ' لديك ? عميل في ! لم يُعلّق لهم ';
 
                     $messageWithCount2 = str_replace('?', $theRepeate, $message2);
                     $messageWithRegion2 = str_replace('!', $value->name_regoin, $messageWithCount2);
-                    $messageWithDate2 = $messageWithRegion2 . ' منذ تاريخ % لتاريخ اليوم';
+                    $messageWithDate2 = $messageWithRegion2 . ' [منذ تاريخ % لتاريخ اليوم]';
                     $messageRegionWithPlaceholder2 = str_replace('%', $Date, $messageWithDate2);
                     if ($userToken) {
                         Notification::send(
@@ -643,9 +643,9 @@ class TaskProceduresController extends Controller
                         ->where('token', '!=', null)
                         ->first();
 
-                    $message3 = ' ،لديك ? عملاء لم يُعلّق لهم ';
+                    $message3 = ' لديك ? عملاء لم يُعلّق لهم ';
                     $messageWithPlaceholder3 = str_replace('?', $value, $message3);
-                    $messageWithDate3 = $messageWithPlaceholder3 . ' منذ تاريخ % لتاريخ اليوم';
+                    $messageWithDate3 = $messageWithPlaceholder3 . ' [منذ تاريخ % لتاريخ اليوم]';
                     $messageRegionWithPlaceholder3 = str_replace('%', $Date, $messageWithDate3);
                     if ($userToken) {
                         Notification::send(
