@@ -564,24 +564,24 @@ class TaskProceduresController extends Controller
                                 $theRepeate = $dValue;
                             }
                         }
-                        $message = ' ,هناك ? عميل في ! لم يُعلّق لهم ';
-                        $messageWithCount = str_replace('?', $theRepeate, $message);
-                        $messageWithRegion = str_replace('!', $IsUser14->name_regoin, $messageWithCount);
-                        $messageWithDate = $messageWithRegion . 'تم الاحصاء منذ تاريخ % الى الان';
-                        $messageRegionWithPlaceholder = str_replace('%', $Date, $messageWithDate);
+                        $message1 = ' ,هناك ? عميل في ! لم يُعلّق لهم ';
+                        $messageWithCount1 = str_replace('?', $theRepeate, $message1);
+                        $messageWithRegion1 = str_replace('!', $IsUser14->name_regoin, $messageWithCount1);
+                        $messageWithDate1 = $messageWithRegion1 . 'تم الاحصاء منذ تاريخ % الى الان';
+                        $messageRegionWithPlaceholder1 = str_replace('%', $Date, $messageWithDate1);
                         if ($userToken) {
                             Notification::send(
                                 null,
                                 new SendNotification(
                                     'تعليقات العملاء',
                                     'cls',
-                                    $messageRegionWithPlaceholder,
+                                    $messageRegionWithPlaceholder1,
                                     [$userToken->token]
                                 )
                             );
 
                             notifiaction::create([
-                                'message' => $messageRegionWithPlaceholder,
+                                'message' => $messageRegionWithPlaceholder1,
                                 'type_notify' => 'checkComment',
                                 'to_user' => $IsUser14->id_user,
                                 'isread' => 0,
@@ -608,25 +608,25 @@ class TaskProceduresController extends Controller
                             $theRepeate = $dValue;
                         }
                     }
-                    $message = ' ,لديك ? عميل في ! لم يُعلّق لهم ';
+                    $message2 = ' ,لديك ? عميل في ! لم يُعلّق لهم ';
 
-                    $messageWithCount = str_replace('?', $theRepeate, $message);
-                    $messageWithRegion = str_replace('!', $value->name_regoin, $messageWithCount);
-                    $messageWithDate = $messageWithRegion . 'تم الاحصاء منذ تاريخ % الى الان';
-                    $messageRegionWithPlaceholder = str_replace('%', $Date, $messageWithDate);
+                    $messageWithCount2 = str_replace('?', $theRepeate, $message2);
+                    $messageWithRegion2 = str_replace('!', $value->name_regoin, $messageWithCount2);
+                    $messageWithDate2 = $messageWithRegion2 . 'تم الاحصاء منذ تاريخ % الى الان';
+                    $messageRegionWithPlaceholder2 = str_replace('%', $Date, $messageWithDate2);
                     if ($userToken) {
                         Notification::send(
                             null,
                             new SendNotification(
                                 'تعليقات العملاء',
                                 'cls',
-                                $messageRegionWithPlaceholder,
+                                $messageRegionWithPlaceholder2,
                                 [$userToken->token]
                             )
                         );
 
                         notifiaction::create([
-                            'message' => $messageRegionWithPlaceholder,
+                            'message' => $messageRegionWithPlaceholder2,
                             'type_notify' => 'checkComment',
                             'to_user' => $value->id_user,
                             'isread' => 0,
@@ -643,23 +643,23 @@ class TaskProceduresController extends Controller
                         ->where('token', '!=', null)
                         ->first();
 
-                    $message = ' ,لديك ? عملاء لم يُعلّق لهم ';
-                    $messageWithPlaceholder = str_replace('?', $value, $message);
-                    $messageWithDate = $messageWithRegion . 'تم الاحصاء منذ تاريخ % الى الان';
-                    $messageRegionWithPlaceholder = str_replace('%', $Date, $messageWithDate);
+                    $message3 = ' ,لديك ? عملاء لم يُعلّق لهم ';
+                    $messageWithPlaceholder3 = str_replace('?', $value, $message3);
+                    $messageWithDate3 = $messageWithPlaceholder3 . 'تم الاحصاء منذ تاريخ % الى الان';
+                    $messageRegionWithPlaceholder3 = str_replace('%', $Date, $messageWithDate3);
                     if ($userToken) {
                         Notification::send(
                             null,
                             new SendNotification(
                                 'تعليقات العملاء',
                                 'cls',
-                                $messageRegionWithPlaceholder,
+                                $messageRegionWithPlaceholder3,
                                 [$userToken->token]
                             )
                         );
 
                         notifiaction::create([
-                            'message' => $messageRegionWithPlaceholder,
+                            'message' => $messageRegionWithPlaceholder3,
                             'type_notify' => 'checkComment',
                             'to_user' => $key,
                             'isread' => 0,
