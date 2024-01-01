@@ -25,9 +25,12 @@ use DateTime;
 
 class TaskService extends JsonResponeService
 {
+    private $MyService;
     private $queriesService;
-    public function __construct(queriesService $queriesService)
+
+    public function __construct(TaskProceduresService $MyService, queriesService $queriesService)
     {
+        $this->MyService = $MyService;
         $this->queriesService = $queriesService;
     }
 
@@ -41,6 +44,7 @@ class TaskService extends JsonResponeService
             $task = new Task();
             $task->title = $request->title;
             $task->created_by = $request->id_user;
+            $task->assignment_type_from = $request->assignment_type_from;
 
             if ($request->hasAny(['assigned_to', 'assigend_department_to', 'assigend_region_to'])) {
                 $currentRequestFromThese = array_intersect_key(
@@ -65,6 +69,11 @@ class TaskService extends JsonResponeService
                                     break;
                             }
                             $task->assigned_to = $value;
+                            $this->MyService->handleNotificationForTaskManual(
+                                $message = $request->title,
+                                $type ='task',
+                                $to_user = $value
+                            );
                             break;
                         case 'assigend_department_to':
                             switch ($request->assignment_type_from) {
@@ -81,6 +90,14 @@ class TaskService extends JsonResponeService
                                     break;
                             }
                             $task->assigend_department_to = $value;
+                            $users = $this->queriesService->departmentSupervisorsToTheRequiredLevelForTaskProcedures($value);
+                            foreach ($users as $userID) {
+                                $this->MyService->handleNotificationForTaskManual(
+                                    $message = $request->title,
+                                    $type = 'task',
+                                    $to_user = $userID
+                                );
+                            }
                             break;
                         case 'assigend_region_to':
                             switch ($request->assignment_type_from) {
@@ -97,6 +114,14 @@ class TaskService extends JsonResponeService
                                     break;
                             }
                             $task->assigend_region_to = $value;
+                            $users = $this->queriesService->BranchSupervisorsToTheRequiredLevelForTaskProcedures($value);
+                            foreach ($users as $userID) {
+                                $this->MyService->handleNotificationForTaskManual(
+                                    $message = $request->title,
+                                    $type = 'task',
+                                    $to_user = $userID
+                                );
+                            }
                             break;
                     }
                 }

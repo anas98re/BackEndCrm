@@ -60,6 +60,14 @@ class TaskProceduresController extends Controller
                 $task->save();
 
                 !empty($task) ? $this->MyService->addTaskStatus($task) : null;
+
+                $this->MyService->handleNotificationForTaskProcedures(
+                    $message = $task->title,
+                    $type ='task',
+                    $to_user = $assigned_to->id_user,
+                    $invoice_id = $request->invoice_id,
+                    $client_id = $client->id_clients
+                );
             } else {
                 $task = null;
             }
@@ -177,6 +185,13 @@ class TaskProceduresController extends Controller
                 $task->save();
 
                 !empty($task) ? $this->MyService->addTaskStatus($task) : null;
+                $this->MyService->handleNotificationForTaskProcedures(
+                    $message = $task->title,
+                    $type ='task',
+                    $to_user = $welcomed_user_id->fk_user,
+                    $invoice_id = $request->idInvoice,
+                    $client_id = $client_id->fk_idClient
+                );
             } else {
                 $task = null;
             }
@@ -215,7 +230,19 @@ class TaskProceduresController extends Controller
                 $task->assigend_department_from  = 2;
                 $task->assigend_department_to  = 5;
                 $task->save();
+
                 !empty($task) ? $this->MyService->addTaskStatus($task) : null;
+
+                $users = $this->MyQueriesService->departmentSupervisorsToTheRequiredLevelForTaskProcedures(5);
+                foreach ($users as $userID) {
+                    $this->MyService->handleNotificationForTaskProcedures(
+                        $message = $task->title,
+                        $type = 'task',
+                        $to_user = $userID,
+                        $invoice_id = $request->idInvoice,
+                        $client_id = $request->id_clients
+                    );
+                }
             } else {
                 $task = null;
             }
@@ -283,7 +310,19 @@ class TaskProceduresController extends Controller
                 $task->assigend_department_from  = 2;
                 $task->assigend_department_to  = 3;
                 $task->save();
+
                 !empty($task) ? $this->MyService->addTaskStatus($task) : null;
+
+                $users = $this->MyQueriesService->departmentSupervisorsToTheRequiredLevelForTaskProcedures(3);
+                foreach ($users as $userID) {
+                    $this->MyService->handleNotificationForTaskProcedures(
+                        $message = $task->title,
+                        $type = 'task',
+                        $to_user = $userID,
+                        $invoice_id = $request->idInvoice,
+                        $client_id = $request->id_clients
+                    );
+                }
             } else {
                 $task = null;
             }
@@ -381,7 +420,19 @@ class TaskProceduresController extends Controller
                 $task->assigend_department_from  = 2;
                 $task->assigend_department_to  = 5;
                 $task->save();
+
                 !empty($task) ? $this->MyService->addTaskStatus($task) : null;
+
+                $users = $this->MyQueriesService->departmentSupervisorsToTheRequiredLevelForTaskProcedures(3);
+                foreach ($users as $userID) {
+                    $this->MyService->handleNotificationForTaskProcedures(
+                        $message = $task->title,
+                        $type = 'task',
+                        $to_user = $userID,
+                        $invoice_id = $request->idInvoice,
+                        $client_id = $client->id_clients
+                    );
+                }
             } else {
                 $task = null;
             }

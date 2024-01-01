@@ -60,7 +60,7 @@ class queriesService extends JsonResponeService
             })
             ->where('u.is_comments_check', '=', 0)
             ->where('u.type_client', '=', 'تفاوض')
-            ->where('u.date_create', '>=', Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString())// get date which is the first day of the previous month.
+            ->where('u.date_create', '>=', Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString()) // get date which is the first day of the previous month.
             ->where(function ($query) {
                 $query->where(function ($q) {
                     $q->where('u.ismarketing', '=', 1)
@@ -105,6 +105,58 @@ class queriesService extends JsonResponeService
         }
 
         return $users;
+    }
+
+    public function BranchSupervisorsToTheRequiredLevelForTaskProcedures($elementOfRegions)
+    {
+        $privgLevelUsers = DB::table('privg_level_user')
+            ->where('fk_privileg', 157)
+            ->where('is_check', 1)
+            ->get();
+        $typeLevel = [];
+        foreach ($privgLevelUsers as $level) {
+            $typeLevel[] = $level->fk_level;
+        }
+        $users = collect();
+        $usersQuery = DB::table('users as u')
+            ->where(function ($query) use ($elementOfRegions, $typeLevel) {
+                $query->where('u.fk_regoin', $elementOfRegions)
+                    ->whereIn('u.type_level', $typeLevel);
+            })
+            ->get();
+        $users = $users->concat($usersQuery);
+
+        $xIDs = [];
+        foreach ($users as $el) {
+            $xIDs[] = $el->id_user;
+        }
+        return $xIDs;
+    }
+
+    public function departmentSupervisorsToTheRequiredLevelForTaskProcedures($elementOfDepartments)
+    {
+        $privgLevelUsers = DB::table('privg_level_user')
+            ->where('fk_privileg', 157)
+            ->where('is_check', 1)
+            ->get();
+        $typeLevel = [];
+        foreach ($privgLevelUsers as $level) {
+            $typeLevel[] = $level->fk_level;
+        }
+        $users = collect();
+        $usersQuery = DB::table('users as u')
+            ->where(function ($query) use ($elementOfDepartments, $typeLevel) {
+                $query->where('u.type_administration', $elementOfDepartments)
+                    ->whereIn('u.type_level', $typeLevel);
+            })
+            ->get();
+        $users = $users->concat($usersQuery);
+
+        $xIDs = [];
+        foreach ($users as $el) {
+            $xIDs[] = $el->id_user;
+        }
+        return $xIDs;
     }
 
     public function getRegionNamesAndDuplicates($duplicates)

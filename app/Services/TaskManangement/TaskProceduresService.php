@@ -6,18 +6,85 @@ use App\Http\Requests\TaskManagementRequests\GroupRequest;
 use App\Http\Requests\TaskManagementRequests\TaskRequest;
 use App\Models\client_invoice;
 use App\Models\clients;
+use App\Models\notifiaction;
 use App\Models\statuse_task_fraction;
 use App\Models\task;
 use App\Models\taskStatus;
 use App\Models\tsks_group;
+use App\Notifications\SendNotification;
 use App\Services\JsonResponeService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Notification;
 
 class TaskProceduresService extends JsonResponeService
 {
-    
+    private $MyQueriesService;
+
+    public function __construct(queriesService $MyQueriesService)
+    {
+        $this->MyQueriesService = $MyQueriesService;
+    }
+
+    public function handleNotificationForTaskProcedures($message, $type, $to_user, $invoice_id, $client_id)
+    {
+        $userToken = DB::table('user_token')->where('fkuser', $to_user)
+            ->where('token', '!=', null)
+            ->first();
+        $communication = DB::table('client_communication')
+            ->where('fk_client', $client_id)
+            ->where('id_invoice', $invoice_id)
+            ->first();
+        Notification::send(
+            null,
+            new SendNotification(
+                'مهمة',
+                '/id_client =' . $client_id . '/id_invoice=' . $invoice_id .
+                    '/id_communication=' . ($communication != null ? $communication->id_communication : 'null'),
+                $message,
+                [($userToken != null ? $userToken->token : 'null')]
+            )
+        );
+
+        notifiaction::create([
+            'message' => $message,
+            'type_notify' => $type,
+            'to_user' => $to_user,
+            'isread' => 0,
+            'data' => $client_id . '/' . $invoice_id .
+                '/' . ($communication != null ? $communication->id_communication : 'null'),
+            'from_user' => 0,
+            'dateNotify' => Carbon::now('Asia/Riyadh')
+        ]);
+    }
+
+    public function handleNotificationForTaskManual($message, $type, $to_user)
+    {
+        $userToken = DB::table('user_token')->where('fkuser', $to_user)
+            ->where('token', '!=', null)
+            ->first();
+
+        Notification::send(
+            null,
+            new SendNotification(
+                'مهمة',
+                'Tsk',
+                $message,
+                [($userToken != null ? $userToken->token : 'null')]
+            )
+        );
+
+        notifiaction::create([
+            'message' => $message,
+            'type_notify' => $type,
+            'to_user' => $to_user,
+            'isread' => 0,
+            'data' => 'Tsk',
+            'from_user' => 0,
+            'dateNotify' => Carbon::now('Asia/Riyadh')
+        ]);
+    }
+
     public function addTaskStatus($task)
     {
         $taskStatuse = taskStatus::where('name', 'Open')->first();
@@ -54,6 +121,16 @@ class TaskProceduresService extends JsonResponeService
                 $task->save();
 
                 !empty($task) ? $this->addTaskStatus($task) : null;
+                $users = $this->MyQueriesService->departmentSupervisorsToTheRequiredLevelForTaskProcedures(2);
+                foreach ($users as $userID) {
+                    $this->handleNotificationForTaskProcedures(
+                        $message = $task->title,
+                        $type = 'task',
+                        $to_user = $userID,
+                        $invoice_id = $idInvoice,
+                        $client_id = $id_clients
+                    );
+                }
             } else {
                 $task = null;
             }
@@ -93,6 +170,16 @@ class TaskProceduresService extends JsonResponeService
                 $task->save();
 
                 !empty($task) ? $this->addTaskStatus($task) : null;
+                $users = $this->MyQueriesService->departmentSupervisorsToTheRequiredLevelForTaskProcedures(4);
+                foreach ($users as $userID) {
+                    $this->handleNotificationForTaskProcedures(
+                        $message = $task->title,
+                        $type = 'task',
+                        $to_user = $userID,
+                        $invoice_id = $idInvoice,
+                        $client_id = $client->id_clients
+                    );
+                }
             } else {
                 $task = null;
             }
