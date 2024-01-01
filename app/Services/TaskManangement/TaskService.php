@@ -108,7 +108,7 @@ class TaskService extends JsonResponeService
             $task->description = $request->description;
             $task->invoice_id = $request->invoice_id;
             $task->group_id = $request->group_id;
-            $task->start_date = $request->input('start_date') ?? Carbon::now();
+            $task->start_date = $request->input('start_date') ?? Carbon::now('Asia/Riyadh');
             $task->deadline = $request->deadline;
 
             // To calucate the hours from deadline
@@ -117,7 +117,7 @@ class TaskService extends JsonResponeService
             $task->hours = $resultOfHouresWithoutFriday;
 
             $task->recurring = $request->recurring;
-            $task->dateTimeCreated = Carbon::now();
+            $task->dateTimeCreated = Carbon::now('Asia/Riyadh');
             $task->recurring_type = $request->recurring_type;
             $task->Number_Of_Recurring = $request->Number_Of_Recurring;
             $task->save();
@@ -147,9 +147,22 @@ class TaskService extends JsonResponeService
                     $task_collaborator->save();
                 }
             }
+            $comment = null;
+            if ($request->public_Type == 'linkComment') {
+                $comment = new task_comment();
+                $comment->CommentText = ($request->description ? $request->description : 'no description');
+                $comment->comment_date = Carbon::now('Asia/Riyadh');
+                $comment->task_id = $task->id;
+                $comment->commented_by = $request->id_user;
+                $comment->save();
+            }
 
             DB::commit();
-            return $task;
+
+            return  $data = [
+                "task" => $task,
+                "commentID" => $comment->id // Add the comment object to the response
+            ];
         } catch (\Throwable $th) {
             throw $th;
             DB::rollBack();
@@ -192,7 +205,7 @@ class TaskService extends JsonResponeService
             $task->description = $request->description;
             $task->invoice_id = $request->invoice_id;
             $task->group_id = $request->group_id;
-            $task->start_date = $request->input('start_date') ;
+            $task->start_date = $request->input('start_date');
             $task->deadline = $request->deadline;
 
             // To update the hours from deadline
@@ -278,11 +291,11 @@ class TaskService extends JsonResponeService
             DB::beginTransaction();
             $task = task::find($id);
             if ($request->task_statuse_id == 4) {
-                $task->actual_delivery_date = Carbon::now();
+                $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
                 $task->save();
             }
             if ($request->task_statuse_id == 8) {
-                $task->recive_date = Carbon::now();
+                $task->recive_date = Carbon::now('Asia/Riyadh');
                 $task->save();
             }
             $updatedData = DB::table('statuse_task_fraction')
@@ -410,7 +423,7 @@ class TaskService extends JsonResponeService
         $task = task::find($id);
         $comment = new task_comment();
         $comment->CommentText = $request->CommentText;
-        $comment->comment_date = Carbon::now();
+        $comment->comment_date = Carbon::now('Asia/Riyadh');
         $comment->commented_by = $request->id_user;
         $comment->task_id = $task->id;
         $comment->save();
@@ -433,3 +446,6 @@ class TaskService extends JsonResponeService
         return tsks_group::select('id', 'groupName')->get();
     }
 }
+
+
+

@@ -247,4 +247,9 @@ class task extends Model
         return $this->belongsTo(client_invoice::class, 'invoice_id', 'id_invoice')
             ->select('id_invoice', 'stateclient');
     }
+
+    public function comments()
+    {
+        
+    }
 }

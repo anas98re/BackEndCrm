@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class TaskProceduresService extends JsonResponeService
 {
+    
     public function addTaskStatus($task)
     {
         $taskStatuse = taskStatus::where('name', 'Open')->first();
