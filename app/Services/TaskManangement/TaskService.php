@@ -72,7 +72,8 @@ class TaskService extends JsonResponeService
                             $this->MyService->handleNotificationForTaskManual(
                                 $message = $request->title,
                                 $type ='task',
-                                $to_user = $value
+                                $to_user = $value,
+                                $from_user = $request->id_user
                             );
                             break;
                         case 'assigend_department_to':
@@ -95,7 +96,8 @@ class TaskService extends JsonResponeService
                                 $this->MyService->handleNotificationForTaskManual(
                                     $message = $request->title,
                                     $type = 'task',
-                                    $to_user = $userID
+                                    $to_user = $userID,
+                                    $from_user = $request->id_user
                                 );
                             }
                             break;
@@ -119,7 +121,8 @@ class TaskService extends JsonResponeService
                                 $this->MyService->handleNotificationForTaskManual(
                                     $message = $request->title,
                                     $type = 'task',
-                                    $to_user = $userID
+                                    $to_user = $userID,
+                                    $from_user = $request->id_user
                                 );
                             }
                             break;
@@ -186,7 +189,7 @@ class TaskService extends JsonResponeService
 
             return  $data = [
                 "task" => $task,
-                "commentID" => $comment->id // Add the comment object to the response
+                "commentID" => ($comment != null ? $comment->id : 'null') // Add the comment object to the response
             ];
         } catch (\Throwable $th) {
             throw $th;

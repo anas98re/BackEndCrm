@@ -58,7 +58,7 @@ class TaskProceduresService extends JsonResponeService
         ]);
     }
 
-    public function handleNotificationForTaskManual($message, $type, $to_user)
+    public function handleNotificationForTaskManual($message, $type, $to_user, $from_user)
     {
         $userToken = DB::table('user_token')->where('fkuser', $to_user)
             ->where('token', '!=', null)
@@ -80,7 +80,7 @@ class TaskProceduresService extends JsonResponeService
             'to_user' => $to_user,
             'isread' => 0,
             'data' => 'Tsk',
-            'from_user' => 0,
+            'from_user' => $from_user,
             'dateNotify' => Carbon::now('Asia/Riyadh')
         ]);
     }
