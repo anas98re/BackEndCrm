@@ -110,7 +110,7 @@ class queriesService extends JsonResponeService
     public function BranchSupervisorsToTheRequiredLevelForTaskProcedures($elementOfRegions)
     {
         $privgLevelUsers = DB::table('privg_level_user')
-            ->where('fk_privileg', 157)
+            ->where('fk_privileg', 158)
             ->where('is_check', 1)
             ->get();
         $typeLevel = [];
@@ -136,7 +136,7 @@ class queriesService extends JsonResponeService
     public function departmentSupervisorsToTheRequiredLevelForTaskProcedures($elementOfDepartments)
     {
         $privgLevelUsers = DB::table('privg_level_user')
-            ->where('fk_privileg', 157)
+            ->where('fk_privileg', 158)
             ->where('is_check', 1)
             ->get();
         $typeLevel = [];
