@@ -123,6 +123,10 @@ class queriesService extends JsonResponeService
                 $query->where('u.fk_regoin', $elementOfRegions)
                     ->whereIn('u.type_level', $typeLevel);
             })
+            ->orWhere(function ($query) use ($typeLevel) {
+                $query->where('u.fk_regoin', 14)
+                    ->whereIn('u.type_level', $typeLevel);
+            })
             ->get();
         $users = $users->concat($usersQuery);
 
@@ -135,18 +139,41 @@ class queriesService extends JsonResponeService
 
     public function departmentSupervisorsToTheRequiredLevelForTaskProcedures($elementOfDepartments)
     {
+        $typeLevel = [];
+        $typeLevel2 = [];
+        $department = [];
+
         $privgLevelUsers = DB::table('privg_level_user')
             ->where('fk_privileg', 158)
             ->where('is_check', 1)
             ->get();
-        $typeLevel = [];
         foreach ($privgLevelUsers as $level) {
             $typeLevel[] = $level->fk_level;
         }
+
+        $privgLevelUsersForDepartment = DB::table('privg_level_user')
+            ->where('fk_privileg', 176)
+            ->where('is_check', 1)
+            ->get();
+        foreach ($privgLevelUsersForDepartment as $level) {
+            $typeLevel2[] = $level->fk_level;
+        }
+
+        $departmentsUsers = DB::table('users')
+            ->whereIn('type_level', $typeLevel2)->get();
+        foreach ($departmentsUsers as $departmentsUsers) {
+            $department[] = $departmentsUsers->type_administration;
+        }
+        $departments = array_unique($department);
+
         $users = collect();
         $usersQuery = DB::table('users as u')
             ->where(function ($query) use ($elementOfDepartments, $typeLevel) {
                 $query->where('u.type_administration', $elementOfDepartments)
+                    ->whereIn('u.type_level', $typeLevel);
+            })
+            ->orWhere(function ($query) use ($typeLevel, $departments) {
+                $query->whereIn('u.type_administration', $departments)
                     ->whereIn('u.type_level', $typeLevel);
             })
             ->get();

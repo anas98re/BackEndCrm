@@ -58,24 +58,44 @@ class TaskProceduresService extends JsonResponeService
         ]);
     }
 
-    public function handleNotificationForTaskManual($message, $type, $to_user, $from_user)
-    {
+    public function handleNotificationForTaskManual(
+        $message,
+        $type,
+        $to_user,
+        $from_user,
+        $from_Nameuser,
+        $from_department,
+        $from_region,
+        $userTo_Value,
+        $departmentTo_Value,
+        $regionTo_Value,
+        $start_Date
+    ) {
         $userToken = DB::table('user_token')->where('fkuser', $to_user)
             ->where('token', '!=', null)
             ->first();
-
+        $fromWhat = (
+            $from_Nameuser ? $from_Nameuser : ($from_department ? $from_department : $from_region)
+        );
+        $toWhat = (
+            $userTo_Value ? $userTo_Value : ($departmentTo_Value ? $departmentTo_Value : $regionTo_Value)
+        );
+        $message = 'مهمة من ( ? ) الى ( ! ) ، تاريخ البدء % ';
+        $messageDescription = str_replace('?', $fromWhat, $message);
+        $fullMessage1 = str_replace('!', $toWhat, $messageDescription);
+        $fullMessage = str_replace('%', $start_Date, $fullMessage1);
         Notification::send(
             null,
             new SendNotification(
                 'مهمة',
                 'Tsk',
-                $message,
+                $fullMessage,
                 [($userToken != null ? $userToken->token : 'null')]
             )
         );
 
         notifiaction::create([
-            'message' => $message,
+            'message' => $fullMessage,
             'type_notify' => $type,
             'to_user' => $to_user,
             'isread' => 0,

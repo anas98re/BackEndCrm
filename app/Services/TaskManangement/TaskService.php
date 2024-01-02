@@ -5,6 +5,8 @@ namespace App\Services\TaskManangement;
 use App\Http\Requests\Registeration\RegisterationRequest;
 use App\Http\Requests\TaskManagementRequests\TaskRequest;
 use App\Models\attachment;
+use App\Models\managements;
+use App\Models\regoin;
 use App\Models\statuse_task_fraction;
 use App\Models\task;
 use App\Models\task_collaborator;
@@ -51,53 +53,88 @@ class TaskService extends JsonResponeService
                     $request->all(),
                     array_flip(['assigned_to', 'assigend_department_to', 'assigend_region_to'])
                 );
-
+                $userValue = null;
+                $departmentValue  = null;
+                $regionValue  = null;
+                $userToValue = null;
+                $departmentToValue = null;
+                $regionToValue = null;
+                $startDate = $request->input('start_date') ?? Carbon::now('Asia/Riyadh');
                 foreach ($currentRequestFromThese as $key => $value) {
                     switch ($key) {
                         case 'assigned_to':
                             switch ($request->assignment_type_from) {
                                 case 'user':
                                     $task->assigned_by = $request->id_user;
+                                    $userValue = users::where('id_user', $request->id_user)
+                                        ->first()->nameUser;
                                     break;
                                 case 'department':
                                     $currentData = users::where('id_user', $request->id_user)->first();
                                     $task->assigend_department_from = $currentData->type_administration;
+                                    $departmentValue = managements::where('idmange', $currentData->type_administration)
+                                        ->first()->name_mange;
                                     break;
                                 case 'region':
                                     $currentData = users::where('id_user', $request->id_user)->first();
                                     $task->assigend_region_from = $currentData->fk_regoin;
+                                    $regionValue = regoin::where('id_regoin', $currentData->fk_regoin)
+                                        ->first()->name_regoin;
                                     break;
                             }
                             $task->assigned_to = $value;
+                            $userToValue = users::where('id_user', $value)
+                                ->first()->nameUser;
                             $this->MyService->handleNotificationForTaskManual(
                                 $message = $request->title,
-                                $type ='task',
+                                $type = 'task',
                                 $to_user = $value,
-                                $from_user = $request->id_user
+                                $from_user = $request->id_user,
+                                $from_Nameuser = $userValue,
+                                $from_department = $departmentValue,
+                                $from_region = $regionValue,
+                                $userTo_Value = $userToValue,
+                                $departmentTo_Value = $departmentToValue,
+                                $regionTo_Value = $userToValue,
+                                $start_Date = $startDate
                             );
                             break;
                         case 'assigend_department_to':
                             switch ($request->assignment_type_from) {
                                 case 'user':
                                     $task->assigned_by = $request->id_user;
+                                    $userValue = users::where('id_user', $request->id_user)->first()->nameUser;
                                     break;
                                 case 'department':
                                     $currentData = users::where('id_user', $request->id_user)->first();
                                     $task->assigend_department_from = $currentData->type_administration;
+                                    $departmentValue = managements::where('idmange', $currentData->type_administration)
+                                        ->first()->name_mange;
                                     break;
                                 case 'region':
                                     $currentData = users::where('id_user', $request->id_user)->first();
                                     $task->assigend_region_from = $currentData->fk_regoin;
+                                    $regionValue = regoin::where('id_regoin', $currentData->fk_regoin)
+                                        ->first()->name_regoin;
                                     break;
                             }
                             $task->assigend_department_to = $value;
+                            $departmentToValue = managements::where('idmange', $value)
+                                ->first()->name_mange;
                             $users = $this->queriesService->departmentSupervisorsToTheRequiredLevelForTaskProcedures($value);
                             foreach ($users as $userID) {
                                 $this->MyService->handleNotificationForTaskManual(
                                     $message = $request->title,
                                     $type = 'task',
                                     $to_user = $userID,
-                                    $from_user = $request->id_user
+                                    $from_user = $request->id_user,
+                                    $from_Nameuser = $userValue,
+                                    $from_department = $departmentValue,
+                                    $from_region = $regionValue,
+                                    $userTo_Value = $userToValue,
+                                    $departmentTo_Value = $departmentToValue,
+                                    $regionTo_Value = $regionToValue,
+                                    $start_Date = $startDate
                                 );
                             }
                             break;
@@ -105,24 +142,38 @@ class TaskService extends JsonResponeService
                             switch ($request->assignment_type_from) {
                                 case 'user':
                                     $task->assigned_by = $request->id_user;
+                                    $userValue = users::where('id_user', $request->id_user)->first()->nameUser;
                                     break;
                                 case 'department':
                                     $currentData = users::where('id_user', $request->id_user)->first();
                                     $task->assigend_department_from = $currentData->type_administration;
+                                    $departmentValue = managements::where('idmange', $currentData->type_administration)
+                                        ->first()->name_mange;
                                     break;
                                 case 'region':
                                     $currentData = users::where('id_user', $request->id_user)->first();
                                     $task->assigend_region_from = $currentData->fk_regoin;
+                                    $regionValue = regoin::where('id_regoin', $currentData->fk_regoin)
+                                        ->first()->name_regoin;
                                     break;
                             }
                             $task->assigend_region_to = $value;
+                            $regionToValue = regoin::where('id_regoin', $value)
+                                ->first()->name_regoin;
                             $users = $this->queriesService->BranchSupervisorsToTheRequiredLevelForTaskProcedures($value);
                             foreach ($users as $userID) {
                                 $this->MyService->handleNotificationForTaskManual(
                                     $message = $request->title,
                                     $type = 'task',
                                     $to_user = $userID,
-                                    $from_user = $request->id_user
+                                    $from_user = $request->id_user,
+                                    $from_Nameuser = $userValue,
+                                    $from_department = $departmentValue,
+                                    $from_region = $regionValue,
+                                    $userTo_Value = $userToValue,
+                                    $departmentTo_Value = $departmentToValue,
+                                    $regionTo_Value = $regionToValue,
+                                    $start_Date = $startDate
                                 );
                             }
                             break;
@@ -474,6 +525,3 @@ class TaskService extends JsonResponeService
         return tsks_group::select('id', 'groupName')->get();
     }
 }
-
-
-
