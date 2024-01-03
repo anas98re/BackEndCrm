@@ -9,7 +9,7 @@ class privilageReport extends Model
 {
     use HasFactory;
 
-    protected $table = 'Privilages_report';
+    protected $table = 'privilages_report';
 
     protected $fillable = [
         'privilage_name',
