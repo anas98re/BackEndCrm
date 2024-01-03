@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\privg_level_user;
 use App\Http\Requests\Storeprivg_level_userRequest;
 use App\Http\Requests\Updateprivg_level_userRequest;
+use App\Mail\sendupdatePermissionsReportToEmail;
 use App\Models\level;
 use App\Models\privilageReport;
 use App\Models\privileges;
@@ -12,6 +13,7 @@ use App\Models\users;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class PrivgLevelUserController extends Controller
 {
@@ -56,6 +58,24 @@ class PrivgLevelUserController extends Controller
         $privilageReport->save();
 
         return $this->sendResponse($updatedData, 'Updated success');
+    }
+
+    public function sendupdatePermissionsReportToEmail(Request $request)
+    {
+        $today = Carbon::today()->toDateString();
+        $privilageReport = privilageReport::whereDate('edit_date', $today)->get();
+        $Changes = [];
+        $level_name = [];
+        $i = 0;
+        foreach ($privilageReport as $el) {
+            $i  = $i + 1;
+            $Changes[] = $el->changes_data;
+            $level_name = $el->level_name;
+            $message = "1: " . "تم تعديل صلاحية :".$level_name."\n\n"
+                . implode("\n\n".$i . ": تم تعديل صلاحية :".$level_name."\n\n", $Changes);
+        }
+
+        Mail::to($request->email)->send(new sendupdatePermissionsReportToEmail($message));
     }
 
     public function insertPrivelgeToAllLevel(Request $request)

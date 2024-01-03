@@ -70,6 +70,7 @@ Route::post('addEmailFromAdmin',[RegisterController::class,'addEmailFromAdmin'])
 Route::post('checkEmail',[RegisterController::class,'checkEmail']);
 Route::post('login',[RegisterController::class,'login']);
 Route::post('updatePermissions',[PrivgLevelUserController::class,'updatePermissions']);
+Route::post('sendupdatePermissionsReportToEmail',[PrivgLevelUserController::class,'sendupdatePermissionsReportToEmail']);
 
 
 Route::get('getinvoiceTask',[TaskController::class,'getinvoiceTask']);
