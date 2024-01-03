@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\privg_level_user;
 use App\Http\Requests\Storeprivg_level_userRequest;
 use App\Http\Requests\Updateprivg_level_userRequest;
+use App\Models\privilageReport;
+use App\Models\privileges;
+use App\Models\users;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -21,6 +25,30 @@ class PrivgLevelUserController extends Controller
             $updatedData[] = DB::table('privg_level_user')
                 ->where('id_privg_user', $data['id_privg_user'][$i])->first();
         }
+        // return $updatedData;
+        foreach ($updatedData as $key => $value) {
+            $id[] = $value->fk_privileg;
+            $name = privileges::where('id_privilege', $value->fk_privileg)
+                ->first()
+                ->name_privilege;
+            $onOrOff = ($value->is_check == 1 ? 'ON' : 'OFF');
+            $nameAndCheck[] = $name . '(' . $onOrOff . ')';
+        }
+        $messageNameAndCheck = implode("\n", $nameAndCheck);
+
+        $userName = null;
+        $userId = null;
+        if ($request->has('user_id')) {
+            $userName = users::where('id_user', $request->id_user)->first()->nameUser;
+            $userId = users::where('id_user', $request->id_user)->first()->id_user;
+        }
+
+        $privilageReport = new privilageReport();
+        $privilageReport->privilage_name = $messageNameAndCheck;
+        $privilageReport->edit_date = Carbon::now('Asia/Riyadh')->toDateTimeString();;
+        $privilageReport->user_update_name = $userName;
+        $privilageReport->fkuser = $userId;
+        $privilageReport->save();
 
         return $this->sendResponse($updatedData, 'Updated success');
     }
