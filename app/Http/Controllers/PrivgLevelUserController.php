@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\privg_level_user;
 use App\Http\Requests\Storeprivg_level_userRequest;
 use App\Http\Requests\Updateprivg_level_userRequest;
+use App\Models\level;
 use App\Models\privilageReport;
 use App\Models\privileges;
 use App\Models\users;
@@ -26,6 +27,7 @@ class PrivgLevelUserController extends Controller
                 ->where('id_privg_user', $data['id_privg_user'][$i])->first();
         }
         // return $updatedData;
+        $levelName = null;
         foreach ($updatedData as $key => $value) {
             $id[] = $value->fk_privileg;
             $name = privileges::where('id_privilege', $value->fk_privileg)
@@ -33,6 +35,8 @@ class PrivgLevelUserController extends Controller
                 ->name_privilege;
             $onOrOff = ($value->is_check == 1 ? 'ON' : 'OFF');
             $nameAndCheck[] = $name . '(' . $onOrOff . ')';
+            $levelName = level::where('id_level', $value->fk_level)
+                ->first()->name_level;
         }
         $messageNameAndCheck = implode("\n", $nameAndCheck);
 
@@ -44,7 +48,8 @@ class PrivgLevelUserController extends Controller
         }
 
         $privilageReport = new privilageReport();
-        $privilageReport->privilage_name = $messageNameAndCheck;
+        $privilageReport->changes_data = $messageNameAndCheck;
+        $privilageReport->level_name = $levelName;
         $privilageReport->edit_date = Carbon::now('Asia/Riyadh')->toDateTimeString();;
         $privilageReport->user_update_name = $userName;
         $privilageReport->fkuser = $userId;

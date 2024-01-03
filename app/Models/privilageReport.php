@@ -12,7 +12,8 @@ class privilageReport extends Model
     protected $table = 'privilages_report';
 
     protected $fillable = [
-        'privilage_name',
+        'changes_data',
+        'level_name',
         'edit_date',
         'user_update_name',
         'fkuser'
