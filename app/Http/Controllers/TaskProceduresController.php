@@ -8,6 +8,7 @@ use App\Http\Requests\UpdatetaskStatusRequest;
 use App\Models\client_comment;
 use App\Models\client_invoice;
 use App\Models\clients;
+use App\Models\config_table;
 use App\Models\notifiaction;
 use App\Models\regoin;
 use App\Models\statuse_task_fraction;
@@ -34,6 +35,7 @@ class TaskProceduresController extends Controller
 
     public function addTaskToApproveAdminAfterAddInvoice(Request $request)
     {
+        
         try {
             DB::beginTransaction();
 
@@ -63,7 +65,7 @@ class TaskProceduresController extends Controller
 
                 $this->MyService->handleNotificationForTaskProcedures(
                     $message = $task->title,
-                    $type ='task',
+                    $type = 'task',
                     $to_user = $assigned_to->id_user,
                     $invoice_id = $request->invoice_id,
                     $client_id = $client->id_clients
@@ -94,13 +96,13 @@ class TaskProceduresController extends Controller
             $statuse_task_fraction = DB::table('statuse_task_fraction')
                 ->where('task_id', $task->id)->first();
             if ($statuse_task_fraction->task_statuse_id == 1) {
-                $task->actual_delivery_date = Carbon::now();
+                $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
                 $task->save();
                 DB::table('statuse_task_fraction')
                     ->where('task_id', $task->id)
                     ->update([
                         'task_statuse_id' => 4,
-                        'changed_date' => Carbon::now(),
+                        'changed_date' => Carbon::now('Asia/Riyadh'),
                         'changed_by' => $request->iduser_approve
                     ]);
                 $this->MyService->addTaskAfterApproveInvoice(
@@ -129,13 +131,13 @@ class TaskProceduresController extends Controller
             $statuse_task_fraction = DB::table('statuse_task_fraction')
                 ->where('task_id', $task->id)->first();
             if ($statuse_task_fraction->task_statuse_id == 1) {
-                $task->actual_delivery_date = Carbon::now();
+                $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
                 $task->save();
                 DB::table('statuse_task_fraction')
                     ->where('task_id', $task->id)
                     ->update([
                         'task_statuse_id' => 4,
-                        'changed_date' => Carbon::now(),
+                        'changed_date' => Carbon::now('Asia/Riyadh'),
                         'changed_by' => $request->iduser_updateed
                     ]);
                 $this->MyService->afterCommunicateWithClient(
@@ -160,17 +162,26 @@ class TaskProceduresController extends Controller
             DB::beginTransaction();
             $client_id = DB::table('client_invoice')->where('id_invoice', $request->idInvoice)
                 ->first();
+
             $welcomed_user_id = DB::table('client_communication')
                 ->where('fk_client', $client_id->fk_idClient)
                 ->where('type_communcation', 'ترحيب')
                 ->first();
+
             $existingTask = Task::where('invoice_id', $request->idInvoice)
                 ->where('client_id', $client_id->fk_idClient)
                 ->where('public_Type', 'com_install_1')
                 ->first();
+
+            $time = config_table::where('name_config', 'period_commincation2')
+                ->first()->value_config;
+            $carbonDatetime = Carbon::parse(Carbon::now('Asia/Riyadh'))->addDays($time);
+            $newDatetime = $carbonDatetime->toDateTimeString();
+
             $client = clients::where('id_clients', $client_id->fk_idClient)->first();
             $message = 'عميل مشترك ( ? ) يحتاج لتواصل الجودة الأول له';
             $messageDescription = str_replace('?', $client->name_enterprise, $message);
+
             if (!$existingTask) {
                 $task = new task();
                 $task->title = 'تواصل جودة اول';
@@ -182,12 +193,13 @@ class TaskProceduresController extends Controller
                 $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 3;
                 $task->assigned_to  = $welcomed_user_id->fk_user;
+                $task->start_date  = $newDatetime;
                 $task->save();
 
                 !empty($task) ? $this->MyService->addTaskStatus($task) : null;
                 $this->MyService->handleNotificationForTaskProcedures(
                     $message = $task->title,
-                    $type ='task',
+                    $type = 'task',
                     $to_user = $welcomed_user_id->fk_user,
                     $invoice_id = $request->idInvoice,
                     $client_id = $client_id->fk_idClient
@@ -264,13 +276,13 @@ class TaskProceduresController extends Controller
             $statuse_task_fraction = DB::table('statuse_task_fraction')
                 ->where('task_id', $task->id)->first();
             if ($statuse_task_fraction->task_statuse_id == 1) {
-                $task->actual_delivery_date = Carbon::now();
+                $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
                 $task->save();
                 DB::table('statuse_task_fraction')
                     ->where('task_id', $task->id)
                     ->update([
                         'task_statuse_id' => 4,
-                        'changed_date' => Carbon::now(),
+                        'changed_date' => Carbon::now('Asia/Riyadh'),
                         'changed_by' => $request->iduser_FApprove
                     ]);
             } else {
@@ -345,13 +357,13 @@ class TaskProceduresController extends Controller
             $statuse_task_fraction = DB::table('statuse_task_fraction')
                 ->where('task_id', $task->id)->first();
             if ($statuse_task_fraction->task_statuse_id == 1) {
-                $task->actual_delivery_date = Carbon::now();
+                $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
                 $task->save();
                 DB::table('statuse_task_fraction')
                     ->where('task_id', $task->id)
                     ->update([
                         'task_statuse_id' => 4,
-                        'changed_date' => Carbon::now(),
+                        'changed_date' => Carbon::now('Asia/Riyadh'),
                         'changed_by' => $request->iduser_FApprove
                     ]);
             } else {
@@ -376,14 +388,14 @@ class TaskProceduresController extends Controller
             $statuse_task_fraction = DB::table('statuse_task_fraction')
                 ->where('task_id', $task->id)->first();
             if ($statuse_task_fraction->task_statuse_id == 1) {
-                $task->actual_delivery_date = Carbon::now();
+                $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
                 $task->save();
 
                 DB::table('statuse_task_fraction')
                     ->where('task_id', $task->id)
                     ->update([
                         'task_statuse_id' => 4,
-                        'changed_date' => Carbon::now(),
+                        'changed_date' => Carbon::now('Asia/Riyadh'),
                         'changed_by' => $request->iduser_updateed
                     ]);
             } else {
@@ -455,14 +467,14 @@ class TaskProceduresController extends Controller
             $statuse_task_fraction = DB::table('statuse_task_fraction')
                 ->where('task_id', $task->id)->first();
             if ($statuse_task_fraction->task_statuse_id == 1) {
-                $task->actual_delivery_date = Carbon::now();
+                $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
                 $task->save();
 
                 DB::table('statuse_task_fraction')
                     ->where('task_id', $task->id)
                     ->update([
                         'task_statuse_id' => 4,
-                        'changed_date' => Carbon::now(),
+                        'changed_date' => Carbon::now('Asia/Riyadh'),
                         'changed_by' => $request->iduser_updateed
                     ]);
             } else {

@@ -76,7 +76,7 @@ class PrivgLevelUserController extends Controller
 
             // Increment the last ID and use it for the new record
             $id_privilege = $lastId + 1;
-
+            
             $requestData = $request->all();
             $requestData['id_privilege'] = $id_privilege;
 

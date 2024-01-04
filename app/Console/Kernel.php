@@ -12,13 +12,13 @@ class Kernel extends ConsoleKernel
 {
     protected $commands = [
         checkClientComments::class,
-        // sendupdatePermissionsReportToEmail::class,
+        sendupdatePermissionsReportToEmail::class,
     ];
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('app:check-client-comments')->daily();
         $schedule->command('app:check-client-comments')->everyMinute();
-        // $schedule->command('app:send-update-Permissions-Report-To-Email')->everyMinute();
+        $schedule->command('app:send-update-Permissions-Report-To-Email')->everyMinute();
     }
 
     /**

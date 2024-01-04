@@ -6,6 +6,7 @@ use App\Http\Requests\TaskManagementRequests\GroupRequest;
 use App\Http\Requests\TaskManagementRequests\TaskRequest;
 use App\Models\client_invoice;
 use App\Models\clients;
+use App\Models\config_table;
 use App\Models\notifiaction;
 use App\Models\statuse_task_fraction;
 use App\Models\task;
@@ -123,10 +124,17 @@ class TaskProceduresService extends JsonResponeService
                 ->where('client_id', $id_clients)
                 ->where('public_Type', 'welcome')
                 ->first();
+
+            $time = config_table::where('name_config', 'period_commincation1')
+                ->first()->value_config;
+            $carbonDatetime = Carbon::parse(Carbon::now('Asia/Riyadh'))->addHours($time);
+            $newDatetime = $carbonDatetime->toDateTimeString();
+
             $invoice = client_invoice::where('id_invoice', $idInvoice)->first();
             $client = clients::where('id_clients', $invoice->fk_idClient)->first();
             $message = 'عميل مشترك ( ? ) يحتاج للترحيب به';
             $messageDescription = str_replace('?', $client->name_enterprise, $message);
+
             if (!$existingTask) {
                 $task = new task();
                 $task->title = 'الترحيب بالعميل';
@@ -138,6 +146,7 @@ class TaskProceduresService extends JsonResponeService
                 $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 2;
                 $task->assigend_department_to  = 2;
+                $task->start_date  = $newDatetime;
                 $task->save();
 
                 !empty($task) ? $this->addTaskStatus($task) : null;
@@ -172,6 +181,11 @@ class TaskProceduresService extends JsonResponeService
                 ->where('public_Type', 'com_install_2')
                 ->first();
 
+            $time = config_table::where('name_config', 'install_second')
+                ->first()->value_config;
+            $carbonDatetime = Carbon::parse(Carbon::now('Asia/Riyadh'))->addDays($time);
+            $newDatetime = $carbonDatetime->toDateTimeString();
+
             $invoice = client_invoice::where('id_invoice', $idInvoice)->first();
             $client = clients::where('id_clients', $invoice->fk_idClient)->first();
             $message = 'عميل مشترك ( ? ) يحتاج لتواصل جودة ثاني';
@@ -187,6 +201,7 @@ class TaskProceduresService extends JsonResponeService
                 $task->public_Type = 'com_install_2';
                 $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 4;
+                $task->start_date  = $newDatetime;
                 $task->save();
 
                 !empty($task) ? $this->addTaskStatus($task) : null;

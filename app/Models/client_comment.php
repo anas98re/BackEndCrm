@@ -11,6 +11,7 @@ class client_comment extends Model
 
     protected $table = 'client_comment';
     protected $primaryKey = 'id_comment';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_comment',

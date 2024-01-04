@@ -5,6 +5,7 @@ namespace App\Services\TaskManangement;
 use App\Http\Requests\Registeration\RegisterationRequest;
 use App\Http\Requests\TaskManagementRequests\TaskRequest;
 use App\Models\attachment;
+use App\Models\client_comment;
 use App\Models\managements;
 use App\Models\regoin;
 use App\Models\statuse_task_fraction;
@@ -228,11 +229,17 @@ class TaskService extends JsonResponeService
             }
             $comment = null;
             if ($request->public_Type == 'linkComment') {
-                $comment = new task_comment();
-                $comment->CommentText = ($request->description ? $request->description : 'no description');
-                $comment->comment_date = Carbon::now('Asia/Riyadh');
-                $comment->task_id = $task->id;
-                $comment->commented_by = $request->id_user;
+                $lastId = DB::table('client_comment')
+                    ->orderBy('id_comment', 'desc')
+                    ->value('id_comment');
+
+                $idComment = $lastId + 1;
+                $comment = new client_comment();
+                $comment->id_comment = $idComment;
+                $comment->content = ($request->description ? $request->description : 'no description');
+                $comment->date_comment = Carbon::now('Asia/Riyadh');
+                $comment->fk_client = ($request->client_id ? $request->client_id : null);;
+                $comment->fk_user = $request->id_user;
                 $comment->save();
             }
 
@@ -468,7 +475,7 @@ class TaskService extends JsonResponeService
     {
         // User::paginate(15);
         // $tasks = task::paginate(2);
-        $tasks = task::all();
+        $tasks = task::orderBy('created_at', 'desc')->get();
         if (!$tasks) {
             return false;
         }
