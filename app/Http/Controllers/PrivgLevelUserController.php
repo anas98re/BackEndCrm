@@ -64,18 +64,7 @@ class PrivgLevelUserController extends Controller
     {
         $today = Carbon::today()->toDateString();
         $privilageReport = privilageReport::whereDate('edit_date', $today)->get();
-        $Changes = [];
-        $level_name = [];
-        $i = 0;
-        foreach ($privilageReport as $el) {
-            $i  = $i + 1;
-            $Changes[] = $el->changes_data;
-            $level_name = $el->level_name;
-            $message = "1: " . "تم تعديل صلاحية :".$level_name."\n\n"
-                . implode("\n\n".$i . ": تم تعديل صلاحية :".$level_name."\n\n", $Changes);
-        }
-
-        Mail::to($request->email)->send(new sendupdatePermissionsReportToEmail($message));
+        Mail::to($request->email)->send(new sendupdatePermissionsReportToEmail($privilageReport));
     }
 
     public function insertPrivelgeToAllLevel(Request $request)
