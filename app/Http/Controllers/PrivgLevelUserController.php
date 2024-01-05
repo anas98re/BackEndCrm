@@ -44,9 +44,9 @@ class PrivgLevelUserController extends Controller
 
         $userName = null;
         $userId = null;
-        if ($request->has('user_id')) {
-            $userName = users::where('id_user', $request->id_user)->first()->nameUser;
-            $userId = users::where('id_user', $request->id_user)->first()->id_user;
+        if ($request->has('fk_user')) {
+            $userName = users::where('id_user', $request->fk_user)->first()->nameUser;
+            $userId = users::where('id_user', $request->fk_user)->first()->id_user;
         }
 
         $privilageReport = new privilageReport();
@@ -76,7 +76,7 @@ class PrivgLevelUserController extends Controller
 
             // Increment the last ID and use it for the new record
             $id_privilege = $lastId + 1;
-            
+
             $requestData = $request->all();
             $requestData['id_privilege'] = $id_privilege;
 
