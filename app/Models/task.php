@@ -188,6 +188,9 @@ class task extends Model
             'start_date_from' => ['start_date', '>='],
             'start_date_to' => ['start_date', '<='],
             'name_enterprise' => ['clients.name_enterprise', '='],
+            'mytasks' => ['assigned_by_or_assigned_to', '='],
+            'mydepartment' => ['assigend_department_from', '='],
+            'mybranch' => ['assigend_region_from_or_assigend_region_to', '='],
         ];
 
         // $searchTerm = $request->input('name_enterprise');
@@ -207,11 +210,37 @@ class task extends Model
                     $tasks->whereDate($column, $operator, $value);
                 } elseif ($key === 'start_date_to') {
                     $tasks->whereDate($column, $operator, $value);
+                } elseif ($key === 'mytasks') {
+                    $tasks->where(function ($query) use ($value) {
+                        $query->where('assigned_by', $value)
+                            ->orWhere('assigned_to', $value);
+                    });
+                } elseif ($key === 'mydepartment') {
+                    $tasks->where(function ($query) use ($value) {
+                        $users = Users::where('type_administration', $value)->get();
+                        $userRegionTask = $users->pluck('id_user')->toArray();
+
+                        $query->where('assigend_department_from', $value)
+                            ->orWhere('assigend_department_to', $value)
+                            ->orwhereIn('assigned_by', $userRegionTask)
+                            ->orWhereIn('assigned_to', $userRegionTask);
+                    });
+                } elseif ($key === 'mybranch') {
+                    $tasks->where(function ($query) use ($value) {
+                        $users = Users::where('fk_regoin', $value)->get();
+                        $userRegionTask = $users->pluck('id_user')->toArray();
+
+                        $query->where('assigend_region_from', $value)
+                            ->orWhere('assigend_region_to', $value)
+                            ->orwhereIn('assigned_by', $userRegionTask)
+                            ->orWhereIn('assigned_to', $userRegionTask);
+                    });
                 } else {
                     $tasks->where($column, $operator, $value);
                 }
             }
         }
+
 
         $tasks = $tasks->get();
 
@@ -250,53 +279,5 @@ class task extends Model
 
     public function comments()
     {
-
     }
 }
-
-
-
-// $filters = [
-//     'status_name' => ['task_statuses.name', '='],
-//     'id' => ['tasks.id', '='],
-//     'assigend_department_from' => ['assigend_department_from', '='],
-//     'assigend_department_to' => ['assigend_department_to', '='],
-//     'assigend_region_from' => ['assigend_region_from', '='],
-//     'assigend_region_to' => ['assigend_region_to', '='],
-//     'assigned_by' => ['assigned_by', '='],
-//     'assigned_to' => ['assigned_to', '='],
-//     'created_by' => ['created_by', '='],
-//     'date_time_created' => ['dateTimeCreated', '='],
-//     'start_date_from' => ['start_date', '>='],
-//     'start_date_to' => ['start_date', '<='],
-//     'name_enterprise' => ['clients.name_enterprise', '='],
-//     'mytasks' => ['mytasks', 'assigned_by_or_assigned_to'],
-// ];
-
-// // $searchTerm = $request->input('name_enterprise');
-// // if (!empty($searchTerm)) {
-// //     $tasks->orderByRaw("SOUNDEX(clients.name_enterprise) = SOUNDEX('$searchTerm') desc");
-// // }
-
-// foreach ($filters as $key => $conditions) {
-//     if ($request->has($key) && !empty($request->input($key))) {
-//         $column = $conditions[0];
-//         $operator = $conditions[1];
-//         $value = $request->input($key);
-
-//         if ($key === 'status_name') {
-//             $tasks->where($column, $operator, $value);
-//         } elseif ($key === 'start_date_from') {
-//             $tasks->whereDate($column, $operator, $value);
-//         } elseif ($key === 'start_date_to') {
-//             $tasks->whereDate($column, $operator, $value);
-//         } elseif ($key === 'mytasks') {
-//             $tasks->where(function ($query) use ($conditions, $value) {
-//                 $query->where($conditions[0], $value)
-//                     ->orWhere($conditions[1], $value);
-//             });
-//         } else {
-//             $tasks->where($column, $operator, $value);
-//         }
-//     }
-// }
