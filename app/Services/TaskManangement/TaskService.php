@@ -247,7 +247,7 @@ class TaskService extends JsonResponeService
 
             return  $data = [
                 "task" => $task,
-                "commentID" => ($comment != null ? $comment->id : 'null') // Add the comment object to the response
+                "commentID" => ($comment != null ? $comment->id_comment : 'null') // Add the comment object to the response
             ];
         } catch (\Throwable $th) {
             throw $th;
