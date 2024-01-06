@@ -35,7 +35,7 @@ class TaskProceduresController extends Controller
 
     public function addTaskToApproveAdminAfterAddInvoice(Request $request)
     {
-        
+
         try {
             DB::beginTransaction();
 
@@ -59,6 +59,7 @@ class TaskProceduresController extends Controller
                 $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 2;
                 $task->assigned_to  = $assigned_to->id_user;
+                $task->start_date = Carbon::now('Asia/Riyadh');
                 $task->save();
 
                 !empty($task) ? $this->MyService->addTaskStatus($task) : null;
@@ -140,11 +141,11 @@ class TaskProceduresController extends Controller
                         'changed_date' => Carbon::now('Asia/Riyadh'),
                         'changed_by' => $request->iduser_updateed
                     ]);
-                $this->MyService->afterCommunicateWithClient(
-                    $request->idInvoice,
-                    $request->id_communication,
-                    $request->iduser_updateed
-                );
+                // $this->MyService->afterCommunicateWithClient(
+                //     $request->idInvoice,
+                //     $request->id_communication,
+                //     $request->iduser_updateed
+                // );
             } else {
                 return;
             }
@@ -192,7 +193,7 @@ class TaskProceduresController extends Controller
                 $task->public_Type = 'com_install_1';
                 $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 3;
-                $task->assigned_to  = $welcomed_user_id->fk_user;
+                $task->assigned_to  = ($welcomed_user_id != null ? $welcomed_user_id->fk_user : null);
                 $task->start_date  = $newDatetime;
                 $task->save();
 
@@ -210,6 +211,41 @@ class TaskProceduresController extends Controller
 
             DB::commit();
             return $task;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
+
+    public function closeTaskAfterInstallClient(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $task = task::where('id_communication', $request->id_communication)
+                ->where('public_Type', 'com_install_1')
+                ->first();
+            $statuse_task_fraction = DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)->first();
+            if ($statuse_task_fraction->task_statuse_id == 1) {
+                $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
+                $task->save();
+                DB::table('statuse_task_fraction')
+                    ->where('task_id', $task->id)
+                    ->update([
+                        'task_statuse_id' => 4,
+                        'changed_date' => Carbon::now('Asia/Riyadh'),
+                        'changed_by' => $request->iduser_updateed
+                    ]);
+                $this->MyService->afterCommunicateWithClient(
+                    $request->idInvoice,
+                    $request->id_communication,
+                    $request->iduser_updateed
+                );
+            } else {
+                return;
+            }
+            DB::commit();
+            return true;
         } catch (\Throwable $th) {
             throw $th;
             DB::rollBack();
@@ -241,6 +277,7 @@ class TaskProceduresController extends Controller
                 $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 2;
                 $task->assigend_department_to  = 5;
+                $task->start_date = Carbon::now('Asia/Riyadh');
                 $task->save();
 
                 !empty($task) ? $this->MyService->addTaskStatus($task) : null;
@@ -321,6 +358,7 @@ class TaskProceduresController extends Controller
                 $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 2;
                 $task->assigend_department_to  = 3;
+                $task->start_date = Carbon::now('Asia/Riyadh');
                 $task->save();
 
                 !empty($task) ? $this->MyService->addTaskStatus($task) : null;
@@ -431,6 +469,7 @@ class TaskProceduresController extends Controller
                 $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 2;
                 $task->assigend_department_to  = 5;
+                $task->start_date = Carbon::now('Asia/Riyadh');
                 $task->save();
 
                 !empty($task) ? $this->MyService->addTaskStatus($task) : null;

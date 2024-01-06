@@ -31,6 +31,7 @@ Route::post('addTaskToApproveAdminAfterAddInvoice',[TaskProceduresController::cl
 Route::post('closeTaskApproveAdminAfterAddInvoice',[TaskProceduresController::class,'closeTaskApproveAdminAfterAddInvoice']);
 Route::post('closeWelcomeTaskAfterUpdateCommunication',[TaskProceduresController::class,'closeWelcomeTaskAfterUpdateCommunication']);
 Route::post('afterInstallClient',[TaskProceduresController::class,'afterInstallClient']);
+Route::post('closeTaskAfterInstallClient',[TaskProceduresController::class,'closeTaskAfterInstallClient']);
 Route::post('addTaskApproveFinanceAfterApproveSales',[TaskProceduresController::class,'addTaskApproveFinanceAfterApproveSales']);
 Route::post('closeTaskApproveFinanceAfterApproveSales',[TaskProceduresController::class,'closeTaskApproveFinanceAfterApproveSales']);
 Route::post('addTaskAddVisitDateAfterApproveInvoice',[TaskProceduresController::class,'addTaskAddVisitDateAfterApproveInvoice']);

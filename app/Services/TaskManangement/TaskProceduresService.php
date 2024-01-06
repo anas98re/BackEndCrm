@@ -241,6 +241,7 @@ class TaskProceduresService extends JsonResponeService
         $task->main_type_task = 'ProccessAuto';
         $task->assigend_department_from  = 2;
         $task->dateTimeCreated  = Carbon::now('Asia/Riyadh');
+        $task->start_date = Carbon::now('Asia/Riyadh');
 
         $task->save();
 
