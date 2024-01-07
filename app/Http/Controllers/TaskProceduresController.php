@@ -635,6 +635,7 @@ class TaskProceduresController extends Controller
                         ->first();
                     $userToken = DB::table('user_token')->where('fkuser', $key)
                         ->where('token', '!=', null)
+                        ->latest('date_create')
                         ->first();
                     if ($IsUser14->id_regoin == 14) {
 
@@ -705,6 +706,7 @@ class TaskProceduresController extends Controller
                 foreach ($BranchSupervisors as $key => $value) {
                     $userToken = DB::table('user_token')->where('fkuser', $value->id_user)
                         ->where('token', '!=', null)
+                        ->latest('date_create')
                         ->first();
                     foreach ($duplicates as $d => $dValue) {
                         if ($value->id_regoin == $d) {
@@ -744,6 +746,7 @@ class TaskProceduresController extends Controller
                 foreach ($array_count_values_ID_USERS_For_Clients as $key => $value) {
                     $userToken = DB::table('user_token')->where('fkuser', $key)
                         ->where('token', '!=', null)
+                        ->latest('date_create') 
                         ->first();
 
                     $message3 = ' لديك ? عملاء لم يُعلّق لهم ';

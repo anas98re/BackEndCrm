@@ -16,12 +16,12 @@ class SendNotification extends Notification
     protected $data;
     protected $fcmTokens;
     // $arratoken,$data,$title,$body
-    public function __construct($title,$data,$body,$fcmTokens)
+    public function __construct($title,$body,$data,$fcmTokens)
     {
         $this->title = $title;
         $this->body = $body;
         $this->data = $data;
-        $this->fcmTokens = $fcmTokens;
+        $this->fcmTokens = [$fcmTokens];
     }
 
     public function via($notifiable)
@@ -31,10 +31,10 @@ class SendNotification extends Notification
 
     public function toFirebase($notifiable)
     {
+        info('Firebase notification: ' . json_encode($this->fcmTokens));
         return (new FirebaseMessage)
                     ->withTitle($this->title)
                     ->withBody($this->body)
-                    ->withAdditionalData($this->data)
                     ->asNotification($this->fcmTokens);
     }
 

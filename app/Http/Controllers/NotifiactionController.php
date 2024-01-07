@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\notifiaction;
 use App\Http\Requests\StorenotifiactionRequest;
 use App\Http\Requests\UpdatenotifiactionRequest;
+use App\Notifications\SendNotification;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
@@ -39,11 +41,14 @@ class NotifiactionController extends Controller
 
     public function testNotify()
     {
-        $userToken = DB::table('user_token')->where('fkuser', 408)
+        $userToken = DB::table('user_token')
+            ->where('fkuser', 408)
             ->where('token', '!=', null)
+            ->latest('date_create')
             ->first();
+            // return $userToken->token;
         notifiaction::create([
-            'message' => '$fullMessage',
+            'message' => 'Firbase',
             'type_notify' => '$type',
             'to_user' => 408,
             'isread' => 0,
@@ -51,6 +56,16 @@ class NotifiactionController extends Controller
             'from_user' => 408,
             'dateNotify' => Carbon::now('Asia/Riyadh')
         ]);
-        $this->sendFCM($userToken, [1, 2], 'hi', 'hi');
+
+        Notification::send(
+            null,
+            new SendNotification(
+                'Firbase',
+                'Tsk',
+                'data',
+                $userToken->token
+            )
+        );
+        // $this->sendFCM($userToken->token, [1, 2], 'hi', 'hi');
     }
 }

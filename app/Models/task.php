@@ -241,8 +241,7 @@ class task extends Model
             }
         }
 
-
-        $tasks = $tasks->get();
+        $tasks = $tasks->orderBy('tasks.id', 'desc')->get();
 
         return ($tasks ? $tasks : 'NotFound');
     }

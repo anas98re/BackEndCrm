@@ -31,6 +31,7 @@ class TaskProceduresService extends JsonResponeService
     {
         $userToken = DB::table('user_token')->where('fkuser', $to_user)
             ->where('token', '!=', null)
+            ->latest('date_create')
             ->first();
         $communication = DB::table('client_communication')
             ->where('fk_client', $client_id)
@@ -74,6 +75,7 @@ class TaskProceduresService extends JsonResponeService
     ) {
         $userToken = DB::table('user_token')->where('fkuser', $to_user)
             ->where('token', '!=', null)
+            ->latest('date_create') 
             ->first();
         $fromWhat = (
             $from_Nameuser ? $from_Nameuser : ($from_department ? $from_department : $from_region)
