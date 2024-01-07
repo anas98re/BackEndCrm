@@ -166,7 +166,8 @@ class TaskProceduresController extends Controller
 
             $welcomed_user_id = DB::table('client_communication')
                 ->where('fk_client', $client_id->fk_idClient)
-                ->where('type_communcation', 'ترحيب')
+                ->where('type_communcation', 'تركيب')
+                ->where('id_invoice', $request->idInvoice)
                 ->first();
 
             $existingTask = Task::where('invoice_id', $request->idInvoice)
@@ -241,66 +242,6 @@ class TaskProceduresController extends Controller
                     $request->id_communication,
                     $request->iduser_updateed
                 );
-            } else {
-                return;
-            }
-            DB::commit();
-            return true;
-        } catch (\Throwable $th) {
-            throw $th;
-            DB::rollBack();
-        }
-    }
-    public function closeTaskAddVisitDateAfterApproveInvoice(Request $request)
-    {
-        try {
-            DB::beginTransaction();
-            $task = task::where('invoice_id', $request->idInvoice)
-                ->where('public_Type', 'AddVisitDate')->first();
-            $statuse_task_fraction = DB::table('statuse_task_fraction')
-                ->where('task_id', $task->id)->first();
-            if ($statuse_task_fraction->task_statuse_id == 1) {
-                $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
-                $task->save();
-                DB::table('statuse_task_fraction')
-                    ->where('task_id', $task->id)
-                    ->update([
-                        'task_statuse_id' => 4,
-                        'changed_date' => Carbon::now('Asia/Riyadh'),
-                        'changed_by' => $request->iduser_FApprove
-                    ]);
-            } else {
-                return;
-            }
-            DB::commit();
-            return true;
-        } catch (\Throwable $th) {
-            throw $th;
-            DB::rollBack();
-        }
-    }
-
-    public function closeTaskafterCommunicateWithClient(Request $request)
-    {
-        try {
-            DB::beginTransaction();
-            $task = task::where('invoice_id', $request->idInvoice)
-                ->where('id_communication', $request->id_communication)
-                ->where('public_Type', 'com_install_2')
-                ->first();
-            $statuse_task_fraction = DB::table('statuse_task_fraction')
-                ->where('task_id', $task->id)->first();
-            if ($statuse_task_fraction->task_statuse_id == 1) {
-                $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
-                $task->save();
-
-                DB::table('statuse_task_fraction')
-                    ->where('task_id', $task->id)
-                    ->update([
-                        'task_statuse_id' => 4,
-                        'changed_date' => Carbon::now('Asia/Riyadh'),
-                        'changed_by' => $request->iduser_updateed
-                    ]);
             } else {
                 return;
             }
@@ -446,7 +387,66 @@ class TaskProceduresController extends Controller
         }
     }
 
+    public function closeTaskAddVisitDateAfterApproveInvoice(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $task = task::where('invoice_id', $request->idInvoice)
+                ->where('public_Type', 'AddVisitDate')->first();
+            $statuse_task_fraction = DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)->first();
+            if ($statuse_task_fraction->task_statuse_id == 1) {
+                $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
+                $task->save();
+                DB::table('statuse_task_fraction')
+                    ->where('task_id', $task->id)
+                    ->update([
+                        'task_statuse_id' => 4,
+                        'changed_date' => Carbon::now('Asia/Riyadh'),
+                        'changed_by' => $request->iduser_FApprove
+                    ]);
+            } else {
+                return;
+            }
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
 
+    public function closeTaskafterCommunicateWithClient(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $task = task::where('invoice_id', $request->idInvoice)
+                ->where('id_communication', $request->id_communication)
+                ->where('public_Type', 'com_install_2')
+                ->first();
+            $statuse_task_fraction = DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)->first();
+            if ($statuse_task_fraction->task_statuse_id == 1) {
+                $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
+                $task->save();
+
+                DB::table('statuse_task_fraction')
+                    ->where('task_id', $task->id)
+                    ->update([
+                        'task_statuse_id' => 4,
+                        'changed_date' => Carbon::now('Asia/Riyadh'),
+                        'changed_by' => $request->iduser_updateed
+                    ]);
+            } else {
+                return;
+            }
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
 
     public function addTaskafterAddPaymentToTheInvoiceForReviewInvoice(Request $request) // 16
     {
@@ -532,7 +532,7 @@ class TaskProceduresController extends Controller
     {
         $index = 0;
         $index1 = 0;
-        $Date = Carbon::now('Asia/Riyadh')->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
+        $Date = Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
 
         $query = $this->MyQueriesService->getClientsThatIsNoUpdateToTheLatestClientUpdatesFor5Days();
 
