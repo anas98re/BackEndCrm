@@ -2,6 +2,7 @@
 
 namespace App\Services\TaskManangement;
 
+use App\Models\users;
 use App\Services\JsonResponeService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -60,7 +61,7 @@ class queriesService extends JsonResponeService
             })
             ->where('u.is_comments_check', '=', 0)
             ->where('u.type_client', '=', 'تفاوض')
-            ->where('u.date_create', '>=', Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString()) // get date which is the first day of the previous month.
+            ->where('u.date_create', '>=', Carbon::now('Asia/Riyadh')->subMonthsNoOverflow(1)->startOfMonth()->toDateString()) // get date which is the first day of the previous month.
             ->where(function ($query) {
                 $query->where(function ($q) {
                     $q->where('u.ismarketing', '=', 1)
@@ -107,10 +108,72 @@ class queriesService extends JsonResponeService
         return $users;
     }
 
+    public function ToBothDepartmentAndRegionSupervisorsToTheRequiredLevelForTaskProcedures($value)
+    {
+        $theUser = users::where('id_user', $value)->first();
+        $userRegion = $theUser->fk_regoin;
+        $userDepartment = $theUser->type_administration;
+
+        $typeLevel = [];
+        $typeLevelForDepartment = [];
+        $department = [];
+
+        $privgLevelUsers = DB::table('privg_level_user')
+            ->where('fk_privileg', 178)
+            ->where('is_check', 1)
+            ->get();
+        foreach ($privgLevelUsers as $level) {
+            $typeLevel[] = $level->fk_level;
+        }
+
+        $privgLevelUsersForDepartment = DB::table('privg_level_user')
+            ->where('fk_privileg', 176)
+            ->where('is_check', 1)
+            ->get();
+        foreach ($privgLevelUsersForDepartment as $level) {
+            $typeLevelForDepartment[] = $level->fk_level;
+        }
+
+        $departmentsUsers = DB::table('users')
+            ->whereIn('type_level', $typeLevelForDepartment)->get();
+        foreach ($departmentsUsers as $departmentsUsers) {
+            $department[] = $departmentsUsers->type_administration;
+        }
+        $departments = array_unique($department);
+
+
+        $users = collect();
+        $usersQuery = DB::table('users as u')
+            ->where(function ($query) use ($userDepartment, $typeLevel) {
+                $query->where('u.type_administration', $userDepartment)
+                    ->whereIn('u.type_level', $typeLevel);
+            })
+            ->orWhere(function ($query) use ($typeLevel, $departments) {
+                $query->whereIn('u.type_administration', $departments)
+                    ->whereIn('u.type_level', $typeLevel);
+            })
+            ->orWhere(function ($query) use ($userRegion, $typeLevel) {
+                $query->where('u.fk_regoin', $userRegion)
+                    ->whereIn('u.type_level', $typeLevel);
+            })
+            ->orWhere(function ($query) use ($typeLevel) {
+                $query->where('u.fk_regoin', 14)
+                    ->whereIn('u.type_level', $typeLevel);
+            })
+            ->get();
+        $users = $users->concat($usersQuery);
+
+        $IDs = [];
+        foreach ($users as $el) {
+            $IDs[] = $el->id_user;
+        }
+        return $IDs;
+    }
+
     public function BranchSupervisorsToTheRequiredLevelForTaskProcedures($elementOfRegions)
     {
         $privgLevelUsers = DB::table('privg_level_user')
-            ->where('fk_privileg', 158)
+            ->where('fk_privileg', 178)
             ->where('is_check', 1)
             ->get();
         $typeLevel = [];
@@ -144,7 +207,7 @@ class queriesService extends JsonResponeService
         $department = [];
 
         $privgLevelUsers = DB::table('privg_level_user')
-            ->where('fk_privileg', 158)
+            ->where('fk_privileg', 178)
             ->where('is_check', 1)
             ->get();
         foreach ($privgLevelUsers as $level) {
@@ -203,7 +266,7 @@ class queriesService extends JsonResponeService
 
         $message = ' هناك ? عميل في ! لم يُعلّق لهم';
         $messageRegionWithPlaceholder = [];
-        $Date = Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
+        $Date = Carbon::now('Asia/Riyadh')->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
         foreach ($duplicatesWithName as $region => $count) {
             $messageWithCount = str_replace('?', $count, $message);
             $messageWithRegion = str_replace('!', $region, $messageWithCount);

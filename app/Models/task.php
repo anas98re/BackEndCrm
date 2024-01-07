@@ -217,7 +217,7 @@ class task extends Model
                     });
                 } elseif ($key === 'mydepartment') {
                     $tasks->where(function ($query) use ($value) {
-                        $users = Users::where('type_administration', $value)->get();
+                        $users = users::where('type_administration', $value)->get();
                         $userRegionTask = $users->pluck('id_user')->toArray();
 
                         $query->where('assigend_department_from', $value)
@@ -227,7 +227,7 @@ class task extends Model
                     });
                 } elseif ($key === 'mybranch') {
                     $tasks->where(function ($query) use ($value) {
-                        $users = Users::where('fk_regoin', $value)->get();
+                        $users = users::where('fk_regoin', $value)->get();
                         $userRegionTask = $users->pluck('id_user')->toArray();
 
                         $query->where('assigend_region_from', $value)

@@ -45,7 +45,7 @@ class checkClientComments extends Command
     {
         $index = 0;
         $index1 = 0;
-        $Date = Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
+        $Date = Carbon::now('Asia/Riyadh')->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
 
         $query = $this->MyQueriesService->getClientsThatIsNoUpdateToTheLatestClientUpdatesFor5Days();
 

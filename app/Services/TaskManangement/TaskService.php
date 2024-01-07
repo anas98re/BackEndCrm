@@ -86,10 +86,12 @@ class TaskService extends JsonResponeService
                             $task->assigned_to = $value;
                             $userToValue = users::where('id_user', $value)
                                 ->first()->nameUser;
+                                return $users = $this->queriesService->ToBothDepartmentAndRegionSupervisorsToTheRequiredLevelForTaskProcedures($value);
+                                foreach ($users as $userID) {
                             $this->MyService->handleNotificationForTaskManual(
                                 $message = $request->title,
                                 $type = 'task',
-                                $to_user = $value,
+                                $to_user = $userID,
                                 $from_user = $request->id_user,
                                 $from_Nameuser = $userValue,
                                 $from_department = $departmentValue,
@@ -98,7 +100,7 @@ class TaskService extends JsonResponeService
                                 $departmentTo_Value = $departmentToValue,
                                 $regionTo_Value = $userToValue,
                                 $start_Date = $startDate
-                            );
+                            );}
                             break;
                         case 'assigend_department_to':
                             switch ($request->assignment_type_from) {
