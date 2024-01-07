@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\NotifiactionController;
 use App\Http\Controllers\PrivgLevelUserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TaskController;
@@ -75,4 +76,5 @@ Route::post('sendupdatePermissionsReportToEmail',[PrivgLevelUserController::clas
 
 
 Route::get('getinvoiceTask',[TaskController::class,'getinvoiceTask']);
+Route::get('testNotify',[NotifiactionController::class,'testNotify']);
 

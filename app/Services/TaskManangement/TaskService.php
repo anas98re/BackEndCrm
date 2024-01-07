@@ -86,7 +86,7 @@ class TaskService extends JsonResponeService
                             $task->assigned_to = $value;
                             $userToValue = users::where('id_user', $value)
                                 ->first()->nameUser;
-                                return $users = $this->queriesService->ToBothDepartmentAndRegionSupervisorsToTheRequiredLevelForTaskProcedures($value);
+                                $users = $this->queriesService->ToBothDepartmentAndRegionSupervisorsToTheRequiredLevelForTaskProcedures($value);
                                 foreach ($users as $userID) {
                             $this->MyService->handleNotificationForTaskManual(
                                 $message = $request->title,
