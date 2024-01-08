@@ -220,8 +220,10 @@ class TaskProceduresController extends Controller
 
     public function closeTaskAfterInstallClient(Request $request)
     {
+        info('$id_communication in controller is: ' . json_encode($request->last_idCommuncation2));
         try {
             DB::beginTransaction();
+
             $task = task::where('id_communication', $request->id_communication)
                 ->where('public_Type', 'com_install_1')
                 ->first();
@@ -237,9 +239,11 @@ class TaskProceduresController extends Controller
                         'changed_date' => Carbon::now('Asia/Riyadh'),
                         'changed_by' => $request->iduser_updateed
                     ]);
+
                 $this->MyService->afterCommunicateWithClient(
                     $request->idInvoice,
-                    $request->id_communication,
+                    $task->client_id,
+                    $request->last_idCommuncation2,
                     $request->iduser_updateed
                 );
             } else {
@@ -648,7 +652,7 @@ class TaskProceduresController extends Controller
                                     'تعليقات العملاء',
                                     'cls',
                                     $message,
-                                    [$userToken->token]
+                                    $userToken->token
                                 )
                             );
 
@@ -680,7 +684,7 @@ class TaskProceduresController extends Controller
                                     'تعليقات العملاء',
                                     'cls',
                                     $messageRegionWithPlaceholder1,
-                                    [$userToken->token]
+                                    $userToken->token
                                 )
                             );
 
@@ -726,7 +730,7 @@ class TaskProceduresController extends Controller
                                 'تعليقات العملاء',
                                 'cls',
                                 $messageRegionWithPlaceholder2,
-                                [$userToken->token]
+                                $userToken->token
                             )
                         );
 
@@ -746,7 +750,7 @@ class TaskProceduresController extends Controller
                 foreach ($array_count_values_ID_USERS_For_Clients as $key => $value) {
                     $userToken = DB::table('user_token')->where('fkuser', $key)
                         ->where('token', '!=', null)
-                        ->latest('date_create') 
+                        ->latest('date_create')
                         ->first();
 
                     $message3 = ' لديك ? عملاء لم يُعلّق لهم ';
@@ -760,7 +764,7 @@ class TaskProceduresController extends Controller
                                 'تعليقات العملاء',
                                 'cls',
                                 $messageRegionWithPlaceholder3,
-                                [$userToken->token]
+                                $userToken->token
                             )
                         );
 

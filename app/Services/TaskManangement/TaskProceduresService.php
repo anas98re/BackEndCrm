@@ -44,7 +44,7 @@ class TaskProceduresService extends JsonResponeService
                 '/id_client =' . $client_id . '/id_invoice=' . $invoice_id .
                     '/id_communication=' . ($communication != null ? $communication->id_communication : 'null'),
                 $message,
-                [($userToken != null ? $userToken->token : 'null')]
+                $userToken->token
             )
         );
 
@@ -75,7 +75,7 @@ class TaskProceduresService extends JsonResponeService
     ) {
         $userToken = DB::table('user_token')->where('fkuser', $to_user)
             ->where('token', '!=', null)
-            ->latest('date_create') 
+            ->latest('date_create')
             ->first();
         $fromWhat = (
             $from_Nameuser ? $from_Nameuser : ($from_department ? $from_department : $from_region)
@@ -93,7 +93,7 @@ class TaskProceduresService extends JsonResponeService
                 'مهمة',
                 'Tsk',
                 $fullMessage,
-                [($userToken != null ? $userToken->token : 'null')]
+                $userToken->token
             )
         );
 
@@ -173,7 +173,7 @@ class TaskProceduresService extends JsonResponeService
         }
     }
 
-    public function afterCommunicateWithClient($idInvoice, $id_communication, $iduser_updateed)
+    public function afterCommunicateWithClient($idInvoice, $client_id, $id_communication, $iduser_updateed)
     {
         try {
             DB::beginTransaction();
@@ -198,6 +198,7 @@ class TaskProceduresService extends JsonResponeService
                 $task->title = 'تواصل جودة ثاني';
                 $task->description = $messageDescription;
                 $task->invoice_id = $idInvoice;
+                $task->client_id = $client_id;
                 $task->assigned_to = $iduser_updateed;
                 $task->id_communication = $id_communication;
                 $task->public_Type = 'com_install_2';
