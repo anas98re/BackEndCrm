@@ -44,7 +44,7 @@ class TaskProceduresService extends JsonResponeService
                 '/id_client =' . $client_id . '/id_invoice=' . $invoice_id .
                     '/id_communication=' . ($communication != null ? $communication->id_communication : 'null'),
                 $message,
-                $userToken->token
+                ($userToken != null ? $userToken->token : null)
             )
         );
 
@@ -90,10 +90,10 @@ class TaskProceduresService extends JsonResponeService
         Notification::send(
             null,
             new SendNotification(
-                'مهمة',
-                'Tsk',
+                'مهمة جديدة',
                 $fullMessage,
-                $userToken->token
+                $fullMessage,
+                ($userToken != null ? $userToken->token : null)
             )
         );
 

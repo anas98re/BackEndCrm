@@ -650,9 +650,9 @@ class TaskProceduresController extends Controller
                                 null,
                                 new SendNotification(
                                     'تعليقات العملاء',
-                                    'cls',
                                     $message,
-                                    $userToken->token
+                                    $message,
+                                    ($userToken != null ? $userToken->token : null)
                                 )
                             );
 
@@ -682,9 +682,9 @@ class TaskProceduresController extends Controller
                                 null,
                                 new SendNotification(
                                     'تعليقات العملاء',
-                                    'cls',
                                     $messageRegionWithPlaceholder1,
-                                    $userToken->token
+                                    $messageRegionWithPlaceholder1,
+                                    ($userToken != null ? $userToken->token : null)
                                 )
                             );
 
@@ -728,9 +728,9 @@ class TaskProceduresController extends Controller
                             null,
                             new SendNotification(
                                 'تعليقات العملاء',
-                                'cls',
                                 $messageRegionWithPlaceholder2,
-                                $userToken->token
+                                $messageRegionWithPlaceholder2,
+                                ($userToken != null ? $userToken->token : null)
                             )
                         );
 
@@ -762,9 +762,9 @@ class TaskProceduresController extends Controller
                             null,
                             new SendNotification(
                                 'تعليقات العملاء',
-                                'cls',
                                 $messageRegionWithPlaceholder3,
-                                $userToken->token
+                                $messageRegionWithPlaceholder3,
+                                ($userToken != null ? $userToken->token : null)
                             )
                         );
 
