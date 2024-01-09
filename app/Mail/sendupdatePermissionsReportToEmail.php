@@ -21,7 +21,8 @@ class sendupdatePermissionsReportToEmail extends Mailable
 
     public function build()
     {
-        return $this->view('updatePermissionsReport')
+        return $this->from('your-email@example.com', 'Smart CRM')
+                    ->view('updatePermissionsReport')
                     ->subject('update Permissions Report');
     }
 

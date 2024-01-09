@@ -62,8 +62,13 @@ class PrivgLevelUserController extends Controller
 
     public function sendupdatePermissionsReportToEmail(Request $request)
     {
-        $today = Carbon::today()->toDateString();
-        $privilageReport = privilageReport::whereDate('edit_date', $today)->get();
+        // $today = Carbon::today()->toDateString();
+        // $privilageReport = privilageReport::whereDate('edit_date', $today)->get();
+
+        $yesterday = Carbon::yesterday()->startOfDay();
+        $now = Carbon::now('Asia/Riyadh');
+
+        $privilageReport = privilageReport::whereBetween('edit_date', [$yesterday, $now])->get();
         Mail::to($request->email)->send(new sendupdatePermissionsReportToEmail($privilageReport));
     }
 
