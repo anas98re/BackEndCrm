@@ -18,4 +18,9 @@ class privilageReport extends Model
         'user_update_name',
         'fkuser'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(users::class, 'fkuser', 'id_user');
+    }
 }

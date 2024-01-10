@@ -68,7 +68,7 @@ class PrivgLevelUserController extends Controller
         $yesterday = Carbon::yesterday()->startOfDay();
         $now = Carbon::now('Asia/Riyadh');
 
-        $privilageReport = privilageReport::whereBetween('edit_date', [$yesterday, $now])->get();
+        $privilageReport = privilageReport::with('user')->whereBetween('edit_date', [$yesterday, $now])->get();
         Mail::to($request->email)->send(new sendupdatePermissionsReportToEmail($privilageReport));
     }
 
