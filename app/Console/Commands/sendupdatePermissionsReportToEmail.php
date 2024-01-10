@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Mail;
 
+
 class sendupdatePermissionsReportToEmail extends Command
 {
 
@@ -41,14 +42,16 @@ class sendupdatePermissionsReportToEmail extends Command
      */
     public function handle()
     {
-        // 'info@smartlifeco.com.tr'
         $Engs = [
             'aya.ghoury@gmail.com',
-            'sabo51051@gmail.com'
+            'sabo51051@gmail.com',
+            'info@smartlifeco.com.tr'
         ];
         foreach ($Engs as $Eng) {
-            $today = Carbon::today()->toDateString();
-            $privilageReport = privilageReport::whereDate('edit_date', $today)->get();
+            $yesterday = Carbon::yesterday()->startOfDay();
+            $now = Carbon::now('Asia/Riyadh');
+
+            $privilageReport = privilageReport::whereBetween('edit_date', [$yesterday, $now])->get();
             Mail::to($Eng)->send(new MailSendupdatePermissionsReportToEmail($privilageReport));
         }
     }

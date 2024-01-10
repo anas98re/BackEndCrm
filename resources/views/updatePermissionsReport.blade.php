@@ -29,6 +29,7 @@
                                 <th scope="col">#</th>
                                 <th scope="col">التغيرات</th>
                                 <th scope="col">اسم المستوى</th>
+                                <th scope="col">اسم الموظف</th>
                                 <th scope="col">الوقت</th>
                             </tr>
                         </thead>
@@ -41,6 +42,7 @@
                                     <th scope="row">{{ $i++ }}</th>
                                     <td>{!! nl2br(e($item->changes_data)) !!}</td>
                                     <td>{{ $item->level_name }}</td>
+                                    <td>{{ $item->user_update_name }}</td>
                                     <td>{{ $item->edit_date }}</td>
                                 </tr>
                             @endforeach
