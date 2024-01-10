@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\NotifiactionController;
 use App\Http\Controllers\PrivgLevelUserController;
@@ -77,4 +78,7 @@ Route::post('sendupdatePermissionsReportToEmail',[PrivgLevelUserController::clas
 
 Route::get('getinvoiceTask',[TaskController::class,'getinvoiceTask']);
 Route::get('testNotify',[NotifiactionController::class,'testNotify']);
+
+//Clients
+Route::post('editClientByTypeClient/{id_clients}',[ClientsController::class,'editClientByTypeClient']);
 
