@@ -51,7 +51,7 @@ class ClientsController extends Controller
                 $idComment = $lastId + 1;
                 $comment = new client_comment();
                 $comment->id_comment = $idComment;
-                $comment->content = 'Update type client to ' . $request->type_client;
+                $comment->content = $request->reason_change;
                 $comment->date_comment = Carbon::now('Asia/Riyadh');
                 $comment->fk_client = $id_clients;
                 $comment->fk_user = $request->id_user;
