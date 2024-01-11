@@ -100,4 +100,27 @@ class ClientsController extends Controller
             DB::rollBack();
         }
     }
+
+    public function appproveAdmin($id_clients, Request $request)
+    {
+        if ($request->isAppprove) {
+            $updateClientData = DB::table('clients')
+                ->where('id_clients', $id_clients)
+                ->update(
+                    [
+                        'type_client' => 'مستبعد',
+                        'date_changetype' => Carbon::now('Asia/Riyadh'),
+                    ]
+                );
+        } else {
+            $updateClientData = DB::table('clients')
+                ->where('id_clients', $id_clients)
+                ->update(
+                    [
+                        'type_client' => 'تفاوض',
+                        'date_changetype' => Carbon::now('Asia/Riyadh'),
+                    ]
+                );
+        }
+    }
 }
