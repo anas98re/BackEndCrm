@@ -31,7 +31,8 @@ class ClientsController extends Controller
                             'user_do' => $request->id_user,
                         ]
                     );
-            } else {
+            }
+            if ($request->type_client == 'معلق استبعاد') {
                 $updateClientData = DB::table('clients')
                     ->where('id_clients', $id_clients)
                     ->update(
