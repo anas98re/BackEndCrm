@@ -13,9 +13,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\SendNotification;
+use App\Services\clientSrevices;
 
 class ClientsController extends Controller
 {
+    private $MyService;
+
+    public function __construct(clientSrevices $MyService)
+    {
+        $this->MyService = $MyService;
+    }
     public function editClientByTypeClient($id_clients, Request $request)
     {
         try {
@@ -130,16 +137,34 @@ class ClientsController extends Controller
     {
         try {
             DB::beginTransaction();
-            $updateClientData = DB::table('clients')
-                ->where('ismarketing', 1)
-                ->where('is_check_marketing', 0)
-                ->whereDate('date_create', '>=', Carbon::createFromDate(2024, 1, 1)->endOfDay())
-                ->where('date_create', '<', Carbon::now('Asia/Riyadh')->subDays(8)->format('Y-m-d H:i:s'))
-                ->update([
-                    'oldSourceClient' => DB::raw('sourcclient'), // Assuming 'oldSourceClient' is the column where you want to store old values
-                    'sourcclient' => Constants::MAIDANI,
-                    'is_check_marketing' => 1,
-                ]);
+            clients::all();
+            $eightDaysAgo = Carbon::now('Asia/Riyadh')->subDays(8);
+
+            // Adjust the date to exclude Fridays and Saturdays
+            while ($eightDaysAgo->isFriday() || $eightDaysAgo->isSaturday()) {
+                $eightDaysAgo->subDay();
+            }
+
+            $formattedDate = $eightDaysAgo->format('Y-m-d H:i:s');
+            // $branchesIdsWithNumberRepetitions =[];
+            $branchesIdsWithNumberRepetitions = $this->MyService
+                ->branchesIdsWithCountForTransformClientsFromMarketing($formattedDate);
+
+
+
+            // $updateClientData = DB::table('clients')
+            //     ->where('ismarketing', 1)
+            //     ->where('is_check_marketing', 0)
+            //     ->whereDate('date_create', '>=', Carbon::createFromDate(2024, 1, 1)->endOfDay())
+            //     ->where('date_create', '<', $formattedDate)
+            //     ->update([
+            //         // 'oldSourceClient' => DB::raw('sourcclient'), // Assuming 'oldSourceClient' is the column where you want to store old values
+            //         // 'sourcclient' => Constants::MAIDANI,
+            //         'is_check_marketing' => 1,
+            //     ]);
+
+            $this->MyService
+                ->sendNotificationsToBranchSupervisorsAndWhoHasPrivilage($branchesIdsWithNumberRepetitions);
 
             // 'oldSourceClient' will now contain the old values of 'sourcclient'
             DB::commit();

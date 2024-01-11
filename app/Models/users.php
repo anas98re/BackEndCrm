@@ -15,13 +15,13 @@ class users extends Model
 
     protected $fillable = [
         'id_user',
-        '   ',
+        'nameUser',
         'email',
         'mobile',
         'code_verfiy',
         'fk_country',
         'type_administration',
-        '~',
+        'type_level',
         'fk_regoin',
         'img_image',
         'img_thumbnail',

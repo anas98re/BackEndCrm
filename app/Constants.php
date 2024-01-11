@@ -6,6 +6,6 @@ namespace App;
 class  Constants
 {
     const MAIDANI = 'ميداني';
-    const AD_EMPLOYEE_ID = '2';
-    const SALES_EMPLOYEE_ID = '3';
+    const NOTICE_OF_TRANSFERRING_MARKETING_CLIENTS_TO_MY_FIELD_ID = 179;
+    const ALL_BRUNSHES = 14;
 }
