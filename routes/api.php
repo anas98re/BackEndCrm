@@ -82,4 +82,5 @@ Route::get('testNotify',[NotifiactionController::class,'testNotify']);
 //Clients
 Route::post('editClientByTypeClient/{id_clients}',[ClientsController::class,'editClientByTypeClient']);
 Route::post('clientAppproveAdmin/{id_clients}',[ClientsController::class,'appproveAdmin']);
+Route::post('transformClientsFromMarketingIfOverrideLimit8Days',[ClientsController::class,'transformClientsFromMarketingIfOverrideLimit8Days']);
 
