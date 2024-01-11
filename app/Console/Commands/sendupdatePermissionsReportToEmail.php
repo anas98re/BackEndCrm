@@ -47,12 +47,14 @@ class sendupdatePermissionsReportToEmail extends Command
             'sabo51051@gmail.com',
             'info@smartlifeco.com.tr'
         ];
-        foreach ($Engs as $Eng) {
-            $yesterday = Carbon::yesterday()->startOfDay();
-            $now = Carbon::now('Asia/Riyadh');
+        $yesterday = Carbon::yesterday()->startOfDay();
+        $now = Carbon::now('Asia/Riyadh');
 
-            $privilageReport = privilageReport::whereBetween('edit_date', [$yesterday, $now])->get();
-            Mail::to($Eng)->send(new MailSendupdatePermissionsReportToEmail($privilageReport));
+        $privilageReport = privilageReport::whereBetween('edit_date', [$yesterday, $now])->get();
+        if (count($privilageReport) > 0) {
+            foreach ($Engs as $Eng) {
+                Mail::to($Eng)->send(new MailSendupdatePermissionsReportToEmail($privilageReport));
+            }
         }
     }
 }

@@ -69,7 +69,9 @@ class PrivgLevelUserController extends Controller
         $now = Carbon::now('Asia/Riyadh');
 
         $privilageReport = privilageReport::with('user')->whereBetween('edit_date', [$yesterday, $now])->get();
-        Mail::to($request->email)->send(new sendupdatePermissionsReportToEmail($privilageReport));
+        if (count($privilageReport) > 0) {
+            Mail::to($request->email)->send(new sendupdatePermissionsReportToEmail($privilageReport));
+        }
     }
 
     public function insertPrivelgeToAllLevel(Request $request)
