@@ -150,7 +150,8 @@ class ClientsController extends Controller
             $branchesIdsWithNumberRepetitions = $this->MyService
                 ->branchesIdsWithCountForTransformClientsFromMarketing($formattedDate);
 
-
+            $this->MyService
+                ->sendNotificationsToResponsapilUserOfClient($formattedDate);
 
             // $updateClientData = DB::table('clients')
             //     ->where('ismarketing', 1)
@@ -165,6 +166,7 @@ class ClientsController extends Controller
 
             $this->MyService
                 ->sendNotificationsToBranchSupervisorsAndWhoHasPrivilage($branchesIdsWithNumberRepetitions);
+
 
             // 'oldSourceClient' will now contain the old values of 'sourcclient'
             DB::commit();
