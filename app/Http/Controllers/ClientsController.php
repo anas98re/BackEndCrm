@@ -146,23 +146,22 @@ class ClientsController extends Controller
             }
 
             $formattedDate = $eightDaysAgo->format('Y-m-d H:i:s');
-            // $branchesIdsWithNumberRepetitions =[];
             $branchesIdsWithNumberRepetitions = $this->MyService
                 ->branchesIdsWithCountForTransformClientsFromMarketing($formattedDate);
 
             $this->MyService
                 ->sendNotificationsToResponsapilUserOfClient($formattedDate);
 
-            // $updateClientData = DB::table('clients')
-            //     ->where('ismarketing', 1)
-            //     ->where('is_check_marketing', 0)
-            //     ->whereDate('date_create', '>=', Carbon::createFromDate(2024, 1, 1)->endOfDay())
-            //     ->where('date_create', '<', $formattedDate)
-            //     ->update([
-            //         // 'oldSourceClient' => DB::raw('sourcclient'), // Assuming 'oldSourceClient' is the column where you want to store old values
-            //         // 'sourcclient' => Constants::MAIDANI,
-            //         'is_check_marketing' => 1,
-            //     ]);
+            $updateClientData = DB::table('clients')
+                ->where('ismarketing', 1)
+                ->where('is_check_marketing', 0)
+                ->whereDate('date_create', '>=', Carbon::createFromDate(2024, 1, 1)->endOfDay())
+                ->where('date_create', '<', $formattedDate)
+                ->update([
+                    // 'oldSourceClient' => DB::raw('sourcclient'), // Assuming 'oldSourceClient' is the column where you want to store old values
+                    // 'sourcclient' => Constants::MAIDANI,
+                    'is_check_marketing' => 1,
+                ]);
 
             $this->MyService
                 ->sendNotificationsToBranchSupervisorsAndWhoHasPrivilage($branchesIdsWithNumberRepetitions);

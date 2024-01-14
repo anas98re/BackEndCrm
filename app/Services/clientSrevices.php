@@ -59,17 +59,7 @@ class clientSrevices extends JsonResponeService
             }
             // Now $currentKey contains the key
         }
-        // return $currentKey;
-        // $branchesIdsWithNumberRepetitions =
-        // {
-        //     "1": 4,
-        //     "14": 3,
-        //     "2": 4,
-        //     "5": 14,
-        //     "6": 7,
-        //     "7": 8
-        // }
-        // foreach ($branchesIdsWithNumberRepetitions as $el => $value) {
+
         $usersQuery = DB::table('users as u')
             ->where(function ($query) use ($typeLevel, $currentKey) {
                 $query->whereIn('u.fk_regoin', $currentKey)
@@ -119,7 +109,6 @@ class clientSrevices extends JsonResponeService
                     $message1 = ' يوجد ? عميل في ! نحتاج تحويلهم الى ميداني';
                     $messageWithCount2 = str_replace('?', $value, $message1);
                     $messageWithRegion2 = str_replace('!', $regionName, $messageWithCount2);
-                    // $message2 = implode("\n", $messageWithRegion2);
                     Notification::send(
                         null,
                         new SendNotification(
