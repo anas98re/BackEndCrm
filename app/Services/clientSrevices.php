@@ -40,7 +40,7 @@ class clientSrevices extends JsonResponeService
         $messageWithRegion1 = [];
         foreach ($branchesIdsWithNumberRepetitions as $el => $value) {
             $regionId = regoin::where('id_regoin', $el)->first()->name_regoin;
-            $message1 = ' هناك ? عميل في ! يجب تحويلهم الى ميداني';
+            $message1 = ' هناك ? عميل في ! نحتاج تحويلهم الى ميداني';
             $messageWithCount1 = str_replace('?', $value, $message1);
             $messageWithRegion1[] = str_replace('!', $regionId, $messageWithCount1);
         }
@@ -98,7 +98,7 @@ class clientSrevices extends JsonResponeService
                 $value = $branchesArray[$usersRegionId];
 
                 $regionName = regoin::where('id_regoin', $usersRegionId)->first()->name_regoin;
-                $message1 = ' لديك ? عميل في ! يجب تحويلهم الى ميداني';
+                $message1 = ' يوجد ? عميل في ! نحتاج تحويلهم الى ميداني';
                 $messageWithCount2 = str_replace('?', $value, $message1);
                 $messageWithRegion2 = str_replace('!', $regionName, $messageWithCount2);
                 // $message2 = implode("\n", $messageWithRegion2);
