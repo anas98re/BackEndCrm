@@ -532,7 +532,7 @@ class TaskProceduresController extends Controller
         }
     }
 
-    public function addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days(Request $request)
+    public function addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days()
     {
         $index = 0;
         $index1 = 0;

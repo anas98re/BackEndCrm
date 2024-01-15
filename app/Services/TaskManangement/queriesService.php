@@ -59,7 +59,7 @@ class queriesService extends JsonResponeService
                             ->whereRaw('client_comment.fk_client = u.id_clients');
                     });
             })
-            ->where('u.is_comments_check', '=', 0)
+            // ->where('u.is_comments_check', '=', 0)
             ->where('u.type_client', '=', 'تفاوض')
             ->where('u.date_create', '>=', Carbon::now('Asia/Riyadh')->subMonthsNoOverflow(1)->startOfMonth()->toDateString()) // get date which is the first day of the previous month.
             ->where(function ($query) {

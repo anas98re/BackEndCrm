@@ -21,7 +21,7 @@ class clientSrevices extends JsonResponeService
     {
         return  DB::table('clients')
             ->where('ismarketing', 1)
-            ->where('is_check_marketing', 0)
+            // ->where('is_check_marketing', 0)
             ->whereDate('date_create', '>=', Carbon::createFromDate(2024, 1, 1)->endOfDay())
             ->where('date_create', '<', $formattedDate)
             ->select('fk_regoin', DB::raw('COUNT(*) as record_count'))
@@ -136,7 +136,7 @@ class clientSrevices extends JsonResponeService
     {
         $userIds = DB::table('clients')
             ->where('ismarketing', 1)
-            ->where('is_check_marketing', 0)
+            // ->where('is_check_marketing', 0)
             ->whereDate('date_create', '>=', Carbon::createFromDate(2024, 1, 1)->endOfDay())
             ->where('date_create', '<', $formattedDate)
             ->pluck('fk_user');
