@@ -170,7 +170,7 @@ class checkClientComments extends Command
                                 'to_user' => $key,
                                 'isread' => 0,
                                 'data' => 'cls',
-                                'from_user' => 330,
+                                'from_user' => 1,
                                 'dateNotify' => Carbon::now('Asia/Riyadh')
                             ]);
                         }
@@ -202,7 +202,7 @@ class checkClientComments extends Command
                                 'to_user' => $IsUser14->id_user,
                                 'isread' => 0,
                                 'data' => 'cls',
-                                'from_user' => 330,
+                                'from_user' => 1,
                                 'dateNotify' => Carbon::now('Asia/Riyadh')
                             ]);
                         }
@@ -247,7 +247,7 @@ class checkClientComments extends Command
                             'to_user' => $value->id_user,
                             'isread' => 0,
                             'data' => 'cls',
-                            'from_user' => 330,
+                            'from_user' => 1,
                             'dateNotify' => Carbon::now('Asia/Riyadh')
                         ]);
                     }
@@ -280,7 +280,7 @@ class checkClientComments extends Command
                             'to_user' => $key,
                             'isread' => 0,
                             'data' => 'cls',
-                            'from_user' => 330,
+                            'from_user' => 1,
                             'dateNotify' => Carbon::now('Asia/Riyadh')
                         ]);
                     }

@@ -22,7 +22,7 @@ class clientSrevices extends JsonResponeService
         return  DB::table('clients')
             ->where('ismarketing', 1)
             ->where('is_check_marketing', 0)
-            ->whereDate('date_create', '>=', Carbon::createFromDate(2023, 9, 1)->endOfDay())
+            ->whereDate('date_create', '>=', Carbon::createFromDate(2024, 1, 1)->endOfDay())
             ->where('date_create', '<', $formattedDate)
             ->select('fk_regoin', DB::raw('COUNT(*) as record_count'))
             ->groupBy('fk_regoin')
@@ -47,11 +47,9 @@ class clientSrevices extends JsonResponeService
                 $messageWithRegion1[] = str_replace('!', $regionId, $messageWithCount1);
             }
         }
-        // return $messageWithRegion1;
-        // return $message = implode("\n", $brunshes);
+
         $users = collect();
         $usersRegionIds = [];
-        // return $branchesIdsWithNumberRepetitions->key;
         $currentKey = [];
         foreach ($branchesIdsWithNumberRepetitions as $key => $value) {
             if ($key != Constants::ALL_BRUNSHES) {
@@ -139,7 +137,7 @@ class clientSrevices extends JsonResponeService
         $userIds = DB::table('clients')
             ->where('ismarketing', 1)
             ->where('is_check_marketing', 0)
-            ->whereDate('date_create', '>=', Carbon::createFromDate(2023, 9, 1)->endOfDay())
+            ->whereDate('date_create', '>=', Carbon::createFromDate(2024, 1, 1)->endOfDay())
             ->where('date_create', '<', $formattedDate)
             ->pluck('fk_user');
 

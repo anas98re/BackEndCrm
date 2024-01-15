@@ -55,7 +55,7 @@ class TaskProceduresService extends JsonResponeService
             'isread' => 0,
             'data' => $client_id . '/' . $invoice_id .
                 '/' . ($communication != null ? $communication->id_communication : 'null'),
-            'from_user' => 0,
+            'from_user' => 1,
             'dateNotify' => Carbon::now('Asia/Riyadh')
         ]);
     }
