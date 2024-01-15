@@ -97,7 +97,7 @@ class ClientsController extends Controller
                         'to_user' => $Id,
                         'isread' => 0,
                         'data' => 'Tsk',
-                        'from_user' => 408,
+                        'from_user' => 1,
                         'dateNotify' => Carbon::now('Asia/Riyadh')
                     ]);
                 }

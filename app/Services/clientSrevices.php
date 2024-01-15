@@ -169,7 +169,7 @@ class clientSrevices extends JsonResponeService
                     'to_user' => $key,
                     'isread' => 0,
                     'data' => 'ccl',
-                    'from_user' => 408,
+                    'from_user' => 1,
                     'dateNotify' => Carbon::now('Asia/Riyadh')
                 ]);
             }
