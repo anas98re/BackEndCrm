@@ -138,14 +138,16 @@ class ClientsController extends Controller
         try {
             DB::beginTransaction();
             clients::all();
-            $eightDaysAgo = Carbon::now('Asia/Riyadh')->subDays(8);
+            $eightWorkingDaysAgo = Carbon::now('Asia/Riyadh');
 
-            // Adjust the date to exclude Fridays and Saturdays
-            while ($eightDaysAgo->isFriday() || $eightDaysAgo->isSaturday()) {
-                $eightDaysAgo->subDay();
+            // Adjust the date to exclude Fridays and Saturdays and go back 8 working days
+            for ($i = 0; $i < 8; $i++) {
+                do {
+                    $eightWorkingDaysAgo->subDay();
+                } while ($eightWorkingDaysAgo->isFriday() || $eightWorkingDaysAgo->isSaturday());
             }
 
-            $formattedDate = $eightDaysAgo->format('Y-m-d H:i:s');
+            $formattedDate = $eightWorkingDaysAgo->format('Y-m-d H:i:s');
             $branchesIdsWithNumberRepetitions = $this->MyService
                 ->branchesIdsWithCountForTransformClientsFromMarketing($formattedDate);
 
