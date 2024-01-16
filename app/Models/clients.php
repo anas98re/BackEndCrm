@@ -19,6 +19,7 @@ class clients extends Model
     //     'fk_client',
     //     'fk_invoice'
     // ];
+    public $timestamps = false;
     protected $fillable = [
         'id_clients', 'name_client', 'name_enterprise', 'type_job',
         'city', 'location', 'fk_regoin', 'date_create', 'type_client',
@@ -28,6 +29,7 @@ class clients extends Model
         'IDcustomer', 'descActivController', 'presystem', 'sourcclient',
         'activity_type_fk', 'user_add', 'date_visit_Client', 'done_transfer',
         'done_visit', 'tag', 'size_activity', 'fk_client_source', 'email',
-        'fk_rejectClient', 'SerialNumber', 'is_comments_check'
+        'fk_rejectClient', 'SerialNumber', 'is_comments_check','type_record',
+        'reason_class','type_classification'
     ];
 }

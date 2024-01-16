@@ -177,4 +177,28 @@ class ClientsController extends Controller
             DB::rollBack();
         }
     }
+
+    public function addClient(StoreclientsRequest $request)
+    {
+        $serialnumber =
+            $this->MyService->generate_serialnumber_InsertedClient(
+                $request->input('date_create')
+            );
+
+        $data = $request->all();
+        $data['SerialNumber'] = $serialnumber;
+
+        clients::create($data);
+
+        return response()->json(['message' => 'Client created successfully']);
+    }
+
+    public function SimilarClientsNames(Request $request)
+    {
+        $name_client = $request->input('name_client');
+
+        $results = clients::where('name_client', 'LIKE', '%' . $name_client . '%')
+            ->pluck('name_client');
+        return response()->json($results);
+    }
 }

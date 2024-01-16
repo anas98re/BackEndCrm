@@ -83,4 +83,6 @@ Route::get('testNotify',[NotifiactionController::class,'testNotify']);
 Route::post('editClientByTypeClient/{id_clients}',[ClientsController::class,'editClientByTypeClient']);
 Route::post('clientAppproveAdmin/{id_clients}',[ClientsController::class,'appproveAdmin']);
 Route::post('transformClientsFromMarketingIfOverrideLimit8Days',[ClientsController::class,'transformClientsFromMarketingIfOverrideLimit8Days']);
+Route::post('addClient',[ClientsController::class,'addClient']);
+Route::post('SimilarClientsNames',[ClientsController::class,'SimilarClientsNames']);
 

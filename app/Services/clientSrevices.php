@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Constants;
 use App\Http\Requests\TaskManagementRequests\GroupRequest;
 use App\Http\Requests\TaskManagementRequests\TaskRequest;
+use App\Models\clients;
 use App\Models\notifiaction;
 use App\Models\regoin;
 use App\Models\tsks_group;
@@ -174,5 +175,45 @@ class clientSrevices extends JsonResponeService
                 ]);
             }
         }
+    }
+
+    function generate_serialnumber($date_create, $index)
+    {
+        $day = Carbon::parse($date_create)->format('d');
+        $m = Carbon::parse($date_create)->format('m');
+        $yy = Carbon::parse($date_create)->format('y');
+        $num = rand(1111, 9999);
+        $index1 = sprintf("%'.05d", $index);
+
+        $serialNumber = $yy . $m . $day . $num . $index1;
+
+        return $serialNumber;
+    }
+
+    function generate_serialnumber_InsertedClient($date_create_client)
+    {
+        // Assuming you have a 'Client' model and a 'clients' table
+        $latestClient = clients::orderByDesc('id_clients')->first();
+
+        if ($latestClient) {
+            $date_create = $latestClient->date_create;
+            $serialnum = $latestClient->SerialNumber;
+
+            $yy = Carbon::parse($date_create)->format('y');
+            $yy_client = Carbon::parse($date_create_client)->format('y');
+
+            if ($yy_client != $yy) {
+                $index = 1;
+            } else {
+                $index = intval(substr($serialnum, 11)) + 1;
+            }
+
+            // Assuming you have a 'generate_serialnumber' function
+            $res = $this->generate_serialnumber($date_create, $index);
+
+            return $res;
+        }
+
+        return null;
     }
 }
