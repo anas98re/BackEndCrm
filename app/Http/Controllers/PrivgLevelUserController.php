@@ -72,6 +72,7 @@ class PrivgLevelUserController extends Controller
         if (count($privilageReport) > 0) {
             Mail::to($request->email)->send(new sendupdatePermissionsReportToEmail($privilageReport));
         }
+        return $this->sendResponse('error','لا يوجد صلاحيات تم تعديلها من الامس حتى هذه اللحظة');
     }
 
     public function insertPrivelgeToAllLevel(Request $request)
