@@ -68,11 +68,15 @@ class PrivgLevelUserController extends Controller
         $yesterday = Carbon::yesterday()->startOfDay();
         $now = Carbon::now('Asia/Riyadh');
 
-        $privilageReport = privilageReport::with('user')->whereBetween('edit_date', [$yesterday, $now])->get();
+        $privilageReport = privilageReport::with('user')
+            ->whereBetween('edit_date', [$yesterday, $now])
+            ->get();
         if (count($privilageReport) > 0) {
             Mail::to($request->email)->send(new sendupdatePermissionsReportToEmail($privilageReport));
+            return $this->sendResponse('true', 'done');
+        } else {
+            return $this->sendResponse('error', 'لا يوجد صلاحيات تم تعديلها من الامس حتى هذه اللحظة');
         }
-        return $this->sendResponse('error','لا يوجد صلاحيات تم تعديلها من الامس حتى هذه اللحظة');
     }
 
     public function insertPrivelgeToAllLevel(Request $request)
