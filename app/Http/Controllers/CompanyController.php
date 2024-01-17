@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\company;
 use App\Http\Requests\StorecompanyRequest;
 use App\Http\Requests\UpdatecompanyRequest;
+use App\Services\CompanySrevices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -12,17 +13,23 @@ use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
+    private $MyService;
+
+    public function __construct(CompanySrevices $MyService)
+    {
+        $this->MyService = $MyService;
+    }
     public function addCompany(Request $request)
     {
         $request->validate([
             'name_company' => 'required|unique:company|max:255',
         ]);
-        $path_logo = $request->file('path_logo')->store('companiesLogo');
+        $generatedPath = $this->MyService->handlingImageName($request->file('path_logo'));
+
         $data = $request->except('path_logo'); // Exclude the file from the general data
-        $data['path_logo'] = $path_logo;
+        $data['path_logo'] = $generatedPath;
 
         company::create($data);
-
         return response()->json(['message' => 'Company created successfully']);
     }
 
@@ -32,24 +39,20 @@ class CompanyController extends Controller
             'name_company' => 'unique:company,name_company,' . $companyId . ',' . 'id_Company' . '|max:255',
         ]);
 
-
         $company = company::find($companyId);
 
         if ($company->path_logo) {
             Storage::delete($company->path_logo);
         }
 
-        // Process the file upload if a new file is provided
         if ($request->hasFile('path_logo')) {
-            $path_logo = $request->file('path_logo')->store('companiesLogo');
-            $company->path_logo = $path_logo;
+            $generatedPath = $this->MyService->handlingImageName($request->file('path_logo'));
+            $company->path_logo = $generatedPath;
         }
 
         // Update other fields if needed
         $company->fill($request->except('path_logo'));
-
         $company->save();
-
         return response()->json(['message' => 'Company updated successfully']);
     }
 }
