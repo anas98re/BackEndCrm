@@ -42,7 +42,7 @@
                                     <th scope="row">{{ $i++ }}</th>
                                     <td>{!! nl2br(e($item->changes_data)) !!}</td>
                                     <td>{{ $item->level_name }}</td>
-                                    <td>{{ $item->user->nameUser }}</td>
+                                    <td>{{ $item->user != null ?  $item->user->nameUser : ''}}</td>
                                     <td>{{ $item->edit_date }}</td>
                                 </tr>
                             @endforeach
