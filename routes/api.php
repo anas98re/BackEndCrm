@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\CompanyCommentController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\NotifiactionController;
 use App\Http\Controllers\PrivgLevelUserController;
@@ -89,4 +90,6 @@ Route::post('SimilarClientsNames',[ClientsController::class,'SimilarClientsNames
 
 //company
 Route::post('addCommentToCompany/{fk_company}',[CompanyCommentController::class,'addCommentToCompany']);
+Route::post('addCompany',[CompanyController::class,'addCompany']);
+Route::post('updateCompany/{companyId}',[CompanyController::class,'updateCompany']);
 

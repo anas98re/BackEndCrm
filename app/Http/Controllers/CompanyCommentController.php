@@ -14,7 +14,7 @@ class CompanyCommentController extends Controller
     {
         $companyComment = new company_comment();
 
-        $companyComment->fk_user = $request->user_id;
+        $companyComment->fk_user = $request->id_user;
         $companyComment->fk_company = $fk_company;
         $companyComment->content = $request->content;
         $companyComment->date_comment = Carbon::now('Asia/Riyadh');

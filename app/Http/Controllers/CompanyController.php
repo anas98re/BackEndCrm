@@ -5,62 +5,51 @@ namespace App\Http\Controllers;
 use App\Models\company;
 use App\Http\Requests\StorecompanyRequest;
 use App\Http\Requests\UpdatecompanyRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+
 
 class CompanyController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function addCompany(Request $request)
     {
-        //
+        $request->validate([
+            'name_company' => 'required|unique:company|max:255',
+        ]);
+        $path_logo = $request->file('path_logo')->store('companiesLogo');
+        $data = $request->except('path_logo'); // Exclude the file from the general data
+        $data['path_logo'] = $path_logo;
+
+        company::create($data);
+
+        return response()->json(['message' => 'Company created successfully']);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function updateCompany(Request $request, $companyId)
     {
-        //
-    }
+        $request->validate([
+            'name_company' => 'unique:company,name_company,' . $companyId . ',' . 'id_Company' . '|max:255',
+        ]);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorecompanyRequest $request)
-    {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(company $company)
-    {
-        //
-    }
+        $company = company::find($companyId);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(company $company)
-    {
-        //
-    }
+        if ($company->path_logo) {
+            Storage::delete($company->path_logo);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatecompanyRequest $request, company $company)
-    {
-        //
-    }
+        // Process the file upload if a new file is provided
+        if ($request->hasFile('path_logo')) {
+            $path_logo = $request->file('path_logo')->store('companiesLogo');
+            $company->path_logo = $path_logo;
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(company $company)
-    {
-        //
+        // Update other fields if needed
+        $company->fill($request->except('path_logo'));
+
+        $company->save();
+
+        return response()->json(['message' => 'Company updated successfully']);
     }
 }
