@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\CompanyCommentController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\NotifiactionController;
 use App\Http\Controllers\PrivgLevelUserController;
@@ -85,4 +86,7 @@ Route::post('clientAppproveAdmin/{id_clients}',[ClientsController::class,'apppro
 Route::post('transformClientsFromMarketingIfOverrideLimit8Days',[ClientsController::class,'transformClientsFromMarketingIfOverrideLimit8Days']);
 Route::post('addClient',[ClientsController::class,'addClient']);
 Route::post('SimilarClientsNames',[ClientsController::class,'SimilarClientsNames']);
+
+//company
+Route::post('addCommentToCompany/{fk_company}',[CompanyCommentController::class,'addCommentToCompany']);
 
