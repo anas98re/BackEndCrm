@@ -88,7 +88,7 @@ Route::post('transformClientsFromMarketingIfOverrideLimit8Days',[ClientsControll
 Route::post('addClient',[ClientsController::class,'addClient']);
 Route::post('SimilarClientsNames',[ClientsController::class,'SimilarClientsNames']);
 
-//company ..
+//company ...
 Route::post('addCommentToCompany/{fk_company}',[CompanyCommentController::class,'addCommentToCompany']);
 Route::post('addCompany',[CompanyController::class,'addCompany']);
 Route::post('updateCompany/{companyId}',[CompanyController::class,'updateCompany']);
