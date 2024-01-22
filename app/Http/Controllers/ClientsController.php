@@ -195,10 +195,25 @@ class ClientsController extends Controller
 
     public function SimilarClientsNames(Request $request)
     {
-        $name_client = $request->input('name_client');
+        $query = clients::query();
 
-        $results = clients::where('name_client', 'LIKE', '%' . $name_client . '%')
-            ->pluck('name_client');
+        if ($request->has('name_client')) {
+            $query->where('name_client', 'LIKE', '%' . $request->name_client . '%');
+        } elseif ($request->has('name_enterprise')) {
+            $query->where('name_enterprise', 'LIKE', '%' . $request->name_enterprise . '%');
+        } elseif ($request->has('phone')) {
+            $query->where('phone', 'LIKE', '%' . $request->phone . '%');
+        }
+
+        $results = $query->pluck($this->getPluckColumn($request));
+
         return response()->json($results);
+    }
+
+    private function getPluckColumn(Request $request)
+    {
+        return $request->has('name_client')
+            ? 'name_client'
+            : ($request->has('name_enterprise') ? 'name_enterprise' : 'phone');
     }
 }
