@@ -211,4 +211,11 @@ class ClientsController extends Controller
 
         return response()->json($results);
     }
+    // to test ..
+    private function getPluckColumn(Request $request)
+    {
+        return $request->has('name_client')
+            ? 'name_client'
+            : ($request->has('name_enterprise') ? 'name_enterprise' : 'phone');
+    }
 }
