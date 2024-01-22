@@ -1,0 +1,11 @@
+{
+    "name": "WebApp",
+    "alias": "webapp",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\WebApp\\app\\Providers\\WebAppServiceProvider"
+    ],
+    "files": []
+}
