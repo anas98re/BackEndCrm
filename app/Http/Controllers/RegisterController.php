@@ -30,7 +30,7 @@ class RegisterController extends Controller
     {
         try {
             DB::beginTransaction();
-            $User = new User();
+            $User = new users();
             $User->nameUser = $request->nameUser;
             $User->email = $request->email;
             $User->mobile = $request->mobile;
@@ -49,15 +49,15 @@ class RegisterController extends Controller
         try {
             DB::beginTransaction();
 
-            $existingEmail = User::where('email', $request->email)->exists();
+            $existingEmail = users::where('email', $request->email)->exists();
             if ($existingEmail) {
-                $code = Str::random(5);
-                $existingCode = User::where('code_verfiy', $code)->exists();
+                $code = rand(11111, 99999);
+                $existingCode = users::where('code_verfiy', $code)->exists();
                 while ($existingCode) {
-                    $code = Str::random(5);
-                    $existingCode = User::where('code_verfiy', $code)->exists();
+                    $code = rand(11111, 99999);
+                    $existingCode = users::where('code_verfiy', $code)->exists();
                 }
-                $user = User::where('email', $request->email)->first();
+                $user = users::where('email', $request->email)->first();
                 $user->code_verfiy = $code;
                 $user->type_level = 0;
                 $user->save();
@@ -77,11 +77,11 @@ class RegisterController extends Controller
 
     public function login1(RegisterationRequest $request)
     {
-        $User = User::where('code_verfiy', $request->code_verfiy)
+        $User = users::where('code_verfiy', $request->code_verfiy)
             ->where('email', $request->email)
             ->exists();
         if ($User) {
-            $UserData = User::where('code_verfiy', $request->code_verfiy)
+            $UserData = users::where('code_verfiy', $request->code_verfiy)
                 ->where('email', $request->email)
                 ->first();
 
@@ -107,7 +107,7 @@ class RegisterController extends Controller
     {
         $input = $request->all();
         $input['type_level'] = 1;
-        $user = User::create($input);
+        $user = users::create($input);
         $success['remember_token'] = $user->createToken('anas')->plainTextToken;
         $success['nameUser'] = $user->nameUser;
         $success['id_user'] = $user->id_user;

@@ -404,7 +404,33 @@ class TaskService extends JsonResponeService
                         'changed_by' => $request->id_user
                     ]);
             } else {
-                return false;
+                if ($task->public_Type == 'AddPayment') {
+                    if ($request->task_statuse_id == 4) {
+                        $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
+                        $task->save();
+                    }
+                    if ($request->task_statuse_id == 8) {
+                        $task->recive_date = Carbon::now('Asia/Riyadh');
+                        $task->save();
+                    }
+                    $updatedData = DB::table('statuse_task_fraction')
+                        ->where('task_id', $task->id)
+                        ->first();
+
+                    if ($request->task_statuse_id != 4 && $updatedData->task_statuse_id == 4) {
+                        $task->actual_delivery_date = null;
+                        $task->save();
+                    }
+
+                    $updatedData = DB::table('statuse_task_fraction')
+                        ->where('task_id', $task->id)
+                        ->update([
+                            'task_statuse_id' => $request->task_statuse_id,
+                            'changed_by' => $request->id_user
+                        ]);
+                } else {
+                    return false;
+                }
             }
             DB::commit();
             if (!$updatedData) {

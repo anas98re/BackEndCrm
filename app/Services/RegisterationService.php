@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Registeration\RegisterationRequest;
 use App\Models\disease;
 use App\Models\User;
+use App\Models\user_token;
 use App\Models\users;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,15 +16,22 @@ class RegisterationService extends Controller
 {
     public function login(RegisterationRequest $request)
     {
-        $User = User::where('code_verfiy', $request->code_verfiy)
+        $User = users::where('code_verfiy', $request->otp)
             ->where('email', $request->email)
             ->exists();
         if ($User) {
-            $UserData = User::where('code_verfiy', $request->code_verfiy)
+            $UserData = users::where('code_verfiy', $request->otp)
                 ->where('email', $request->email)
                 ->first();
 
             $remember_token = $UserData->createToken('anas')->plainTextToken;
+            // $fcm_token = $UserData->createToken('anas')->plainTextToken;
+
+            $user_token = new user_token();
+            $user_token->token = $request->token;
+            $user_token->fkuser = $UserData->id_user;
+            $user_token->date_create = Carbon::now('Asia/Riyadh');
+            $user_token->save();
         } else {
             return $this->sendUnauthenticated(['Error'], 'Unauthenticated');
         }
@@ -68,7 +77,8 @@ class RegisterationService extends Controller
                 $index++;
             }
         }
-        $arrJson[] = $remember_token;
+        // $arrJson[] = $remember_token;
+        $arrJson[] = $request->token;
 
         return response()->json($arrJson, 200);
     }

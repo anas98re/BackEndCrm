@@ -22,7 +22,7 @@ class RegisterationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code_verfiy' => 'required|size:5',
+            'otp' => 'required|size:5',
             'email' => 'required','email', 'max:255',
         ];
     }

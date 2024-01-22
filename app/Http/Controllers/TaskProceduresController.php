@@ -457,7 +457,7 @@ class TaskProceduresController extends Controller
         try {
             DB::beginTransaction();
 
-            $existingTask = Task::where('invoice_id', $request->idInvoice)
+            $existingTask = task::where('invoice_id', $request->idInvoice)
                 ->where('public_Type', 'AddPayment')
                 ->first();
 
