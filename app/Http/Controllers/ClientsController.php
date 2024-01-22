@@ -198,22 +198,17 @@ class ClientsController extends Controller
         $query = clients::query();
 
         if ($request->has('name_client')) {
-            $query->where('name_client', 'LIKE', '%' . $request->name_client . '%');
-        } elseif ($request->has('name_enterprise')) {
-            $query->where('name_enterprise', 'LIKE', '%' . $request->name_enterprise . '%');
-        } elseif ($request->has('phone')) {
-            $query->where('phone', 'LIKE', '%' . $request->phone . '%');
+            $query->orWhere('name_client', 'LIKE', '%' . $request->name_client . '%');
+        }
+        if ($request->has('name_enterprise')) {
+            $query->orWhere('name_enterprise', 'LIKE', '%' . $request->name_enterprise . '%');
+        }
+        if ($request->has('phone')) {
+            $query->orWhere('phone', 'LIKE', '%' . $request->phone . '%');
         }
 
-        $results = $query->pluck($this->getPluckColumn($request));
+        $results = $query->select('name_client', 'name_enterprise', 'phone')->get();
 
         return response()->json($results);
-    }
-
-    private function getPluckColumn(Request $request)
-    {
-        return $request->has('name_client')
-            ? 'name_client'
-            : ($request->has('name_enterprise') ? 'name_enterprise' : 'phone');
     }
 }
