@@ -98,5 +98,6 @@ Route::post('updateCompany/{companyId}',[CompanyController::class,'updateCompany
 Route::post('addLink',[ImportantLinkController::class,'addLink']);
 Route::post('editLink/{id}',[ImportantLinkController::class,'editLink']);
 Route::get('getAllLink',[ImportantLinkController::class,'getAllLink']);
+Route::post('deleteLink/{id}',[ImportantLinkController::class,'deleteLink']);
 
 

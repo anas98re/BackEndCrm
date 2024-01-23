@@ -39,5 +39,12 @@ class ImportantLinkController extends Controller
         return $this->sendResponse($links, 'These are all links');
     }
 
+    public function deleteLink($id)
+    {
+        $link = ImportantLink::find($id);
+        $link->delete();
+        return $this->sendResponse('done', 'link deleted successfully');
+    }
+
 
 }
