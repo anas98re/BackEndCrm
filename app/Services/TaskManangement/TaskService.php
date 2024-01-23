@@ -25,6 +25,7 @@ use PhpParser\Node\Stmt\TryCatch;
 use SebastianBergmann\Type\VoidType;
 use Carbon\CarbonInterval;
 use DateTime;
+use Illuminate\Support\Facades\Auth;
 
 class TaskService extends JsonResponeService
 {
@@ -376,10 +377,11 @@ class TaskService extends JsonResponeService
 
     public function changeStatuseTask(Request $request, $id)
     {
+        // return auth('sanctum')->user()->id_user;
         try {
             DB::beginTransaction();
             $task = task::find($id);
-            if ($task->main_type_task == 'ProcessManual') {
+            if ($task->main_type_task != 'ProccessAuto') {
                 if ($request->task_statuse_id == 4) {
                     $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
                     $task->save();
@@ -401,7 +403,8 @@ class TaskService extends JsonResponeService
                     ->where('task_id', $task->id)
                     ->update([
                         'task_statuse_id' => $request->task_statuse_id,
-                        'changed_by' => $request->id_user
+                        // 'changed_by' => $request->id_user
+                        'changed_by' => auth('sanctum')->user()->id_user
                     ]);
             } else {
                 if ($task->public_Type == 'AddPayment') {
@@ -426,7 +429,8 @@ class TaskService extends JsonResponeService
                         ->where('task_id', $task->id)
                         ->update([
                             'task_statuse_id' => $request->task_statuse_id,
-                            'changed_by' => $request->id_user
+                            // 'changed_by' => $request->id_user
+                            'changed_by' => auth('sanctum')->user()->id_user
                         ]);
                 } else {
                     return false;

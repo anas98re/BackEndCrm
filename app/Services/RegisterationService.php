@@ -77,8 +77,8 @@ class RegisterationService extends Controller
                 $index++;
             }
         }
-        // $arrJson[] = $remember_token;
-        $arrJson[] = $request->token;
+        $arrJson[] = $remember_token;
+        // $arrJson[] = $request->token;
 
         return response()->json($arrJson, 200);
     }
