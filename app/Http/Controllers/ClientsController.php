@@ -212,7 +212,13 @@ class ClientsController extends Controller
             $query->orWhere('phone', 'LIKE', '%' . $request->phone . '%');
         }
 
-        $results = $query->select('name_client', 'name_enterprise', 'phone')->get();
+        $results = $query->select(
+            'name_client',
+            'name_enterprise',
+            'phone',
+            'id_clients',
+            'date_create'
+        )->get();
 
         return response()->json($results);
     }
