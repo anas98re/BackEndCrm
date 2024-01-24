@@ -7,6 +7,7 @@ use App\Models\clients;
 use App\Http\Requests\StoreclientsRequest;
 use App\Http\Requests\UpdateclientsRequest;
 use App\Models\client_comment;
+use App\Models\convertClintsStaticts;
 use App\Models\notifiaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -232,28 +233,48 @@ class ClientsController extends Controller
 
     public function convertClientsFromAnEmployeeToEmployee(Request $request)
     {
-        $oldUserId = $request->oldUserId;
-        $newUserId = $request->newUserId;
-        return $oldIdsCount = DB::table('clients')->where('fk_user', $oldUserId)->count();
-        // Perform the update and get the number of affected rows
-        $affectedRows = DB::table('clients')
-            ->where('fk_user', $oldUserId)
-            ->where(function ($query) {
-                $query->where('type_client', 'مستبعد')
-                    ->orWhere('type_client', 'تفاوض');
-            })
-            ->whereYear('date_create', 2023)
-            ->update(['fk_user' => $newUserId]);
+        try {
+            DB::beginTransaction();
+            $oldUserId = $request->oldUserId;
+            $newUserId = $request->newUserId;
+            $Count = DB::table('clients')->where('fk_user', $oldUserId)
+                ->where(function ($query) {
+                    $query->where('type_client', 'مستبعد')
+                        ->orWhere('type_client', 'تفاوض');
+                })
+                ->whereYear('date_create', 2023)->count();
 
+            convertClintsStaticts::create([
+                'numberOfClients' => $Count != 0  ? $Count : 0,
+                'convert_date' => Carbon::now('Asia/Riyadh'),
+                'oldUserId' => $oldUserId,
+                'newUserId' => $newUserId,
+            ]);
+            // Perform the update and get the number of affected rows
+            $affectedRows = DB::table('clients')
+                ->where('fk_user', $oldUserId)
+                ->where(function ($query) {
+                    $query->where('type_client', 'مستبعد')
+                        ->orWhere('type_client', 'تفاوض');
+                })
+                ->whereYear('date_create', 2023)
+                ->update(['fk_user' => $newUserId]);
+
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
         // Additional statistics
-        $oldIdsCount = DB::table('clients')->where('fk_user', $oldUserId)->count();
-        $newIdsCount = DB::table('clients')->where('fk_user', $newUserId)->count();
-        $totalClients = DB::table('clients')->count();
+        // $oldIdsCount = DB::table('clients')->where('fk_user', $oldUserId)->count();
+        // $newIdsCount = DB::table('clients')->where('fk_user', $newUserId)->count();
+        // $totalClients = DB::table('clients')->count();
 
-        // Output statistics
-        echo "Number of affected rows: $affectedRows\n";
-        echo "Number of clients with old user ID ($oldUserId): $oldIdsCount\n";
-        echo "Number of clients with new user ID ($newUserId): $newIdsCount\n";
-        echo "Total number of clients: $totalClients\n";
+        // // Output statistics
+        // echo "Number of affected rows: $affectedRows\n";
+        // echo "Number of clients with old user ID ($oldUserId): $oldIdsCount\n";
+        // echo "Number of clients with new user ID ($newUserId): $newIdsCount\n";
+        // echo "Total number of clients: $totalClients\n";
     }
 }
