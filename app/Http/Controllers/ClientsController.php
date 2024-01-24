@@ -102,8 +102,10 @@ class ClientsController extends Controller
                     ]);
                 }
             }
+            $ClientData = DB::table('clients')
+                ->where('id_clients', $id_clients)->first();
             DB::commit();
-            return true;
+            return $this->sendResponse($ClientData, 'updated');
         } catch (\Throwable $th) {
             throw $th;
             DB::rollBack();
@@ -131,6 +133,9 @@ class ClientsController extends Controller
                     ]
                 );
         }
+        $ClientData = DB::table('clients')
+            ->where('id_clients', $id_clients)->first();
+        return $this->sendResponse($ClientData, 'Done');
     }
 
     public function transformClientsFromMarketingIfOverrideLimit8Days()
