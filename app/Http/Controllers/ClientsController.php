@@ -229,4 +229,31 @@ class ClientsController extends Controller
             ? 'name_client'
             : ($request->has('name_enterprise') ? 'name_enterprise' : 'phone');
     }
+
+    public function convertClientsFromAnEmployeeToEmployee(Request $request)
+    {
+        $oldUserId = $request->oldUserId;
+        $newUserId = $request->newUserId;
+        return $oldIdsCount = DB::table('clients')->where('fk_user', $oldUserId)->count();
+        // Perform the update and get the number of affected rows
+        $affectedRows = DB::table('clients')
+            ->where('fk_user', $oldUserId)
+            ->where(function ($query) {
+                $query->where('type_client', 'مستبعد')
+                    ->orWhere('type_client', 'تفاوض');
+            })
+            ->whereYear('date_create', 2023)
+            ->update(['fk_user' => $newUserId]);
+
+        // Additional statistics
+        $oldIdsCount = DB::table('clients')->where('fk_user', $oldUserId)->count();
+        $newIdsCount = DB::table('clients')->where('fk_user', $newUserId)->count();
+        $totalClients = DB::table('clients')->count();
+
+        // Output statistics
+        echo "Number of affected rows: $affectedRows\n";
+        echo "Number of clients with old user ID ($oldUserId): $oldIdsCount\n";
+        echo "Number of clients with new user ID ($newUserId): $newIdsCount\n";
+        echo "Total number of clients: $totalClients\n";
+    }
 }
