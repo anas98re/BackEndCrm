@@ -17,4 +17,14 @@ class convertClintsStaticts extends Model
         'newUserId',
         'description',
     ];
+
+    public function oldUser()
+    {
+        return $this->belongsTo(User::class, 'oldUserId', 'id_user');
+    }
+
+    public function newUser()
+    {
+        return $this->belongsTo(User::class, 'newUserId', 'id_user');
+    }
 }

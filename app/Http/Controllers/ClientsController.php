@@ -6,6 +6,8 @@ use App\Constants;
 use App\Models\clients;
 use App\Http\Requests\StoreclientsRequest;
 use App\Http\Requests\UpdateclientsRequest;
+use App\Mail\sendStactictesConvretClientsToEmail;
+use App\Mail\sendStactictesConvretClientsTothabetEmail;
 use App\Models\client_comment;
 use App\Models\convertClintsStaticts;
 use App\Models\notifiaction;
@@ -15,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\SendNotification;
 use App\Services\clientSrevices;
+use Illuminate\Support\Facades\Mail;
 
 class ClientsController extends Controller
 {
@@ -266,15 +269,11 @@ class ClientsController extends Controller
             throw $th;
             DB::rollBack();
         }
-        // Additional statistics
-        // $oldIdsCount = DB::table('clients')->where('fk_user', $oldUserId)->count();
-        // $newIdsCount = DB::table('clients')->where('fk_user', $newUserId)->count();
-        // $totalClients = DB::table('clients')->count();
+    }
 
-        // // Output statistics
-        // echo "Number of affected rows: $affectedRows\n";
-        // echo "Number of clients with old user ID ($oldUserId): $oldIdsCount\n";
-        // echo "Number of clients with new user ID ($newUserId): $newIdsCount\n";
-        // echo "Total number of clients: $totalClients\n";
+    public function sendStactictesConvretClientsToEmail(Request $request)
+    {
+        $ClintsStaticts = convertClintsStaticts::with(['oldUser', 'newUser'])->get();
+            Mail::to($request->email)->send(new sendStactictesConvretClientsToEmail($ClintsStaticts));
     }
 }
