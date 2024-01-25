@@ -113,7 +113,7 @@ class ClientsController extends Controller
                         'type_notify' => 'تحديث عميل',
                         'to_user' => $Id,
                         'isread' => 0,
-                        'data' => 'Tsk',
+                        'data' => $id_clients,
                         'from_user' => 1,
                         'dateNotify' => Carbon::now('Asia/Riyadh')
                     ]);
