@@ -44,6 +44,19 @@ class ClientsController extends Controller
                         ]
                     );
             }
+            if ($request->type_client == 'تفاوض') {
+                $updateClientData = DB::table('clients')
+                    ->where('id_clients', $id_clients)
+                    ->update(
+                        [
+                            'type_client' => $request->type_client,
+                            'date_changetype' => Carbon::now('Asia/Riyadh'),
+                            'offer_price' => $request->offer_price,
+                            'date_price' => $request->date_price,
+                            'user_do' => $request->id_user,
+                        ]
+                    );
+            }
             if ($request->type_client == 'مستبعد') {
                 $updateClientData = DB::table('clients')
                     ->where('id_clients', $id_clients)
