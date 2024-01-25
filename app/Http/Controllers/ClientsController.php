@@ -224,7 +224,8 @@ class ClientsController extends Controller
             'date_create'
         )->get();
 
-        return response()->json($results);
+        // return response()->json($results);
+        return $this->sendResponse($results, 'data');
     }
     // to test ..
     private function getPluckColumn(Request $request)
@@ -274,6 +275,6 @@ class ClientsController extends Controller
     public function sendStactictesConvretClientsToEmail(Request $request)
     {
         $ClintsStaticts = convertClintsStaticts::with(['oldUser', 'newUser'])->get();
-            Mail::to($request->email)->send(new sendStactictesConvretClientsToEmail($ClintsStaticts));
+        Mail::to($request->email)->send(new sendStactictesConvretClientsToEmail($ClintsStaticts));
     }
 }
