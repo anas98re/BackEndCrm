@@ -59,7 +59,7 @@ class RegisterController extends Controller
                 }
                 $user = users::where('email', $request->email)->first();
                 $user->code_verfiy = $code;
-                $user->type_level = 0;
+                // $user->type_level = 0;
                 $user->save();
                 Mail::to($request->email)->send(new VerificationCodeEmail($code));
 
