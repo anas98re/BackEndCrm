@@ -86,7 +86,7 @@ class RegisterationService extends Controller
 
         return $this->sendResponse(
             $remember_token ? $remember_token : null,
-            $arrJson ? $arrJson : 'code is wrong'
+            $UserData->id_user ? $UserData->id_user : 'code is wrong'
         );
         return response()->json($arrJson, 200);
     }
