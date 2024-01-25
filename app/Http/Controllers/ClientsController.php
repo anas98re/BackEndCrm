@@ -44,12 +44,12 @@ class ClientsController extends Controller
                         ]
                     );
             }
-            if ($request->type_client == 'معلق استبعاد') {
+            if ($request->type_client == 'مستبعد') {
                 $updateClientData = DB::table('clients')
                     ->where('id_clients', $id_clients)
                     ->update(
                         [
-                            'type_client' => $request->type_client,
+                            'type_client' => 'معلق استبعاد',
                             'date_changetype' => Carbon::now('Asia/Riyadh'),
                             'fk_rejectClient' => $request->fk_rejectClient,
                             'reason_change' => $request->reason_change,
@@ -221,11 +221,12 @@ class ClientsController extends Controller
             'name_enterprise',
             'phone',
             'id_clients',
-            'date_create'
+            'date_create',
+            'SerialNumber'
         )->get();
 
-        // return response()->json($results);
-        return $this->sendResponse($results, 'data');
+        return response()->json($results);
+        // return $this->sendResponse($results, 'data');
     }
     // to test ..
     private function getPluckColumn(Request $request)
