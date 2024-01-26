@@ -20,6 +20,6 @@ class CompanyCommentController extends Controller
         $companyComment->date_comment = Carbon::now('Asia/Riyadh');
 
         $companyComment->save();
-        return $this->sendResponse('true', 'done');
+        return $this->sendResponse($companyComment, 'done');
     }
 }

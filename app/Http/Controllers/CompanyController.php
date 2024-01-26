@@ -29,8 +29,9 @@ class CompanyController extends Controller
         $data = $request->except('path_logo'); // Exclude the file from the general data
         $data['path_logo'] = $generatedPath;
 
-        company::create($data);
-        return response()->json(['message' => 'Company created successfully']);
+        $company = company::create($data);
+        // return response()->json(['message' => 'Company created successfully']);
+        return $this->sendResponse($company, 'Company created successfully');
     }
 
     public function updateCompany(Request $request, $companyId)
@@ -53,7 +54,8 @@ class CompanyController extends Controller
         // Update other fields if needed
         $company->fill($request->except('path_logo'));
         $company->save();
-        return response()->json(['message' => 'Company updated successfully']);
+        // return response()->json(['message' => 'Company updated successfully']);
+        return $this->sendResponse($company, 'Company updated successfully');
     }
     //test
 }
