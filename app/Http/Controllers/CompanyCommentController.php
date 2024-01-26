@@ -22,4 +22,11 @@ class CompanyCommentController extends Controller
         $companyComment->save();
         return $this->sendResponse($companyComment, 'done');
     }
+    public function getCommentsViaCompanyId($companyId)
+    {
+        $companyComments = company_comment::where('fk_company', $companyId)
+            ->orderBy('date_comment', 'desc')->get();
+        return $this->sendResponse($companyComments, 'done');
+    }
+
 }

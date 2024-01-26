@@ -93,6 +93,7 @@ Route::post('sendStactictesConvretClientsToEmail',[ClientsController::class,'sen
 
 //company ...
 Route::post('addCommentToCompany/{fk_company}',[CompanyCommentController::class,'addCommentToCompany']);
+Route::get('getCommentsViaCompanyId/{companyId}',[CompanyCommentController::class,'getCommentsViaCompanyId']);
 Route::post('addCompany',[CompanyController::class,'addCompany']);
 Route::post('updateCompany/{companyId}',[CompanyController::class,'updateCompany']);
 
