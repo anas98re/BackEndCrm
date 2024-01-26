@@ -17,7 +17,6 @@ class ImportantLinkController extends Controller
 
         $link = importantLink::create($data);
         return $this->sendResponse($link, 'Link created successfully');
-        // return response()->json(['message' => 'Link created successfully']);
     }
 
     public function editLink(Request $request, $id)
@@ -30,7 +29,6 @@ class ImportantLinkController extends Controller
         $link->update($data);
 
         return $this->sendResponse($link, 'Link updated successfully');
-        // return response()->json(['message' => 'Link updated successfully']);
     }
 
     public function getAllLink()
