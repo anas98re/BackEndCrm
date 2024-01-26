@@ -15,9 +15,9 @@ class ImportantLinkController extends Controller
         $data = $request->all();
         $data['add_date'] = Carbon::now('Asia/Riyadh');
 
-        importantLink::create($data);
-
-        return response()->json(['message' => 'Link created successfully']);
+        $link = importantLink::create($data);
+        return $this->sendResponse($link, 'Link created successfully');
+        // return response()->json(['message' => 'Link created successfully']);
     }
 
     public function editLink(Request $request, $id)
@@ -29,7 +29,8 @@ class ImportantLinkController extends Controller
 
         $link->update($data);
 
-        return response()->json(['message' => 'Link updated successfully']);
+        return $this->sendResponse($link, 'Link updated successfully');
+        // return response()->json(['message' => 'Link updated successfully']);
     }
 
     public function getAllLink()
