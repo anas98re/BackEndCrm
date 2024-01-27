@@ -18,4 +18,9 @@ class company_comment extends Model
         'content',
         'date_comment'
     ];
+
+    public function Users()
+    {
+        return $this->belongsTo(users::class, 'fk_user', 'id_user')->select('id_user', 'nameUser','img_image');
+    }
 }

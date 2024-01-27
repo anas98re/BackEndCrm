@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\company_comment;
 use App\Http\Requests\Storecompany_commentRequest;
 use App\Http\Requests\Updatecompany_commentRequest;
+use App\Http\Resources\companrCommentResources;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -25,8 +26,9 @@ class CompanyCommentController extends Controller
     public function getCommentsViaCompanyId($companyId)
     {
         $companyComments = company_comment::where('fk_company', $companyId)
-            ->orderBy('date_comment', 'desc')->get();
-        return $this->sendResponse($companyComments, 'done');
+            ->with('Users')
+            ->orderBy('date_comment', 'desc')
+            ->get();
+        return $this->sendResponse(companrCommentResources::collection($companyComments), 'These are all comments for this company');
     }
-
 }
