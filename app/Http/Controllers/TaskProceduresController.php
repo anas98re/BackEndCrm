@@ -537,7 +537,8 @@ class TaskProceduresController extends Controller
     {
         $index = 0;
         $index1 = 0;
-        $Date = Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
+        // $Date = Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
+        $Date = Carbon::now('Asia/Riyadh')->startOfMonth()->toDateString();
 
         $query = $this->MyQueriesService->getClientsThatIsNoUpdateToTheLatestClientUpdatesFor5Days();
 
@@ -632,7 +633,7 @@ class TaskProceduresController extends Controller
                 $array_count_values_ID_USERS_For_Clients = array_count_values($idUsersForClients);
 
                 // Sending notifications to responsible for all (regions)brunches
-                $RegionNamesAndDuplicates = $this->MyQueriesService->getRegionNamesAndDuplicates($duplicates);
+                return $RegionNamesAndDuplicates = $this->MyQueriesService->getRegionNamesAndDuplicates($duplicates);
                 foreach ($array_count_values_USERS as $key => $value) {
                     $IsUser14 = users::where('id_user', $key)
                         ->join('regoin', 'users.fk_regoin', '=', 'regoin.id_regoin')
@@ -676,7 +677,8 @@ class TaskProceduresController extends Controller
                         $message1 = ' هناك ? عميل في ! لم يُعلّق لهم';
                         $messageWithCount1 = str_replace('?', $theRepeate, $message1);
                         $messageWithRegion1 = str_replace('!', $IsUser14->name_regoin, $messageWithCount1);
-                        $messageWithDate1 = $messageWithRegion1 . ' [تم الاحصاء منذ تاريخ % لتاريخ اليوم]';
+                        // $messageWithDate1 = $messageWithRegion1 . ' [تم الاحصاء منذ تاريخ % لتاريخ اليوم]';
+                        $messageWithDate1 = $messageWithRegion1;
                         $messageRegionWithPlaceholder1 = str_replace('%', $Date, $messageWithDate1);
                         if ($userToken) {
                             Notification::send(
@@ -722,7 +724,8 @@ class TaskProceduresController extends Controller
 
                     $messageWithCount2 = str_replace('?', $theRepeate, $message2);
                     $messageWithRegion2 = str_replace('!', $value->name_regoin, $messageWithCount2);
-                    $messageWithDate2 = $messageWithRegion2 . ' [تم الاحصاء منذ تاريخ % لتاريخ اليوم]';
+                    // $messageWithDate2 = $messageWithRegion2 . ' [تم الاحصاء منذ تاريخ % لتاريخ اليوم]';
+                    $messageWithDate2 = $messageWithRegion2 ;
                     $messageRegionWithPlaceholder2 = str_replace('%', $Date, $messageWithDate2);
                     if ($userToken) {
                         Notification::send(
@@ -756,7 +759,8 @@ class TaskProceduresController extends Controller
 
                     $message3 = ' لديك ? عملاء لم يُعلّق لهم ';
                     $messageWithPlaceholder3 = str_replace('?', $value, $message3);
-                    $messageWithDate3 = $messageWithPlaceholder3 . ' [ تم الاحصاء منذ تاريخ % لتاريخ اليوم]';
+                    // $messageWithDate3 = $messageWithPlaceholder3 . ' [ تم الاحصاء منذ تاريخ % لتاريخ اليوم]';
+                    $messageWithDate3 = $messageWithPlaceholder3 ;
                     $messageRegionWithPlaceholder3 = str_replace('%', $Date, $messageWithDate3);
                     if ($userToken) {
                         Notification::send(
