@@ -11,6 +11,7 @@ class company_comment extends Model
 
     protected $table = 'company_comment';
     public $timestamps = false;
+    protected $primaryKey = 'id_comment_company';
     protected $fillable = [
         'id_comment_company',
         'fk_user',
