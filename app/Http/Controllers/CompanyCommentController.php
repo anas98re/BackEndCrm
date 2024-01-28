@@ -32,7 +32,7 @@ class CompanyCommentController extends Controller
         // $companyComment->img_image = $user->img_image;
 
         // Return the comment object as response
-        return $this->sendResponse([$companyComment], 'done');
+        return $this->sendResponse($companyComment, 'done');
     }
     public function getCommentsViaCompanyId($companyId)
     {
