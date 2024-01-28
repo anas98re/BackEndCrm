@@ -170,7 +170,7 @@ class ClientsController extends Controller
             }
 
             $formattedDate = $eightWorkingDaysAgo->format('Y-m-d H:i:s');
-            return $branchesIdsWithNumberRepetitions = $this->MyService
+            $branchesIdsWithNumberRepetitions = $this->MyService
                 ->branchesIdsWithCountForTransformClientsFromMarketing($formattedDate);
 
             $this->MyService
