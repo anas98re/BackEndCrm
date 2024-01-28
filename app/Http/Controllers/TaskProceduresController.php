@@ -633,7 +633,7 @@ class TaskProceduresController extends Controller
                 $array_count_values_ID_USERS_For_Clients = array_count_values($idUsersForClients);
 
                 // Sending notifications to responsible for all (regions)brunches
-                return $RegionNamesAndDuplicates = $this->MyQueriesService->getRegionNamesAndDuplicates($duplicates);
+                $RegionNamesAndDuplicates = $this->MyQueriesService->getRegionNamesAndDuplicates($duplicates);
                 foreach ($array_count_values_USERS as $key => $value) {
                     $IsUser14 = users::where('id_user', $key)
                         ->join('regoin', 'users.fk_regoin', '=', 'regoin.id_regoin')

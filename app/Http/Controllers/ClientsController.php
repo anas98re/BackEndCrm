@@ -88,11 +88,20 @@ class ClientsController extends Controller
                     ->where('id_clients', $id_clients)
                     ->first()
                     ->fk_regoin;
+
                 $usersId = DB::table('users')
                     ->where('fk_regoin', $brunchClient)
                     ->where('isActive', 1)
                     ->where('type_level', 14)
                     ->pluck('id_user');
+
+                $nameClient = DB::table('clients')
+                    ->where('id_clients', $id_clients)
+                    ->first()->name_enterprise;
+
+                $message1 = 'العميل ? يحتاج لموافقة على الاستبعاد';
+                $messageNotifi = str_replace('?', $nameClient, $message1);
+                
                 foreach ($usersId as $Id) {
                     $userToken = DB::table('user_token')->where('fkuser', $Id)
                         ->where('token', '!=', null)
@@ -101,7 +110,7 @@ class ClientsController extends Controller
                     Notification::send(
                         null,
                         new SendNotification(
-                            'تحديث جديد لنوع عميل',
+                            $messageNotifi,
                             $request->type_client,
                             'Edit',
                             ($userToken != null ? $userToken->token : null)
@@ -109,7 +118,7 @@ class ClientsController extends Controller
                     );
 
                     notifiaction::create([
-                        'message' => 'تحديث جديد لنوع عميل',
+                        'message' => $messageNotifi,
                         'type_notify' => 'تحديث عميل',
                         'to_user' => $Id,
                         'isread' => 0,
