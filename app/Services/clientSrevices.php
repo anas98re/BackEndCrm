@@ -139,6 +139,8 @@ class clientSrevices extends JsonResponeService
     {
         $userIds = DB::table('clients')
             ->where('ismarketing', 1)
+            ->where('fk_regoin', Constants::MARKETING_SALSE_ID)
+            ->where('type_client', [Constants::NEGOTIATION, Constants::OFFER_PRICE])
             // ->where('is_check_marketing', 0)
             ->whereDate('date_create', '>=', Carbon::createFromDate(2024, 1, 1)->endOfDay())
             ->where('date_create', '<', $formattedDate)
@@ -162,7 +164,7 @@ class clientSrevices extends JsonResponeService
                         'تحويلات العملاء',
                         $messageWithCount2,
                         $messageWithCount2,
-                        ($userToken != null ? $userToken->token : null)
+                        $userToken != null ? $userToken->token : null
                     )
                 );
 
