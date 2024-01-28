@@ -17,19 +17,20 @@ class CompanyCommentController extends Controller
     {
         $companyComment = new company_comment();
 
-        $companyComment->fk_user = $request->id_user;
-        $companyComment->fk_company = $fk_company;
+        $companyComment->fk_user = (int)$request->id_user;
+        $companyComment->fk_company = (int)$fk_company;
         $companyComment->content = $request->content;
         $companyComment->date_comment = Carbon::now('Asia/Riyadh');
 
         $companyComment->save();
 
         // Retrieve user details
-        // $user = users::find($request->id_user);
+        $user = users::find($request->id_user);
 
         // Add user details to the comment object
-        // $companyComment->nameUser = $user->nameUser;
-        // $companyComment->img_image = $user->img_image;
+        $companyComment->nameUser = $user->nameUser;
+        $companyComment->img_image = $user->img_image;
+
 
         // Return the comment object as response
         return $this->sendResponse($companyComment, 'done');
