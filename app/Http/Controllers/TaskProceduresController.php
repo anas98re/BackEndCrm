@@ -537,8 +537,8 @@ class TaskProceduresController extends Controller
     {
         $index = 0;
         $index1 = 0;
-        // $Date = Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
-        $Date = Carbon::now('Asia/Riyadh')->startOfMonth()->toDateString();
+        $Date = Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
+        // $Date = Carbon::now('Asia/Riyadh')->startOfMonth()->toDateString();
 
         $query = $this->MyQueriesService->getClientsThatIsNoUpdateToTheLatestClientUpdatesFor5Days();
 

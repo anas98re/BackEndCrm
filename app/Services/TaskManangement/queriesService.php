@@ -61,8 +61,8 @@ class queriesService extends JsonResponeService
             })
             // ->where('u.is_comments_check', '=', 0)
             // ->where('u.type_client', '=', 'تفاوض')
-            // ->where('u.date_create', '>=', Carbon::now('Asia/Riyadh')->subMonthsNoOverflow(1)->startOfMonth()->toDateString()) // get date which is the first day of the previous month.
-            ->where('u.date_create', '>=', Carbon::now('Asia/Riyadh')->startOfMonth()->toDateString()) // get date which is the first day of the previous month.
+            ->where('u.date_create', '>=', Carbon::now('Asia/Riyadh')->subMonthsNoOverflow(1)->startOfMonth()->toDateString()) // get date which is the first day of the previous month.
+            // ->where('u.date_create', '>=', Carbon::now('Asia/Riyadh')->startOfMonth()->toDateString()) // get date which is the first day of the previous month.
             ->where(function ($query) {
                 $query->where('u.type_client', '=', 'تفاوض')
                     ->orWhere('u.type_client', '=', 'عرض سعر');
