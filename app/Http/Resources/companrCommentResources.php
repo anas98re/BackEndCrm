@@ -10,8 +10,8 @@ class companrCommentResources extends JsonResource
     {
         return [
             'id_comment_company' => $this->id_comment_company,
-            'fk_user' => $this->fk_user,
-            'fk_company' => $this->fk_company,
+            'fk_user' => (int)$this->fk_user,
+            'fk_company' => (int)$this->fk_company,
             'content' => $this->content,
             'date_comment' => $this->date_comment,
             'nameUser' => $this->Users->nameUser,
