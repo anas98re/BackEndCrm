@@ -6,6 +6,7 @@ use App\Models\company_comment;
 use App\Http\Requests\Storecompany_commentRequest;
 use App\Http\Requests\Updatecompany_commentRequest;
 use App\Http\Resources\companrCommentResources;
+use App\Models\users;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -22,12 +23,16 @@ class CompanyCommentController extends Controller
         $companyComment->date_comment = Carbon::now('Asia/Riyadh');
 
         $companyComment->save();
-        $companyCommentCollection = $companyComment instanceof Collection ? $companyComment : collect([$companyComment]);
-        $companyCommentResources = $companyCommentCollection->map(function ($comment) {
-            return new companrCommentResources($comment);
-        });
 
-        return $this->sendResponse($companyCommentResources, 'done');
+        // Retrieve user details
+        // $user = users::find($request->id_user);
+
+        // Add user details to the comment object
+        // $companyComment->nameUser = $user->nameUser;
+        // $companyComment->img_image = $user->img_image;
+
+        // Return the comment object as response
+        return $this->sendResponse([$companyComment], 'done');
     }
     public function getCommentsViaCompanyId($companyId)
     {
