@@ -62,12 +62,31 @@ class RegisterController extends Controller
                 // $user->type_level = 0;
                 $user->save();
                 Mail::to($request->email)->send(new VerificationCodeEmail($code));
+            } else {
+                $User = new users();
+                $email = $request->email;
+                $nameUser = strstr($email, '@', true); // Get the substring before the '@' symbol in the email
+                $User->nameUser = $nameUser;
+                $User->email = $email;
+                $User->mobile = rand(1111111, 99999999);
+                $User->type_level = 1;
+                $User->save();
 
-                DB::commit();
-                return $this->sendResponse([$user->email], 'Done');
+                $code = rand(11111, 99999);
+                $existingCode = users::where('code_verfiy', $code)->exists();
+                while ($existingCode) {
+                    $code = rand(11111, 99999);
+                    $existingCode = users::where('code_verfiy', $code)->exists();
+                }
+                $user = users::where('email', $request->email)->first();
+                $user->code_verfiy = $code;
+                // $user->type_level = 0;
+                $user->save();
+                Mail::to($request->email)->send(new VerificationCodeEmail($code));
             }
-
-            return $this->sendUnauthenticated(['Error'], 'Unauthenticated');
+            DB::commit();
+            return $this->sendResponse([$user->email], 'Done');
+            // return $this->sendUnauthenticated(['Error'], 'Unauthenticated');
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);

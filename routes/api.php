@@ -12,6 +12,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskProceduresController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+// use
 
 /*
 |--------------------------------------------------------------------------
@@ -49,7 +50,7 @@ Route::post('addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days',[TaskPr
 Route::post('getUsersByTypeAdministrationAndRegion',[RegisterController::class,'getUsersByTypeAdministrationAndRegion']);
 
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum','knowCurrentUser'])->group(function () {
     Route::post('test',[RegisterController::class,'test']);
 
     //Tasks
