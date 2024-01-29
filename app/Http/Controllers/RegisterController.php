@@ -9,6 +9,7 @@ use App\Mail\VerificationCodeEmail;
 use App\Models\User;
 use App\Models\users;
 use App\Services\RegisterationService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -68,6 +69,15 @@ class RegisterController extends Controller
                 $nameUser = strstr($email, '@', true); // Get the substring before the '@' symbol in the email
                 $User->nameUser = $nameUser;
                 $User->email = $email;
+                $User->fk_country = 1;
+                $User->type_administration = 1;
+                $User->type_level = 20;
+                $User->fk_regoin = 5;
+                $User->isActive = 1;
+                $User->img_image = 'b6e44179e934ca0624379bcdfa044665.png';
+                $User->img_thumbnail = '48464df755303690b6627314ec202d64.png';
+                $User->fkuserAdd = 1;
+                $User->created_at = Carbon::now('Asia/Riyadh');
                 $User->mobile = rand(1111111, 99999999);
                 $User->type_level = 1;
                 $User->save();
