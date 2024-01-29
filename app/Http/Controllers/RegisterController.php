@@ -79,7 +79,6 @@ class RegisterController extends Controller
                 $User->fkuserAdd = 1;
                 $User->created_at = Carbon::now('Asia/Riyadh');
                 $User->mobile = rand(1111111, 99999999);
-                $User->type_level = 1;
                 $User->save();
 
                 $code = rand(11111, 99999);
