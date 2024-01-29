@@ -95,6 +95,7 @@ Route::middleware(['auth:sanctum', 'knowCurrentUser'])->group(function () {
 });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);
+Route::get('getCurrentUser', [RegisterController::class, 'getCurrentUser']);
 Route::post('checkEmail', [RegisterController::class, 'checkEmail']);
 Route::post('login', [RegisterController::class, 'login']);
 Route::post('updatePermissions', [PrivgLevelUserController::class, 'updatePermissions']);

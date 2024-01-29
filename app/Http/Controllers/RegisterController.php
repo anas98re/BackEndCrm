@@ -18,6 +18,8 @@ use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Http;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class RegisterController extends Controller
 {
@@ -145,7 +147,7 @@ class RegisterController extends Controller
 
     public function test(Request $request)
     {
-        return $user = auth()->user();
+        $user = auth()->user();
         $string = "hi h#o#$%&*w are %you$";
         $replacedString = str_replace(' ', '_', $string);
         $finalString = preg_replace('/[^A-Za-z0-9_]/', '', $replacedString);
@@ -157,5 +159,13 @@ class RegisterController extends Controller
     {
         $users = $this->MyService->getUsersByTypeAdministrationAndRegion($request);
         return (count($users) > 0 ? $users : response()->json(['not_found']));
+    }
+
+    public function getCurrentUser(Request $request)
+    {
+        // $bearerToken = '13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465';
+        $tokenable_type = PersonalAccessToken::findToken($request->bearerToken);
+        $user = users::where('id_user',$tokenable_type->tokenable_id)->first()->id_user;
+        return  $user;
     }
 }
