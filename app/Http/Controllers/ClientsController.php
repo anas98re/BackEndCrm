@@ -101,7 +101,7 @@ class ClientsController extends Controller
 
                 $message1 = 'العميل ? يحتاج لموافقة على الاستبعاد';
                 $messageNotifi = str_replace('?', $nameClient, $message1);
-                
+
                 foreach ($usersId as $Id) {
                     $userToken = DB::table('user_token')->where('fkuser', $Id)
                         ->where('token', '!=', null)
@@ -168,17 +168,16 @@ class ClientsController extends Controller
     {
         try {
             DB::beginTransaction();
-            clients::all();
-            $eightWorkingDaysAgo = Carbon::now('Asia/Riyadh');
+            $sevenWorkingDaysAgo = Carbon::now('Asia/Riyadh');
 
-            // Adjust the date to exclude Fridays and Saturdays and go back 8 working days
-            for ($i = 0; $i < 8; $i++) {
+            // Adjust the date to exclude Fridays and Saturdays and go back 7 working days
+            for ($i = 0; $i < 7; $i++) {
                 do {
-                    $eightWorkingDaysAgo->subDay();
-                } while ($eightWorkingDaysAgo->isFriday() || $eightWorkingDaysAgo->isSaturday());
+                    $sevenWorkingDaysAgo->subDay();
+                } while ($sevenWorkingDaysAgo->isFriday() || $sevenWorkingDaysAgo->isSaturday());
             }
 
-            $formattedDate = $eightWorkingDaysAgo->format('Y-m-d H:i:s');
+            $formattedDate = $sevenWorkingDaysAgo->format('Y-m-d H:i:s');
             $branchesIdsWithNumberRepetitions = $this->MyService
                 ->branchesIdsWithCountForTransformClientsFromMarketing($formattedDate);
 

@@ -216,7 +216,8 @@ class TaskService extends JsonResponeService
 
             if ($request->has('file_path')) { // If we want add attachment files to the task..
                 $attachment = new attachment();
-                $attachment->file_path = $request->file_path;
+                $generatedPath = $this->MyService->handlingImageName($request->file('file_path'));
+                $attachment->file_path = $generatedPath;
                 $attachment->task_id = $task->id;
                 $attachment->create_date = $request->start_date;
                 $attachment->created_by = $request->id_user;
