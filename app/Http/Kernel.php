@@ -15,10 +15,10 @@ class Kernel extends HttpKernel
      */
     // app/Http/Kernel.php
 
-    protected $routeMiddleware = [
-        // Other middleware entries...
-        'knowCurrentUser' => \App\Http\Middleware\KnowCurrentUser::class,
-    ];
+    // protected $routeMiddleware = [
+    //     // Other middleware entries...
+    //     'knowCurrentUser' => \App\Http\Middleware\KnowCurrentUser::class,
+    // ];
 
     protected $middleware = [
         // \App\Http\Middleware\TrustHosts::class,
@@ -29,6 +29,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\SanctumCustomHeaderMiddleware::class,
+        \App\Http\Middleware\KnowCurrentUser::class,
     ];
 
     /**
