@@ -50,7 +50,7 @@ Route::post('addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days', [TaskP
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
 
 
-Route::middleware(['auth:sanctum', 'knowCurrentUser'])->group(function () {
+// Route::middleware(['auth:sanctum', 'knowCurrentUser'])->group(function () {
     Route::post('test', [RegisterController::class, 'test']);
 
     //Tasks
@@ -92,7 +92,7 @@ Route::middleware(['auth:sanctum', 'knowCurrentUser'])->group(function () {
     Route::post('editLink/{id}', [ImportantLinkController::class, 'editLink']);
     Route::get('getAllLink', [ImportantLinkController::class, 'getAllLink']);
     Route::post('deleteLink/{id}', [ImportantLinkController::class, 'deleteLink']);
-});
+// });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);
 Route::get('getCurrentUser', [RegisterController::class, 'getCurrentUser']);
