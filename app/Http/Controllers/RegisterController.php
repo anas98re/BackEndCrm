@@ -169,4 +169,12 @@ class RegisterController extends Controller
         $user = users::where('id_user',$tokenable_type->tokenable_id)->first()->id_user;
         return  $user;
     }
+
+    public function getHashToken(Request $request)
+    {
+        $bearerToken = $request->bearerToken();
+        // $bearerToken = '13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465';
+        $tokenable_type = PersonalAccessToken::findToken($bearerToken);
+        return $tokenable_type ? 1 : 0;
+    }
 }
