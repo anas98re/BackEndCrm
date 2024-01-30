@@ -50,8 +50,8 @@ Route::post('addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days', [TaskP
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
 
 
-// Route::middleware(['auth:sanctum', 'knowCurrentUser'])->group(function () {
-Route::middleware(['auth:sanctum'])->group(function () {
+Route::middleware(['auth:sanctum', 'knowCurrentUser'])->group(function () {
+// Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('test', [RegisterController::class, 'test']);
 
     //Tasks
