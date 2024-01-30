@@ -19,6 +19,8 @@ class GroupController extends Controller
 
     public function addGroup(GroupRequest $request)
     {
+        return $request->id_user;
+        return auth('sanctum')->user();
         $data = $this->MyService->addGroup($request);
         return $this->sendResponse($data,'Done');
     }
