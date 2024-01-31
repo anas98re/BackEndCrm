@@ -2,6 +2,7 @@
 
 namespace App\Services\TaskManangement;
 
+use App\Constants;
 use App\Models\users;
 use App\Services\JsonResponeService;
 use Carbon\Carbon;
@@ -102,7 +103,7 @@ class queriesService extends JsonResponeService
                         ->whereIn('u.type_level', $typeLevel);
                 })
                 ->orWhere(function ($query) use ($regoin, $typeLevel) {
-                    $query->where('u.fk_regoin', 14)
+                    $query->where('u.fk_regoin', Constants::ALL_BRUNSHES)
                         ->where('u.fk_country', $regoin->fk_country)
                         ->whereIn('u.type_level', $typeLevel);
                 })
@@ -162,7 +163,7 @@ class queriesService extends JsonResponeService
                     ->whereIn('u.type_level', $typeLevel);
             })
             ->orWhere(function ($query) use ($typeLevel) {
-                $query->where('u.fk_regoin', 14)
+                $query->where('u.fk_regoin', Constants::ALL_BRUNSHES)
                     ->whereIn('u.type_level', $typeLevel);
             })
             ->get();
@@ -192,7 +193,7 @@ class queriesService extends JsonResponeService
                     ->whereIn('u.type_level', $typeLevel);
             })
             ->orWhere(function ($query) use ($typeLevel) {
-                $query->where('u.fk_regoin', 14)
+                $query->where('u.fk_regoin', Constants::ALL_BRUNSHES)
                     ->whereIn('u.type_level', $typeLevel);
             })
             ->get();

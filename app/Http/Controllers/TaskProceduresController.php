@@ -41,7 +41,7 @@ class TaskProceduresController extends Controller
             DB::beginTransaction();
 
             $assigned_to = users::where('fk_regoin', $request->fk_regoin)
-                ->where('type_level', 14)->first();
+                ->where('type_level', Constants::ALL_BRUNSHES)->first();
             $existingTask = Task::where('invoice_id', $request->invoice_id)
                 ->where('public_Type', 'approveAdmin')
                 ->first();
@@ -646,7 +646,7 @@ class TaskProceduresController extends Controller
                         ->where('token', '!=', null)
                         ->latest('date_create')
                         ->first();
-                    if ($IsUser14->id_regoin == 14) {
+                    if ($IsUser14->id_regoin == Constants::ALL_BRUNSHES) {
 
 
                         if ($userToken) {
@@ -708,7 +708,7 @@ class TaskProceduresController extends Controller
                 }
 
                 // Sending notifications to Branch supervisors
-                $BranchSupervisors = users::where('type_level', 14)
+                $BranchSupervisors = users::where('type_level', Constants::ALL_BRUNSHES)
                     ->whereIn('fk_regoin', $elementOfRegions)
                     ->join('regoin', 'users.fk_regoin', '=', 'regoin.id_regoin')
                     ->select('users.id_user', 'regoin.name_regoin', 'regoin.id_regoin')
