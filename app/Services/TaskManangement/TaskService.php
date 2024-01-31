@@ -2,6 +2,7 @@
 
 namespace App\Services\TaskManangement;
 
+use App\Constants;
 use App\Http\Requests\Registeration\RegisterationRequest;
 use App\Http\Requests\TaskManagementRequests\TaskRequest;
 use App\Models\attachment;
@@ -163,23 +164,25 @@ class TaskService extends JsonResponeService
                                     break;
                             }
                             $task->assigend_region_to = $value;
-                            $regionToValue = regoin::where('id_regoin', $value)
-                                ->first()->name_regoin;
-                            $users = $this->queriesService->BranchSupervisorsToTheRequiredLevelForTaskProcedures($value);
-                            foreach ($users as $userID) {
-                                $this->MyService->handleNotificationForTaskManual(
-                                    $message = $request->title,
-                                    $type = 'task',
-                                    $to_user = $userID,
-                                    $from_user = $request->id_user,
-                                    $from_Nameuser = $userValue,
-                                    $from_department = $departmentValue,
-                                    $from_region = $regionValue,
-                                    $userTo_Value = $userToValue,
-                                    $departmentTo_Value = $departmentToValue,
-                                    $regionTo_Value = $regionToValue,
-                                    $start_Date = $startDate
-                                );
+                            if ($value != Constants::ALL_BRUNSHES) {
+                                $regionToValue = regoin::where('id_regoin', $value)
+                                    ->first()->name_regoin;
+                                $users = $this->queriesService->BranchSupervisorsToTheRequiredLevelForTaskProcedures($value);
+                                foreach ($users as $userID) {
+                                    $this->MyService->handleNotificationForTaskManual(
+                                        $message = $request->title,
+                                        $type = 'task',
+                                        $to_user = $userID,
+                                        $from_user = $request->id_user,
+                                        $from_Nameuser = $userValue,
+                                        $from_department = $departmentValue,
+                                        $from_region = $regionValue,
+                                        $userTo_Value = $userToValue,
+                                        $departmentTo_Value = $departmentToValue,
+                                        $regionTo_Value = $regionToValue,
+                                        $start_Date = $startDate
+                                    );
+                                }
                             }
                             break;
                     }

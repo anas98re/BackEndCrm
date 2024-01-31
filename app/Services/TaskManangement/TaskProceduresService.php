@@ -234,12 +234,12 @@ class TaskProceduresService extends JsonResponeService
     {
         $message = ' لديك ? عملاء لم يُعلّق لهم ';
         $messageWithPlaceholder = str_replace('?', $value, $message);
-        $messageWithDate = $messageWithPlaceholder . ' [منذ تاريخ % لتاريخ اليوم]';
-        $messageRegionWithPlaceholder = str_replace('%', $Date, $messageWithDate);
+        // $messageWithDate = $messageWithPlaceholder . ' [منذ تاريخ % لتاريخ اليوم]';
+        // $messageRegionWithPlaceholder = str_replace('%', $Date, $messageWithDate);
 
         $task = new task();
         $task->title = 'تعليقات العملاء';
-        $task->description = $messageRegionWithPlaceholder;
+        $task->description = $messageWithPlaceholder;
         $task->assigned_to = $key;
         $task->public_Type = 'checkComments';
         $task->main_type_task = 'ProccessAuto';

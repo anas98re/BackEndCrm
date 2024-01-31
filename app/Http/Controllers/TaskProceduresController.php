@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants;
 use App\Models\taskStatus;
 use App\Http\Requests\StoretaskStatusRequest;
 use App\Http\Requests\UpdatetaskStatusRequest;
@@ -537,7 +538,7 @@ class TaskProceduresController extends Controller
     {
         $index = 0;
         $index1 = 0;
-        $Date = Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
+        $Date = Carbon::now('Asia/Riyadh')->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
         // $Date = Carbon::now('Asia/Riyadh')->startOfMonth()->toDateString();
 
         $query = $this->MyQueriesService->getClientsThatIsNoUpdateToTheLatestClientUpdatesFor5Days();
@@ -607,8 +608,10 @@ class TaskProceduresController extends Controller
                 $elementOfRegions = [];
                 $countRegions = [];
                 foreach ($duplicates as $element => $count) {
-                    $elementOfRegions[] = $element;
-                    $countRegions[] = $count;
+                    if ($element != Constants::ALL_BRUNSHES) {
+                        $elementOfRegions[] = $element;
+                        $countRegions[] = $count;
+                    }
                 }
 
                 $privgLevelUsers = DB::table('privg_level_user')
@@ -678,21 +681,21 @@ class TaskProceduresController extends Controller
                         $messageWithCount1 = str_replace('?', $theRepeate, $message1);
                         $messageWithRegion1 = str_replace('!', $IsUser14->name_regoin, $messageWithCount1);
                         // $messageWithDate1 = $messageWithRegion1 . ' [تم الاحصاء منذ تاريخ % لتاريخ اليوم]';
-                        $messageWithDate1 = $messageWithRegion1;
-                        $messageRegionWithPlaceholder1 = str_replace('%', $Date, $messageWithDate1);
+                        // $messageWithDate1 = $messageWithRegion1;
+                        // $messageRegionWithPlaceholder1 = str_replace('%', $Date, $messageWithDate1);
                         if ($userToken) {
                             Notification::send(
                                 null,
                                 new SendNotification(
                                     'تعليقات العملاء',
-                                    $messageRegionWithPlaceholder1,
-                                    $messageRegionWithPlaceholder1,
+                                    $messageWithRegion1,
+                                    $messageWithRegion1,
                                     ($userToken != null ? $userToken->token : null)
                                 )
                             );
 
                             notifiaction::create([
-                                'message' => $messageRegionWithPlaceholder1,
+                                'message' => $messageWithRegion1,
                                 'type_notify' => 'checkComment',
                                 'to_user' => $IsUser14->id_user,
                                 'isread' => 0,
@@ -725,21 +728,21 @@ class TaskProceduresController extends Controller
                     $messageWithCount2 = str_replace('?', $theRepeate, $message2);
                     $messageWithRegion2 = str_replace('!', $value->name_regoin, $messageWithCount2);
                     // $messageWithDate2 = $messageWithRegion2 . ' [تم الاحصاء منذ تاريخ % لتاريخ اليوم]';
-                    $messageWithDate2 = $messageWithRegion2 ;
-                    $messageRegionWithPlaceholder2 = str_replace('%', $Date, $messageWithDate2);
+                    // $messageWithDate2 = $messageWithRegion2;
+                    // $messageRegionWithPlaceholder2 = str_replace('%', $Date, $messageWithDate2);
                     if ($userToken) {
                         Notification::send(
                             null,
                             new SendNotification(
                                 'تعليقات العملاء',
-                                $messageRegionWithPlaceholder2,
-                                $messageRegionWithPlaceholder2,
+                                $messageWithRegion2,
+                                $messageWithRegion2,
                                 ($userToken != null ? $userToken->token : null)
                             )
                         );
 
                         notifiaction::create([
-                            'message' => $messageRegionWithPlaceholder2,
+                            'message' => $messageWithRegion2,
                             'type_notify' => 'checkComment',
                             'to_user' => $value->id_user,
                             'isread' => 0,
@@ -760,21 +763,21 @@ class TaskProceduresController extends Controller
                     $message3 = ' لديك ? عملاء لم يُعلّق لهم ';
                     $messageWithPlaceholder3 = str_replace('?', $value, $message3);
                     // $messageWithDate3 = $messageWithPlaceholder3 . ' [ تم الاحصاء منذ تاريخ % لتاريخ اليوم]';
-                    $messageWithDate3 = $messageWithPlaceholder3 ;
-                    $messageRegionWithPlaceholder3 = str_replace('%', $Date, $messageWithDate3);
+                    // $messageWithDate3 = $messageWithPlaceholder3;
+                    // $messageRegionWithPlaceholder3 = str_replace('%', $Date, $messageWithDate3);
                     if ($userToken) {
                         Notification::send(
                             null,
                             new SendNotification(
                                 'تعليقات العملاء',
-                                $messageRegionWithPlaceholder3,
-                                $messageRegionWithPlaceholder3,
+                                $messageWithPlaceholder3,
+                                $messageWithPlaceholder3,
                                 ($userToken != null ? $userToken->token : null)
                             )
                         );
 
                         notifiaction::create([
-                            'message' => $messageRegionWithPlaceholder3,
+                            'message' => $messageWithPlaceholder3,
                             'type_notify' => 'checkComment',
                             'to_user' => $key,
                             'isread' => 0,
