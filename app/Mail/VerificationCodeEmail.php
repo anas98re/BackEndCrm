@@ -21,8 +21,9 @@ class VerificationCodeEmail extends Mailable
 
     public function build()
     {
-        return $this->view('emailsVerification_code')
-                    ->subject('Verification Code');
+        return $this->from('your-email@example.com', 'Smart CRM')
+            ->view('emailsVerification_code')
+            ->subject('Verification Code');
     }
 
     /**
