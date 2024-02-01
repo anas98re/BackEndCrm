@@ -220,4 +220,63 @@ class clientSrevices extends JsonResponeService
 
         return null;
     }
+
+
+    public function filterByNameClientOrEnterprise($query, $nameClient, $nameEnterprise)
+    {
+        if ($nameClient) {
+            $this->filterByNameClient($query, $nameClient);
+        }
+
+        if ($nameEnterprise) {
+            $this->filterByNameEnterprise($query, $nameEnterprise);
+        }
+    }
+
+    private function filterByNameClient($query, $nameClient)
+    {
+        // Ensure the search term is properly encoded as UTF-8
+        $searchTerm = mb_convert_encoding($nameClient, 'UTF-8', mb_detect_encoding($nameClient));
+
+        // Split the search term to get the first word and the first three letters of the second word
+        $searchTermParts = explode(' ', $searchTerm);
+        $firstWord = $searchTermParts[0];
+        $secondWordPrefix = isset($searchTermParts[1]) ? mb_substr($searchTermParts[1], 0, 3, 'UTF-8') : '';
+
+        // Fetch results based on the first word and the first three letters of the second word for name_client
+        $query->orWhere(function ($query) use ($firstWord, $secondWordPrefix) {
+            $query->where('name_client', 'LIKE', $firstWord . ' ' . $secondWordPrefix . '%');
+        });
+    }
+
+    private function filterByNameEnterprise($query, $nameEnterprise)
+    {
+        $excludedWords = ['موسسة', 'مؤسسة', 'مؤسسه', 'جمعية', 'جمعيه'];
+        $excludeFirstWord = false;
+
+        // Check if any of the excluded words are present in the name_enterprise
+        foreach ($excludedWords as $excludedWord) {
+            if (strpos($nameEnterprise, $excludedWord) !== false) {
+                $excludeFirstWord = true;
+                break;
+            }
+        }
+
+        // Fetch results based on the adjusted query for name_enterprise
+        $query->orWhere(function ($query) use ($nameEnterprise, $excludeFirstWord) {
+            $searchTermParts = explode(' ', $nameEnterprise);
+            $firstWord = isset($searchTermParts[0]) ? $searchTermParts[0] : '';
+            $secondWordPrefix = isset($searchTermParts[1]) ? mb_substr($searchTermParts[1], 0, 3, 'UTF-8') : '';
+
+            if (!$excludeFirstWord) {
+                $query->where('name_enterprise', 'LIKE', $firstWord . ' ' . $secondWordPrefix . '%');
+            } else {
+                // If the first word is excluded, use the second word as the first word
+                $Sec = isset($searchTermParts[1]) ? $searchTermParts[1] : '';
+                $thirdWordPrefix = isset($searchTermParts[2]) ? mb_substr($searchTermParts[2], 0, 3, 'UTF-8') : '';
+                $query->where('name_enterprise', 'LIKE', $Sec . ' ' . $thirdWordPrefix . '%');
+            }
+        });
+    }
+
 }

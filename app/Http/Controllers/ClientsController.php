@@ -223,32 +223,46 @@ class ClientsController extends Controller
         return response()->json(['message' => 'Client created successfully']);
     }
 
+
     public function SimilarClientsNames(Request $request)
     {
-        $query = clients::query();
-
-        if ($request->has('name_client')) {
-            $query->orWhere('name_client', 'LIKE', '%' . $request->name_client . '%');
-        }
-        if ($request->has('name_enterprise')) {
-            $query->orWhere('name_enterprise', 'LIKE', '%' . $request->name_enterprise . '%');
-        }
-        if ($request->has('phone')) {
-            $query->orWhere('phone', 'LIKE', '%' . $request->phone . '%');
-        }
-
-        $results = $query->select(
+        $selectFields = [
             'name_client',
             'name_enterprise',
             'phone',
             'id_clients',
             'date_create',
             'SerialNumber'
-        )->get();
+        ];
+
+        $query = clients::query();
+
+        if ($request->has('phone') && !empty($request->phone)) {
+            // Create a separate instance of the query to execute only the phone condition
+            $phoneQuery = clients::query()->where('phone', $request->phone)->select($selectFields)->get();
+
+            // Check if there are results for phone query
+            if ($phoneQuery->count() > 0) {
+                return response()->json($phoneQuery);
+            }
+        }
+
+        // Continue with name_client or name_enterprise condition
+        if ($request->has('name_client') || $request->has('name_enterprise')) {
+            $nameClient = $request->input('name_client');
+            $nameEnterprise = $request->input('name_enterprise');
+
+            $this->MyService->filterByNameClientOrEnterprise($query, $nameClient, $nameEnterprise);
+        }
+
+        // Get results for name_client or name_enterprise condition
+        $results = $query->select($selectFields)->get();
 
         return response()->json($results);
-        // return $this->sendResponse($results, 'data');
     }
+
+
+
     // to test ..
     private function getPluckColumn(Request $request)
     {
