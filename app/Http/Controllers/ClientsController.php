@@ -113,7 +113,7 @@ class ClientsController extends Controller
                             $messageNotifi,
                             $request->type_client,
                             'Edit',
-                            ($userToken != null ? $userToken->token : null)
+                        ($userToken != null ? $userToken->token : null)
                         )
                     );
 
