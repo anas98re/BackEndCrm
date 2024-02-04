@@ -27,6 +27,7 @@ class ClientsController extends Controller
     {
         $this->MyService = $MyService;
     }
+
     public function editClientByTypeClient($id_clients, Request $request)
     {
         try {
@@ -107,12 +108,18 @@ class ClientsController extends Controller
                         ->where('token', '!=', null)
                         ->latest('date_create')
                         ->first();
+
+                    $data = 'id_client =' . $id_clients .
+                        ' ,title =' . 'موافقة استبعاد' .
+                        ' ,Type =' . 'exclude' .
+                        ' ,messageNotifi=' . $messageNotifi;
+
                     Notification::send(
                         null,
                         new SendNotification(
-                            'exclude',
+                            'موافقة استبعاد',
                             $messageNotifi,
-                            'exclude',
+                            $data,
                             ($userToken != null ? $userToken->token : null)
                         )
                     );
@@ -122,7 +129,7 @@ class ClientsController extends Controller
                         'type_notify' => 'exclude',
                         'to_user' => $Id,
                         'isread' => 0,
-                        'data' => $id_clients,
+                        'data' =>  $id_clients,
                         'from_user' => 1,
                         'dateNotify' => Carbon::now('Asia/Riyadh')
                     ]);
