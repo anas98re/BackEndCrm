@@ -110,16 +110,16 @@ class ClientsController extends Controller
                     Notification::send(
                         null,
                         new SendNotification(
+                            'exclude',
                             $messageNotifi,
-                            $request->type_client,
-                            'Edit',
-                        ($userToken != null ? $userToken->token : null)
+                            'exclude',
+                            ($userToken != null ? $userToken->token : null)
                         )
                     );
 
                     notifiaction::create([
                         'message' => $messageNotifi,
-                        'type_notify' => 'تحديث عميل',
+                        'type_notify' => 'exclude',
                         'to_user' => $Id,
                         'isread' => 0,
                         'data' => $id_clients,
