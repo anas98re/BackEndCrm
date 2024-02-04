@@ -229,7 +229,7 @@ class clientSrevices extends JsonResponeService
         }
 
         if ($nameEnterprise) {
-            $this->filterByNameEnterprise($query, $nameEnterprise);
+            $this->filter_has_NameEnterprise($query, $nameEnterprise);
         }
     }
 
@@ -247,6 +247,29 @@ class clientSrevices extends JsonResponeService
         $query->orWhere(function ($query) use ($firstWord, $secondWordPrefix) {
             $query->where('name_client', 'LIKE', $firstWord . ' ' . $secondWordPrefix . '%');
         });
+    }
+
+    private function filter_has_NameEnterprise($query, $nameEnterprise)
+    {
+        if ($nameEnterprise) {
+            $query->orWhere(function ($query) use ($nameEnterprise) {
+                $excludedWords = ['موسسة', 'مؤسسة', 'مؤسسه', 'جمعية', 'جمعيه'];
+                $searchTerms = explode(' ', $nameEnterprise);
+
+                // Exclude the first word if it matches any of the specified words
+                if (count($searchTerms) > 1) {
+                    $firstWord = array_shift($searchTerms);
+                    if (in_array($firstWord, $excludedWords)) {
+                        $searchTerms = array_values($searchTerms); // Re-index the array after removing the first word
+                    }
+                }
+
+                // Apply the LIKE operator for each remaining word
+                foreach ($searchTerms as $term) {
+                    $query->where('name_enterprise', 'LIKE', '%' . $term . '%');
+                }
+            });
+        }
     }
 
     private function filterByNameEnterprise($query, $nameEnterprise)
@@ -278,5 +301,4 @@ class clientSrevices extends JsonResponeService
             }
         });
     }
-
 }
