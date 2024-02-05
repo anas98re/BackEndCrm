@@ -7,6 +7,9 @@ use App\Http\Requests\StoreimportantLinkRequest;
 use App\Http\Requests\UpdateimportantLinkRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Exports\ImportantLinksExport;
+use App\Imports\ImportantLinksImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ImportantLinkController extends Controller
 {
@@ -45,5 +48,18 @@ class ImportantLinkController extends Controller
         return $this->sendResponse('done', 'link deleted successfully');
     }
 
+    public function export()
+    {
+        return Excel::download(new ImportantLinksExport, 'important_links.xlsx');
+    }
+
+    public function import(Request $request)
+    {
+        $file = $request->file('file');
+
+        Excel::import(new ImportantLinksImport, $file);
+
+        return $this->sendResponse('success', 'Important links imported successfully.');
+    }
 
 }

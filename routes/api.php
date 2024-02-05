@@ -94,6 +94,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('editLink/{id}', [ImportantLinkController::class, 'editLink']);
     Route::get('getAllLink', [ImportantLinkController::class, 'getAllLink']);
     Route::post('deleteLink/{id}', [ImportantLinkController::class, 'deleteLink']);
+    // links Excel
+    Route::get('export', [ImportantLinkController::class, 'export']);
+    Route::post('import', [ImportantLinkController::class, 'import']);
 });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);

@@ -17,5 +17,7 @@ class importantLink extends Model
         'add_date',
         'edit_date',
         'user_id',
+        'clause',
+        'department'
     ];
 }
