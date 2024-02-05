@@ -96,7 +96,7 @@ Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class,
     // links Excel
     Route::get('export', [ImportantLinkController::class, 'export']);
     Route::post('import', [ImportantLinkController::class, 'import']);
-});
+// });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);
 Route::get('getCurrentUser', [RegisterController::class, 'getCurrentUser']);
