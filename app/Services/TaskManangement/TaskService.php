@@ -63,6 +63,12 @@ class TaskService extends JsonResponeService
                 $departmentToValue = null;
                 $regionToValue = null;
                 $startDate = $request->input('start_date') ?? Carbon::now('Asia/Riyadh');
+                // $this->MyService->fillAssignedviaType(
+                //     $startDate,
+                //     $request->id_user,
+                //     $request->assignment_type_from,
+                //     $request->title
+                // );
                 foreach ($currentRequestFromThese as $key => $value) {
                     switch ($key) {
                         case 'assigned_to':

@@ -81,6 +81,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('SimilarClientsNames', [ClientsController::class, 'SimilarClientsNames']);
     Route::post('convertClientsFromAnEmployeeToEmployee', [ClientsController::class, 'convertClientsFromAnEmployeeToEmployee']);
     Route::post('sendStactictesConvretClientsToEmail', [ClientsController::class, 'sendStactictesConvretClientsToEmail']);
+    Route::get('editDatePriceDataToCorrectFormatt', [ClientsController::class, 'editDatePriceDataToCorrectFormatt']);
 
     //company ...
     Route::post('addCommentToCompany/{fk_company}', [CompanyCommentController::class, 'addCommentToCompany']);

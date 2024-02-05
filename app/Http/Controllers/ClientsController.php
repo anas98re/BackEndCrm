@@ -320,4 +320,18 @@ class ClientsController extends Controller
         $ClintsStaticts = convertClintsStaticts::with(['oldUser', 'newUser'])->get();
         Mail::to($request->email)->send(new sendStactictesConvretClientsToEmail($ClintsStaticts));
     }
+
+    public function editDatePriceDataToCorrectFormatt()
+    {
+        $dataUpdatedAndOld = [];
+        $clients = clients::pluck('date_price', 'id_clients');
+        foreach ($clients as $clientId => $datePrice) {
+            if ($datePrice !== null) {
+                $formattedDatetime = Carbon::parse($datePrice)->format('Y-m-d H:i:s');
+                clients::where('id_clients', $clientId)->update(['date_price1' => $formattedDatetime]);
+                $dataUpdatedAndOld[] = 'Client Id is: '.$clientId. ', '.$datePrice.' -> '.$formattedDatetime;
+            }
+        }
+        return $dataUpdatedAndOld;
+    }
 }

@@ -269,4 +269,9 @@ class TaskProceduresService extends JsonResponeService
         $generatedPath = $path_logo->storeAs('attachments', $generatedFilename);
         return $generatedPath;
     }
+
+    public function fillAssignedviaType($startDate, $id_user)
+    {
+
+    }
 }
