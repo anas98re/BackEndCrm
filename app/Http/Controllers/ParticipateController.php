@@ -13,7 +13,7 @@ class ParticipateController extends Controller
     public function getParticipateClints($id)
     {
         $ClientIds = client_invoice::where('participate_fk', $id)->pluck('fk_idClient');
-        return $clientsInfo = DB::table('clients as u')
+        $clientsInfo = DB::table('clients as u')
             ->select(
                 'u.id_clients',
                 'u.name_client',
@@ -34,12 +34,13 @@ class ParticipateController extends Controller
             ->join('users as us', 'us.id_user', '=', 'u.fk_user')
             ->leftJoin('users as uuserss', 'uuserss.id_user', '=', 'u.user_add')
             ->get();
+            return $this->sendResponse($clientsInfo, 'Done');
     }
 
     public function getParticipateInvoices($id)
     {
         $invoiceIds = client_invoice::where('participate_fk', $id)->pluck('id_invoice');
-        return $clientsInfo = DB::table('client_invoice as CI')
+        $invoiceInfo = DB::table('client_invoice as CI')
             ->select(
                 'CI.id_invoice',
                 'CI.date_create',
@@ -65,6 +66,7 @@ class ParticipateController extends Controller
             ->leftJoin('country as c', 'c.id_country', '=', 'r.fk_country')
             ->join('users as us', 'us.id_user', '=', 'CI.fk_idUser')
             ->get();
+            return $this->sendResponse($invoiceInfo, 'Done');
     }
 }
 
