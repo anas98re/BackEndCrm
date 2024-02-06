@@ -6,10 +6,13 @@ use App\Models\company_comment;
 use App\Http\Requests\Storecompany_commentRequest;
 use App\Http\Requests\Updatecompany_commentRequest;
 use App\Http\Resources\companrCommentResources;
+use App\Imports\CompanyImport;
 use App\Models\users;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class CompanyCommentController extends Controller
 {
@@ -42,5 +45,14 @@ class CompanyCommentController extends Controller
             ->orderBy('date_comment', 'desc')
             ->get();
         return $this->sendResponse(companrCommentResources::collection($companyComments), 'These are all comments for this company');
+    }
+
+    public function importCompanyComment(Request $request)
+    {
+        $file = $request->file('file');
+
+        Excel::import(new CompanyImport, $file);
+
+        return $this->sendResponse('success', 'Important company comments imported successfully.');
     }
 }
