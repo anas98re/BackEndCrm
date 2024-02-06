@@ -65,45 +65,49 @@ class RegisterController extends Controller
                 // $user->type_level = 0;
                 $user->save();
                 Mail::to($request->email)->send(new VerificationCodeEmail($code));
-            } else {
-                $User = new users();
-                $email = $request->email;
-                $nameUser = strstr($email, '@', true); // Get the substring before the '@' symbol in the email
-                $User->nameUser = $nameUser;
-                $User->email = $email;
-                $User->fk_country = 1;
-                $User->type_administration = 1;
-                $User->type_level = 20;
-                $User->fk_regoin = 5;
-                $User->isActive = 1;
-                $User->img_image = 'b6e44179e934ca0624379bcdfa044665.png';
-                $User->img_thumbnail = '48464df755303690b6627314ec202d64.png';
-                $User->fkuserAdd = 1;
-                $User->created_at = Carbon::now('Asia/Riyadh');
-                $User->mobile = rand(1111111, 99999999);
-                $User->save();
-
-                $code = rand(11111, 99999);
-                $existingCode = users::where('code_verfiy', $code)->exists();
-                while ($existingCode) {
-                    $code = rand(11111, 99999);
-                    $existingCode = users::where('code_verfiy', $code)->exists();
-                }
-                $user = users::where('email', $request->email)->first();
-                $user->code_verfiy = $code;
-                // $user->type_level = 0;
-                $user->save();
-                Mail::to($request->email)->send(new VerificationCodeEmail($code));
+                DB::commit();
+                return $this->sendResponse([$user->email], 'Done');
             }
-            DB::commit();
-            return $this->sendResponse([$user->email], 'Done');
+            // else {
+            //     $User = new users();
+            //     $email = $request->email;
+            //     $nameUser = strstr($email, '@', true); // Get the substring before the '@' symbol in the email
+            //     $User->nameUser = $nameUser;
+            //     $User->email = $email;
+            //     $User->fk_country = 1;
+            //     $User->type_administration = 1;
+            //     $User->type_level = 20;
+            //     $User->fk_regoin = 5;
+            //     $User->isActive = 1;
+            //     $User->img_image = 'b6e44179e934ca0624379bcdfa044665.png';
+            //     $User->img_thumbnail = '48464df755303690b6627314ec202d64.png';
+            //     $User->fkuserAdd = 1;
+            //     $User->created_at = Carbon::now('Asia/Riyadh');
+            //     $User->mobile = rand(1111111, 99999999);
+            //     $User->save();
+
+            //     $code = rand(11111, 99999);
+            //     $existingCode = users::where('code_verfiy', $code)->exists();
+            //     while ($existingCode) {
+            //         $code = rand(11111, 99999);
+            //         $existingCode = users::where('code_verfiy', $code)->exists();
+            //     }
+            //     $user = users::where('email', $request->email)->first();
+            //     $user->code_verfiy = $code;
+            //     // $user->type_level = 0;
+            //     $user->save();
+            //     Mail::to($request->email)->send(new VerificationCodeEmail($code));
+            //     DB::commit();
+            // }
+
+            return $this->sendUnauthenticated(['Error'], 'This email not exist');
             // return $this->sendUnauthenticated(['Error'], 'Unauthenticated');
+
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
 
     public function login1(RegisterationRequest $request)
     {
@@ -166,7 +170,7 @@ class RegisterController extends Controller
         $bearerToken = $request->bearerToken();
         // $bearerToken = '13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465';
         $tokenable_type = PersonalAccessToken::findToken($bearerToken);
-        $user = users::where('id_user',$tokenable_type->tokenable_id)->first()->id_user;
+        $user = users::where('id_user', $tokenable_type->tokenable_id)->first()->id_user;
         return  $user;
     }
 
