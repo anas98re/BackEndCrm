@@ -93,6 +93,8 @@ Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class,
     Route::get('getCommentsViaCompanyId/{companyId}', [CompanyCommentController::class, 'getCommentsViaCompanyId']);
     Route::post('addCompany', [CompanyController::class, 'addCompany']);
     Route::post('updateCompany/{companyId}', [CompanyController::class, 'updateCompany']);
+    //company Excel
+    Route::post('importCompanyComment', [CompanyCommentController::class, 'importCompanyComment']);
 
     //Links
     Route::post('addLink', [ImportantLinkController::class, 'addLink']);
