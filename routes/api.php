@@ -6,6 +6,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ImportantLinkController;
 use App\Http\Controllers\NotifiactionController;
+use App\Http\Controllers\ParticipateController;
 use App\Http\Controllers\PrivgLevelUserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TaskController;
@@ -82,6 +83,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('convertClientsFromAnEmployeeToEmployee', [ClientsController::class, 'convertClientsFromAnEmployeeToEmployee']);
     Route::post('sendStactictesConvretClientsToEmail', [ClientsController::class, 'sendStactictesConvretClientsToEmail']);
     Route::get('editDatePriceDataToCorrectFormatt', [ClientsController::class, 'editDatePriceDataToCorrectFormatt']);
+    //Clients Participate
+    Route::get('getParticipateClints/{id}', [ParticipateController::class, 'getParticipateClints']);
+    Route::get('getParticipateInvoices/{id}', [ParticipateController::class, 'getParticipateInvoices']);
+
+
 
     //company ...
     Route::post('addCommentToCompany/{fk_company}', [CompanyCommentController::class, 'addCommentToCompany']);
@@ -110,3 +116,5 @@ Route::post('sendupdatePermissionsReportToEmail', [PrivgLevelUserController::cla
 
 Route::get('getinvoiceTask', [TaskController::class, 'getinvoiceTask']);
 Route::get('testNotify', [NotifiactionController::class, 'testNotify']);
+
+//opt/cpanel/ea-php81/root/bin/php /usr/local/bin/composer update

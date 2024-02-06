@@ -168,6 +168,7 @@ class TaskProceduresController extends Controller
             $welcomed_user_id = DB::table('client_communication')
                 ->where('fk_client', $client_id->fk_idClient)
                 ->where('type_communcation', 'تركيب')
+                ->where('type_install', 1)
                 ->where('id_invoice', $request->idInvoice)
                 ->first();
 

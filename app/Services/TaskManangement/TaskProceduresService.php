@@ -147,7 +147,7 @@ class TaskProceduresService extends JsonResponeService
                 $task->public_Type = 'welcome';
                 $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 2;
-                $task->assigend_department_to  = 2;
+                $task->assigend_department_to  = 4;
                 $task->start_date  = $newDatetime;
                 $task->save();
 
