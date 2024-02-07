@@ -53,11 +53,11 @@ class CommentParticipateController extends Controller
     {
         return $commentsWithParticipate = $comments->map(function ($comment) {
             return [
-                'comment_id' => $comment->id,
                 'participate_id' => $comment->participate_id,
                 'content' => $comment->content,
                 'date_comment' => $comment->date_comment,
                 'user_id' => $comment->user_id,
+                'id' => $comment->id,
                 'nameUser' => $comment->users->nameUser,
                 'img_image' => $comment->users->img_image,
                 'name_participate' => $comment->participates->name_participate,
