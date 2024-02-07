@@ -51,11 +51,11 @@ class ClientsDateController extends Controller
             }
 
             DB::commit();
-            return response()->json(['message' => $request->typeProcess . ' Process completed successfully'], 200);
+            return $this->sendResponse(['message' => $request->typeProcess . ' Process completed successfully'], 200);
         } catch (\Exception $e) {
             DB::rollback();
 
-            return response()->json(['message' => 'Failed to process. Please try again.'], 500);
+            return $this->sendResponse(['message' => 'Failed to process. Please try again.'], 500);
         }
     }
 
@@ -85,15 +85,15 @@ class ClientsDateController extends Controller
                 ->where('token', '!=', null)
                 ->latest('date_create')
                 ->first();
-            Notification::send(
-                null,
-                new SendNotification(
-                    $typeProcess,
-                    $message,
-                    1,
-                    ($userToken != null ? $userToken->token : null)
-                )
-            );
+            // Notification::send(
+            //     null,
+            //     new SendNotification(
+            //         $typeProcess,
+            //         $message,
+            //         1,
+            //         ($userToken != null ? $userToken->token : null)
+            //     )
+            // );
 
             notifiaction::create([
                 'message' => $message,
