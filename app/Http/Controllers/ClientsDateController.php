@@ -85,15 +85,15 @@ class ClientsDateController extends Controller
                 ->where('token', '!=', null)
                 ->latest('date_create')
                 ->first();
-            // Notification::send(
-            //     null,
-            //     new SendNotification(
-            //         $typeProcess,
-            //         $message,
-            //         1,
-            //         ($userToken != null ? $userToken->token : null)
-            //     )
-            // );
+            Notification::send(
+                null,
+                new SendNotification(
+                    $typeProcess,
+                    $message,
+                    1,
+                    ($userToken != null ? $userToken->token : null)
+                )
+            );
 
             notifiaction::create([
                 'message' => $message,
