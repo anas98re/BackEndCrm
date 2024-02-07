@@ -10,6 +10,7 @@ class clients_date extends Model
     use HasFactory;
 
     protected $table = 'clients_date';
+    public $timestamps = false;
 
     protected $fillable = [
         'idclients_date',
@@ -17,6 +18,9 @@ class clients_date extends Model
         'fk_user',
         'is_done',
         'fk_client',
-        'fk_invoice'
+        'fk_invoice',
+        'type_date',
+        'processReason',
+        'user_id_process'
     ];
 }
