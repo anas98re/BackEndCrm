@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\CommentParticipateController;
 use App\Http\Controllers\CompanyCommentController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GroupController;
@@ -86,6 +87,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //Clients Participate
     Route::get('getParticipateClints/{id}', [ParticipateController::class, 'getParticipateClints']);
     Route::get('getParticipateInvoices/{id}', [ParticipateController::class, 'getParticipateInvoices']);
+    Route::post('addCommentParticipate', [CommentParticipateController::class, 'addCommentParticipate']);
+    Route::get('getParticipateComments/{id}', [CommentParticipateController::class, 'getParticipateComments']);
 
 
 

@@ -51,7 +51,6 @@ class ParticipateController extends Controller
                 'CI.notes',
                 'CI.total',
                 'CI.dateinstall_done',
-                'CI.stateclient',
                 'CI.date_approve',
                 'CI.address_invoice',
                 'CI.invoice_source',
@@ -59,11 +58,17 @@ class ParticipateController extends Controller
                 'CI.renew_year',
                 'CI.Date_FApprove',
                 'CI.stateclient',
+                'CI.approve_back_done',
+                'CI.isApprove',
+                'r.name_regoin',
+                'CI.name_enterpriseinv',
+                'CI.currency_name',
                 'c.nameCountry',
                 'r.name_regoin',
                 'us.nameUser',
                 'r.fk_country',
                 'cl.name_enterprise',
+                // ,,,,
             )
             ->whereIn('CI.id_invoice', $invoiceIds) // Filter by the client IDs
             ->leftJoin('clients as cl', 'cl.id_clients', '=', 'CI.fk_idClient')
