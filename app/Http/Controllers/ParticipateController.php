@@ -23,6 +23,8 @@ class ParticipateController extends Controller
                 'u.fk_user',
                 'u.offer_price',
                 'u.date_price',
+                'u.date_create',
+                'u.tag',
                 'c.nameCountry',
                 'r.name_regoin',
                 'us.nameUser',
@@ -34,7 +36,7 @@ class ParticipateController extends Controller
             ->join('users as us', 'us.id_user', '=', 'u.fk_user')
             ->leftJoin('users as uuserss', 'uuserss.id_user', '=', 'u.user_add')
             ->get();
-            return $this->sendResponse($clientsInfo, 'Done');
+        return $this->sendResponse($clientsInfo, 'Done');
     }
 
     public function getParticipateInvoices($id)
@@ -55,10 +57,13 @@ class ParticipateController extends Controller
                 'CI.invoice_source',
                 'CI.amount_paid',
                 'CI.renew_year',
+                'CI.Date_FApprove',
+                'CI.stateclient',
                 'c.nameCountry',
                 'r.name_regoin',
                 'us.nameUser',
-                'r.fk_country'
+                'r.fk_country',
+                'cl.name_enterprise',
             )
             ->whereIn('CI.id_invoice', $invoiceIds) // Filter by the client IDs
             ->leftJoin('clients as cl', 'cl.id_clients', '=', 'CI.fk_idClient')
@@ -66,8 +71,6 @@ class ParticipateController extends Controller
             ->leftJoin('country as c', 'c.id_country', '=', 'r.fk_country')
             ->join('users as us', 'us.id_user', '=', 'CI.fk_idUser')
             ->get();
-            return $this->sendResponse($invoiceInfo, 'Done');
+        return $this->sendResponse($invoiceInfo, 'Done');
     }
 }
-
-
