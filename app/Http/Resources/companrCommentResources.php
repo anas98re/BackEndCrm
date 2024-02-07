@@ -15,7 +15,7 @@ class companrCommentResources extends JsonResource
             'content' => $this->content,
             'date_comment' => $this->date_comment,
             'nameUser' => $this->Users->nameUser,
-            'img_image' => $this->Users->img_image,
+            'img_image' => $this->Users->img_image ? $this->Users->img_image : '',
         ];
     }
 }

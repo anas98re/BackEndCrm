@@ -23,7 +23,7 @@ class CommentParticipateController extends Controller
         $participate = participate::where('id_participate',$request->participate_id)->first();
 
         $comment->nameUser = $user->nameUser;
-        $comment->img_image = $user->img_image;
+        $comment->img_image = $user->img_image ? $user->img_image : '';
         $comment->user_id = $user->id_user;
 
         $comment->name_participate = $participate->name_participate;
@@ -59,7 +59,7 @@ class CommentParticipateController extends Controller
                 'user_id' => $comment->user_id,
                 'id' => $comment->id,
                 'nameUser' => $comment->users->nameUser,
-                'img_image' => $comment->users->img_image,
+                'img_image' => $comment->users->img_image ? $comment->users->img_image : '',
                 'name_participate' => $comment->participates->name_participate,
                 'mobile_participate' => $comment->participates->mobile_participate,
                 'namebank_participate' => $comment->participates->namebank_participate,
