@@ -32,7 +32,7 @@ class CompanyCommentController extends Controller
 
         // Add user details to the comment object
         $companyComment->nameUser = $user->nameUser;
-        $companyComment->img_image = $user->img_image;
+        $companyComment->img_image = $user->img_image ? $user->img_image : '';
 
 
         // Return the comment object as response

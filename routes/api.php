@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\ClientsDateController;
 use App\Http\Controllers\CommentParticipateController;
 use App\Http\Controllers\CompanyCommentController;
 use App\Http\Controllers\CompanyController;
@@ -88,6 +89,8 @@ Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class,
     Route::get('getParticipateInvoices/{id}', [ParticipateController::class, 'getParticipateInvoices']);
     Route::post('addCommentParticipate', [CommentParticipateController::class, 'addCommentParticipate']);
     Route::get('getParticipateComments/{id}', [CommentParticipateController::class, 'getParticipateComments']);
+    //clients Date
+    Route::post('rescheduleOrCancelVisitClient/{idclients_date}', [ClientsDateController::class, 'rescheduleOrCancelVisitClient']);
 
 
 

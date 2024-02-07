@@ -11,14 +11,6 @@ class clients extends Model
 
     protected $table = 'clients';
 
-    // protected $fillable = [
-    //     'idclients_date',
-    //     'date_client_visit',
-    //     'fk_user',
-    //     'is_done',
-    //     'fk_client',
-    //     'fk_invoice'
-    // ];
     public $timestamps = false;
     protected $fillable = [
         'id_clients', 'name_client', 'name_enterprise', 'type_job',

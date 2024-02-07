@@ -15,11 +15,16 @@ class commentParticipate extends Model
     protected $fillable = [
         'participate_id',
         'content',
-        'date_comment'
+        'date_comment',
+        'user_id'
     ];
 
     public function Participates()
     {
         return $this->belongsTo(participate::class, 'participate_id', 'id_participate');
+    }
+    public function users()
+    {
+        return $this->belongsTo(users::class, 'user_id', 'id_user');
     }
 }
