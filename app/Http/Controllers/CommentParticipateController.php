@@ -26,10 +26,6 @@ class CommentParticipateController extends Controller
         $comment->img_image = $user->img_image ? $user->img_image : '';
         $comment->user_id = $user->id_user;
 
-        $comment->name_participate = $participate->name_participate;
-        $comment->mobile_participate = $participate->mobile_participate;
-        $comment->namebank_participate = $participate->namebank_participate;
-        $comment->numberbank_participate = $participate->numberbank_participate;
         $comment->add_date = $participate->add_date;
         $comment->update_date = $participate->update_date;
 
@@ -60,10 +56,6 @@ class CommentParticipateController extends Controller
                 'id' => $comment->id,
                 'nameUser' => $comment->users->nameUser,
                 'img_image' => $comment->users->img_image ? $comment->users->img_image : '',
-                'name_participate' => $comment->participates->name_participate,
-                'mobile_participate' => $comment->participates->mobile_participate,
-                'namebank_participate' => $comment->participates->namebank_participate,
-                'numberbank_participate' => $comment->participates->numberbank_participate,
                 'add_date' => $comment->participates->add_date,
                 'update_date' => $comment->participates->update_date,
             ];
