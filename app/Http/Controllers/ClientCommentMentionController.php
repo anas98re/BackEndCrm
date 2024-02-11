@@ -41,15 +41,15 @@ class ClientCommentMentionController extends Controller
                 $Name = users::where('id_user', $request->id_user)->first()->nameUser;
                 $content = 'تم ذكرك في تعليق بواسطة ?';
                 $message = str_replace('?', $Name, $content);
-                // Notification::send(
-                //     null,
-                //     new SendNotification(
-                //         'منشن',
-                //         $message,
-                //         1,
-                //         ($userToken != null ? $userToken->token : null)
-                //     )
-                // );
+                Notification::send(
+                    null,
+                  
+                        'منشن',
+                        $message,
+                        1,
+                        ($userToken != null ? $userToken->token : null)
+                    )
+                );
 
                 notifiaction::create([
                     'message' => $message,
