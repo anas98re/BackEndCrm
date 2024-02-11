@@ -49,6 +49,8 @@ Route::post('closeTaskAddVisitDateAfterApproveInvoice', [TaskProceduresControlle
 Route::post('closeTaskafterCommunicateWithClient', [TaskProceduresController::class, 'closeTaskafterCommunicateWithClient']);
 Route::post('addTaskafterAddPaymentToTheInvoiceForReviewInvoice', [TaskProceduresController::class, 'addTaskafterAddPaymentToTheInvoiceForReviewInvoice']);
 Route::post('addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days', [TaskProceduresController::class, 'addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days']);
+//clients comments mentions
+Route::post('addCommentClientMention', [ClientCommentMentionController::class, 'addCommentClientMention']);
 
 
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
@@ -93,8 +95,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('getParticipateComments/{id}', [CommentParticipateController::class, 'getParticipateComments']);
     //clients Date
     Route::post('rescheduleOrCancelVisitClient/{idclients_date}', [ClientsDateController::class, 'rescheduleOrCancelVisitClient']);
-    //clients comments mentions
-    Route::post('addCommentClientMention', [ClientCommentMentionController::class, 'addCommentClientMention']);
 
 
 
