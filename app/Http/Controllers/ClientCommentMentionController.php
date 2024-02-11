@@ -43,7 +43,7 @@ class ClientCommentMentionController extends Controller
                 $message = str_replace('?', $Name, $content);
                 Notification::send(
                     null,
-                  
+                    new SendNotification(
                         'منشن',
                         $message,
                         1,
