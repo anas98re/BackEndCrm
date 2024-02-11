@@ -20,7 +20,7 @@ class ClientCommentMentionController extends Controller
         DB::beginTransaction();
 
         try {
-            $userIds = $request->input('userIds');
+            info('request all: ' . json_encode($request->all()));
             $userIds = json_decode($request->input('userIds'), true);
 
             $commentContent = $request->input('commentContent');
@@ -64,6 +64,7 @@ class ClientCommentMentionController extends Controller
             DB::commit();
             return $this->sendResponse(['message' => 'done'], 200);
         } catch (\Exception $e) {
+            info('e: ' . json_encode($e));
             DB::rollback();
 
             return $this->sendResponse(['message' => 'Failed to process. Please try again.'], 500);
