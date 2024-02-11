@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClientCommentMentionController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ClientsDateController;
 use App\Http\Controllers\CommentParticipateController;
@@ -92,6 +93,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('getParticipateComments/{id}', [CommentParticipateController::class, 'getParticipateComments']);
     //clients Date
     Route::post('rescheduleOrCancelVisitClient/{idclients_date}', [ClientsDateController::class, 'rescheduleOrCancelVisitClient']);
+    //clients comments mentions
+    Route::post('addCommentClientMention', [ClientCommentMentionController::class, 'addCommentClientMention']);
 
 
 
