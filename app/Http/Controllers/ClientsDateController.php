@@ -26,6 +26,7 @@ class ClientsDateController extends Controller
                         'is_done' => 3,
                         'date_client_visit' => $request->date_client_visit,
                         'processReason' => $request->processReason,
+                        'type_date' => $request->type_date,
                         'user_id_process' => auth('sanctum')->user()->id_user
                     ]);
 
