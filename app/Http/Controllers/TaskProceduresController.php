@@ -89,11 +89,11 @@ class TaskProceduresController extends Controller
     {
         try {
             DB::beginTransaction();
-            $client_communication = DB::table('client_communication')->insertGetId([
-                'fk_client' => $request->id_clients,
-                'type_communcation' => 'ترحيب',
-                'id_invoice' => $request->idInvoice
-            ]);
+            // $client_communication = DB::table('client_communication')->insertGetId([
+            //     'fk_client' => $request->id_clients,
+            //     'type_communcation' => 'ترحيب',
+            //     'id_invoice' => $request->idInvoice
+            // ]);
             $task = task::where('invoice_id', $request->idInvoice)
                 ->where('public_Type', 'approveAdmin')
                 ->first();
@@ -112,7 +112,7 @@ class TaskProceduresController extends Controller
                 $this->MyService->addTaskAfterApproveInvoice(
                     $request->idInvoice,
                     $request->id_clients,
-                    $client_communication
+                    $request->lastCommunicatinId
                 );
             } else {
                 return;
