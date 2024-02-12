@@ -23,8 +23,10 @@ class ClientsDateController extends Controller
             if ($request->typeProcess == 'reschedule') {
                 $client = clients_date::where('idclients_date', $idclients_date)
                     ->update([
+                        'is_done' => 3,
                         'date_client_visit' => $request->date_client_visit,
                         'processReason' => $request->processReason,
+                        'type_date' => $request->type_date,
                         'user_id_process' => auth('sanctum')->user()->id_user
                     ]);
 

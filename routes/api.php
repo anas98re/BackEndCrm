@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ClientCommentMentionController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ClientsDateController;
 use App\Http\Controllers\CommentParticipateController;
@@ -48,6 +49,8 @@ Route::post('closeTaskAddVisitDateAfterApproveInvoice', [TaskProceduresControlle
 Route::post('closeTaskafterCommunicateWithClient', [TaskProceduresController::class, 'closeTaskafterCommunicateWithClient']);
 Route::post('addTaskafterAddPaymentToTheInvoiceForReviewInvoice', [TaskProceduresController::class, 'addTaskafterAddPaymentToTheInvoiceForReviewInvoice']);
 Route::post('addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days', [TaskProceduresController::class, 'addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days']);
+//clients comments mentions
+Route::post('addCommentClientMention', [ClientCommentMentionController::class, 'addCommentClientMention']);
 
 
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
