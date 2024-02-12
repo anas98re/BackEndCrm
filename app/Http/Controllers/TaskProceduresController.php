@@ -39,7 +39,8 @@ class TaskProceduresController extends Controller
 
         try {
             DB::beginTransaction();
-
+            info('request all: ' . json_encode($request->all()));
+            info('fk_regoin: ' . json_encode($request->fk_regoin));
             $assigned_to = users::where('fk_regoin', $request->fk_regoin)
                 ->where('type_level', Constants::ALL_BRUNSHES)->first();
             $existingTask = Task::where('invoice_id', $request->invoice_id)
