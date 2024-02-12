@@ -39,7 +39,7 @@ class TaskProceduresController extends Controller
 
         try {
             DB::beginTransaction();
-            info('request all: ' . json_encode($request->all()));
+            info('request all 1: ' . json_encode($request->all()));
             info('fk_regoin: ' . json_encode($request->fk_regoin));
             info('Constants::ALL_BRUNSHES: ' . json_encode(Constants::ALL_BRUNSHES));
             $assigned_to = users::where('fk_regoin', $request->fk_regoin)
@@ -89,6 +89,7 @@ class TaskProceduresController extends Controller
     {
         try {
             DB::beginTransaction();
+            info('request all 2: ' . json_encode($request->all()));
             // $client_communication = DB::table('client_communication')->insertGetId([
             //     'fk_client' => $request->id_clients,
             //     'type_communcation' => 'ترحيب',
