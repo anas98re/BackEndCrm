@@ -21,6 +21,7 @@ use App\Services\TaskManangement\TaskProceduresService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
 class TaskProceduresController extends Controller
@@ -34,7 +35,7 @@ class TaskProceduresController extends Controller
         $this->MyQueriesService = $MyQueriesService;
     }
 
-    public function addTaskToApproveAdminAfterAddInvoice(Request $request)
+    public function addTaskToApproveAdminAfterAddInvoice2(Request $request)
     {
 
         try {
@@ -42,47 +43,155 @@ class TaskProceduresController extends Controller
             info('request all 1: ' . json_encode($request->all()));
             info('fk_regoin: ' . json_encode($request->fk_regoin));
             info('Constants::ALL_BRUNSHES: ' . json_encode(Constants::ALL_BRUNSHES));
-            $assigned_to = users::where('fk_regoin', $request->fk_regoin)
-                ->where('type_level', Constants::ALL_BRUNSHES)->first();
-            $existingTask = Task::where('invoice_id', $request->invoice_id)
-                ->where('public_Type', 'approveAdmin')
-                ->first();
+            $assigneds_to = users::where('fk_regoin', $request->fk_regoin)
+                ->where('type_level', 14)->get();
 
+            if ($assigneds_to->isEmpty()) {
+                // Handle the case where $assigneds_to is empty (no users found)
+                // For example, you can log a message or return early
+                Log::warning('No users found for the specified region and type level.');
+                return;
+            } else {
+            }
             $invoice = client_invoice::where('id_invoice', $request->invoice_id)->first();
             $client = clients::where('id_clients', $invoice->fk_idClient)->first();
             $message = 'يوجد فاتورة للعميل ( ? ) بانتظار الموافقة';
             $messageDescription = str_replace('?', $client->name_enterprise, $message);
 
-            if (!$existingTask) {
-                $task = new task();
-                $task->title = 'موافقة المشرف';
-                $task->description = $messageDescription;
-                $task->invoice_id = $request->invoice_id;
-                $task->public_Type = 'approveAdmin';
-                $task->main_type_task = 'ProccessAuto';
-                $task->assigend_department_from  = 2;
-                $task->assigned_to = $assigned_to ? $assigned_to->id_user : null;
-                $task->assigend_department_to = $assigned_to ? null : 2;
-                $task->start_date = Carbon::now('Asia/Riyadh');
-                $task->save();
+            foreach ($assigneds_to as $assigned_to) {
+                $existingTask = Task::where('invoice_id', $request->invoice_id)
+                    ->where('public_Type', 'approveAdmin')
+                    ->where('assigned_to', $assigned_to->id_user)
+                    ->first();
+                if (!$existingTask) {
+                    $task = new task();
+                    $task->title = 'موافقة المشرف';
+                    $task->description = $messageDescription;
+                    $task->invoice_id = $request->invoice_id;
+                    $task->public_Type = 'approveAdmin';
+                    $task->main_type_task = 'ProccessAuto';
+                    $task->assigend_department_from  = 2;
+                    $task->assigned_to = $assigned_to ? $assigned_to->id_user : null;
+                    $task->assigend_department_to = $assigned_to ? null : 2;
+                    $task->start_date = Carbon::now('Asia/Riyadh');
+                    $task->save();
 
-                !empty($task) ? $this->MyService->addTaskStatus($task) : null;
+                    !empty($task) ? $this->MyService->addTaskStatus($task) : null;
 
-                $this->MyService->handleNotificationForTaskProcedures(
-                    $message = $task->title,
-                    $type = 'task',
-                    $to_user = $assigned_to->id_user,
-                    $invoice_id = $request->invoice_id,
-                    $client_id = $client->id_clients
-                );
-            } else {
-                $task = null;
+                    $this->MyService->handleNotificationForTaskProcedures(
+                        $message = $task->title,
+                        $type = 'task',
+                        $to_user = $assigned_to->id_user,
+                        $invoice_id = $request->invoice_id,
+                        $client_id = $client->id_clients
+                    );
+                } else {
+                    $task = null;
+                }
             }
             DB::commit();
             return $task;
         } catch (\Throwable $th) {
             throw $th;
             DB::rollBack();
+        }
+    }
+
+    public function addTaskToApproveAdminAfterAddInvoice(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Retrieve assigned users based on region and type level
+            $assigneds_to = users::where('fk_regoin', $request->fk_regoin)
+                ->where('type_level', 14)->get();
+
+            $invoice = client_invoice::where('id_invoice', $request->invoice_id)->first();
+            $client = clients::where('id_clients', $invoice->fk_idClient)->first();
+            $message = 'يوجد فاتورة للعميل ( ? ) بانتظار الموافقة';
+            $messageDescription = str_replace('?', $client->name_enterprise, $message);
+            // Check if $assigneds_to is empty
+            if ($assigneds_to->isEmpty()) {
+                // Log a warning message if no users are found and execute the loop once
+                Log::warning('No users found for the specified region and type level.');
+                $usersIdsManamgerSuprevisor = users::where('type_level', 9)
+                    ->Where('type_administration', 2)
+                    ->get();
+
+                foreach ($usersIdsManamgerSuprevisor as $user) {
+                    $existingTask = Task::where('invoice_id', $request->invoice_id)
+                        ->where('public_Type', 'approveAdmin')
+                        ->where('assigned_to', $user->id_user)
+                        ->first();
+                    if (!$existingTask) {
+                        $task = new task();
+                        $task->title = 'موافقة المشرف';
+                        $task->description = $messageDescription;
+                        $task->invoice_id = $request->invoice_id;
+                        $task->public_Type = 'approveAdmin';
+                        $task->main_type_task = 'ProccessAuto';
+                        $task->assigend_department_from  = 2;
+                        $task->assigend_department_to = 2;
+                        $task->start_date = Carbon::now('Asia/Riyadh');
+                        $task->save();
+
+                        // Add task status and handle notifications
+                        $this->MyService->addTaskStatus($task);
+                        $this->MyService->handleNotificationForTaskProcedures(
+                            $message = $task->title,
+                            $type = 'task',
+                            $to_user = $user->id_user,
+                            $invoice_id = $request->invoice_id,
+                            $client_id = $client->id_clients
+                        );
+                    }
+                }
+                DB::commit();
+                return true;
+            } else {
+                foreach ($assigneds_to as $assigned_to) {
+                    // Check if task already exists for the invoice and assigned user
+                    $existingTask = Task::where('invoice_id', $request->invoice_id)
+                        ->where('public_Type', 'approveAdmin')
+                        ->where('assigned_to', $assigned_to->id_user)
+                        ->first();
+
+                    // If task doesn't exist, create a new task
+                    if (!$existingTask) {
+
+                        $task = new task();
+                        $task->title = 'موافقة المشرف';
+                        $task->description = $messageDescription;
+                        $task->invoice_id = $request->invoice_id;
+                        $task->public_Type = 'approveAdmin';
+                        $task->main_type_task = 'ProccessAuto';
+                        $task->assigend_department_from  = 2;
+                        $task->assigned_to = $assigned_to->id_user;
+                        $task->start_date = Carbon::now('Asia/Riyadh');
+                        $task->save();
+
+                        // Add task status and handle notifications
+                        $this->MyService->addTaskStatus($task);
+                        $this->MyService->handleNotificationForTaskProcedures(
+                            $message = $task->title,
+                            $type = 'task',
+                            $to_user = $assigned_to->id_user,
+                            $invoice_id = $request->invoice_id,
+                            $client_id = $client->id_clients
+                        );
+                    }
+                }
+            }
+
+            // Commit the transaction
+            DB::commit();
+
+            // Return the last created task
+            return $task ?? null;
+        } catch (\Throwable $th) {
+            // Rollback the transaction and re-throw the exception
+            DB::rollBack();
+            throw $th;
         }
     }
 
