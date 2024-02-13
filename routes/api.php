@@ -8,6 +8,7 @@ use App\Http\Controllers\CompanyCommentController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ImportantLinkController;
+use App\Http\Controllers\MaincityController;
 use App\Http\Controllers\NotifiactionController;
 use App\Http\Controllers\ParticipateController;
 use App\Http\Controllers\PrivgLevelUserController;
@@ -94,6 +95,8 @@ Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class,
     Route::get('getParticipateComments/{id}', [CommentParticipateController::class, 'getParticipateComments']);
     //clients Date
     Route::post('rescheduleOrCancelVisitClient/{idclients_date}', [ClientsDateController::class, 'rescheduleOrCancelVisitClient']);
+    //Cities
+    Route::post('getCitiesFromMainCitiesIds', [MaincityController::class, 'getCitiesFromMainCitiesIds']);
 
 
 

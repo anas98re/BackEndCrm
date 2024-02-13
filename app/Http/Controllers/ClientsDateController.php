@@ -53,7 +53,8 @@ class ClientsDateController extends Controller
             }
 
             DB::commit();
-            return $this->sendResponse(['message' => 'done'], 200);
+            // return $this->sendResponse(['message' => 'done'], 200);
+            return response()->json(['success' => true,'message' => 'done','code' => 200]);
         } catch (\Exception $e) {
             DB::rollback();
 

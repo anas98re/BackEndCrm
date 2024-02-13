@@ -5,62 +5,29 @@ namespace App\Http\Controllers;
 use App\Models\maincity;
 use App\Http\Requests\StoremaincityRequest;
 use App\Http\Requests\UpdatemaincityRequest;
+use Illuminate\Http\Request;
 
 class MaincityController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function getCitiesFromMainCitiesIds(Request $request)
     {
-        //
-    }
+        $mainCitiesIds = json_decode($request->mainCitiesIds, true);
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        // Ensure $mainCitiesIds is an array
+        $mainCitiesIds = is_array($mainCitiesIds) ? $mainCitiesIds : [];
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoremaincityRequest $request)
-    {
-        //
-    }
+        $mainCities = maincity::whereIn('id_maincity', $mainCitiesIds)->get();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(maincity $maincity)
-    {
-        //
-    }
+        $cities = [];
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(maincity $maincity)
-    {
-        //
-    }
+        foreach ($mainCities as $mainCity) {
+            // Access the cities associated with the main city
+            $mainCityCities = $mainCity->cities;
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatemaincityRequest $request, maincity $maincity)
-    {
-        //
-    }
+            // Merge the cities into the $cities array
+            $cities = array_merge($cities, $mainCityCities->toArray());
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(maincity $maincity)
-    {
-        //
+        return $this->sendResponse($cities, 'Done');;
     }
 }
