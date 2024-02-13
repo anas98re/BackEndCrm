@@ -61,7 +61,8 @@ class TaskProceduresController extends Controller
                 $task->public_Type = 'approveAdmin';
                 $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 2;
-                $task->assigned_to  = $assigned_to->id_user;
+                $task->assigned_to = $assigned_to ? $assigned_to->id_user : null;
+                $task->assigend_department_to = $assigned_to ? null : 2;
                 $task->start_date = Carbon::now('Asia/Riyadh');
                 $task->save();
 
