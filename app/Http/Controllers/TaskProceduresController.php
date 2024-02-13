@@ -35,7 +35,7 @@ class TaskProceduresController extends Controller
         $this->MyQueriesService = $MyQueriesService;
     }
 
-    public function addTaskToApproveAdminAfterAddInvoice2(Request $request)
+    public function addTaskToApproveAdminAfterAddInvoiceTEST(Request $request)
     {
 
         try {

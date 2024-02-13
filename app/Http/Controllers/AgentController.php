@@ -5,62 +5,28 @@ namespace App\Http\Controllers;
 use App\Models\agent;
 use App\Http\Requests\StoreagentRequest;
 use App\Http\Requests\UpdateagentRequest;
+use App\Models\client_invoice;
+use App\Services\AgentSrevices;
+use Illuminate\Support\Facades\DB;
 
 class AgentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private $MyService;
+    public function __construct(AgentSrevices $myService)
     {
-        //
+        $this->MyService = $myService;
+    }
+    public function getAgentClints($id)
+    {
+        $ClientIds = client_invoice::where('fk_agent', $id)->pluck('fk_idClient');
+        $clientsInfo = $this->MyService->getAgentClintsService($ClientIds);
+        return $this->sendResponse($clientsInfo, 'Done');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function getAgentInvoices($id)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreagentRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(agent $agent)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(agent $agent)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateagentRequest $request, agent $agent)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(agent $agent)
-    {
-        //
+        $invoiceIds = client_invoice::where('fk_agent', $id)->pluck('id_invoice');
+        $invoiceInfo = $this->MyService->getAgentInvoicesService($invoiceIds);
+        return $this->sendResponse($invoiceInfo, 'Done');
     }
 }
