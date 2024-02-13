@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AgentCommentController;
+use App\Http\Controllers\AgentController;
 use App\Http\Controllers\ClientCommentMentionController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ClientsDateController;
@@ -93,6 +95,11 @@ Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class,
     Route::get('getParticipateInvoices/{id}', [ParticipateController::class, 'getParticipateInvoices']);
     Route::post('addCommentParticipate', [CommentParticipateController::class, 'addCommentParticipate']);
     Route::get('getParticipateComments/{id}', [CommentParticipateController::class, 'getParticipateComments']);
+    //Clients Agents
+    Route::get('getAgentClints/{id}', [AgentController::class, 'getAgentClints']);
+    Route::get('getAgentInvoices/{id}', [AgentController::class, 'getAgentInvoices']);
+    Route::post('addCommentAgent', [AgentCommentController::class, 'addCommentAgent']);
+    Route::get('getAgentComments/{id}', [AgentCommentController::class, 'getAgentComments']);
     //clients Date
     Route::post('rescheduleOrCancelVisitClient/{idclients_date}', [ClientsDateController::class, 'rescheduleOrCancelVisitClient']);
     //Cities
