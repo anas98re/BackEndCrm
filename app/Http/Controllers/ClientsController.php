@@ -6,6 +6,7 @@ use App\Constants;
 use App\Models\clients;
 use App\Http\Requests\StoreclientsRequest;
 use App\Http\Requests\UpdateclientsRequest;
+use App\Imports\ClientsImport;
 use App\Mail\sendStactictesConvretClientsToEmail;
 use App\Mail\sendStactictesConvretClientsTothabetEmail;
 use App\Models\client_comment;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Notification;
 use App\Notifications\SendNotification;
 use App\Services\clientSrevices;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ClientsController extends Controller
 {
@@ -333,5 +335,14 @@ class ClientsController extends Controller
             }
         }
         return $dataUpdatedAndOld;
+    }
+
+    public function importClints(Request $request)
+    {
+        $file = $request->file('file');
+
+        Excel::import(new ClientsImport, $file);
+
+        return $this->sendResponse('success', 'Important clients imported successfully.');
     }
 }
