@@ -31,9 +31,14 @@ class ClientsImport implements ToModel
         } elseif ($row[6] == 'قمر'){
             info('$row4 is: ' . $row[6]);
             $name = 'قمر';
+        } else {
+            $name = 'ayaEng';
         }
+
         info('name is: ' . $name);
-        $id_user = users::where('nameUser', $name)->first()->id_user;
+        // $id_user = users::where('nameUser', $name)->first()->id_user;
+        // Copy
+        $id_user = users::where('nameUser', 'LIKE', '%' . $name . '%')->first()->id_user;
 
 
         if ($row[9] == 'البريد الإلكتروني') {
