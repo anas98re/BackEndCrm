@@ -53,6 +53,10 @@ class ClientsImport implements ToModel
             $email = $row[9];
         }
 
+        if($row[5] == 'إهتمام مختلف'){
+            $row[5] = 'اهتمام مختلف';
+        }
+
 
         return new clients([
             'date_create' =>
@@ -72,7 +76,7 @@ class ClientsImport implements ToModel
                 Carbon::createFromDate(1899, 12, 30)->addDays($row[7])
                 ->startOfDay()
                 ->format('Y-m-d H:i:s'),
-            'SerialNumber' => 1,
+            'SerialNumber' => null,
             'email' => $email,
         ]);
     }
