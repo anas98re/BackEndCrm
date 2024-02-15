@@ -18,28 +18,43 @@ class ClientsImport implements ToModel
     {
 
         if ($row[6] == 'عهود') {
+            $id_user = 208;
             $name = 'عهود طرابزوني';
             info('$row1 is: ' . $row[6]);
         } elseif ($row[6] == 'نوف') {
             $name = 'نوف الجبرني';
+            $id_user = users::where('nameUser', 'LIKE', '%' . $name . '%')->first()->id_user;
             info('$row2 is: ' . $row[6]);
         } elseif ($row[6] == 'سفيان') {
+            $id_user = 74;
             $name = 'سفيان زيد';
             info('$row3 is: ' . $row[6]);
         } elseif ($row[6] == 'الموظف') {
+            $id_user = 1;
             $name = 'ayaEng';
-        } else {
-            $name = $row[6];
+        } elseif ($row[6] == 'قمر'){
+            $id_user = 120;
             info('$row4 is: ' . $row[6]);
+            $name = 'قمر';
+        } else {
+            $id_user = 1;
+            $name = 'ayaEng';
         }
+
         info('name is: ' . $name);
-        $id_user = users::where('nameUser', $name)->first()->id_user;
+        // $id_user = users::where('nameUser', $name)->first()->id_user;
+        // Copy
+        // $id_user = users::where('nameUser', 'LIKE', '%' . $name . '%')->first()->id_user;
 
 
         if ($row[9] == 'البريد الإلكتروني') {
             $email = null;
         } else {
             $email = $row[9];
+        }
+
+        if($row[5] == 'إهتمام مختلف'){
+            $row[5] = 'اهتمام مختلف';
         }
 
 
@@ -61,7 +76,7 @@ class ClientsImport implements ToModel
                 Carbon::createFromDate(1899, 12, 30)->addDays($row[7])
                 ->startOfDay()
                 ->format('Y-m-d H:i:s'),
-            'SerialNumber' => 1,
+            'SerialNumber' => null,
             'email' => $email,
         ]);
     }
