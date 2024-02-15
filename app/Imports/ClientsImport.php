@@ -76,7 +76,7 @@ class ClientsImport implements ToModel
                 Carbon::createFromDate(1899, 12, 30)->addDays($row[7])
                 ->startOfDay()
                 ->format('Y-m-d H:i:s'),
-            'SerialNumber' => null,
+            'SerialNumber' => 1,
             'email' => $email,
         ]);
     }
