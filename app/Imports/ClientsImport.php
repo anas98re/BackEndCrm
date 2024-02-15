@@ -44,10 +44,7 @@ class ClientsImport implements ToModel
             $row[0] == 'تاريخ التسجيل' || $row[0] === null ? null :
                 Carbon::createFromDate(1899, 12, 30)->addDays($row[0])
                 ->startOfDay()
-                ->addHours(Carbon::parse($row[0])->toDateTimeString())
-                ->addMinutes(Carbon::parse($row[0])->toDateTimeString())
-                ->addSeconds(Carbon::parse($row[0])->toDateTimeString())
-                ->toDateTimeString(),
+                ->format('Y-m-d H:i:s'),
             'mobile' => $row[1],
             'name_client' => $row[2],
             'sourcclient' => $row[3],
@@ -59,10 +56,7 @@ class ClientsImport implements ToModel
             $row[7] == 'تاريخ الإستلام' || $row[7] === null ? null :
                 Carbon::createFromDate(1899, 12, 30)->addDays($row[7])
                 ->startOfDay()
-                ->addHours(Carbon::parse($row[7])->toDateTimeString())
-                ->addMinutes(Carbon::parse($row[7])->toDateTimeString())
-                ->addSeconds(Carbon::parse($row[7])->toDateTimeString())
-                ->toDateTimeString(),
+                ->format('Y-m-d H:i:s'),
             'SerialNumber' => 1,
             'email' => $email,
         ]);
