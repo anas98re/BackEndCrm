@@ -19,14 +19,18 @@ class ClientsImport implements ToModel
 
         if ($row[6] == 'عهود') {
             $name = 'عهود طرابزوني';
+            info('$row1 is: ' . $row[6]);
         } elseif ($row[6] == 'نوف') {
             $name = 'نوف الجبرني';
+            info('$row2 is: ' . $row[6]);
         } elseif ($row[6] == 'سفيان') {
             $name = 'سفيان زيد';
+            info('$row3 is: ' . $row[6]);
         } elseif ($row[6] == 'الموظف') {
             $name = 'ayaEng';
         } else {
             $name = $row[6];
+            info('$row4 is: ' . $row[6]);
         }
         info('name is: ' . $name);
         $id_user = users::where('nameUser', $name)->first()->id_user;
