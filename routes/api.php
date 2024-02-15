@@ -104,6 +104,8 @@ Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class,
     Route::post('rescheduleOrCancelVisitClient/{idclients_date}', [ClientsDateController::class, 'rescheduleOrCancelVisitClient']);
     //Cities
     Route::post('getCitiesFromMainCitiesIds', [MaincityController::class, 'getCitiesFromMainCitiesIds']);
+    //cllients Excel
+    Route::post('importClints', [ClientsController::class, 'importClints']);
 
 
 
