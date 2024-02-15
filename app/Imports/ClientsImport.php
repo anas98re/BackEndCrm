@@ -29,7 +29,7 @@ class ClientsImport implements ToModel
         } elseif ($row[6] == 'الموظف') {
             $name = 'ayaEng';
         } else {
-            $name = $row[6];
+            $name = 'قمر';
             info('$row4 is: ' . $row[6]);
         }
         info('name is: ' . $name);
