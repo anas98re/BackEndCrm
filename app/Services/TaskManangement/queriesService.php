@@ -2,6 +2,7 @@
 
 namespace App\Services\TaskManangement;
 
+use App\Constants;
 use App\Models\users;
 use App\Services\JsonResponeService;
 use Carbon\Carbon;
@@ -60,8 +61,13 @@ class queriesService extends JsonResponeService
                     });
             })
             // ->where('u.is_comments_check', '=', 0)
-            ->where('u.type_client', '=', 'تفاوض')
+            // ->where('u.type_client', '=', 'تفاوض')
             ->where('u.date_create', '>=', Carbon::now('Asia/Riyadh')->subMonthsNoOverflow(1)->startOfMonth()->toDateString()) // get date which is the first day of the previous month.
+            // ->where('u.date_create', '>=', Carbon::now('Asia/Riyadh')->startOfMonth()->toDateString()) // get date which is the first day of the previous month.
+            ->where(function ($query) {
+                $query->where('u.type_client', '=', 'تفاوض')
+                    ->orWhere('u.type_client', '=', 'عرض سعر');
+            })
             ->where(function ($query) {
                 $query->where(function ($q) {
                     $q->where('u.ismarketing', '=', 1)
@@ -97,7 +103,7 @@ class queriesService extends JsonResponeService
                         ->whereIn('u.type_level', $typeLevel);
                 })
                 ->orWhere(function ($query) use ($regoin, $typeLevel) {
-                    $query->where('u.fk_regoin', 14)
+                    $query->where('u.fk_regoin', Constants::ALL_BRUNSHES)
                         ->where('u.fk_country', $regoin->fk_country)
                         ->whereIn('u.type_level', $typeLevel);
                 })
@@ -157,7 +163,7 @@ class queriesService extends JsonResponeService
                     ->whereIn('u.type_level', $typeLevel);
             })
             ->orWhere(function ($query) use ($typeLevel) {
-                $query->where('u.fk_regoin', 14)
+                $query->where('u.fk_regoin', Constants::ALL_BRUNSHES)
                     ->whereIn('u.type_level', $typeLevel);
             })
             ->get();
@@ -187,7 +193,7 @@ class queriesService extends JsonResponeService
                     ->whereIn('u.type_level', $typeLevel);
             })
             ->orWhere(function ($query) use ($typeLevel) {
-                $query->where('u.fk_regoin', 14)
+                $query->where('u.fk_regoin', Constants::ALL_BRUNSHES)
                     ->whereIn('u.type_level', $typeLevel);
             })
             ->get();
@@ -270,7 +276,8 @@ class queriesService extends JsonResponeService
         foreach ($duplicatesWithName as $region => $count) {
             $messageWithCount = str_replace('?', $count, $message);
             $messageWithRegion = str_replace('!', $region, $messageWithCount);
-            $messageWithDate = $messageWithRegion . ' [منذ تاريخ % لتاريخ اليوم]';
+            // $messageWithDate = $messageWithRegion . ' [منذ تاريخ % لتاريخ اليوم]';
+            $messageWithDate = $messageWithRegion ;
             $messageRegionWithPlaceholder[] = str_replace('%', $Date, $messageWithDate);
         }
 

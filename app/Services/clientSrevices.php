@@ -22,6 +22,8 @@ class clientSrevices extends JsonResponeService
     {
         return  DB::table('clients')
             ->where('ismarketing', 1)
+            ->where('fk_regoin', Constants::MARKETING_SALSE_ID)
+            ->where('type_client', [Constants::NEGOTIATION, Constants::OFFER_PRICE])
             // ->where('is_check_marketing', 0)
             ->whereDate('date_create', '>=', Carbon::createFromDate(2024, 1, 1)->endOfDay())
             ->where('date_create', '<', $formattedDate)
@@ -137,6 +139,8 @@ class clientSrevices extends JsonResponeService
     {
         $userIds = DB::table('clients')
             ->where('ismarketing', 1)
+            ->where('fk_regoin', Constants::MARKETING_SALSE_ID)
+            ->where('type_client', [Constants::NEGOTIATION, Constants::OFFER_PRICE])
             // ->where('is_check_marketing', 0)
             ->whereDate('date_create', '>=', Carbon::createFromDate(2024, 1, 1)->endOfDay())
             ->where('date_create', '<', $formattedDate)
@@ -157,10 +161,10 @@ class clientSrevices extends JsonResponeService
                 Notification::send(
                     null,
                     new SendNotification(
-                        'تعليقات العملاء',
+                        'تحويلات العملاء',
                         $messageWithCount2,
                         $messageWithCount2,
-                        ($userToken != null ? $userToken->token : null)
+                        $userToken != null ? $userToken->token : null
                     )
                 );
 
@@ -215,5 +219,86 @@ class clientSrevices extends JsonResponeService
         }
 
         return null;
+    }
+
+
+    public function filterByNameClientOrEnterprise($query, $nameClient, $nameEnterprise)
+    {
+        if ($nameClient) {
+            $this->filterByNameClient($query, $nameClient);
+        }
+
+        if ($nameEnterprise) {
+            $this->filter_has_NameEnterprise($query, $nameEnterprise);
+        }
+    }
+
+    private function filterByNameClient($query, $nameClient)
+    {
+        // Ensure the search term is properly encoded as UTF-8
+        $searchTerm = mb_convert_encoding($nameClient, 'UTF-8', mb_detect_encoding($nameClient));
+
+        // Split the search term to get the first word and the first three letters of the second word
+        $searchTermParts = explode(' ', $searchTerm);
+        $firstWord = $searchTermParts[0];
+        $secondWordPrefix = isset($searchTermParts[1]) ? mb_substr($searchTermParts[1], 0, 3, 'UTF-8') : '';
+
+        // Fetch results based on the first word and the first three letters of the second word for name_client
+        $query->orWhere(function ($query) use ($firstWord, $secondWordPrefix) {
+            $query->where('name_client', 'LIKE', $firstWord . ' ' . $secondWordPrefix . '%');
+        });
+    }
+
+    private function filter_has_NameEnterprise($query, $nameEnterprise)
+    {
+        if ($nameEnterprise) {
+            $query->orWhere(function ($query) use ($nameEnterprise) {
+                $excludedWords = ['موسسة', 'مؤسسة', 'مؤسسه', 'جمعية', 'جمعيه'];
+                $searchTerms = explode(' ', $nameEnterprise);
+
+                // Exclude the first word if it matches any of the specified words
+                if (count($searchTerms) > 1) {
+                    $firstWord = array_shift($searchTerms);
+                    if (in_array($firstWord, $excludedWords)) {
+                        $searchTerms = array_values($searchTerms); // Re-index the array after removing the first word
+                    }
+                }
+
+                // Apply the LIKE operator for each remaining word
+                foreach ($searchTerms as $term) {
+                    $query->where('name_enterprise', 'LIKE', '%' . $term . '%');
+                }
+            });
+        }
+    }
+
+    private function filterByNameEnterprise($query, $nameEnterprise)
+    {
+        $excludedWords = ['موسسة', 'مؤسسة', 'مؤسسه', 'جمعية', 'جمعيه'];
+        $excludeFirstWord = false;
+
+        // Check if any of the excluded words are present in the name_enterprise
+        foreach ($excludedWords as $excludedWord) {
+            if (strpos($nameEnterprise, $excludedWord) !== false) {
+                $excludeFirstWord = true;
+                break;
+            }
+        }
+
+        // Fetch results based on the adjusted query for name_enterprise
+        $query->orWhere(function ($query) use ($nameEnterprise, $excludeFirstWord) {
+            $searchTermParts = explode(' ', $nameEnterprise);
+            $firstWord = isset($searchTermParts[0]) ? $searchTermParts[0] : '';
+            $secondWordPrefix = isset($searchTermParts[1]) ? mb_substr($searchTermParts[1], 0, 3, 'UTF-8') : '';
+
+            if (!$excludeFirstWord) {
+                $query->where('name_enterprise', 'LIKE', $firstWord . ' ' . $secondWordPrefix . '%');
+            } else {
+                // If the first word is excluded, use the second word as the first word
+                $Sec = isset($searchTermParts[1]) ? $searchTermParts[1] : '';
+                $thirdWordPrefix = isset($searchTermParts[2]) ? mb_substr($searchTermParts[2], 0, 3, 'UTF-8') : '';
+                $query->where('name_enterprise', 'LIKE', $Sec . ' ' . $thirdWordPrefix . '%');
+            }
+        });
     }
 }

@@ -11,6 +11,7 @@ class company_comment extends Model
 
     protected $table = 'company_comment';
     public $timestamps = false;
+    protected $primaryKey = 'id_comment_company';
     protected $fillable = [
         'id_comment_company',
         'fk_user',
@@ -18,4 +19,9 @@ class company_comment extends Model
         'content',
         'date_comment'
     ];
+
+    public function Users()
+    {
+        return $this->belongsTo(users::class, 'fk_user', 'id_user')->select('id_user', 'nameUser','img_image');
+    }
 }

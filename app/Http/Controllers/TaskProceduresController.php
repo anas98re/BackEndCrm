@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants;
 use App\Models\taskStatus;
 use App\Http\Requests\StoretaskStatusRequest;
 use App\Http\Requests\UpdatetaskStatusRequest;
@@ -20,6 +21,7 @@ use App\Services\TaskManangement\TaskProceduresService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
 class TaskProceduresController extends Controller
@@ -33,46 +35,59 @@ class TaskProceduresController extends Controller
         $this->MyQueriesService = $MyQueriesService;
     }
 
-    public function addTaskToApproveAdminAfterAddInvoice(Request $request)
+    public function addTaskToApproveAdminAfterAddInvoiceTEST(Request $request)
     {
 
         try {
             DB::beginTransaction();
+            info('request all 1: ' . json_encode($request->all()));
+            info('fk_regoin: ' . json_encode($request->fk_regoin));
+            info('Constants::ALL_BRUNSHES: ' . json_encode(Constants::ALL_BRUNSHES));
+            $assigneds_to = users::where('fk_regoin', $request->fk_regoin)
+                ->where('type_level', 14)->get();
 
-            $assigned_to = users::where('fk_regoin', $request->fk_regoin)
-                ->where('type_level', 14)->first();
-            $existingTask = Task::where('invoice_id', $request->invoice_id)
-                ->where('public_Type', 'approveAdmin')
-                ->first();
-
+            if ($assigneds_to->isEmpty()) {
+                // Handle the case where $assigneds_to is empty (no users found)
+                // For example, you can log a message or return early
+                Log::warning('No users found for the specified region and type level.');
+                return;
+            } else {
+            }
             $invoice = client_invoice::where('id_invoice', $request->invoice_id)->first();
             $client = clients::where('id_clients', $invoice->fk_idClient)->first();
             $message = 'يوجد فاتورة للعميل ( ? ) بانتظار الموافقة';
             $messageDescription = str_replace('?', $client->name_enterprise, $message);
 
-            if (!$existingTask) {
-                $task = new task();
-                $task->title = 'موافقة المشرف';
-                $task->description = $messageDescription;
-                $task->invoice_id = $request->invoice_id;
-                $task->public_Type = 'approveAdmin';
-                $task->main_type_task = 'ProccessAuto';
-                $task->assigend_department_from  = 2;
-                $task->assigned_to  = $assigned_to->id_user;
-                $task->start_date = Carbon::now('Asia/Riyadh');
-                $task->save();
+            foreach ($assigneds_to as $assigned_to) {
+                $existingTask = Task::where('invoice_id', $request->invoice_id)
+                    ->where('public_Type', 'approveAdmin')
+                    ->where('assigned_to', $assigned_to->id_user)
+                    ->first();
+                if (!$existingTask) {
+                    $task = new task();
+                    $task->title = 'موافقة المشرف';
+                    $task->description = $messageDescription;
+                    $task->invoice_id = $request->invoice_id;
+                    $task->public_Type = 'approveAdmin';
+                    $task->main_type_task = 'ProccessAuto';
+                    $task->assigend_department_from  = 2;
+                    $task->assigned_to = $assigned_to ? $assigned_to->id_user : null;
+                    $task->assigend_department_to = $assigned_to ? null : 2;
+                    $task->start_date = Carbon::now('Asia/Riyadh');
+                    $task->save();
 
-                !empty($task) ? $this->MyService->addTaskStatus($task) : null;
+                    !empty($task) ? $this->MyService->addTaskStatus($task) : null;
 
-                $this->MyService->handleNotificationForTaskProcedures(
-                    $message = $task->title,
-                    $type = 'task',
-                    $to_user = $assigned_to->id_user,
-                    $invoice_id = $request->invoice_id,
-                    $client_id = $client->id_clients
-                );
-            } else {
-                $task = null;
+                    $this->MyService->handleNotificationForTaskProcedures(
+                        $message = $task->title,
+                        $type = 'task',
+                        $to_user = $assigned_to->id_user,
+                        $invoice_id = $request->invoice_id,
+                        $client_id = $client->id_clients
+                    );
+                } else {
+                    $task = null;
+                }
             }
             DB::commit();
             return $task;
@@ -82,15 +97,114 @@ class TaskProceduresController extends Controller
         }
     }
 
+    public function addTaskToApproveAdminAfterAddInvoice(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            // Retrieve assigned users based on region and type level
+            $assigneds_to = users::where('fk_regoin', $request->fk_regoin)
+                ->where('type_level', 14)->get();
+
+            $invoice = client_invoice::where('id_invoice', $request->invoice_id)->first();
+            $client = clients::where('id_clients', $invoice->fk_idClient)->first();
+            $message = 'يوجد فاتورة للعميل ( ? ) بانتظار الموافقة';
+            $messageDescription = str_replace('?', $client->name_enterprise, $message);
+            // Check if $assigneds_to is empty
+            if ($assigneds_to->isEmpty()) {
+                // Log a warning message if no users are found and execute the loop once
+                Log::warning('No users found for the specified region and type level.');
+                $usersIdsManamgerSuprevisor = users::where('type_level', 9)
+                    ->Where('type_administration', 2)
+                    ->get();
+
+                foreach ($usersIdsManamgerSuprevisor as $user) {
+                    $existingTask = Task::where('invoice_id', $request->invoice_id)
+                        ->where('public_Type', 'approveAdmin')
+                        ->where('assigned_to', $user->id_user)
+                        ->first();
+                    if (!$existingTask) {
+                        $task = new task();
+                        $task->title = 'موافقة المشرف';
+                        $task->description = $messageDescription;
+                        $task->invoice_id = $request->invoice_id;
+                        $task->public_Type = 'approveAdmin';
+                        $task->main_type_task = 'ProccessAuto';
+                        $task->assigend_department_from  = 2;
+                        $task->assigend_department_to = 2;
+                        $task->start_date = Carbon::now('Asia/Riyadh');
+                        $task->save();
+
+                        // Add task status and handle notifications
+                        $this->MyService->addTaskStatus($task);
+                        $this->MyService->handleNotificationForTaskProcedures(
+                            $message = $task->title,
+                            $type = 'task',
+                            $to_user = $user->id_user,
+                            $invoice_id = $request->invoice_id,
+                            $client_id = $client->id_clients
+                        );
+                    }
+                }
+                DB::commit();
+                return true;
+            } else {
+                foreach ($assigneds_to as $assigned_to) {
+                    // Check if task already exists for the invoice and assigned user
+                    $existingTask = Task::where('invoice_id', $request->invoice_id)
+                        ->where('public_Type', 'approveAdmin')
+                        ->where('assigned_to', $assigned_to->id_user)
+                        ->first();
+
+                    // If task doesn't exist, create a new task
+                    if (!$existingTask) {
+
+                        $task = new task();
+                        $task->title = 'موافقة المشرف';
+                        $task->description = $messageDescription;
+                        $task->invoice_id = $request->invoice_id;
+                        $task->public_Type = 'approveAdmin';
+                        $task->main_type_task = 'ProccessAuto';
+                        $task->assigend_department_from  = 2;
+                        $task->assigned_to = $assigned_to->id_user;
+                        $task->start_date = Carbon::now('Asia/Riyadh');
+                        $task->save();
+
+                        // Add task status and handle notifications
+                        $this->MyService->addTaskStatus($task);
+                        $this->MyService->handleNotificationForTaskProcedures(
+                            $message = $task->title,
+                            $type = 'task',
+                            $to_user = $assigned_to->id_user,
+                            $invoice_id = $request->invoice_id,
+                            $client_id = $client->id_clients
+                        );
+                    }
+                }
+            }
+
+            // Commit the transaction
+            DB::commit();
+
+            // Return the last created task
+            return $task ?? null;
+        } catch (\Throwable $th) {
+            // Rollback the transaction and re-throw the exception
+            DB::rollBack();
+            throw $th;
+        }
+    }
+
     public function closeTaskApproveAdminAfterAddInvoice(Request $request)
     {
         try {
             DB::beginTransaction();
-            $client_communication = DB::table('client_communication')->insertGetId([
-                'fk_client' => $request->id_clients,
-                'type_communcation' => 'ترحيب',
-                'id_invoice' => $request->idInvoice
-            ]);
+            info('request all 2: ' . json_encode($request->all()));
+            // $client_communication = DB::table('client_communication')->insertGetId([
+            //     'fk_client' => $request->id_clients,
+            //     'type_communcation' => 'ترحيب',
+            //     'id_invoice' => $request->idInvoice
+            // ]);
             $task = task::where('invoice_id', $request->idInvoice)
                 ->where('public_Type', 'approveAdmin')
                 ->first();
@@ -109,7 +223,7 @@ class TaskProceduresController extends Controller
                 $this->MyService->addTaskAfterApproveInvoice(
                     $request->idInvoice,
                     $request->id_clients,
-                    $client_communication
+                    $request->lastCommunicatinId
                 );
             } else {
                 return;
@@ -167,6 +281,7 @@ class TaskProceduresController extends Controller
             $welcomed_user_id = DB::table('client_communication')
                 ->where('fk_client', $client_id->fk_idClient)
                 ->where('type_communcation', 'تركيب')
+                ->where('type_install', 1)
                 ->where('id_invoice', $request->idInvoice)
                 ->first();
 
@@ -457,7 +572,7 @@ class TaskProceduresController extends Controller
         try {
             DB::beginTransaction();
 
-            $existingTask = Task::where('invoice_id', $request->idInvoice)
+            $existingTask = task::where('invoice_id', $request->idInvoice)
                 ->where('public_Type', 'AddPayment')
                 ->first();
 
@@ -470,6 +585,7 @@ class TaskProceduresController extends Controller
                 $task->title = 'مراجعة فاتورة';
                 $task->description = $messageDescription;
                 $task->invoice_id = $request->idInvoice;
+                $task->client_id = $client->id_clients;
                 $task->public_Type = 'AddPayment';
                 $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 2;
@@ -536,7 +652,8 @@ class TaskProceduresController extends Controller
     {
         $index = 0;
         $index1 = 0;
-        $Date = Carbon::now()->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
+        $Date = Carbon::now('Asia/Riyadh')->subMonthsNoOverflow(1)->startOfMonth()->toDateString();
+        // $Date = Carbon::now('Asia/Riyadh')->startOfMonth()->toDateString();
 
         $query = $this->MyQueriesService->getClientsThatIsNoUpdateToTheLatestClientUpdatesFor5Days();
 
@@ -605,8 +722,10 @@ class TaskProceduresController extends Controller
                 $elementOfRegions = [];
                 $countRegions = [];
                 foreach ($duplicates as $element => $count) {
-                    $elementOfRegions[] = $element;
-                    $countRegions[] = $count;
+                    if ($element != Constants::ALL_BRUNSHES) {
+                        $elementOfRegions[] = $element;
+                        $countRegions[] = $count;
+                    }
                 }
 
                 $privgLevelUsers = DB::table('privg_level_user')
@@ -641,7 +760,7 @@ class TaskProceduresController extends Controller
                         ->where('token', '!=', null)
                         ->latest('date_create')
                         ->first();
-                    if ($IsUser14->id_regoin == 14) {
+                    if ($IsUser14->id_regoin == Constants::ALL_BRUNSHES) {
 
 
                         if ($userToken) {
@@ -675,21 +794,22 @@ class TaskProceduresController extends Controller
                         $message1 = ' هناك ? عميل في ! لم يُعلّق لهم';
                         $messageWithCount1 = str_replace('?', $theRepeate, $message1);
                         $messageWithRegion1 = str_replace('!', $IsUser14->name_regoin, $messageWithCount1);
-                        $messageWithDate1 = $messageWithRegion1 . ' [منذ تاريخ % لتاريخ اليوم]';
-                        $messageRegionWithPlaceholder1 = str_replace('%', $Date, $messageWithDate1);
+                        // $messageWithDate1 = $messageWithRegion1 . ' [تم الاحصاء منذ تاريخ % لتاريخ اليوم]';
+                        // $messageWithDate1 = $messageWithRegion1;
+                        // $messageRegionWithPlaceholder1 = str_replace('%', $Date, $messageWithDate1);
                         if ($userToken) {
                             Notification::send(
                                 null,
                                 new SendNotification(
                                     'تعليقات العملاء',
-                                    $messageRegionWithPlaceholder1,
-                                    $messageRegionWithPlaceholder1,
+                                    $messageWithRegion1,
+                                    $messageWithRegion1,
                                     ($userToken != null ? $userToken->token : null)
                                 )
                             );
 
                             notifiaction::create([
-                                'message' => $messageRegionWithPlaceholder1,
+                                'message' => $messageWithRegion1,
                                 'type_notify' => 'checkComment',
                                 'to_user' => $IsUser14->id_user,
                                 'isread' => 0,
@@ -702,7 +822,7 @@ class TaskProceduresController extends Controller
                 }
 
                 // Sending notifications to Branch supervisors
-                $BranchSupervisors = users::where('type_level', 14)
+                $BranchSupervisors = users::where('type_level', Constants::ALL_BRUNSHES)
                     ->whereIn('fk_regoin', $elementOfRegions)
                     ->join('regoin', 'users.fk_regoin', '=', 'regoin.id_regoin')
                     ->select('users.id_user', 'regoin.name_regoin', 'regoin.id_regoin')
@@ -721,21 +841,22 @@ class TaskProceduresController extends Controller
 
                     $messageWithCount2 = str_replace('?', $theRepeate, $message2);
                     $messageWithRegion2 = str_replace('!', $value->name_regoin, $messageWithCount2);
-                    $messageWithDate2 = $messageWithRegion2 . ' [منذ تاريخ % لتاريخ اليوم]';
-                    $messageRegionWithPlaceholder2 = str_replace('%', $Date, $messageWithDate2);
+                    // $messageWithDate2 = $messageWithRegion2 . ' [تم الاحصاء منذ تاريخ % لتاريخ اليوم]';
+                    // $messageWithDate2 = $messageWithRegion2;
+                    // $messageRegionWithPlaceholder2 = str_replace('%', $Date, $messageWithDate2);
                     if ($userToken) {
                         Notification::send(
                             null,
                             new SendNotification(
                                 'تعليقات العملاء',
-                                $messageRegionWithPlaceholder2,
-                                $messageRegionWithPlaceholder2,
+                                $messageWithRegion2,
+                                $messageWithRegion2,
                                 ($userToken != null ? $userToken->token : null)
                             )
                         );
 
                         notifiaction::create([
-                            'message' => $messageRegionWithPlaceholder2,
+                            'message' => $messageWithRegion2,
                             'type_notify' => 'checkComment',
                             'to_user' => $value->id_user,
                             'isread' => 0,
@@ -755,21 +876,22 @@ class TaskProceduresController extends Controller
 
                     $message3 = ' لديك ? عملاء لم يُعلّق لهم ';
                     $messageWithPlaceholder3 = str_replace('?', $value, $message3);
-                    $messageWithDate3 = $messageWithPlaceholder3 . ' [منذ تاريخ % لتاريخ اليوم]';
-                    $messageRegionWithPlaceholder3 = str_replace('%', $Date, $messageWithDate3);
+                    // $messageWithDate3 = $messageWithPlaceholder3 . ' [ تم الاحصاء منذ تاريخ % لتاريخ اليوم]';
+                    // $messageWithDate3 = $messageWithPlaceholder3;
+                    // $messageRegionWithPlaceholder3 = str_replace('%', $Date, $messageWithDate3);
                     if ($userToken) {
                         Notification::send(
                             null,
                             new SendNotification(
                                 'تعليقات العملاء',
-                                $messageRegionWithPlaceholder3,
-                                $messageRegionWithPlaceholder3,
+                                $messageWithPlaceholder3,
+                                $messageWithPlaceholder3,
                                 ($userToken != null ? $userToken->token : null)
                             )
                         );
 
                         notifiaction::create([
-                            'message' => $messageRegionWithPlaceholder3,
+                            'message' => $messageWithPlaceholder3,
                             'type_notify' => 'checkComment',
                             'to_user' => $key,
                             'isread' => 0,

@@ -2,6 +2,7 @@
 
 namespace App\Services\TaskManangement;
 
+use App\Constants;
 use App\Http\Requests\Registeration\RegisterationRequest;
 use App\Http\Requests\TaskManagementRequests\TaskRequest;
 use App\Models\attachment;
@@ -25,6 +26,7 @@ use PhpParser\Node\Stmt\TryCatch;
 use SebastianBergmann\Type\VoidType;
 use Carbon\CarbonInterval;
 use DateTime;
+use Illuminate\Support\Facades\Auth;
 
 class TaskService extends JsonResponeService
 {
@@ -61,6 +63,12 @@ class TaskService extends JsonResponeService
                 $departmentToValue = null;
                 $regionToValue = null;
                 $startDate = $request->input('start_date') ?? Carbon::now('Asia/Riyadh');
+                // $this->MyService->fillAssignedviaType(
+                //     $startDate,
+                //     $request->id_user,
+                //     $request->assignment_type_from,
+                //     $request->title
+                // );
                 foreach ($currentRequestFromThese as $key => $value) {
                     switch ($key) {
                         case 'assigned_to':
@@ -86,21 +94,22 @@ class TaskService extends JsonResponeService
                             $task->assigned_to = $value;
                             $userToValue = users::where('id_user', $value)
                                 ->first()->nameUser;
-                                $users = $this->queriesService->ToBothDepartmentAndRegionSupervisorsToTheRequiredLevelForTaskProcedures($value);
-                                foreach ($users as $userID) {
-                            $this->MyService->handleNotificationForTaskManual(
-                                $message = $request->title,
-                                $type = 'task',
-                                $to_user = $userID,
-                                $from_user = $request->id_user,
-                                $from_Nameuser = $userValue,
-                                $from_department = $departmentValue,
-                                $from_region = $regionValue,
-                                $userTo_Value = $userToValue,
-                                $departmentTo_Value = $departmentToValue,
-                                $regionTo_Value = $userToValue,
-                                $start_Date = $startDate
-                            );}
+                            $users = $this->queriesService->ToBothDepartmentAndRegionSupervisorsToTheRequiredLevelForTaskProcedures($value);
+                            foreach ($users as $userID) {
+                                $this->MyService->handleNotificationForTaskManual(
+                                    $message = $request->title,
+                                    $type = 'task',
+                                    $to_user = $userID,
+                                    $from_user = $request->id_user,
+                                    $from_Nameuser = $userValue,
+                                    $from_department = $departmentValue,
+                                    $from_region = $regionValue,
+                                    $userTo_Value = $userToValue,
+                                    $departmentTo_Value = $departmentToValue,
+                                    $regionTo_Value = $userToValue,
+                                    $start_Date = $startDate
+                                );
+                            }
                             break;
                         case 'assigend_department_to':
                             switch ($request->assignment_type_from) {
@@ -161,23 +170,25 @@ class TaskService extends JsonResponeService
                                     break;
                             }
                             $task->assigend_region_to = $value;
-                            $regionToValue = regoin::where('id_regoin', $value)
-                                ->first()->name_regoin;
-                            $users = $this->queriesService->BranchSupervisorsToTheRequiredLevelForTaskProcedures($value);
-                            foreach ($users as $userID) {
-                                $this->MyService->handleNotificationForTaskManual(
-                                    $message = $request->title,
-                                    $type = 'task',
-                                    $to_user = $userID,
-                                    $from_user = $request->id_user,
-                                    $from_Nameuser = $userValue,
-                                    $from_department = $departmentValue,
-                                    $from_region = $regionValue,
-                                    $userTo_Value = $userToValue,
-                                    $departmentTo_Value = $departmentToValue,
-                                    $regionTo_Value = $regionToValue,
-                                    $start_Date = $startDate
-                                );
+                            if ($value != Constants::ALL_BRUNSHES) {
+                                $regionToValue = regoin::where('id_regoin', $value)
+                                    ->first()->name_regoin;
+                                $users = $this->queriesService->BranchSupervisorsToTheRequiredLevelForTaskProcedures($value);
+                                foreach ($users as $userID) {
+                                    $this->MyService->handleNotificationForTaskManual(
+                                        $message = $request->title,
+                                        $type = 'task',
+                                        $to_user = $userID,
+                                        $from_user = $request->id_user,
+                                        $from_Nameuser = $userValue,
+                                        $from_department = $departmentValue,
+                                        $from_region = $regionValue,
+                                        $userTo_Value = $userToValue,
+                                        $departmentTo_Value = $departmentToValue,
+                                        $regionTo_Value = $regionToValue,
+                                        $start_Date = $startDate
+                                    );
+                                }
                             }
                             break;
                     }
@@ -214,7 +225,8 @@ class TaskService extends JsonResponeService
 
             if ($request->has('file_path')) { // If we want add attachment files to the task..
                 $attachment = new attachment();
-                $attachment->file_path = $request->file_path;
+                $generatedPath = $this->MyService->handlingImageName($request->file('file_path'));
+                $attachment->file_path = $generatedPath;
                 $attachment->task_id = $task->id;
                 $attachment->create_date = $request->start_date;
                 $attachment->created_by = $request->id_user;
@@ -375,32 +387,65 @@ class TaskService extends JsonResponeService
 
     public function changeStatuseTask(Request $request, $id)
     {
+        // return auth('sanctum')->user()->id_user; ..
         try {
             DB::beginTransaction();
             $task = task::find($id);
-            if ($request->task_statuse_id == 4) {
-                $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
-                $task->save();
-            }
-            if ($request->task_statuse_id == 8) {
-                $task->recive_date = Carbon::now('Asia/Riyadh');
-                $task->save();
-            }
-            $updatedData = DB::table('statuse_task_fraction')
-                ->where('task_id', $task->id)
-                ->first();
+            if ($task->main_type_task != 'ProccessAuto') {
+                if ($request->task_statuse_id == 4) {
+                    $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
+                    $task->save();
+                }
+                if ($request->task_statuse_id == 8) {
+                    $task->recive_date = Carbon::now('Asia/Riyadh');
+                    $task->save();
+                }
+                $updatedData = DB::table('statuse_task_fraction')
+                    ->where('task_id', $task->id)
+                    ->first();
 
-            if ($request->task_statuse_id != 4 && $updatedData->task_statuse_id == 4) {
-                $task->actual_delivery_date = null;
-                $task->save();
-            }
+                if ($request->task_statuse_id != 4 && $updatedData->task_statuse_id == 4) {
+                    $task->actual_delivery_date = null;
+                    $task->save();
+                }
 
-            $updatedData = DB::table('statuse_task_fraction')
-                ->where('task_id', $task->id)
-                ->update([
-                    'task_statuse_id' => $request->task_statuse_id,
-                    'changed_by' => $request->id_user
-                ]);
+                $updatedData = DB::table('statuse_task_fraction')
+                    ->where('task_id', $task->id)
+                    ->update([
+                        'task_statuse_id' => $request->task_statuse_id,
+                        // 'changed_by' => $request->id_user
+                        'changed_by' => auth('sanctum')->user()->id_user
+                    ]);
+            } else {
+                if ($task->public_Type == 'AddPayment') {
+                    if ($request->task_statuse_id == 4) {
+                        $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
+                        $task->save();
+                    }
+                    if ($request->task_statuse_id == 8) {
+                        $task->recive_date = Carbon::now('Asia/Riyadh');
+                        $task->save();
+                    }
+                    $updatedData = DB::table('statuse_task_fraction')
+                        ->where('task_id', $task->id)
+                        ->first();
+
+                    if ($request->task_statuse_id != 4 && $updatedData->task_statuse_id == 4) {
+                        $task->actual_delivery_date = null;
+                        $task->save();
+                    }
+
+                    $updatedData = DB::table('statuse_task_fraction')
+                        ->where('task_id', $task->id)
+                        ->update([
+                            'task_statuse_id' => $request->task_statuse_id,
+                            // 'changed_by' => $request->id_user
+                            'changed_by' => auth('sanctum')->user()->id_user
+                        ]);
+                } else {
+                    return false;
+                }
+            }
             DB::commit();
             if (!$updatedData) {
                 return false;

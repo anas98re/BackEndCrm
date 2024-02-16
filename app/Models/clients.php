@@ -11,14 +11,6 @@ class clients extends Model
 
     protected $table = 'clients';
 
-    // protected $fillable = [
-    //     'idclients_date',
-    //     'date_client_visit',
-    //     'fk_user',
-    //     'is_done',
-    //     'fk_client',
-    //     'fk_invoice'
-    // ];
     public $timestamps = false;
     protected $fillable = [
         'id_clients', 'name_client', 'name_enterprise', 'type_job',
@@ -30,6 +22,6 @@ class clients extends Model
         'activity_type_fk', 'user_add', 'date_visit_Client', 'done_transfer',
         'done_visit', 'tag', 'size_activity', 'fk_client_source', 'email',
         'fk_rejectClient', 'SerialNumber', 'is_comments_check','type_record',
-        'reason_class','type_classification'
+        'reason_class','type_classification','date_update', 'fkuser_update','received_date'
     ];
 }

@@ -41,9 +41,10 @@ class TaskProceduresService extends JsonResponeService
             null,
             new SendNotification(
                 'مهمة',
+                $message,
                 '/id_client =' . $client_id . '/id_invoice=' . $invoice_id .
                     '/id_communication=' . ($communication != null ? $communication->id_communication : 'null'),
-                $message,
+
                 ($userToken != null ? $userToken->token : null)
             )
         );
@@ -53,8 +54,7 @@ class TaskProceduresService extends JsonResponeService
             'type_notify' => $type,
             'to_user' => $to_user,
             'isread' => 0,
-            'data' => $client_id . '/' . $invoice_id .
-                '/' . ($communication != null ? $communication->id_communication : 'null'),
+            'data' => 'Tsk',
             'from_user' => 1,
             'dateNotify' => Carbon::now('Asia/Riyadh')
         ]);
@@ -147,7 +147,7 @@ class TaskProceduresService extends JsonResponeService
                 $task->public_Type = 'welcome';
                 $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 2;
-                $task->assigend_department_to  = 2;
+                $task->assigend_department_to  = 4;
                 $task->start_date  = $newDatetime;
                 $task->save();
 
@@ -233,12 +233,12 @@ class TaskProceduresService extends JsonResponeService
     {
         $message = ' لديك ? عملاء لم يُعلّق لهم ';
         $messageWithPlaceholder = str_replace('?', $value, $message);
-        $messageWithDate = $messageWithPlaceholder . ' [منذ تاريخ % لتاريخ اليوم]';
-        $messageRegionWithPlaceholder = str_replace('%', $Date, $messageWithDate);
+        // $messageWithDate = $messageWithPlaceholder . ' [منذ تاريخ % لتاريخ اليوم]';
+        // $messageRegionWithPlaceholder = str_replace('%', $Date, $messageWithDate);
 
         $task = new task();
         $task->title = 'تعليقات العملاء';
-        $task->description = $messageRegionWithPlaceholder;
+        $task->description = $messageWithPlaceholder;
         $task->assigned_to = $key;
         $task->public_Type = 'checkComments';
         $task->main_type_task = 'ProccessAuto';
@@ -249,5 +249,29 @@ class TaskProceduresService extends JsonResponeService
         $task->save();
 
         !empty($task) ? $this->addTaskStatus($task) : null;
+    }
+
+    public function handlingImageName($path_logo)
+    {
+        $originalFilename = $path_logo->getClientOriginalName();
+        $fileExtension = $path_logo->getClientOriginalExtension();
+        $randomNumber = mt_rand(10000, 99999);
+
+        // Remove the file extension from the original filename
+        $filenameWithoutExtension = pathinfo($originalFilename, PATHINFO_FILENAME);
+
+        $modifiedFilename = str_replace(' ', '_', $filenameWithoutExtension) . '_' . $randomNumber;
+
+        // Combine the filename and extension
+        $generatedFilename = $modifiedFilename . '.' . $fileExtension;
+
+        // Store the file with the modified filename
+        $generatedPath = $path_logo->storeAs('attachments', $generatedFilename);
+        return $generatedPath;
+    }
+
+    public function fillAssignedviaType($startDate, $id_user)
+    {
+
     }
 }

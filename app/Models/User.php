@@ -18,9 +18,10 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $table = 'users';
+    public $timestamps = false;
 
     protected $primaryKey = 'id_user';
-    
+
     protected $fillable = [
         'id_user',
         'nameUser',
@@ -63,5 +64,5 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
     ];
 
-    
+
 }

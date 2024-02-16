@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class user_token extends Model
 {
     use HasFactory;
-
+    public $timestamps = false;
     protected $table = 'user_token';
 
     protected $fillable = [

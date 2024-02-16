@@ -9,6 +9,7 @@ use App\Mail\VerificationCodeEmail;
 use App\Models\User;
 use App\Models\users;
 use App\Services\RegisterationService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -17,6 +18,8 @@ use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Facades\Http;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class RegisterController extends Controller
 {
@@ -30,7 +33,7 @@ class RegisterController extends Controller
     {
         try {
             DB::beginTransaction();
-            $User = new User();
+            $User = new users();
             $User->nameUser = $request->nameUser;
             $User->email = $request->email;
             $User->mobile = $request->mobile;
@@ -49,39 +52,70 @@ class RegisterController extends Controller
         try {
             DB::beginTransaction();
 
-            $existingEmail = User::where('email', $request->email)->exists();
+            $existingEmail = users::where('email', $request->email)->exists();
             if ($existingEmail) {
-                $code = Str::random(5);
-                $existingCode = User::where('code_verfiy', $code)->exists();
+                $code = rand(11111, 99999);
+                $existingCode = users::where('code_verfiy', $code)->exists();
                 while ($existingCode) {
-                    $code = Str::random(5);
-                    $existingCode = User::where('code_verfiy', $code)->exists();
+                    $code = rand(11111, 99999);
+                    $existingCode = users::where('code_verfiy', $code)->exists();
                 }
-                $user = User::where('email', $request->email)->first();
+                $user = users::where('email', $request->email)->first();
                 $user->code_verfiy = $code;
-                $user->type_level = 0;
+                // $user->type_level = 0;
                 $user->save();
                 Mail::to($request->email)->send(new VerificationCodeEmail($code));
-
                 DB::commit();
                 return $this->sendResponse([$user->email], 'Done');
             }
+            // else {
+            //     $User = new users();
+            //     $email = $request->email;
+            //     $nameUser = strstr($email, '@', true); // Get the substring before the '@' symbol in the email
+            //     $User->nameUser = $nameUser;
+            //     $User->email = $email;
+            //     $User->fk_country = 1;
+            //     $User->type_administration = 1;
+            //     $User->type_level = 20;
+            //     $User->fk_regoin = 5;
+            //     $User->isActive = 1;
+            //     $User->img_image = 'b6e44179e934ca0624379bcdfa044665.png';
+            //     $User->img_thumbnail = '48464df755303690b6627314ec202d64.png';
+            //     $User->fkuserAdd = 1;
+            //     $User->created_at = Carbon::now('Asia/Riyadh');
+            //     $User->mobile = rand(1111111, 99999999);
+            //     $User->save();
 
-            return $this->sendUnauthenticated(['Error'], 'Unauthenticated');
+            //     $code = rand(11111, 99999);
+            //     $existingCode = users::where('code_verfiy', $code)->exists();
+            //     while ($existingCode) {
+            //         $code = rand(11111, 99999);
+            //         $existingCode = users::where('code_verfiy', $code)->exists();
+            //     }
+            //     $user = users::where('email', $request->email)->first();
+            //     $user->code_verfiy = $code;
+            //     // $user->type_level = 0;
+            //     $user->save();
+            //     Mail::to($request->email)->send(new VerificationCodeEmail($code));
+            //     DB::commit();
+            // }
+
+            return $this->sendUnauthenticated(['Error'], 'This email not exist');
+            // return $this->sendUnauthenticated(['Error'], 'Unauthenticated');
+
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 
-
     public function login1(RegisterationRequest $request)
     {
-        $User = User::where('code_verfiy', $request->code_verfiy)
+        $User = users::where('code_verfiy', $request->code_verfiy)
             ->where('email', $request->email)
             ->exists();
         if ($User) {
-            $UserData = User::where('code_verfiy', $request->code_verfiy)
+            $UserData = users::where('code_verfiy', $request->code_verfiy)
                 ->where('email', $request->email)
                 ->first();
 
@@ -107,7 +141,7 @@ class RegisterController extends Controller
     {
         $input = $request->all();
         $input['type_level'] = 1;
-        $user = User::create($input);
+        $user = users::create($input);
         $success['remember_token'] = $user->createToken('anas')->plainTextToken;
         $success['nameUser'] = $user->nameUser;
         $success['id_user'] = $user->id_user;
@@ -117,7 +151,7 @@ class RegisterController extends Controller
 
     public function test(Request $request)
     {
-        return $user = auth()->user();
+        $user = auth()->user();
         $string = "hi h#o#$%&*w are %you$";
         $replacedString = str_replace(' ', '_', $string);
         $finalString = preg_replace('/[^A-Za-z0-9_]/', '', $replacedString);
@@ -129,5 +163,22 @@ class RegisterController extends Controller
     {
         $users = $this->MyService->getUsersByTypeAdministrationAndRegion($request);
         return (count($users) > 0 ? $users : response()->json(['not_found']));
+    }
+
+    public function getCurrentUser(Request $request)
+    {
+        $bearerToken = $request->bearerToken();
+        // $bearerToken = '13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465';
+        $tokenable_type = PersonalAccessToken::findToken($bearerToken);
+        $user = users::where('id_user', $tokenable_type->tokenable_id)->first()->id_user;
+        return  $user;
+    }
+
+    public function getHashToken(Request $request)
+    {
+        $bearerToken = $request->bearerToken();
+        // $bearerToken = '13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465';
+        $tokenable_type = PersonalAccessToken::findToken($bearerToken);
+        return $tokenable_type ? 1 : 0;
     }
 }
