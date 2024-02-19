@@ -118,6 +118,6 @@ class ClientsDateController extends Controller
             ->where('dd.fk_invoice', $invoiceId)
             ->get();
 
-        return $result;
+        return $this->sendResponse($result,'Done');
     }
 }
