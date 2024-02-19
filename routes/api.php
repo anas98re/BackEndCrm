@@ -13,6 +13,7 @@ use App\Http\Controllers\ImportantLinkController;
 use App\Http\Controllers\MaincityController;
 use App\Http\Controllers\NotifiactionController;
 use App\Http\Controllers\ParticipateController;
+use App\Http\Controllers\PaymentDetailController;
 use App\Http\Controllers\PrivgLevelUserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TaskController;
@@ -126,6 +127,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // links Excel
     Route::get('export', [ImportantLinkController::class, 'export']);
     Route::post('import', [ImportantLinkController::class, 'import']);
+
+    //PaymentDetails
+    Route::post('createPaymentDetails', [PaymentDetailController::class, 'createPaymentDetails']);
+
 });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);
