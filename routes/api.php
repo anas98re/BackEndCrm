@@ -13,6 +13,7 @@ use App\Http\Controllers\ImportantLinkController;
 use App\Http\Controllers\MaincityController;
 use App\Http\Controllers\NotifiactionController;
 use App\Http\Controllers\ParticipateController;
+use App\Http\Controllers\PaymentDetailController;
 use App\Http\Controllers\PrivgLevelUserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TaskController;
@@ -58,6 +59,9 @@ Route::post('addCommentClientMention', [ClientCommentMentionController::class, '
 
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
 
+//PaymentDetails
+Route::post('createPaymentDetails', [PaymentDetailController::class, 'createPaymentDetails']);
+Route::get('getPaymaentsViaInvoiceId/{id}', [PaymentDetailController::class, 'getPaymaentsViaInvoiceId']);
 
 // Route::middleware(['auth:sanctum', 'knowCurrentUser'])->group(function () {
     Route::post('test', [RegisterController::class, 'test']);
@@ -102,6 +106,7 @@ Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class,
     Route::get('getAgentComments/{id}', [AgentCommentController::class, 'getAgentComments']);
     //clients Date
     Route::post('rescheduleOrCancelVisitClient/{idclients_date}', [ClientsDateController::class, 'rescheduleOrCancelVisitClient']);
+    Route::get('getDateVisitAgentFromQuery/{agentId}', [ClientsDateController::class, 'getDateVisitAgentFromQuery']);
     //Cities
     Route::post('getCitiesFromMainCitiesIds', [MaincityController::class, 'getCitiesFromMainCitiesIds']);
     //cllients Excel
