@@ -110,12 +110,12 @@ class ClientsDateController extends Controller
         }
     }
 
-    public function getDateVisitAgentFromQuery($invoiceId)
+    public function getDateVisitAgentFromQuery($agentId)
     {
         $result = DB::table('clients_date AS dd')
             ->join('agent as AG', 'AG.id_agent','=','dd.fk_agent')
             ->select('dd.*', 'AG.name_agent')
-            ->where('dd.fk_invoice', $invoiceId)
+            ->where('dd.fk_agent', $agentId)
             ->get();
 
         return $this->sendResponse($result,'Done');
