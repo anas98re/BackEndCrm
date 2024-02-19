@@ -11,7 +11,6 @@ class payment_detail extends Model
 
     protected $table = 'payment_details';
     public $timestamps = false;
-    protected $primaryKey = 'payment_idAdd';
 
     protected $fillable = [
         'payment_idAdd',

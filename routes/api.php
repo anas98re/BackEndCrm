@@ -107,6 +107,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('getAgentComments/{id}', [AgentCommentController::class, 'getAgentComments']);
     //clients Date
     Route::post('rescheduleOrCancelVisitClient/{idclients_date}', [ClientsDateController::class, 'rescheduleOrCancelVisitClient']);
+    Route::get('getDateVisitAgentFromQuery/{invoiceId}', [ClientsDateController::class, 'getDateVisitAgentFromQuery']);
     //Cities
     Route::post('getCitiesFromMainCitiesIds', [MaincityController::class, 'getCitiesFromMainCitiesIds']);
     //cllients Excel
