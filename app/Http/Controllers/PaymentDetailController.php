@@ -18,7 +18,7 @@ class PaymentDetailController extends Controller
         info('Done PaymentDetails added successfully');
     }
 
-    public function ($id)
+    public function getPaymaentsViaInvoiceId($id)
     {
         $paymentDetails = payment_detail::where('fk_invoice', $id)->get();
         $invoiceName = client_invoice::where('id_invoice', $id)->first()->name_enterpriseinv;
