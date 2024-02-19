@@ -61,6 +61,7 @@ Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class,
 
 //PaymentDetails
 Route::post('createPaymentDetails', [PaymentDetailController::class, 'createPaymentDetails']);
+Route::get('getPaymaentsViaInvoiceId/{id}', [PaymentDetailController::class, 'getPaymaentsViaInvoiceId']);
 
 // Route::middleware(['auth:sanctum', 'knowCurrentUser'])->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
