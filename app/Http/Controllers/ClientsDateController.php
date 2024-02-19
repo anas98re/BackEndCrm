@@ -54,7 +54,7 @@ class ClientsDateController extends Controller
 
             DB::commit();
             // return $this->sendResponse(['message' => 'done'], 200);
-            return response()->json(['success' => true,'message' => 'done','code' => 200]);
+            return response()->json(['success' => true, 'message' => 'done', 'code' => 200]);
         } catch (\Exception $e) {
             DB::rollback();
 
@@ -108,5 +108,16 @@ class ClientsDateController extends Controller
                 'dateNotify' => Carbon::now('Asia/Riyadh')->format('Y-m-d H:i:s')
             ]);
         }
+    }
+
+    public function getDateVisitAgentFromQuery($invoiceId)
+    {
+        $result = DB::table('clients_date AS dd')
+            ->join('agent as AG', 'AG.id_agent','=','dd.fk_agent')
+            ->select('dd.*', 'AG.name_agent')
+            ->where('dd.fk_invoice', $invoiceId)
+            ->get();
+
+        return $result;
     }
 }
