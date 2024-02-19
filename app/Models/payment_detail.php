@@ -20,4 +20,9 @@ class payment_detail extends Model
         'date_updatePayment',
         'amount_paid'
     ];
+
+    public function invoices()
+    {
+        return $this->belongsTo(client_invoice::class,'id_invoice','fk_invoice');
+    }
 }
