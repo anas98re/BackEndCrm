@@ -59,6 +59,8 @@ Route::post('addCommentClientMention', [ClientCommentMentionController::class, '
 
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
 
+//PaymentDetails
+Route::post('createPaymentDetails', [PaymentDetailController::class, 'createPaymentDetails']);
 
 // Route::middleware(['auth:sanctum', 'knowCurrentUser'])->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -128,8 +130,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('export', [ImportantLinkController::class, 'export']);
     Route::post('import', [ImportantLinkController::class, 'import']);
 
-    //PaymentDetails
-    Route::post('createPaymentDetails', [PaymentDetailController::class, 'createPaymentDetails']);
+
 
 });
 
