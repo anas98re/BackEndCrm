@@ -106,7 +106,7 @@ Route::get('getPaymaentsViaInvoiceId/{id}', [PaymentDetailController::class, 'ge
     Route::get('getAgentComments/{id}', [AgentCommentController::class, 'getAgentComments']);
     //clients Date
     Route::post('rescheduleOrCancelVisitClient/{idclients_date}', [ClientsDateController::class, 'rescheduleOrCancelVisitClient']);
-    Route::get('getDateVisitAgentFromQuery/{agentId}', [ClientsDateController::class, 'getDateVisitAgentFromQuery']);
+    Route::get('getDateVisitAgent/{agentId}', [ClientsDateController::class, 'getDateVisitAgentFromQuery']);
     //Cities
     Route::post('getCitiesFromMainCitiesIds', [MaincityController::class, 'getCitiesFromMainCitiesIds']);
     //cllients Excel
