@@ -156,7 +156,7 @@ class ClientsController extends Controller
                     [
                         'type_client' => 'مستبعد',
                         'date_changetype' => Carbon::now('Asia/Riyadh'),
-                        'approveIduser_reject' => auth('sanctum')->user()->id_user,
+                        // 'approveIduser_reject' => auth('sanctum')->user()->id_user,
                     ]
                 );
         } else {
@@ -166,7 +166,7 @@ class ClientsController extends Controller
                     [
                         'type_client' => 'تفاوض',
                         'date_changetype' => Carbon::now('Asia/Riyadh'),
-                        'approveIduser_reject' => auth('sanctum')->user()->id_user,
+                        // 'approveIduser_reject' => auth('sanctum')->user()->id_user,
                     ]
                 );
         }
