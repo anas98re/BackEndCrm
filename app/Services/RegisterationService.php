@@ -16,14 +16,14 @@ class RegisterationService extends Controller
 {
     public function login(RegisterationRequest $request)
     {
-        $User = users::where('code_verfiy', $request->otp)
-            ->where('email', $request->email)
+        $User = users::where('code_verfiy', 'LIKE', '%' . $request->otp . '%')
+            ->where('email', 'LIKE', '%' . $request->email . '%')
             ->exists();
         $UserData = 0;
         if ($User) {
-            $UserData = users::where('code_verfiy', $request->otp)
-                ->where('email', $request->email)
-                ->first();
+            $UserData = users::where('code_verfiy', 'LIKE', '%' . $request->otp . '%')
+            ->where('email', 'LIKE', '%' . $request->email . '%')
+            ->first();
 
             $remember_token = $UserData->createToken('anas')->plainTextToken;
             // $fcm_token = $UserData->createToken('anas')->plainTextToken;
