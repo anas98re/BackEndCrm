@@ -26,7 +26,7 @@ class PaymentDetailController extends Controller
 
         $data = $paymentDetails->map(function ($payment) use ($invoiceName) {
             $payment['invoice_name_enterpriseinv'] = $invoiceName;
-            $payment['nameUser'] = $payment->users ? $payment->users->nameUser : null;
+            $payment['nameUserPaymentAdd'] = $payment->users ? $payment->users->nameUser : null;
             unset($payment->users);
             return $payment;
         });
