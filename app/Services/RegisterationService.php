@@ -16,6 +16,7 @@ class RegisterationService extends Controller
 {
     public function login(RegisterationRequest $request)
     {
+        // ->whereRaw("TRIM(email) = '{$request->email}'")
         $User = users::where('code_verfiy', 'LIKE', '%' . $request->otp . '%')
             ->where('email', 'LIKE', '%' . $request->email . '%')
             ->exists();
