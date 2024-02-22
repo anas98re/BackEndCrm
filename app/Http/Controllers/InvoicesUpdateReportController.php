@@ -7,6 +7,7 @@ use App\Http\Requests\StoreinvoicesUpdateReportRequest;
 use App\Http\Requests\UpdateinvoicesUpdateReportRequest;
 use App\Models\client_invoice;
 use App\Models\clients;
+use App\Models\users;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -27,16 +28,28 @@ class InvoicesUpdateReportController extends Controller
                 $client = clients::where('id_clients',$dataBeforeUpdate[0]['fk_idClient'])->first();
         //     }
         // }
+        $user = null;
+        if(!$dataBeforeUpdate[0]['lastuserupdate']){
+            $user = users::where('id_user',$dataBeforeUpdate[0]['lastuserupdate'])->first()->nameUser;
+        }
+
         $dataBeforeUpdateHandeling = [];
-        // foreach ($dataBeforeUpdate as $key => $value) {
             $dataBeforeUpdateHandeling = [
                 'name_enterprise'=> $client->name_enterprise,
                 'name_client'=> $client->name_client,
                 'fk_client'=> $client->id_clients,
                 'date_create'=> $client->date_create,
-                'date_create'=> $dataBeforeUpdate['date_approve'],
+                'date_approve'=> $dataBeforeUpdate[0]['date_approve'],
+                'fk_idUser'=> $dataBeforeUpdate[0]['fk_idUser'],
+                'fk_regoin_invoice'=> $dataBeforeUpdate[0]['fk_regoin_invoice'],
+                'fk_regoin'=> $dataBeforeUpdate[0]['fk_regoin'],
+                'fkcountry'=> $dataBeforeUpdate[0]['fkcountry'],
+                'lastuserupdate'=> $dataBeforeUpdate[0]['lastuserupdate'],
+                'lastnameuser'=> $user,
+                'id_invoice'=> $dataBeforeUpdate[0]['id_invoice'],
+                'date_lastuserupdate'=> $dataBeforeUpdate[0]['date_lastuserupdate'],
             ];
-        // }
+
 
         $values = $requestData['values'];
 
