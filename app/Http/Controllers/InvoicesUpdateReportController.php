@@ -21,12 +21,12 @@ class InvoicesUpdateReportController extends Controller
         $dataBeforeUpdate = json_decode($requestData['dataBeforeUpdate'], true);
         info('dataBeforeUpdate is:', $dataBeforeUpdate);
         info('requestData is:', $requestData);
-        foreach ($dataBeforeUpdate as $key1 => $value1) {
-            if($key1 == 'fk_idClient')
-            {
-                $client = clients::where('id_clients',$value1)->first();
-            }
-        }
+        // foreach ($dataBeforeUpdate as $key1 => $value1) {
+        //     if($key1 == 'fk_idClient')
+        //     {
+                $client = clients::where('id_clients',$dataBeforeUpdate['fk_idClient'])->first();
+        //     }
+        // }
         $dataBeforeUpdateHandeling = [];
         // foreach ($dataBeforeUpdate as $key => $value) {
             $dataBeforeUpdateHandeling = [
