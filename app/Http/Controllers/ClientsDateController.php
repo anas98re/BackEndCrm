@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\clients_date;
 use App\Http\Requests\Storeclients_dateRequest;
 use App\Http\Requests\Updateclients_dateRequest;
+use App\Models\agent;
 use App\Models\clients;
 use App\Models\notifiaction;
 use App\Notifications\SendNotification;
@@ -20,37 +21,37 @@ class ClientsDateController extends Controller
         // DB::beginTransaction();
 
         // try {
-            if ($request->typeProcess == 'reschedule') {
-                $client = clients_date::where('idclients_date', $idclients_date)
-                    ->update([
-                        'is_done' => 3,
-                        'date_client_visit' => $request->date_client_visit,
-                        'processReason' => $request->processReason,
-                        'type_date' => $request->type_date,
-                        'user_id_process' => auth('sanctum')->user()->id_user
-                    ]);
+        if ($request->typeProcess == 'reschedule') {
+            $client = clients_date::where('idclients_date', $idclients_date)
+                ->update([
+                    'is_done' => 3,
+                    'date_client_visit' => $request->date_client_visit,
+                    'processReason' => $request->processReason,
+                    'type_date' => $request->type_date,
+                    'user_id_process' => auth('sanctum')->user()->id_user
+                ]);
 
-                $this->handleNotification(
-                    $privilage_id = 59,
-                    $typeProcess = 'اعادة جدولة زيارة',
-                    $idclients_date
-                );
-            } elseif ($request->typeProcess == 'cancel') {
-                $client = clients_date::where('idclients_date', $idclients_date)
-                    ->update([
-                        'is_done' => 2,
-                        'processReason' => $request->processReason,
-                        'user_id_process' => auth('sanctum')->user()->id_user
-                    ]);
+            $this->handleNotification(
+                $privilage_id = 59,
+                $typeProcess = 'اعادة جدولة زيارة',
+                $idclients_date
+            );
+        } elseif ($request->typeProcess == 'cancel') {
+            $client = clients_date::where('idclients_date', $idclients_date)
+                ->update([
+                    'is_done' => 2,
+                    'processReason' => $request->processReason,
+                    'user_id_process' => auth('sanctum')->user()->id_user
+                ]);
 
-                $this->handleNotification(
-                    $privilage_id = 181,
-                    $typeProcess = 'الغاء زيارة',
-                    $idclients_date
-                );
-            } else {
-                return;
-            }
+            $this->handleNotification(
+                $privilage_id = 181,
+                $typeProcess = 'الغاء زيارة',
+                $idclients_date
+            );
+        } else {
+            return;
+        }
 
         //     DB::commit();
         //     // return $this->sendResponse(['message' => 'done'], 200);
@@ -75,13 +76,26 @@ class ClientsDateController extends Controller
 
         $client = clients_date::where('idclients_date', $idclients_date)
             ->first()->fk_client;
-        $clienName = clients::where('id_clients', $client)->first()->name_enterprise;
-        if ($typeProcess == 'الغاء زيارة') {
-            $content = 'تم الغاء زيارة للعميل ?';
-            $message = str_replace('?', $clienName, $content);
+        if (!$client) {
+            $clienName = clients::where('id_clients', $client)->first()->name_enterprise;
+            if ($typeProcess == 'الغاء زيارة') {
+                $content = 'تم الغاء زيارة للعميل ?';
+                $message = str_replace('?', $clienName, $content);
+            } else {
+                $content = 'تم اعادة جدولة زيارة للعميل ?';
+                $message = str_replace('?', $clienName, $content);
+            }
         } else {
-            $content = 'تم اعادة جدولة زيارة للعميل ?';
-            $message = str_replace('?', $clienName, $content);
+            $agent = clients_date::where('idclients_date', $idclients_date)
+                ->first()->fk_agent;
+            $agentName = agent::where('id_agent', $agent)->first()->name_agent;
+            if ($typeProcess == 'الغاء زيارة') {
+                $content = 'تم الغاء زيارة للوكيل ?';
+                $message = str_replace('?', $agentName, $content);
+            } else {
+                $content = 'تم اعادة جدولة زيارة للوكيل ?';
+                $message = str_replace('?', $agentName, $content);
+            }
         }
         foreach ($usersId as $Id) {
             $userToken = DB::table('user_token')->where('fkuser', $Id)
@@ -113,11 +127,11 @@ class ClientsDateController extends Controller
     public function getDateVisitAgentFromQuery($agentId)
     {
         $result = DB::table('clients_date AS dd')
-            ->join('agent as AG', 'AG.id_agent','=','dd.fk_agent')
+            ->join('agent as AG', 'AG.id_agent', '=', 'dd.fk_agent')
             ->select('dd.*', 'AG.name_agent')
             ->where('dd.fk_agent', $agentId)
             ->get();
 
-        return $this->sendResponse($result,'Done');
+        return $this->sendResponse($result, 'Done');
     }
 }
