@@ -69,10 +69,10 @@ class InvoicesUpdateReportController extends Controller
             }
         }
 
-        foreach ($infoData as $data) {
-            info('$value inside for is:', $data['value']);
-            info('$dataBeforeUpdate[$index] inside for is:', $data['dataBeforeUpdate']);
-        }
+        // foreach ($infoData as $data) {
+        //     info('$value inside for is:', $data['value']);
+        //     info('$dataBeforeUpdate[$index] inside for is:', $data['dataBeforeUpdate']);
+        // }
 
 
         info('changes is:', $changes);
