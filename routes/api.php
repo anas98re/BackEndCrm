@@ -56,7 +56,8 @@ Route::post('addTaskafterAddPaymentToTheInvoiceForReviewInvoice', [TaskProcedure
 Route::post('addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days', [TaskProceduresController::class, 'addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days']);
 //clients comments mentions
 Route::post('addCommentClientMention', [ClientCommentMentionController::class, 'addCommentClientMention']);
-
+ //cllients Invoices
+ Route::post('storageInvoicesUpdates', [InvoicesUpdateReportController::class, 'storageInvoicesUpdates']);
 
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
 
@@ -113,8 +114,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('getCitiesFromMainCitiesIds', [MaincityController::class, 'getCitiesFromMainCitiesIds']);
     //cllients Excel
     Route::post('importClints', [ClientsController::class, 'importClints']);
-    //cllients Invoices
-    Route::post('storageInvoicesUpdates', [InvoicesUpdateReportController::class, 'storageInvoicesUpdates']);
+
 
 
 
