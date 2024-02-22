@@ -30,6 +30,8 @@ class InvoicesUpdateReportController extends Controller
         info('data is:', $data);
         $changes = [];
         foreach ($dataBeforeUpdate as $key => $value) {
+            info('$data[$key] is:', $data);
+            info('$value in dataBeforeUpdate foreach:', $data);
             if (isset($data[$key]) && $data[$key] !== $value) {
                 $changes[$key] = [
                     'before' => $value,
