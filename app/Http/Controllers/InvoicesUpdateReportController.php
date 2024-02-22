@@ -14,6 +14,7 @@ class InvoicesUpdateReportController extends Controller
     public function storageInvoicesUpdates(Request $request)
     {
         info('$request->all() for storageInvoicesUpdates:',$request->all());
+        $updates = [];
         foreach ($request->all()  as $key => $value) {
 
             $updates[] = $key . ' : ' . $value ;
