@@ -17,10 +17,12 @@ class InvoicesUpdateReportController extends Controller
 
         $requestData = json_decode($request->getContent(), true);
         $dataBeforeUpdate = json_decode($requestData['dataBeforeUpdate'], true);
-
+        info('dataBeforeUpdate is:', $dataBeforeUpdate);
+        info('requestData is:', $requestData);
         $keys = $requestData['keys'];
         $values = $requestData['values'];
-
+        info('keys is:', $keys);
+        info('values is:', $values);
         $data = [];
         foreach ($keys as $index => $key) {
             $value = $values[$index];
@@ -49,10 +51,10 @@ class InvoicesUpdateReportController extends Controller
         $isApprove = $invoiceData->isApprove === 1 ? 'true' : 'false';
 
         $invoicesUpdateReport = new invoicesUpdateReport();
-        $invoicesUpdateReport->changesData = $InvoicesChanges;
+        $invoicesUpdateReport->changesData = $InvoicesUpdates;
         $invoicesUpdateReport->afterApprove = $isApprove;
         $invoicesUpdateReport->edit_date = Carbon::now('Asia/Riyadh')->toDateTimeString();
-        $invoicesUpdateReport->user_id = $request->input('fk_idUser');
+        $invoicesUpdateReport->user_id = $request->fk_idUser;
         $invoicesUpdateReport->save();
 
         return $this->sendResponse($invoicesUpdateReport, 'Updated success');
