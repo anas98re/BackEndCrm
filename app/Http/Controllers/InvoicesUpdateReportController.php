@@ -61,10 +61,12 @@ class InvoicesUpdateReportController extends Controller
                 $changes[] = [
                     'before' => $dataBeforeUpdateHandeling[$index],
                     'after' => $value,
+                    'infoKays' => $index,
                 ];
                 $infoData[] = [
                     'value' => $value,
                     'dataBeforeUpdate' => $dataBeforeUpdateHandeling[$index],
+                    'infoKays' => $index,
                 ];
             }
         }
@@ -81,7 +83,8 @@ class InvoicesUpdateReportController extends Controller
         foreach ($changes as $key => $change) {
             $before = is_array($change['before']) ? json_encode($change['before']) : $change['before'];
             $after = is_array($change['after']) ? json_encode($change['after']) : $change['after'];
-            $updates[] = $key . ' : ' . $before . ' -> ' . $after;
+            $infoKay = is_array($change['infoKays']) ? json_encode($change['infoKays']) : $change['infoKays'];
+            $updates[] = $infoKay . ' : ' . $before . ' -> ' . $after;
         }
 
         $InvoicesUpdates = implode("\n", $updates);
