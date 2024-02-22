@@ -15,8 +15,8 @@ class InvoicesUpdateReportController extends Controller
     {
         info('$request->all() for storageInvoicesUpdates:', $request->all());
 
-
         $requestData = json_decode($request->getContent(), true);
+        $dataBeforeUpdate = json_decode($requestData['dataBeforeUpdate'], true);
 
         $keys = $requestData['keys'];
         $values = $requestData['values'];
@@ -27,30 +27,29 @@ class InvoicesUpdateReportController extends Controller
             $data[$key] = $value;
         }
 
-
-        $updates = [];
-        foreach ($data as $key => $value) {
-            $updates[] = $key . ' : ' . $value;
+        $changes = [];
+        foreach ($dataBeforeUpdate as $key => $value) {
+            if (isset($data[$key]) && $data[$key] !== $value) {
+                $changes[$key] = [
+                    'before' => $value,
+                    'after' => $data[$key],
+                ];
+            }
         }
 
-        // $id_invoice = null;
-        // foreach ($request->all() as $key => $value) {
-        //     if (is_array($value)) {
-        //         $value = implode(', ', $value);
-        //     }
-        //     $updates[] = $key . ' : ' . $value;
-        //     // if ($key === 'id_invoice') {
-        //     //     $id_invoice = $value;
-        //     // }
-        // }
+        $updates = [];
+        foreach ($changes as $key => $change) {
+            $updates[] = $key . ' : ' . $change['before'] . ' -> ' . $change['after'];
+        }
 
         $InvoicesUpdates = implode("\n", $updates);
+        $InvoicesChanges = implode("\n", $changes);
 
         $invoiceData = client_invoice::where('id_invoice', $request->id_invoice)->first();
         $isApprove = $invoiceData->isApprove === 1 ? 'true' : 'false';
 
         $invoicesUpdateReport = new invoicesUpdateReport();
-        $invoicesUpdateReport->changesData = $InvoicesUpdates;
+        $invoicesUpdateReport->changesData = $InvoicesChanges;
         $invoicesUpdateReport->afterApprove = $isApprove;
         $invoicesUpdateReport->edit_date = Carbon::now('Asia/Riyadh')->toDateTimeString();
         $invoicesUpdateReport->user_id = $request->input('fk_idUser');
