@@ -24,4 +24,9 @@ class payment_detail extends Model
     {
         return $this->belongsTo(client_invoice::class,'id_invoice','fk_invoice');
     }
+
+    public function users()
+    {
+        return $this->belongsTo(users::class,'payment_idAdd','id_user')->select('id_user','nameUser');
+    }
 }
