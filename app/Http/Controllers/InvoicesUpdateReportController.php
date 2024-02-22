@@ -19,13 +19,12 @@ class InvoicesUpdateReportController extends Controller
         $dataBeforeUpdate = json_decode($requestData['dataBeforeUpdate'], true);
         info('dataBeforeUpdate is:', $dataBeforeUpdate);
         info('requestData is:', $requestData);
-        $keys = $requestData['keys'];
+        // $keys = $requestData['keys'];
         $values = $requestData['values'];
-        info('keys is:', $keys);
+        // info('keys is:', $keys);
         info('values is:', $values);
         $data = [];
-        foreach ($keys as $index => $key) {
-            $value = $values[$index];
+        foreach ($values as $key => $value) {
             $data[$key] = $value;
         }
 
