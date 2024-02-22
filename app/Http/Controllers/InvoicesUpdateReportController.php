@@ -40,7 +40,9 @@ class InvoicesUpdateReportController extends Controller
 
         $updates = [];
         foreach ($changes as $key => $change) {
-            $updates[] = $key . ' : ' . implode(', ', (array) $change['before']) . ' -> ' . implode(', ', (array) $change['after']);
+            $before = is_array($change['before']) ? json_encode($change['before']) : $change['before'];
+            $after = is_array($change['after']) ? json_encode($change['after']) : $change['after'];
+            $updates[] = $key . ' : ' . $before . ' -> ' . $after;
         }
 
         $InvoicesUpdates = implode("\n", $updates);
