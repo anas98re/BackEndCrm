@@ -17,9 +17,9 @@ class ClientsDateController extends Controller
 {
     public function rescheduleOrCancelVisitClient(Request $request, $idclients_date)
     {
-        DB::beginTransaction();
+        // DB::beginTransaction();
 
-        try {
+        // try {
             if ($request->typeProcess == 'reschedule') {
                 $client = clients_date::where('idclients_date', $idclients_date)
                     ->update([
@@ -52,14 +52,14 @@ class ClientsDateController extends Controller
                 return;
             }
 
-            DB::commit();
-            // return $this->sendResponse(['message' => 'done'], 200);
-            return response()->json(['success' => true, 'message' => 'done', 'code' => 200]);
-        } catch (\Exception $e) {
-            DB::rollback();
+        //     DB::commit();
+        //     // return $this->sendResponse(['message' => 'done'], 200);
+        //     return response()->json(['success' => true, 'message' => 'done', 'code' => 200]);
+        // } catch (\Exception $e) {
+        //     DB::rollback();
 
-            return $this->sendResponse(['message' => 'Failed to process. Please try again.'], 500);
-        }
+        //     return $this->sendResponse(['message' => 'Failed to process. Please try again.'], 500);
+        // }
     }
 
     private function handleNotification($privilage_id, $typeProcess, $idclients_date)
