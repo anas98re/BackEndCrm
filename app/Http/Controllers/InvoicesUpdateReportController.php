@@ -42,7 +42,7 @@ class InvoicesUpdateReportController extends Controller
                 'date_approve'=> $dataBeforeUpdate[0]['date_approve'],
                 'fk_idUser'=> $dataBeforeUpdate[0]['fk_idUser'],
                 'fk_regoin_invoice'=> $dataBeforeUpdate[0]['fk_regoin_invoice'],
-                'fk_regoin'=> $dataBeforeUpdate[0]['fk_regoin_invoice'],
+                'fk_regoin'=> $client->fk_regoin,
                 'fkcountry'=> 1,
                 'lastuserupdate'=> $dataBeforeUpdate[0]['lastuserupdate'],
                 'lastnameuser'=> $user,
@@ -71,12 +71,6 @@ class InvoicesUpdateReportController extends Controller
             }
         }
 
-        // foreach ($infoData as $data) {
-        //     info('$value inside for is:', $data['value']);
-        //     info('$dataBeforeUpdate[$index] inside for is:', $data['dataBeforeUpdate']);
-        // }
-
-
         info('changes is:', $changes);
 
         $updates = [];
@@ -91,7 +85,8 @@ class InvoicesUpdateReportController extends Controller
 
         $invoiceData = client_invoice::where('id_invoice', $request->id_invoice)->first();
         $isApprove = $invoiceData->isApprove === 1 ? 'true' : 'false';
-
+        info('$invoiceData is: ',$invoiceData);
+        info('$invoiceData->isApprove is: ',$invoiceData->isApprove);
         $invoicesUpdateReport = new invoicesUpdateReport();
         $invoicesUpdateReport->changesData = $InvoicesUpdates;
         $invoicesUpdateReport->afterApprove = $isApprove;
