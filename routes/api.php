@@ -10,6 +10,7 @@ use App\Http\Controllers\CompanyCommentController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ImportantLinkController;
+use App\Http\Controllers\InvoicesUpdateReportController;
 use App\Http\Controllers\MaincityController;
 use App\Http\Controllers\NotifiactionController;
 use App\Http\Controllers\ParticipateController;
@@ -112,6 +113,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('getCitiesFromMainCitiesIds', [MaincityController::class, 'getCitiesFromMainCitiesIds']);
     //cllients Excel
     Route::post('importClints', [ClientsController::class, 'importClints']);
+    //cllients Invoices
+    Route::post('storageInvoicesUpdates', [InvoicesUpdateReportController::class, 'storageInvoicesUpdates']);
 
 
 
