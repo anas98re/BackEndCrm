@@ -38,6 +38,8 @@ class InvoicesUpdateReportController extends Controller
             }
         }
 
+        info('changes is:', $changes);
+
         $updates = [];
         foreach ($changes as $key => $change) {
             $before = is_array($change['before']) ? json_encode($change['before']) : $change['before'];
