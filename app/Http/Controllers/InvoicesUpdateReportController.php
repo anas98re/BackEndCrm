@@ -13,6 +13,7 @@ class InvoicesUpdateReportController extends Controller
 {
     public function storageInvoicesUpdates(Request $request)
     {
+        info('****************************************************************');
         info('$request->all() for storageInvoicesUpdates:', $request->all());
 
         $requestData = json_decode($request->getContent(), true);
@@ -25,21 +26,29 @@ class InvoicesUpdateReportController extends Controller
         info('values is:', $values);
         $data = [];
         foreach ($values as $key => $value) {
-            $data[$key] = $value;
-        }
-        info('data is:', $data);
-        $changes = [];
-        foreach ($dataBeforeUpdate as $key => $value) {
-            info('$data[$key] is:', $data[$key]);
-            info('$value in dataBeforeUpdate foreach:', $value);
-            return 1;
-            if (isset($data[$key]) && $data[$key] !== $value) {
-                $changes[$key] = [
-                    'before' => $value,
-                    'after' => $data[$key],
-                ];
+            foreach ($dataBeforeUpdate as $key1 => $value1) {
+                if ($value !== $value1) {
+                    $changes[] = [
+                        'before' => $value1,
+                        'after' => $value,
+                    ];
+                }
             }
+            // $data[$key] = $value;
         }
+        // info('data is:', $data);
+        // $changes = [];
+        // foreach ($dataBeforeUpdate as $key => $value) {
+        //     info('$data[$key] is:', $data[$key]);
+        //     info('$value in dataBeforeUpdate foreach:', $value);
+        //     return 1;
+        //     if (isset($data[$key]) && $data[$key] !== $value) {
+        //         $changes[$key] = [
+        //             'before' => $value,
+        //             'after' => $data[$key],
+        //         ];
+        //     }
+        // }
 
         info('changes is:', $changes);
 
