@@ -13,23 +13,23 @@ class InvoicesUpdateReportController extends Controller
 {
     public function storageInvoicesUpdates(Request $request)
     {
-        info('$request->all() for storageInvoicesUpdates:',$request->all());
+        info('$request->all() for storageInvoicesUpdates:', $request->all());
+
         $updates = [];
-        foreach ($request->all()  as $key => $value) {
-
-            $updates[] = $key . ' : ' . $value ;
-
+        foreach ($request->all() as $key => $value) {
+            $updates[] = $key . ' : ' . $value;
         }
+
         $InvoicesUpdates = implode("\n", $updates);
 
-        $invoiceData = client_invoice::where('id_invoice',$request->id_invoice)->first();
+        $invoiceData = client_invoice::where('id_invoice', $request->input('id_invoice'))->first();
         $isApprove = $invoiceData->isApprove === 1 ? true : false;
 
         $invoicesUpdateReport = new invoicesUpdateReport();
         $invoicesUpdateReport->changesData = $InvoicesUpdates;
         $invoicesUpdateReport->afterApprove = $isApprove;
         $invoicesUpdateReport->edit_date = Carbon::now('Asia/Riyadh')->toDateTimeString();
-        $invoicesUpdateReport->user_id = $request->fk_idUser;
+        $invoicesUpdateReport->user_id = $request->input('fk_idUser');
         $invoicesUpdateReport->save();
 
         return $this->sendResponse($invoicesUpdateReport, 'Updated success');
