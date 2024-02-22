@@ -85,8 +85,8 @@ class InvoicesUpdateReportController extends Controller
 
         $invoiceData = client_invoice::where('id_invoice', $request->id_invoice)->first();
         $isApprove = $invoiceData->isApprove === 1 ? 'true' : 'false';
-        info('$invoiceData is: ',$invoiceData);
-        info('$invoiceData->isApprove is: ',$invoiceData->isApprove);
+        info('$invoiceData is: ',array($invoiceData));
+        info('$invoiceData->isApprove is: ',array($invoiceData->isApprove));
         $invoicesUpdateReport = new invoicesUpdateReport();
         $invoicesUpdateReport->changesData = $InvoicesUpdates;
         $invoicesUpdateReport->afterApprove = $isApprove;
