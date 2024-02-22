@@ -66,10 +66,10 @@ class ClientsController extends Controller
                     ->update(
                         [
                             'type_client' => 'معلق استبعاد',
-                            'date_changetype' => Carbon::now('Asia/Riyadh'),
+                            'date_reject' => Carbon::now('Asia/Riyadh'),
                             'fk_rejectClient' => $request->fk_rejectClient,
                             'reason_change' => $request->reason_change,
-                            'fk_user_reject' => $request->id_user,
+                            'fk_user_reject ' => $request->id_user,
                         ]
                     );
                 //add comment to client comment table.
@@ -155,8 +155,8 @@ class ClientsController extends Controller
                 ->update(
                     [
                         'type_client' => 'مستبعد',
-                        'date_reject' => Carbon::now('Asia/Riyadh'),
-                        // 'approveIduser_reject' => auth('sanctum')->user()->id_user,
+                        'date_approve_reject' => Carbon::now('Asia/Riyadh'),
+                        'approveIduser_reject' => auth('sanctum')->user()->id_user,
                     ]
                 );
         } else {
@@ -166,7 +166,8 @@ class ClientsController extends Controller
                     [
                         'type_client' => 'تفاوض',
                         'date_approve_reject' => Carbon::now('Asia/Riyadh'),
-                        // 'approveIduser_reject' => auth('sanctum')->user()->id_user,
+                        'date_changetype' => Carbon::now('Asia/Riyadh'),
+                        'approveIduser_reject' => auth('sanctum')->user()->id_user,
                     ]
                 );
         }
