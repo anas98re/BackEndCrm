@@ -54,7 +54,7 @@ class InvoicesUpdateReportController extends Controller
         $invoicesUpdateReport->changesData = $InvoicesUpdates;
         $invoicesUpdateReport->afterApprove = $isApprove;
         $invoicesUpdateReport->edit_date = Carbon::now('Asia/Riyadh')->toDateTimeString();
-        $invoicesUpdateReport->user_id = $request->input('fk_idUser');
+        $invoicesUpdateReport->user_id = $request->fk_idUser;
         $invoicesUpdateReport->save();
 
         return $this->sendResponse($invoicesUpdateReport, 'Updated success');
