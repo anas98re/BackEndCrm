@@ -29,7 +29,7 @@ class InvoicesUpdateReportController extends Controller
         //     }
         // }
         $user = null;
-        if(!$dataBeforeUpdate[0]['lastuserupdate']){
+        if($dataBeforeUpdate[0]['lastuserupdate']){
             $user = users::where('id_user',$dataBeforeUpdate[0]['lastuserupdate'])->first()->nameUser;
         }
 
