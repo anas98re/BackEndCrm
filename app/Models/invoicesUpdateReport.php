@@ -11,6 +11,8 @@ class invoicesUpdateReport extends Model
 
     protected $table = 'invoices_update_reports';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'changesData',
         'afterApprove',
