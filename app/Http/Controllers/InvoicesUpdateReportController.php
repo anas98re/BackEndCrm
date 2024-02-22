@@ -6,6 +6,7 @@ use App\Models\invoicesUpdateReport;
 use App\Http\Requests\StoreinvoicesUpdateReportRequest;
 use App\Http\Requests\UpdateinvoicesUpdateReportRequest;
 use App\Models\client_invoice;
+use App\Models\clients;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -20,21 +21,37 @@ class InvoicesUpdateReportController extends Controller
         $dataBeforeUpdate = json_decode($requestData['dataBeforeUpdate'], true);
         info('dataBeforeUpdate is:', $dataBeforeUpdate);
         info('requestData is:', $requestData);
-        // $keys = $requestData['keys'];
+        foreach ($dataBeforeUpdate as $key1 => $value1) {
+            if($key1 == 'fk_idClient')
+            {
+                $client = clients::where('id_clients',$value1)->first();
+            }
+        }
+        $dataBeforeUpdateHandeling = [];
+        // foreach ($dataBeforeUpdate as $key => $value) {
+            $dataBeforeUpdateHandeling = [
+                'name_enterprise'=> $client->name_enterprise,
+                'name_client'=> $client->name_client,
+                'fk_client'=> $client->id_clients,
+                'date_create'=> $client->date_create,
+                'date_create'=> $dataBeforeUpdate['date_approve'],
+            ];
+        // }
+
         $values = $requestData['values'];
-        // info('keys is:', $keys);
+
         info('values is:', $values);
         $data = [];
         $infoData = [];
         foreach ($values as $index => $value) {
-            if ($value !== $dataBeforeUpdate[$index]) {
+            if ($value !== $dataBeforeUpdateHandeling[$index]) {
                 $changes[] = [
-                    'before' => $dataBeforeUpdate[$index],
+                    'before' => $dataBeforeUpdateHandeling[$index],
                     'after' => $value,
                 ];
                 $infoData[] = [
                     'value' => $value,
-                    'dataBeforeUpdate' => $dataBeforeUpdate[$index],
+                    'dataBeforeUpdate' => $dataBeforeUpdateHandeling[$index],
                 ];
             }
         }
@@ -43,19 +60,7 @@ class InvoicesUpdateReportController extends Controller
             info('$value inside for is:', $data['value']);
             info('$dataBeforeUpdate[$index] inside for is:', $data['dataBeforeUpdate']);
         }
-        // info('data is:', $data);
-        // $changes = [];
-        // foreach ($dataBeforeUpdate as $key => $value) {
-        //     info('$data[$key] is:', $data[$key]);
-        //     info('$value in dataBeforeUpdate foreach:', $value);
-        //     return 1;
-        //     if (isset($data[$key]) && $data[$key] !== $value) {
-        //         $changes[$key] = [
-        //             'before' => $value,
-        //             'after' => $data[$key],
-        //         ];
-        //     }
-        // }
+
 
         info('changes is:', $changes);
 
@@ -67,7 +72,6 @@ class InvoicesUpdateReportController extends Controller
         }
 
         $InvoicesUpdates = implode("\n", $updates);
-        // $InvoicesChanges = implode("\n", $changes);
 
         $invoiceData = client_invoice::where('id_invoice', $request->id_invoice)->first();
         $isApprove = $invoiceData->isApprove === 1 ? 'true' : 'false';
