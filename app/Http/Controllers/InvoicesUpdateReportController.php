@@ -24,7 +24,7 @@ class InvoicesUpdateReportController extends Controller
         // foreach ($dataBeforeUpdate as $key1 => $value1) {
         //     if($key1 == 'fk_idClient')
         //     {
-                $client = clients::where('id_clients',$dataBeforeUpdate['fk_idClient'])->first();
+                $client = clients::where('id_clients',$dataBeforeUpdate[0]['fk_idClient'])->first();
         //     }
         // }
         $dataBeforeUpdateHandeling = [];
