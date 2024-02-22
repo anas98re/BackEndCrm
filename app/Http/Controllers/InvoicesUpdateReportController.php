@@ -17,6 +17,9 @@ class InvoicesUpdateReportController extends Controller
 
         $updates = [];
         foreach ($request->all() as $key => $value) {
+            if (is_array($value)) {
+                $value = implode(', ', $value);
+            }
             $updates[] = $key . ' : ' . $value;
         }
 
