@@ -76,7 +76,7 @@ class ClientsDateController extends Controller
 
         $client = clients_date::where('idclients_date', $idclients_date)
             ->first()->fk_client;
-        if (!$client) {
+        if ($client) {
             $clienName = clients::where('id_clients', $client)->first()->name_enterprise;
             if ($typeProcess == 'الغاء زيارة') {
                 $content = 'تم الغاء زيارة للعميل ?';
