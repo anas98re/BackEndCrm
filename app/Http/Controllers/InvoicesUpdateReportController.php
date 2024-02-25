@@ -59,19 +59,19 @@ class InvoicesUpdateReportController extends Controller
         $data = [];
         $infoData = [];
         foreach ($values as $index => $value) {
-            info('$index are:', $index);
-            return 1;
-            if ($value !== $dataBeforeUpdateHandeling[$index]) {
-                $changes[] = [
-                    'before' => $dataBeforeUpdateHandeling[$index],
-                    'after' => $value,
-                    'infoKays' => $index,
-                ];
-                $infoData[] = [
-                    'value' => $value,
-                    'dataBeforeUpdate' => $dataBeforeUpdateHandeling[$index],
-                    'infoKays' => $index,
-                ];
+            if ($index !== 'fkcountry') {
+                if ($value !== $dataBeforeUpdateHandeling[$index]) {
+                    $changes[] = [
+                        'before' => $dataBeforeUpdateHandeling[$index],
+                        'after' => $value,
+                        'infoKays' => $index,
+                    ];
+                    $infoData[] = [
+                        'value' => $value,
+                        'dataBeforeUpdate' => $dataBeforeUpdateHandeling[$index],
+                        'infoKays' => $index,
+                    ];
+                }
             }
         }
 
