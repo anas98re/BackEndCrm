@@ -54,6 +54,9 @@ class InvoicesUpdateReportController extends Controller
         $values = $requestData['values'];
         info('$dataBeforeUpdateHandeling[8] is : ',$dataBeforeUpdateHandeling[8]);
         info('values is:', $values);
+        $keys = array_keys($dataBeforeUpdateHandeling);
+        info('$keys are:', $keys);
+
         $data = [];
         $infoData = [];
         foreach ($values as $index => $value) {
