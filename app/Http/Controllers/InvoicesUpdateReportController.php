@@ -59,7 +59,7 @@ class InvoicesUpdateReportController extends Controller
         $data = [];
         $infoData = [];
         foreach ($values as $index => $value) {
-            if ($index !== 'fkcountry') {
+            if ($index !== 'fkcountry' || $index !== 'date_lastuserupdate' ) {
                 if ($value !== $dataBeforeUpdateHandeling[$index]) {
                     $changes[] = [
                         'before' => $dataBeforeUpdateHandeling[$index],
@@ -82,9 +82,9 @@ class InvoicesUpdateReportController extends Controller
             if ($change['infoKays'] == 'fk_client') {
                 $nameEnterPriseBefor = clients::where(
                     'id_clients',
-                    is_array($change['before'])
+                    is_array($change['after'])
                         ? json_encode($change['before'])
-                        : $change['before']
+                        : $change['after']
                 )
                     ->first()->name_enterprise;
                 $nameEnterPriseAfter = clients::where(
@@ -96,6 +96,23 @@ class InvoicesUpdateReportController extends Controller
                     ->first()->name_client;
                 $infoKay = 'nameEnterPrise';
                 $updates[] = $infoKay . ' : ' . $nameEnterPriseBefor . ',  name_client: ' . $nameEnterPriseAfter;
+            } elseif($change['infoKays'] == 'fk_idUser'){
+                $nameUser = users::where(
+                    'id_user',
+                    is_array($change['after'])
+                        ? json_encode($change['after'])
+                        : $change['after']
+                )
+                    ->first()->nameUser;
+                $nameEnterPriseAfter = users::where(
+                    'id_user',
+                    is_array($change['after'])
+                        ? json_encode($change['after'])
+                        : $change['after']
+                )
+                    ->first()->nameUser;
+                $infoKay = 'nameUser';
+                $updates[] = $infoKay . ' : ' . $nameUser ;
             } else {
                 $before = is_array($change['before']) ? json_encode($change['before']) : $change['before'];
                 $after = is_array($change['after']) ? json_encode($change['after']) : $change['after'];
