@@ -97,14 +97,14 @@ class InvoicesUpdateReportController extends Controller
                 $infoKay = 'nameEnterPrise';
                 $updates[] = $infoKay . ' : ' . $nameEnterPriseBefor . ',  name_client: ' . $nameEnterPriseAfter;
             } elseif($change['infoKays'] == 'fk_idUser'){
-                $nameUser = users::where(
+                $nameUserBefor = users::where(
                     'id_user',
-                    is_array($change['after'])
-                        ? json_encode($change['after'])
-                        : $change['after']
+                    is_array($change['before'])
+                        ? json_encode($change['before'])
+                        : $change['before']
                 )
                     ->first()->nameUser;
-                $nameEnterPriseAfter = users::where(
+                $nameUserAfter = users::where(
                     'id_user',
                     is_array($change['after'])
                         ? json_encode($change['after'])
@@ -112,12 +112,12 @@ class InvoicesUpdateReportController extends Controller
                 )
                     ->first()->nameUser;
                 $infoKay = 'nameUser';
-                $updates[] = $infoKay . ' : ' . $nameUser ;
+                $updates[] = $infoKay . ' : ' . $nameUserBefor . ' TO ' . $nameUserAfter;
             } else {
                 $before = is_array($change['before']) ? json_encode($change['before']) : $change['before'];
                 $after = is_array($change['after']) ? json_encode($change['after']) : $change['after'];
                 $infoKay = is_array($change['infoKays']) ? json_encode($change['infoKays']) : $change['infoKays'];
-                $updates[] = $infoKay . ' : ' . $before . ' -> ' . $after;
+                $updates[] = $infoKay . ' : ' . $before . ' TO ' . $after;
             }
         }
 
