@@ -23,9 +23,12 @@ class InvoicesUpdateReportController extends Controller
         $dataBeforeUpdate = json_decode($requestData['dataBeforeUpdate'], true);
         info('dataBeforeUpdate is:', $dataBeforeUpdate);
         info('requestData is:', $requestData);
-
+        // foreach ($dataBeforeUpdate as $key1 => $value1) {
+        //     if($key1 == 'fk_idClient')
+        //     {
         $client = clients::where('id_clients', $dataBeforeUpdate[0]['fk_idClient'])->first();
-
+        //     }
+        // }
         $user = null;
         if ($dataBeforeUpdate[0]['lastuserupdate']) {
             $user = users::where('id_user', $dataBeforeUpdate[0]['lastuserupdate'])->first()->nameUser;
@@ -76,7 +79,7 @@ class InvoicesUpdateReportController extends Controller
         info('changes is:', $changes);
 
         $updates = [];
-        $updates[] = 'InvoiceNumber' . ' : ' . $request->id_invoice;
+        $updates[] = 'Invoice Number: ' . $request->id_invoice;
         foreach ($changes as $key => $change) {
             if ($change['infoKays'] == 'fk_client') {
                 $nameEnterPriseBefor = clients::where(
@@ -95,6 +98,23 @@ class InvoicesUpdateReportController extends Controller
                     ->first()->name_client;
                 $infoKay = 'nameEnterPrise';
                 $updates[] = $infoKay . ' : ' . $nameEnterPriseBefor . ',  name_client: ' . $nameEnterPriseAfter;
+            } elseif($change['infoKays'] == 'fk_idUser'){
+                $nameUserBefor = users::where(
+                    'id_user',
+                    is_array($change['before'])
+                        ? json_encode($change['before'])
+                        : $change['before']
+                )
+                    ->first()->nameUser;
+                $nameUserAfter = users::where(
+                    'id_user',
+                    is_array($change['after'])
+                        ? json_encode($change['after'])
+                        : $change['after']
+                )
+                    ->first()->nameUser;
+                $infoKay = 'nameUser';
+                $updates[] = $infoKay . ' : ' . $nameUserBefor . ' TO ' . $nameUserAfter;
             } elseif($change['infoKays'] == 'fk_regoin_invoice'){
                 $nameRegoinBefor = regoin::where(
                     'id_regoin',
@@ -102,15 +122,15 @@ class InvoicesUpdateReportController extends Controller
                         ? json_encode($change['before'])
                         : $change['before']
                 )
-                    ->first()->name_regoin;
+                    ->first()->nameUser;
                 $nameRegoinAfter = regoin::where(
                     'id_regoin',
                     is_array($change['after'])
                         ? json_encode($change['after'])
                         : $change['after']
                 )
-                    ->first()->name_regoin;
-                $infoKay = 'nameUser';
+                    ->first()->nameRegoin;
+                $infoKay = 'nameRegoin';
                 $updates[] = $infoKay . ' : ' . $nameRegoinBefor . ' TO ' . $nameRegoinAfter;
             } else {
                 $before = is_array($change['before']) ? json_encode($change['before']) : $change['before'];
