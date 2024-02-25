@@ -79,7 +79,24 @@ class InvoicesUpdateReportController extends Controller
 
         $updates = [];
         foreach ($changes as $key => $change) {
-            if ($key != 'fkcountry') {
+            if ($change['infoKays'] == 'fk_client') {
+                $nameEnterPriseBefor = clients::where(
+                    'id_clients',
+                    is_array($change['before'])
+                        ? json_encode($change['before'])
+                        : $change['before']
+                )
+                    ->first()->name_enterprise;
+                $nameEnterPriseAfter = clients::where(
+                    'id_clients',
+                    is_array($change['after'])
+                        ? json_encode($change['after'])
+                        : $change['after']
+                )
+                    ->first()->name_enterprise;
+                $infoKay = 'nameEnterPrise';
+                $updates[] = $infoKay . ' : ' . $nameEnterPriseBefor . ' -> ' . $nameEnterPriseAfter;
+            } else {
                 $before = is_array($change['before']) ? json_encode($change['before']) : $change['before'];
                 $after = is_array($change['after']) ? json_encode($change['after']) : $change['after'];
                 $infoKay = is_array($change['infoKays']) ? json_encode($change['infoKays']) : $change['infoKays'];
