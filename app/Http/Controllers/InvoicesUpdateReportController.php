@@ -122,14 +122,14 @@ class InvoicesUpdateReportController extends Controller
                         ? json_encode($change['before'])
                         : $change['before']
                 )
-                    ->first()->nameUser;
+                    ->first()->name_regoin;
                 $nameRegoinAfter = regoin::where(
                     'id_regoin',
                     is_array($change['after'])
                         ? json_encode($change['after'])
                         : $change['after']
                 )
-                    ->first()->nameRegoin;
+                    ->first()->name_regoin;
                 $infoKay = 'nameRegoin';
                 $updates[] = $infoKay . ' : ' . $nameRegoinBefor . ' TO ' . $nameRegoinAfter;
             } else {
