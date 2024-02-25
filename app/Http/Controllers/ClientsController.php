@@ -69,7 +69,7 @@ class ClientsController extends Controller
                             'date_reject' => Carbon::now('Asia/Riyadh'),
                             'fk_rejectClient' => $request->fk_rejectClient,
                             'reason_change' => $request->reason_change,
-                            'fk_user_reject ' => $request->id_user,
+                            'fk_user_reject' => $request->id_user,
                         ]
                     );
                 //add comment to client comment table.
