@@ -7,6 +7,7 @@ use App\Http\Requests\StoreinvoicesUpdateReportRequest;
 use App\Http\Requests\UpdateinvoicesUpdateReportRequest;
 use App\Models\client_invoice;
 use App\Models\clients;
+use App\Models\regoin;
 use App\Models\users;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -22,12 +23,9 @@ class InvoicesUpdateReportController extends Controller
         $dataBeforeUpdate = json_decode($requestData['dataBeforeUpdate'], true);
         info('dataBeforeUpdate is:', $dataBeforeUpdate);
         info('requestData is:', $requestData);
-        // foreach ($dataBeforeUpdate as $key1 => $value1) {
-        //     if($key1 == 'fk_idClient')
-        //     {
+
         $client = clients::where('id_clients', $dataBeforeUpdate[0]['fk_idClient'])->first();
-        //     }
-        // }
+
         $user = null;
         if ($dataBeforeUpdate[0]['lastuserupdate']) {
             $user = users::where('id_user', $dataBeforeUpdate[0]['lastuserupdate'])->first()->nameUser;
@@ -79,6 +77,7 @@ class InvoicesUpdateReportController extends Controller
 
         $updates = [];
         foreach ($changes as $key => $change) {
+            $updates[] = 'InvoiceNumber' . ' : ' . $request->id_invoice;
             if ($change['infoKays'] == 'fk_client') {
                 $nameEnterPriseBefor = clients::where(
                     'id_clients',
@@ -96,23 +95,23 @@ class InvoicesUpdateReportController extends Controller
                     ->first()->name_client;
                 $infoKay = 'nameEnterPrise';
                 $updates[] = $infoKay . ' : ' . $nameEnterPriseBefor . ',  name_client: ' . $nameEnterPriseAfter;
-            } elseif($change['infoKays'] == 'fk_idUser'){
-                $nameUserBefor = users::where(
-                    'id_user',
+            } elseif($change['infoKays'] == 'fk_regoin_invoice'){
+                $nameRegoinBefor = regoin::where(
+                    'id_regoin',
                     is_array($change['before'])
                         ? json_encode($change['before'])
                         : $change['before']
                 )
-                    ->first()->nameUser;
-                $nameUserAfter = users::where(
-                    'id_user',
+                    ->first()->name_regoin;
+                $nameRegoinAfter = regoin::where(
+                    'id_regoin',
                     is_array($change['after'])
                         ? json_encode($change['after'])
                         : $change['after']
                 )
-                    ->first()->nameUser;
+                    ->first()->name_regoin;
                 $infoKay = 'nameUser';
-                $updates[] = $infoKay . ' : ' . $nameUserBefor . ' TO ' . $nameUserAfter;
+                $updates[] = $infoKay . ' : ' . $nameRegoinBefor . ' TO ' . $nameRegoinAfter;
             } else {
                 $before = is_array($change['before']) ? json_encode($change['before']) : $change['before'];
                 $after = is_array($change['after']) ? json_encode($change['after']) : $change['after'];
