@@ -93,9 +93,9 @@ class InvoicesUpdateReportController extends Controller
                         ? json_encode($change['after'])
                         : $change['after']
                 )
-                    ->first()->name_enterprise;
+                    ->first()->name_client;
                 $infoKay = 'nameEnterPrise';
-                $updates[] = $infoKay . ' : ' . $nameEnterPriseBefor . ' -> ' . $nameEnterPriseAfter;
+                $updates[] = $infoKay . ' : ' . $nameEnterPriseBefor . ',  name_client: ' . $nameEnterPriseAfter;
             } else {
                 $before = is_array($change['before']) ? json_encode($change['before']) : $change['before'];
                 $after = is_array($change['after']) ? json_encode($change['after']) : $change['after'];
