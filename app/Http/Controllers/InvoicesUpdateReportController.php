@@ -79,26 +79,8 @@ class InvoicesUpdateReportController extends Controller
         info('changes is:', $changes);
 
         $updates = [];
-        $updates[] = 'Invoice Number: ' . $request->id_invoice;
         foreach ($changes as $key => $change) {
-            if ($change['infoKays'] == 'fk_client') {
-                $nameEnterPriseBefor = clients::where(
-                    'id_clients',
-                    is_array($change['after'])
-                        ? json_encode($change['before'])
-                        : $change['after']
-                )
-                    ->first()->name_enterprise;
-                $nameEnterPriseAfter = clients::where(
-                    'id_clients',
-                    is_array($change['after'])
-                        ? json_encode($change['after'])
-                        : $change['after']
-                )
-                    ->first()->name_client;
-                $infoKay = 'nameEnterPrise';
-                $updates[] = $infoKay . ' : ' . $nameEnterPriseBefor . ',  name_client: ' . $nameEnterPriseAfter;
-            } elseif($change['infoKays'] == 'fk_idUser'){
+            if($change['infoKays'] == 'fk_idUser'){
                 $nameUserBefor = users::where(
                     'id_user',
                     is_array($change['before'])
@@ -149,6 +131,7 @@ class InvoicesUpdateReportController extends Controller
         $invoicesUpdateReport = new invoicesUpdateReport();
         $invoicesUpdateReport->changesData = $InvoicesUpdates;
         $invoicesUpdateReport->afterApprove = $isApprove;
+        $invoicesUpdateReport->invoice_id = $request->id_invoice;
         $invoicesUpdateReport->edit_date = Carbon::now('Asia/Riyadh')->toDateTimeString();
         $invoicesUpdateReport->user_id = $request->fk_idUser;
         $invoicesUpdateReport->save();
