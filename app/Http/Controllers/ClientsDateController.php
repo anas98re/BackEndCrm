@@ -18,9 +18,9 @@ class ClientsDateController extends Controller
 {
     public function rescheduleOrCancelVisitClient(Request $request, $idclients_date)
     {
-        DB::beginTransaction();
+        // DB::beginTransaction();
 
-        try {
+        // try {
         if ($request->typeProcess == 'reschedule') {
             $client = clients_date::where('idclients_date', $idclients_date)
                 ->update([
@@ -53,14 +53,14 @@ class ClientsDateController extends Controller
             return;
         }
 
-            DB::commit();
-            // return $this->sendResponse(['message' => 'done'], 200);
-            return response()->json(['success' => true, 'message' => 'done', 'code' => 200]);
-        } catch (\Exception $e) {
-            DB::rollback();
+        DB::commit();
+        // return $this->sendResponse(['message' => 'done'], 200);
+        return response()->json(['success' => true, 'message' => 'done', 'code' => 200]);
+        // } catch (\Exception $e) {
+        //     DB::rollback();
 
-            return $this->sendResponse(['message' => 'Failed to process. Please try again.'], 500);
-        }
+        //     return $this->sendResponse(['message' => 'Failed to process. Please try again.'], 500);
+        // }
     }
 
     private function handleNotification($privilage_id, $typeProcess, $idclients_date)
@@ -74,9 +74,16 @@ class ClientsDateController extends Controller
             ->whereIn('type_level', $privgLevelUsers)
             ->pluck('id_user');
 
-        $client = clients_date::where('idclients_date', $idclients_date)
-            ->first()->fk_client;
-        if ($client) {
+        $clintOrAgentData = 0;
+        $typeNotify = 0;
+        $clientData = clients_date::where('idclients_date', $idclients_date)
+            ->first();
+        $agentData = clients_date::where('idclients_date', $idclients_date)
+            ->first();
+        if ($clientData->fk_client) {
+            $client = $clientData->fk_client;
+            $typeNotify = 'clientVisit';
+            $clintOrAgentData = $client;
             $clienName = clients::where('id_clients', $client)->first()->name_enterprise;
             if ($typeProcess == 'الغاء زيارة') {
                 $content = 'تم الغاء زيارة للعميل ?';
@@ -86,8 +93,11 @@ class ClientsDateController extends Controller
                 $message = str_replace('?', $clienName, $content);
             }
         } else {
-            $agent = clients_date::where('idclients_date', $idclients_date)
-                ->first()->fk_agent;
+            // $agent = clients_date::where('idclients_date', $idclients_date)
+            //     ->first()
+            $agent = $agentData->fk_agent;
+            $typeNotify = 'agentVisit';
+            $clintOrAgentData = $agent;
             $agentName = agent::where('id_agent', $agent)->first()->name_agent;
             if ($typeProcess == 'الغاء زيارة') {
                 $content = 'تم الغاء زيارة للوكيل ?';
@@ -114,10 +124,10 @@ class ClientsDateController extends Controller
 
             notifiaction::create([
                 'message' => $message,
-                'type_notify' => 'exclude',
+                'type_notify' => $typeNotify,
                 'to_user' => $Id,
                 'isread' => 0,
-                'data' =>  $client,
+                'data' =>  $clintOrAgentData,
                 'from_user' => 1,
                 'dateNotify' => Carbon::now('Asia/Riyadh')->format('Y-m-d H:i:s')
             ]);
