@@ -25,30 +25,30 @@ class InvoicesUpdateReportController extends Controller
         // foreach ($dataBeforeUpdate as $key1 => $value1) {
         //     if($key1 == 'fk_idClient')
         //     {
-                $client = clients::where('id_clients',$dataBeforeUpdate[0]['fk_idClient'])->first();
+        $client = clients::where('id_clients', $dataBeforeUpdate[0]['fk_idClient'])->first();
         //     }
         // }
         $user = null;
-        if($dataBeforeUpdate[0]['lastuserupdate']){
-            $user = users::where('id_user',$dataBeforeUpdate[0]['lastuserupdate'])->first()->nameUser;
+        if ($dataBeforeUpdate[0]['lastuserupdate']) {
+            $user = users::where('id_user', $dataBeforeUpdate[0]['lastuserupdate'])->first()->nameUser;
         }
 
         $dataBeforeUpdateHandeling = [];
-            $dataBeforeUpdateHandeling = [
-                'name_enterprise'=> $client->name_enterprise,
-                'name_client'=> $client->name_client,
-                'fk_client'=> $client->id_clients,
-                'date_create'=> $client->date_create,
-                'date_approve'=> $dataBeforeUpdate[0]['date_approve'],
-                'fk_idUser'=> $dataBeforeUpdate[0]['fk_idUser'],
-                'fk_regoin_invoice'=> $dataBeforeUpdate[0]['fk_regoin_invoice'],
-                'fk_regoin'=> $client->fk_regoin,
-                'fkcountry'=> 1,
-                'lastuserupdate'=> $dataBeforeUpdate[0]['lastuserupdate'],
-                'lastnameuser'=> $user,
-                'id_invoice'=> $dataBeforeUpdate[0]['id_invoice'],
-                'date_lastuserupdate'=> $dataBeforeUpdate[0]['date_lastuserupdate'],
-            ];
+        $dataBeforeUpdateHandeling = [
+            'name_enterprise' => $client->name_enterprise,
+            'name_client' => $client->name_client,
+            'fk_client' => $client->id_clients,
+            'date_create' => $client->date_create,
+            'date_approve' => $dataBeforeUpdate[0]['date_approve'],
+            'fk_idUser' => $dataBeforeUpdate[0]['fk_idUser'],
+            'fk_regoin_invoice' => $dataBeforeUpdate[0]['fk_regoin_invoice'],
+            'fk_regoin' => $client->fk_regoin,
+            'fkcountry' => 1,
+            'lastuserupdate' => $dataBeforeUpdate[0]['lastuserupdate'],
+            'lastnameuser' => $user,
+            'id_invoice' => $dataBeforeUpdate[0]['id_invoice'],
+            'date_lastuserupdate' => $dataBeforeUpdate[0]['date_lastuserupdate'],
+        ];
 
 
         $values = $requestData['values'];
@@ -75,18 +75,20 @@ class InvoicesUpdateReportController extends Controller
 
         $updates = [];
         foreach ($changes as $key => $change) {
-            $before = is_array($change['before']) ? json_encode($change['before']) : $change['before'];
-            $after = is_array($change['after']) ? json_encode($change['after']) : $change['after'];
-            $infoKay = is_array($change['infoKays']) ? json_encode($change['infoKays']) : $change['infoKays'];
-            $updates[] = $infoKay . ' : ' . $before . ' -> ' . $after;
+            if ($key != 'fkcountry') {
+                $before = is_array($change['before']) ? json_encode($change['before']) : $change['before'];
+                $after = is_array($change['after']) ? json_encode($change['after']) : $change['after'];
+                $infoKay = is_array($change['infoKays']) ? json_encode($change['infoKays']) : $change['infoKays'];
+                $updates[] = $infoKay . ' : ' . $before . ' -> ' . $after;
+            }
         }
 
         $InvoicesUpdates = implode("\n", $updates);
 
         $invoiceData = client_invoice::where('id_invoice', $request->id_invoice)->first();
         $isApprove = $invoiceData->isApprove === "1" ? 'true' : 'false';
-        info('$invoiceData is: ',array($invoiceData));
-        info('$invoiceData->isApprove is: ',array($invoiceData->isApprove));
+        info('$invoiceData is: ', array($invoiceData));
+        info('$invoiceData->isApprove is: ', array($invoiceData->isApprove));
         $invoicesUpdateReport = new invoicesUpdateReport();
         $invoicesUpdateReport->changesData = $InvoicesUpdates;
         $invoicesUpdateReport->afterApprove = $isApprove;
