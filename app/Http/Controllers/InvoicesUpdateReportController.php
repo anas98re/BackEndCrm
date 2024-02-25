@@ -76,8 +76,8 @@ class InvoicesUpdateReportController extends Controller
         info('changes is:', $changes);
 
         $updates = [];
+        $updates[] = 'InvoiceNumber' . ' : ' . $request->id_invoice;
         foreach ($changes as $key => $change) {
-            $updates[] = 'InvoiceNumber' . ' : ' . $request->id_invoice;
             if ($change['infoKays'] == 'fk_client') {
                 $nameEnterPriseBefor = clients::where(
                     'id_clients',
