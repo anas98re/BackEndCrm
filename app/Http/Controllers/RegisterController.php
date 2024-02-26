@@ -51,17 +51,17 @@ class RegisterController extends Controller
     {
         try {
             DB::beginTransaction();
-            $email = $request->email;
-            $existingEmail = users::where('email', 'LIKE', '%' . $request->email . '%')->exists();
+            $email  = trim($request->email);
+            $existingEmail = users::where('email', $email)->exists();
 
             if ($existingEmail) {
                 $code = rand(11111, 99999);
-                $existingCode = users::where('code_verfiy', 'LIKE', '%' . $code . '%')->exists();
+                $existingCode = users::where('code_verfiy', $code)->exists();
                 while ($existingCode) {
                     $code = rand(11111, 99999);
-                    $existingCode = users::where('code_verfiy', 'LIKE', '%' . $code . '%')->exists();
+                    $existingCode = users::where('code_verfiy', $code)->exists();
                 }
-                $user = users::where('email', 'LIKE', '%' . $request->email . '%')->first();
+                $user = users::where('email', $email)->first();
                 $user->code_verfiy = $code;
                 // $user->type_level = 0;
                 $user->save();
