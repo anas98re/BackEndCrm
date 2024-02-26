@@ -28,7 +28,8 @@ class ClientsDateController extends Controller
                     'date_client_visit' => $request->date_client_visit,
                     'processReason' => $request->processReason,
                     'type_date' => $request->type_date,
-                    'user_id_process' => auth('sanctum')->user()->id_user
+                    'user_id_process' => auth('sanctum')->user()->id_user,
+                    'date_end' => $request->date_end
                 ]);
 
             $this->handleNotification(
