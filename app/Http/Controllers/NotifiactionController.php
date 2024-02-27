@@ -49,7 +49,7 @@ class NotifiactionController extends Controller
             // return $userToken->token;
         notifiaction::create([
             'message' => 'Firbase',
-            'type_notify' => '$type',
+            'type_notify' => 'type',
             'to_user' => 408,
             'isread' => 0,
             'data' => 'Tsk',

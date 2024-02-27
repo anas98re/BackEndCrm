@@ -10,9 +10,11 @@ use App\Http\Controllers\CompanyCommentController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ImportantLinkController;
+use App\Http\Controllers\InvoicesUpdateReportController;
 use App\Http\Controllers\MaincityController;
 use App\Http\Controllers\NotifiactionController;
 use App\Http\Controllers\ParticipateController;
+use App\Http\Controllers\PaymentDetailController;
 use App\Http\Controllers\PrivgLevelUserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TaskController;
@@ -54,10 +56,14 @@ Route::post('addTaskafterAddPaymentToTheInvoiceForReviewInvoice', [TaskProcedure
 Route::post('addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days', [TaskProceduresController::class, 'addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days']);
 //clients comments mentions
 Route::post('addCommentClientMention', [ClientCommentMentionController::class, 'addCommentClientMention']);
-
+//cllients Invoices
+Route::post('storageInvoicesUpdates', [InvoicesUpdateReportController::class, 'storageInvoicesUpdates']);
 
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
 
+//PaymentDetails
+Route::post('createPaymentDetails', [PaymentDetailController::class, 'createPaymentDetails']);
+Route::get('getPaymaentsViaInvoiceId/{id}', [PaymentDetailController::class, 'getPaymaentsViaInvoiceId']);
 
 // Route::middleware(['auth:sanctum', 'knowCurrentUser'])->group(function () {
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -103,10 +109,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('getAgentComments/{id}', [AgentCommentController::class, 'getAgentComments']);
     //clients Date
     Route::post('rescheduleOrCancelVisitClient/{idclients_date}', [ClientsDateController::class, 'rescheduleOrCancelVisitClient']);
+    Route::get('getDateVisitAgent/{agentId}', [ClientsDateController::class, 'getDateVisitAgentFromQuery']);
     //Cities
     Route::post('getCitiesFromMainCitiesIds', [MaincityController::class, 'getCitiesFromMainCitiesIds']);
     //cllients Excel
     Route::post('importClints', [ClientsController::class, 'importClints']);
+
 
 
 

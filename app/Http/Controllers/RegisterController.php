@@ -51,8 +51,9 @@ class RegisterController extends Controller
     {
         try {
             DB::beginTransaction();
+            $email  = trim($request->email);
+            $existingEmail = users::where('email', $email)->exists();
 
-            $existingEmail = users::where('email', $request->email)->exists();
             if ($existingEmail) {
                 $code = rand(11111, 99999);
                 $existingCode = users::where('code_verfiy', $code)->exists();
@@ -60,7 +61,7 @@ class RegisterController extends Controller
                     $code = rand(11111, 99999);
                     $existingCode = users::where('code_verfiy', $code)->exists();
                 }
-                $user = users::where('email', $request->email)->first();
+                $user = users::where('email', $email)->first();
                 $user->code_verfiy = $code;
                 // $user->type_level = 0;
                 $user->save();
