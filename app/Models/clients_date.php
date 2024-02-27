@@ -21,6 +21,8 @@ class clients_date extends Model
         'fk_invoice',
         'type_date',
         'processReason',
-        'user_id_process'
+        'user_id_process',
+        'fk_agent',
+        'date_end'
     ];
 }

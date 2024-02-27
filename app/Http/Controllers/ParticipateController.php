@@ -61,13 +61,13 @@ class ParticipateController extends Controller
                 'CI.approve_back_done',
                 'CI.isApprove',
                 'r.name_regoin',
-                'CI.name_enterpriseinv',
                 'CI.currency_name',
                 'c.nameCountry',
                 'r.name_regoin',
                 'us.nameUser',
                 'r.fk_country',
                 'cl.name_enterprise',
+                'cl.name_client',
                 // ,,,,
             )
             ->whereIn('CI.id_invoice', $invoiceIds) // Filter by the client IDs

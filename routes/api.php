@@ -10,6 +10,7 @@ use App\Http\Controllers\CompanyCommentController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ImportantLinkController;
+use App\Http\Controllers\InvoicesUpdateReportController;
 use App\Http\Controllers\MaincityController;
 use App\Http\Controllers\NotifiactionController;
 use App\Http\Controllers\ParticipateController;
@@ -55,7 +56,8 @@ Route::post('addTaskafterAddPaymentToTheInvoiceForReviewInvoice', [TaskProcedure
 Route::post('addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days', [TaskProceduresController::class, 'addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days']);
 //clients comments mentions
 Route::post('addCommentClientMention', [ClientCommentMentionController::class, 'addCommentClientMention']);
-
+//cllients Invoices
+Route::post('storageInvoicesUpdates', [InvoicesUpdateReportController::class, 'storageInvoicesUpdates']);
 
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
 
@@ -107,11 +109,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('getAgentComments/{id}', [AgentCommentController::class, 'getAgentComments']);
     //clients Date
     Route::post('rescheduleOrCancelVisitClient/{idclients_date}', [ClientsDateController::class, 'rescheduleOrCancelVisitClient']);
-    Route::get('getDateVisitAgentFromQuery/{agentId}', [ClientsDateController::class, 'getDateVisitAgentFromQuery']);
+    Route::get('getDateVisitAgent/{agentId}', [ClientsDateController::class, 'getDateVisitAgentFromQuery']);
     //Cities
     Route::post('getCitiesFromMainCitiesIds', [MaincityController::class, 'getCitiesFromMainCitiesIds']);
     //cllients Excel
     Route::post('importClints', [ClientsController::class, 'importClints']);
+
 
 
 
@@ -131,9 +134,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // links Excel
     Route::get('export', [ImportantLinkController::class, 'export']);
     Route::post('import', [ImportantLinkController::class, 'import']);
-
-
-
 });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);

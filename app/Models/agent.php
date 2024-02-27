@@ -10,7 +10,7 @@ class agent extends Model
     use HasFactory;
 
     protected $table = 'agent';
-    
+
     protected $fillable = [
         'id_agent',
         'name_agent',
@@ -19,6 +19,16 @@ class agent extends Model
         'mobile_agent',
         'fk_country',
         'description',
-        'image_agent'
+        'image_agent',
+        'cityId',
+        'add_date',
+        'update_date',
+        'fk_user_add',
+        'fk_user_update',
+        'fkuser_training',
+        'is_training',
+        'date_training',
     ];
 }
+
+
