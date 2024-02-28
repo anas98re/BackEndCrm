@@ -11,7 +11,12 @@ class clientTest extends TestCase
 
     public function testRescheduleOrCancelVisitClient()
     {
-        // Prepare the request data for rescheduling the visit
+        info('Client');
+        $bearerToken = '13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465';
+        $requestDataCancel = [
+            'typeProcess' => 'cancel',
+            'processReason' => '..',
+        ];
         $requestDataReschedule = [
             'typeProcess' => 'reschedule',
             'date_client_visit' => '2023-12-05 14:30:00',
@@ -20,26 +25,27 @@ class clientTest extends TestCase
             'date_end' => '2023-12-07 14:30:00',
         ];
 
-        // Send a request to reschedule the visit
-        $responseReschedule = $this->withHeaders([
-            'Authorization' => 'Bearer 13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465',
-        ])->post('/api/rescheduleOrCancelVisitClient/1', $requestDataReschedule);
+        // Combine both sets of data into an array
+        $requestDataArray = [$requestDataCancel, $requestDataReschedule];
 
-        // Assert that the rescheduling request was successful
-        $responseReschedule->assertStatus(200);
+        foreach ($requestDataArray as $requestData) {
+            $response = $this->withHeaders([
+                'Authorization' => 'Bearer ' . $bearerToken,
+            ])->post('/api/rescheduleOrCancelVisitClient/222', $requestData);
 
-        // Prepare the request data for canceling the visit
-        $requestDataCancel = [
-            'typeProcess' => 'cancel',
-            'processReason' => '..',
-        ];
+            $response->assertStatus(200);
 
-        // Send a request to cancel the visit
-        $responseCancel = $this->withHeaders([
-            'Authorization' => 'Bearer 13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465',
-        ])->post('/api/rescheduleOrCancelVisitClient/1', $requestDataCancel);
+            $responseData = $response->json();
+            info($responseData);
+            info('ee' , array('e..0'));
+            // Assert that the success flag is true
+            $this->assertTrue($responseData['success']);
 
-        // Assert that the cancellation request was successful
-        $responseCancel->assertStatus(200);
+            // Assert that the message content is as expected
+            $this->assertEquals('done', $responseData['message']);
+
+            // Assert that the HTTP status code is 200
+            // $this->assertEquals(200, $responseData->getStatusCode());
+        }
     }
 }

@@ -19,6 +19,7 @@ class groupTest extends TestCase
     // }
     public function testBoxContents()
     {
+        info('Client');
         $box = [];
 
         $this->assertFalse(isset($box['toy']));
