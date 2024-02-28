@@ -99,6 +99,7 @@ class ClientsDateService extends JsonResponeService
         }
     }
 
+    
     private function addClientComment($client, $processReason)
     {
         $client_comment = new client_comment();
