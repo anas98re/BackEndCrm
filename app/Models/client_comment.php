@@ -18,6 +18,7 @@ class client_comment extends Model
         'fk_user',
         'fk_client',
         'content',
+        'type_comment',
         'date_comment',
         'IDcustomer',
         'Username',

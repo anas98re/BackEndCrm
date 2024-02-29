@@ -104,6 +104,7 @@ class ClientsDateService extends JsonResponeService
     {
         $client_comment = new client_comment();
         $client_comment->fk_client = $client;
+        $client_comment->type_comment = 'زيارة عميل';
         $client_comment->content = $processReason;
         $client_comment->date_comment = Carbon::now('Asia/Riyadh');
         $client_comment->fk_user = auth('sanctum')->user()->id_user;
