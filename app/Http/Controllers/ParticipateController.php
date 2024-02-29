@@ -70,7 +70,7 @@ class ParticipateController extends Controller
                 'cl.name_client',
                 // ,,,,
             )
-            ->whereIn('CI.id_invoice', $invoiceIds) // Filter by the client IDs
+            ->whereIn('CI.id_invoice', $invoiceIds) // Filter by the invoice IDs
             ->leftJoin('clients as cl', 'cl.id_clients', '=', 'CI.fk_idClient')
             ->leftJoin('regoin as r', 'r.id_regoin', '=', 'cl.fk_regoin')
             ->leftJoin('country as c', 'c.id_country', '=', 'r.fk_country')

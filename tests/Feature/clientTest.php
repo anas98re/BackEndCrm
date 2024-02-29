@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -9,37 +10,58 @@ use Tests\TestCase;
 class clientTest extends TestCase
 {
 
-    public function testRescheduleOrCancelVisitClient()
+    public function testEditClientByTypeClient()
     {
-        // Prepare the request data for rescheduling the visit
-        $requestDataReschedule = [
-            'typeProcess' => 'reschedule',
-            'date_client_visit' => '2023-12-05 14:30:00',
-            'processReason' => '..',
-            'type_date' => '..',
-            'date_end' => '2023-12-07 14:30:00',
+        $request1 = [
+            'type_client' => 'عرض سعر',
+            'offer_price' => '5',
+            'date_price' => '5'
+        ];
+        $request2 = [
+            'type_client' => 'تفاوض',
+            'offer_price' => '5',
+            'date_price' => '5'
+        ];
+        $request3 = [
+            'type_client' => 'مستبعد',
+            'reason_change' => 'reason',
+        ];
+        $allTypeRequests = [$request1, $request2, $request3];
+        foreach ($allTypeRequests as $type) {
+            $response = $this->withHeaders([
+                'Authorization' => 'Bearer ' . $this->bearerToken,
+            ])->post('/api/editClientByTypeClient/1', $type);
+            $this->assertTrue(in_array($type['type_client'], ['عرض سعر', 'تفاوض', 'مستبعد']));
+            $response->assertStatus(200);
+            $responseData = $response->json();
+            $this->assertTrue($responseData['success']);
+            $result = $response->decodeResponseJson()['data'];
+            // dd($result);
+            $this->assertEquals($result, $responseData['data']);
+        }
+    }
+
+    public function testAppproveAdmin()
+    {
+        $request1 = [
+            'isAppprove' => true,
+        ];
+        $request2 = [
+            'isAppprove' => false,
         ];
 
-        // Send a request to reschedule the visit
-        $responseReschedule = $this->withHeaders([
-            'Authorization' => 'Bearer 13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465',
-        ])->post('/api/rescheduleOrCancelVisitClient/1', $requestDataReschedule);
-
-        // Assert that the rescheduling request was successful
-        $responseReschedule->assertStatus(200);
-
-        // Prepare the request data for canceling the visit
-        $requestDataCancel = [
-            'typeProcess' => 'cancel',
-            'processReason' => '..',
-        ];
-
-        // Send a request to cancel the visit
-        $responseCancel = $this->withHeaders([
-            'Authorization' => 'Bearer 13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465',
-        ])->post('/api/rescheduleOrCancelVisitClient/1', $requestDataCancel);
-
-        // Assert that the cancellation request was successful
-        $responseCancel->assertStatus(200);
+        $allTypeRequests = [$request1, $request2];
+        foreach ($allTypeRequests as $type) {
+            $response = $this->withHeaders([
+                'Authorization' => 'Bearer ' . $this->bearerToken,
+            ])->post('/api/clientAppproveAdmin/1', $type);
+        }
+        $this->assertTrue(in_array($type['isAppprove'], [1, 0]));
+        $response->assertStatus(200);
+        $responseData = $response->json();
+        $this->assertTrue($responseData['success']);
+        $result = $response->decodeResponseJson()['data'];
+        // dd($result);
+        $this->assertEquals($result, $responseData['data']);
     }
 }
