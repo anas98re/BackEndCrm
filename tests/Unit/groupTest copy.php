@@ -11,9 +11,14 @@ use Tests\TestCase;
 class groupTest extends TestCase
 {
 
+    // public function test_example(): void
+    // {
+    //     $response = $this->get('/getGroupsInfo');
+
+    //     $response->assertStatus(200);
+    // }
     // public function testBoxContents()
     // {
-    //     info('Client');
     //     $box = [];
 
     //     $this->assertFalse(isset($box['toy']));
