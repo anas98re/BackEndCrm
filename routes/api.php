@@ -113,6 +113,7 @@ Route::get('getPaymaentsViaInvoiceId/{id}', [PaymentDetailController::class, 'ge
     Route::post('getCitiesFromMainCitiesIds', [MaincityController::class, 'getCitiesFromMainCitiesIds']);
     //cllients Excel
     Route::post('importClints', [ClientsController::class, 'importClints']);
+    Route::post('importAnotherClints', [ClientsController::class, 'importAnotherClints']);
 
 
 
