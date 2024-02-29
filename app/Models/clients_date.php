@@ -15,6 +15,7 @@ class clients_date extends Model
     protected $fillable = [
         'idclients_date',
         'date_client_visit',
+        'fk_user',
         'fk_user_add',
         'is_done',
         'fk_client',

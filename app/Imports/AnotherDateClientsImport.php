@@ -16,8 +16,6 @@ class AnotherDateClientsImport implements ToModel
 
     public function model(array $row)
     {
-        $counts = [];
-        $counts[0] = 0;
         $clientMobile = clients::where('mobile', $row[1])->first();
         if (!$clientMobile) {
             $clientName = clients::where('name_client', $row[2])->first();
@@ -49,20 +47,20 @@ class AnotherDateClientsImport implements ToModel
                 }
 
 
-                // return new clients([
-                //     'date_create' =>
-                //     $row[0] == 'تاريخ التسجيل' || $row[0] === null ? null :
-                //         Carbon::createFromDate(1899, 12, 30)->addDays($row[0])
-                //         ->startOfDay()
-                //         ->format('Y-m-d H:i:s'),
-                //     'mobile' => $row[1],
-                //     'name_client' => $row[2],
-                //     'sourcclient' => $row[3],
-                //     'type_record' => $row[4],
-                //     'type_classification' => $row[5],
-                //     'fk_user' => $id_user,
-                //     'SerialNumber' => 1
-                // ]);
+                return new clients([
+                    'date_create' =>
+                    $row[0] == 'تاريخ التسجيل' || $row[0] === null ? null :
+                        Carbon::createFromDate(1899, 12, 30)->addDays($row[0])
+                        ->startOfDay()
+                        ->format('Y-m-d H:i:s'),
+                    'mobile' => $row[1],
+                    'name_client' => $row[2],
+                    'sourcclient' => $row[3],
+                    'type_record' => $row[4],
+                    'type_classification' => $row[5],
+                    'fk_user' => $id_user,
+                    'SerialNumber' => 1
+                ]);
             }
         }
     }
