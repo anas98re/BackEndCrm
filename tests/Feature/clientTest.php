@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -9,43 +10,58 @@ use Tests\TestCase;
 class clientTest extends TestCase
 {
 
-    public function testRescheduleOrCancelVisitClient()
+    public function testEditClientByTypeClient()
     {
-        info('Client');
-        $bearerToken = '13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465';
-        $requestDataCancel = [
-            'typeProcess' => 'cancel',
-            'processReason' => '..',
+        $request1 = [
+            'type_client' => 'عرض سعر',
+            'offer_price' => '5',
+            'date_price' => '5'
         ];
-        $requestDataReschedule = [
-            'typeProcess' => 'reschedule',
-            'date_client_visit' => '2023-12-05 14:30:00',
-            'processReason' => '..',
-            'type_date' => '..',
-            'date_end' => '2023-12-07 14:30:00',
+        $request2 = [
+            'type_client' => 'تفاوض',
+            'offer_price' => '5',
+            'date_price' => '5'
         ];
-
-        // Combine both sets of data into an array
-        $requestDataArray = [$requestDataCancel, $requestDataReschedule];
-
-        foreach ($requestDataArray as $requestData) {
+        $request3 = [
+            'type_client' => 'مستبعد',
+            'reason_change' => 'reason',
+        ];
+        $allTypeRequests = [$request1, $request2, $request3];
+        foreach ($allTypeRequests as $type) {
             $response = $this->withHeaders([
-                'Authorization' => 'Bearer ' . $bearerToken,
-            ])->post('/api/rescheduleOrCancelVisitClient/222', $requestData);
-
+                'Authorization' => 'Bearer ' . $this->bearerToken,
+            ])->post('/api/editClientByTypeClient/1', $type);
+            $this->assertTrue(in_array($type['type_client'], ['عرض سعر', 'تفاوض', 'مستبعد']));
             $response->assertStatus(200);
-
             $responseData = $response->json();
-            info($responseData);
-            info('ee' , array('e..0'));
-            // Assert that the success flag is true
             $this->assertTrue($responseData['success']);
-
-            // Assert that the message content is as expected
-            $this->assertEquals('done', $responseData['message']);
-
-            // Assert that the HTTP status code is 200
-            // $this->assertEquals(200, $responseData->getStatusCode());
+            $result = $response->decodeResponseJson()['data'];
+            // dd($result);
+            $this->assertEquals($result, $responseData['data']);
         }
+    }
+
+    public function testAppproveAdmin()
+    {
+        $request1 = [
+            'isAppprove' => true,
+        ];
+        $request2 = [
+            'isAppprove' => false,
+        ];
+
+        $allTypeRequests = [$request1, $request2];
+        foreach ($allTypeRequests as $type) {
+            $response = $this->withHeaders([
+                'Authorization' => 'Bearer ' . $this->bearerToken,
+            ])->post('/api/clientAppproveAdmin/1', $type);
+        }
+        $this->assertTrue(in_array($type['isAppprove'], [1, 0]));
+        $response->assertStatus(200);
+        $responseData = $response->json();
+        $this->assertTrue($responseData['success']);
+        $result = $response->decodeResponseJson()['data'];
+        // dd($result);
+        $this->assertEquals($result, $responseData['data']);
     }
 }

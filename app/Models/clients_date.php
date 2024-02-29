@@ -15,14 +15,15 @@ class clients_date extends Model
     protected $fillable = [
         'idclients_date',
         'date_client_visit',
-        'fk_user',
+        'fk_user_add',
         'is_done',
         'fk_client',
         'fk_invoice',
         'type_date',
         'processReason',
-        'user_id_process',
+        'fk_user_update',
         'fk_agent',
-        'date_end'
+        'date_end',
+        'fk_user_done'
     ];
 }

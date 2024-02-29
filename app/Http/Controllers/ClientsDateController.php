@@ -36,7 +36,7 @@ class ClientsDateController extends Controller
                         'date_client_visit' => $request->date_client_visit,
                         'processReason' => $request->processReason,
                         'type_date' => $request->type_date,
-                        'user_id_process' => auth('sanctum')->user()->id_user,
+                        'fk_user_update' => auth('sanctum')->user()->id_user,
                         'date_end' => $request->date_end
                     ]);
 
@@ -51,7 +51,7 @@ class ClientsDateController extends Controller
                     ->update([
                         'is_done' => 2,
                         'processReason' => $request->processReason,
-                        'user_id_process' => auth('sanctum')->user()->id_user
+                        'fk_user_update' => auth('sanctum')->user()->id_user
                     ]);
 
                     $this->myService->handleNotificationAndComments(
