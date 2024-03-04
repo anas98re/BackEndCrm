@@ -16,11 +16,24 @@ class AnotherDateClientsImport implements ToModel
 
     public function model(array $row)
     {
-        $clientMobile = clients::where('mobile', $row[1])->first();
+        $excludeRows = clients::whereNotBetween('id_clients', [16451, 16527])->pluck('id_clients');
+        foreach ($excludeRows as $d){
+            info(json_decode($d));
+        }
+
+        $clientMobile = clients::where('mobile', $row[1])
+            ->whereNotIn('id_clients', $excludeRows)
+            ->first();
         if (!$clientMobile) {
-            $clientName = clients::where('name_client', $row[2])->first();
+            $clientName = clients::where(function ($query) use ($row) {
+                $query->where('name_client', $row[2])
+                    ->orWhere('name_enterprise', $row[2]);
+            })
+                ->whereNotIn('id_clients', $excludeRows)
+                ->first();
+
             if (!$clientName) {
-                info('line ');
+                info('lineTest ');
                 if ($row[6] == 'عهود') {
                     $id_user = 208;
                     $name = 'عهود طرابزوني';
@@ -47,20 +60,20 @@ class AnotherDateClientsImport implements ToModel
                 }
 
 
-                return new clients([
-                    'date_create' =>
-                    $row[0] == 'تاريخ التسجيل' || $row[0] === null ? null :
-                        Carbon::createFromDate(1899, 12, 30)->addDays($row[0])
-                        ->startOfDay()
-                        ->format('Y-m-d H:i:s'),
-                    'mobile' => $row[1],
-                    'name_client' => $row[2],
-                    'sourcclient' => $row[3],
-                    'type_record' => $row[4],
-                    'type_classification' => $row[5],
-                    'fk_user' => $id_user,
-                    'SerialNumber' => 1
-                ]);
+                // return new clients([
+                //     'date_create' =>
+                //     $row[0] == 'تاريخ التسجيل' || $row[0] === null ? null :
+                //         Carbon::createFromDate(1899, 12, 30)->addDays($row[0])
+                //         ->startOfDay()
+                //         ->format('Y-m-d H:i:s'),
+                //     'mobile' => $row[1],
+                //     'name_client' => $row[2],
+                //     'sourcclient' => $row[3],
+                //     'type_record' => $row[4],
+                //     'type_classification' => $row[5],
+                //     'fk_user' => $id_user,
+                //     'SerialNumber' => 1
+                // ]);
             }
         }
     }
