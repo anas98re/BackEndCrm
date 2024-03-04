@@ -26,11 +26,12 @@ class AnotherDateClientsImport implements ToModel
                 $query->where('name_client', $row[2])
                     ->orWhere('name_enterprise', $row[2]);
             })
-                ->whereNotIn('id_clients', $excludeRows)
-                ->first();
+            ->whereNotIn('id_clients', $excludeRows)
+            ->distinct()
+            ->count();
 
             if (!$clientName) {
-                info('lineTest2 ');
+                info('lineTest3 ');
                 if ($row[6] == 'عهود') {
                     $id_user = 208;
                     $name = 'عهود طرابزوني';
