@@ -66,7 +66,6 @@ Route::post('createPaymentDetails', [PaymentDetailController::class, 'createPaym
 Route::get('getPaymaentsViaInvoiceId/{id}', [PaymentDetailController::class, 'getPaymaentsViaInvoiceId']);
 
 // Route::middleware(['auth:sanctum', 'knowCurrentUser'])->group(function () {
-Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('test', [RegisterController::class, 'test']);
 
     //Tasks
@@ -135,7 +134,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // links Excel
     Route::get('export', [ImportantLinkController::class, 'export']);
     Route::post('import', [ImportantLinkController::class, 'import']);
-});
+// });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);
 Route::get('getCurrentUser', [RegisterController::class, 'getCurrentUser']);
