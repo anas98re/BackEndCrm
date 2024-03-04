@@ -15,12 +15,17 @@ class PaymentDetailController extends Controller
     {
         info('request all for PaymentDetails: ' . json_encode($request->all()));
         if ($request->isRefresh) {
-            $amountPaid = $request->amount_paid -
-                client_invoice::where('id_invoice', $request->fk_invoice)
-                ->first()->amount_paid;
-                info('amountPaid :'. json_encode($amountPaid));
-                // info('invoic :'. json_encode(client_invoice::where('id_invoice', $request->fk_invoice)
-                // ->first()->amount_paid));
+            $amountPaidRequest = (float) $request->amount_paid;
+
+            // Retrieve the amount_paid from the client_invoice model and convert it to a numeric value
+            $clientInvoice = client_invoice::where('id_invoice', $request->fk_invoice)->first();
+            $amountPaidClientInvoice = (float) $clientInvoice->amount_paid;
+
+            // Perform the subtraction operation
+            $amountPaid = $amountPaidRequest - $amountPaidClientInvoice;
+            info('amountPaid :' . json_encode($amountPaid));
+            // info('invoic :'. json_encode(client_invoice::where('id_invoice', $request->fk_invoice)
+            // ->first()->amount_paid));
             $data = [
                 'payment_idAdd' => $request->payment_idAdd,
                 'fk_invoice' => $request->fk_invoice,
