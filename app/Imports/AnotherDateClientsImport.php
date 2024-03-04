@@ -17,9 +17,6 @@ class AnotherDateClientsImport implements ToModel
     public function model(array $row)
     {
         $excludeRows = clients::whereBetween('id_clients', [16451, 16527])->pluck('id_clients');
-        foreach ($excludeRows as $d){
-            info(json_decode($d));
-        }
 
         $clientMobile = clients::where('mobile', $row[1])
             ->whereNotIn('id_clients', $excludeRows)
@@ -33,7 +30,11 @@ class AnotherDateClientsImport implements ToModel
                 ->first();
 
             if (!$clientName) {
-                info('lineTest ');
+                $clientName2 = clients::where('name_client', $row[2])->first()->name_client;
+                $name_enterprise = clients::where('name_enterprise', $row[2])->first()->name_enterprise;
+                if ($clientName2 !== $name_enterprise) {
+                    info('lineTest14 ');
+                }
                 if ($row[6] == 'عهود') {
                     $id_user = 208;
                     $name = 'عهود طرابزوني';
