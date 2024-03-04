@@ -104,14 +104,14 @@ class ParticipateTest extends TestCase
 
     public function testAddCommentParticipate()
     {
-        $clientData = [
-            'content' => $this->faker->paragraph,
-            'participate_id' => participate::inRandomOrder()->first()->id_participate
-        ];
+            $clientData = [
+                'content' => $this->faker->paragraph,
+                'participate_id' => participate::inRandomOrder()->first()->id_participate
+            ];
 
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->bearerToken,
-        ])->post('/api/addCommentParticipate', $clientData);
+            $response = $this->withHeaders([
+                'Authorization' => 'Bearer ' . $this->bearerToken,
+            ])->post('/api/addCommentParticipate', $clientData);
 
         $response->assertStatus(200);
         $responseData = $response->json();
