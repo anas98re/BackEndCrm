@@ -16,7 +16,7 @@ class AnotherDateClientsImport implements ToModel
 
     public function model(array $row)
     {
-        $excludeRows = clients::whereNotBetween('id_clients', [16451, 16527])->pluck('id_clients');
+        $excludeRows = clients::whereBetween('id_clients', [16451, 16527])->pluck('id_clients');
         foreach ($excludeRows as $d){
             info(json_decode($d));
         }
