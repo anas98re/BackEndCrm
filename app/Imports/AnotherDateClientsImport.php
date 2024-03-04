@@ -32,8 +32,10 @@ class AnotherDateClientsImport implements ToModel
             if (!$clientName) {
                 $clientName2 = clients::where('name_client', $row[2])->first();
                 $x = $clientName2 ? $clientName2->name_client : null;
+                info('$x ',array($x));
                 $name_enterprise = clients::where('name_enterprise', $row[2])->first();
                 $y = $name_enterprise ? $name_enterprise->name_enterprise : null;
+                info('$y ',array($y));
                 if ($x !== $y) {
                     info('lineTest14 ');
                 }
