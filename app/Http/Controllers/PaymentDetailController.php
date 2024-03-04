@@ -14,13 +14,13 @@ class PaymentDetailController extends Controller
     public function createPaymentDetails(Request $request)
     {
         info('request all for PaymentDetails: ' . json_encode($request->all()));
-        if ($request->isRefresh === 1) {
+        if ($request->isRefresh) {
             $amountPaid = $request->amount_paid -
                 client_invoice::where('id_invoice', $request->fk_invoice)
                 ->first()->amount_paid;
                 info('amountPaid :'. json_encode($amountPaid));
-                info('invoic :'. json_encode(client_invoice::where('id_invoice', $request->fk_invoice)
-                ->first()->amount_paid));
+                // info('invoic :'. json_encode(client_invoice::where('id_invoice', $request->fk_invoice)
+                // ->first()->amount_paid));
             $data = [
                 'payment_idAdd' => $request->payment_idAdd,
                 'fk_invoice' => $request->fk_invoice,
