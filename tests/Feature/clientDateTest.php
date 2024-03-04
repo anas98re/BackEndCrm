@@ -2,65 +2,65 @@
 
 namespace Tests\Feature;
 
+use App\Models\agent;
+use App\Models\clients_date;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class clientDateTest extends TestCase
 {
+    use WithFaker;
 
-    // public function testRescheduleOrCancelVisitClient()
-    // {
-    //     info('Client');
-    //     $requestDataCancel = [
-    //         'typeProcess' => 'cancel',
-    //         'processReason' => '..',
-    //     ];
-    //     $requestDataReschedule = [
-    //         'typeProcess' => 'reschedule',
-    //         'date_client_visit' => '2023-12-05 14:30:00',
-    //         'processReason' => '..',
-    //         'type_date' => '..',
-    //         'date_end' => '2023-12-07 14:30:00',
-    //     ];
+    public function testRescheduleOrCancelVisitClient()
+    {
+        $requestDataCancel = [
+            'typeProcess' => 'cancel',
+            'processReason' => $this->faker->sentence,
+        ];
+        $requestDataReschedule = [
+            'typeProcess' => 'reschedule',
+            'date_client_visit' => $this->faker->dateTime->format('Y-m-d H:i:s'),
+            'processReason' => $this->faker->sentence,
+            'type_date' => $this->faker->sentence,
+            'date_end' => $this->faker->dateTime->format('Y-m-d H:i:s'),
+        ];
 
-    //     // Combine both sets of data into an array
-    //     $requestDataArray = [$requestDataCancel, $requestDataReschedule];
+        // Combine both sets of data into an array
+        $requestDataArray = [$requestDataCancel, $requestDataReschedule];
+        $idclients_date = clients_date::inRandomOrder()->first()->idclients_date;
+        foreach ($requestDataArray as $requestData) {
+            $response = $this->withHeaders([
+                'Authorization' => 'Bearer ' . $this->bearerToken,
+            ])->post('/api/rescheduleOrCancelVisitClient/'.$idclients_date, $requestData);
 
-    //     foreach ($requestDataArray as $requestData) {
-    //         $response = $this->withHeaders([
-    //             'Authorization' => 'Bearer ' . $this->bearerToken,
-    //         ])->post('/api/rescheduleOrCancelVisitClient/222', $requestData);
+            $response->assertStatus(200);
 
-    //         $response->assertStatus(200);
+            $responseData = $response->json();
+            $this->assertTrue($responseData['success']);
 
-    //         $responseData = $response->json();
-    //         info($responseData);
-    //         info('ee' , array('e..0'));
-    //         // Assert that the success flag is true
-    //         $this->assertTrue($responseData['success']);
 
-    //         // Assert that the message content is as expected
-    //         $this->assertEquals('done', $responseData['message']);
-    //         $this->assertEquals(200, $responseData['code']);
+            $this->assertEquals('done', $responseData['message']);
+            $this->assertEquals(200, $responseData['code']);
+            $result = $response->decodeResponseJson()['message'];
+            $this->assertEquals($result, $responseData['message']);
+        }
+    }
 
-    //         $result = $response->decodeResponseJson()['message'];
-    //         $this->assertEquals($result, $responseData['message']);
-    //     }
-    // }
+    public function testGetDateVisitAgentFromQuery()
+    {
+        $agent_id = agent::inRandomOrder()->first()->id_agent;
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->bearerToken,
+        ])->get('/api/getDateVisitAgent/'.$agent_id);
+        $response->assertStatus(200);
+        $responseData = $response->json();
+        $this->assertTrue($responseData['success']);
+        $result = $response->decodeResponseJson()['data'];
+        $this->assertEquals($result, $responseData['data']);
+    }
 
-    // public function testGetDateVisitAgentFromQuery()
-    // {
-    //     $response = $this->withHeaders([
-    //         'Authorization' => 'Bearer ' . $this->bearerToken,
-    //     ])->get('/api/getDateVisitAgent/1');
-    //     $response->assertStatus(200);
-    //     $responseData = $response->json();
-    //     $this->assertTrue($responseData['success']);
-    //     $result = $response->decodeResponseJson()['data'];
-    //     // dd($result);
-    //     $this->assertEquals($result, $responseData['data']);
-    // }
 
 
 }

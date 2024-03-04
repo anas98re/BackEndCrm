@@ -18,6 +18,8 @@ class target extends Model
         'year_target',
         'value_target',
         'fk_region',
-        'region_name'
+        'region_name',
+        'fk_user_add',
+        'fk_user_update'
     ];
 }
