@@ -35,7 +35,13 @@ class PaymentDetailController extends Controller
                 'amount_paid' => $amountPaid,
             ];
         } else {
-            $data = $request->all();
+            $data = [
+                'payment_idAdd' => $request->payment_idAdd,
+                'fk_invoice' => $request->fk_invoice,
+                'payment_date' => Carbon::now('Asia/Riyadh'),
+                'date_updatePayment' => Carbon::now('Asia/Riyadh'),
+                'amount_paid' => $request->amount_paid,
+            ];
         }
         payment_detail::create($data);
         info('Done PaymentDetails added successfully');
