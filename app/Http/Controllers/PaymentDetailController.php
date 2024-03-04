@@ -6,6 +6,7 @@ use App\Models\payment_detail;
 use App\Http\Requests\Storepayment_detailRequest;
 use App\Http\Requests\Updatepayment_detailRequest;
 use App\Models\client_invoice;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PaymentDetailController extends Controller
@@ -17,8 +18,14 @@ class PaymentDetailController extends Controller
             $amountPaid = $request->amount_paid -
                 client_invoice::where('id_invoice', $request->fk_invoice)
                 ->first()->amount_paid;
-            $data = $request->all();
-            $data[$amountPaid] = $amountPaid;
+                info('amountPaid :'. json_encode($amountPaid));
+            $data = [
+                'payment_idAdd' => $request->payment_idAdd,
+                'fk_invoice' => $request->fk_invoice,
+                'payment_date' => Carbon::now('Asia/Riyadh'),
+                'date_updatePayment' => Carbon::now('Asia/Riyadh'),
+                'amount_paid' => $amountPaid,
+            ];
         } else {
             $data = $request->all();
         }
