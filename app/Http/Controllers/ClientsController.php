@@ -6,6 +6,7 @@ use App\Constants;
 use App\Models\clients;
 use App\Http\Requests\StoreclientsRequest;
 use App\Http\Requests\UpdateclientsRequest;
+use App\Imports\AnotherDateClientsImport;
 use App\Imports\ClientsImport;
 use App\Mail\sendStactictesConvretClientsToEmail;
 use App\Mail\sendStactictesConvretClientsTothabetEmail;
@@ -80,6 +81,7 @@ class ClientsController extends Controller
                 $idComment = $lastId + 1;
                 $comment = new client_comment();
                 $comment->id_comment = $idComment;
+                $comment->type_comment = 'استبعاد عميل';
                 $comment->content = $request->reason_change;
                 $comment->date_comment = Carbon::now('Asia/Riyadh');
                 $comment->fk_client = $id_clients;
@@ -345,6 +347,15 @@ class ClientsController extends Controller
         $file = $request->file('file');
 
         Excel::import(new ClientsImport, $file);
+
+        return $this->sendResponse('success', 'Important clients imported successfully.');
+    }
+
+    public function importAnotherClints(Request $request)
+    {
+        $file = $request->file('file');
+
+        Excel::import(new AnotherDateClientsImport, $file);
 
         return $this->sendResponse('success', 'Important clients imported successfully.');
     }

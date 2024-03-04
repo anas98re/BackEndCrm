@@ -284,3 +284,5 @@ class queriesService extends JsonResponeService
         return $messageRegionWithPlaceholder;
     }
 }
+
+
