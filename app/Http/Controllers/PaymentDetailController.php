@@ -24,7 +24,7 @@ class PaymentDetailController extends Controller
             $data = [
                 'payment_idAdd' => $request->payment_idAdd,
                 'fk_invoice' => $request->fk_invoice,
-                'payment_date' => Carbon::now('Asia/Riyadh'),
+                'payment_date' => $request->payment_date,
                 'date_updatePayment' => Carbon::now('Asia/Riyadh'),
                 'amount_paid' => $amountPaid,
             ];
@@ -32,7 +32,7 @@ class PaymentDetailController extends Controller
             $data = [
                 'payment_idAdd' => $request->payment_idAdd,
                 'fk_invoice' => $request->fk_invoice,
-                'payment_date' => Carbon::now('Asia/Riyadh'),
+                'payment_date' => $request->payment_date,
                 'date_updatePayment' => Carbon::now('Asia/Riyadh'),
                 'amount_paid' => $request->amount_paid,
             ];
