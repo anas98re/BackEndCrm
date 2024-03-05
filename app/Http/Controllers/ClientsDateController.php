@@ -37,7 +37,8 @@ class ClientsDateController extends Controller
                         'processReason' => $request->processReason,
                         'type_date' => $request->type_date,
                         'fk_user_update' => auth('sanctum')->user()->id_user,
-                        'date_end' => $request->date_end
+                        'date_end' => $request->date_end,
+                        'fk_user' => $request->fk_user
                     ]);
 
                     $this->myService->handleNotificationAndComments(
