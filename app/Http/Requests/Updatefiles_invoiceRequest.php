@@ -22,7 +22,7 @@ class Updatefiles_invoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'file_attach_invoice' => 'required'
         ];
     }
 }
