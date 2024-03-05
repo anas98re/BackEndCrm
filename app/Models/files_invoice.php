@@ -11,9 +11,11 @@ class files_invoice extends Model
 
     protected $table = 'files_invoice';
 
+    public $timestamps = false;
     protected $fillable = [
         'id',
         'fk_invoice',
-        'file_attach_invoice'
+        'file_attach_invoice',
+        'is_support_employee'
     ];
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\ClientsDateController;
 use App\Http\Controllers\CommentParticipateController;
 use App\Http\Controllers\CompanyCommentController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\FilesInvoiceController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ImportantLinkController;
 use App\Http\Controllers\InvoicesUpdateReportController;
@@ -117,6 +118,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('importAnotherClints', [ClientsController::class, 'importAnotherClints']);
 
 
+    //invoices
+    Route::post('addInvoiceFiles', [FilesInvoiceController::class, 'addInvoiceFiles']);
+    Route::post('updateInvoiceFiles', [FilesInvoiceController::class, 'updateInvoiceFiles']);
+    Route::post('deleteInvoiceFiles', [FilesInvoiceController::class, 'deleteInvoiceFiles']);
 
 
     //company ...
