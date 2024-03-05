@@ -26,6 +26,16 @@ class JsonResponeService
         return response()->json($response, $code);
     }
 
+    public function sendSucssas($result)
+        {
+            $response = [
+                'result' => 'success',
+                'code' => 200,
+                'message' => $result
+            ];
+            return response()->json($response, 200);
+        }
+
     public function sendUnauthenticated($error, $errorMessage = [], $code = 401)
     {
         $response = [
