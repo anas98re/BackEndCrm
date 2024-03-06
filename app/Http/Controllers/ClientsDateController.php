@@ -24,6 +24,7 @@ class ClientsDateController extends Controller
     {
         $this->myService = $myService;
     }
+    
     public function rescheduleOrCancelVisitClient(Request $request, $idclients_date)
     {
         DB::beginTransaction();

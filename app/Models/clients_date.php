@@ -18,6 +18,7 @@ class clients_date extends Model
         'fk_user',
         'fk_user_add',
         'is_done',
+        'date_done',
         'fk_client',
         'fk_invoice',
         'type_date',
