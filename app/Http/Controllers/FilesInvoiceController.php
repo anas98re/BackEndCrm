@@ -23,7 +23,7 @@ class FilesInvoiceController extends Controller
     {
         try {
             DB::beginTransaction();
-
+            info($request->file('file_attach_invoice'));
             $fileInvoice = [];
             foreach ($request->file('file_attach_invoice') as $index => $file) {
                 $filsHandled = $this->myService->handlingfileInvoiceName($file);
