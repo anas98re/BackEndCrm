@@ -24,6 +24,7 @@ class ClientsDateController extends Controller
     {
         $this->myService = $myService;
     }
+
     public function rescheduleOrCancelVisitClient(Request $request, $idclients_date)
     {
         DB::beginTransaction();
@@ -38,7 +39,8 @@ class ClientsDateController extends Controller
                         'type_date' => $request->type_date,
                         'fk_user_update' => auth('sanctum')->user()->id_user,
                         'date_end' => $request->date_end,
-                        'fk_user' => $request->fk_user
+                        'fk_user' => $request->fk_user,
+                        'date_update_visit' => Carbon::now('Asia/Riyadh')
                     ]);
 
                     $this->myService->handleNotificationAndComments(
@@ -52,7 +54,8 @@ class ClientsDateController extends Controller
                     ->update([
                         'is_done' => 2,
                         'processReason' => $request->processReason,
-                        'fk_user_update' => auth('sanctum')->user()->id_user
+                        'fk_user_update' => auth('sanctum')->user()->id_user,
+                        'date_update_visit' => Carbon::now('Asia/Riyadh')
                     ]);
 
                     $this->myService->handleNotificationAndComments(

@@ -18,6 +18,7 @@ class clients_date extends Model
         'fk_user',
         'fk_user_add',
         'is_done',
+        'date_done',
         'fk_client',
         'fk_invoice',
         'type_date',
@@ -25,6 +26,7 @@ class clients_date extends Model
         'fk_user_update',
         'fk_agent',
         'date_end',
-        'fk_user_done'
+        'fk_user_done',
+        'date_update_visit'
     ];
 }
