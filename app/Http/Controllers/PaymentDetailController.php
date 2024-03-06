@@ -14,21 +14,21 @@ class PaymentDetailController extends Controller
     public function createPaymentDetails(Request $request)
     {
         info('request all for PaymentDetails: ' . json_encode($request->all()));
-        if ($request->isRefresh) {
-            $amountPaidRequest = (float) $request->amount_paid;
+        // if ($request->isRefresh) {
+        //     $amountPaidRequest = (float) $request->amount_paid;
 
-            $clientInvoice = client_invoice::where('id_invoice', $request->fk_invoice)->first();
-            $amountPaidClientInvoice = (float) $clientInvoice->amount_paid;
-            $amountPaid = $amountPaidRequest - $amountPaidClientInvoice;
+        //     $clientInvoice = client_invoice::where('id_invoice', $request->fk_invoice)->first();
+        //     $amountPaidClientInvoice = (float) $clientInvoice->amount_paid;
+        //     $amountPaid = $amountPaidRequest - $amountPaidClientInvoice;
 
-            $data = [
-                'payment_idAdd' => $request->payment_idAdd,
-                'fk_invoice' => $request->fk_invoice,
-                'payment_date' => $request->payment_date,
-                'date_updatePayment' => Carbon::now('Asia/Riyadh'),
-                'amount_paid' => $amountPaid,
-            ];
-        } else {
+        //     $data = [
+        //         'payment_idAdd' => $request->payment_idAdd,
+        //         'fk_invoice' => $request->fk_invoice,
+        //         'payment_date' => $request->payment_date,
+        //         'date_updatePayment' => Carbon::now('Asia/Riyadh'),
+        //         'amount_paid' => $amountPaid,
+        //     ];
+        // } else {
             $data = [
                 'payment_idAdd' => $request->payment_idAdd,
                 'fk_invoice' => $request->fk_invoice,
@@ -36,7 +36,7 @@ class PaymentDetailController extends Controller
                 'date_updatePayment' => Carbon::now('Asia/Riyadh'),
                 'amount_paid' => $request->amount_paid,
             ];
-        }
+        // }
         payment_detail::create($data);
         info('Done PaymentDetails added successfully');
     }
