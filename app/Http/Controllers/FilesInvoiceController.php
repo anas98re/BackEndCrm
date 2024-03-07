@@ -25,7 +25,7 @@ class FilesInvoiceController extends Controller
     //this is the api we use for all procesess add, update and delete..
     public function InvoiceFiles(Storefiles_invoiceRequest $request)
     {
-        $filesDelete = json_decode($request->input('file_delete'));
+        $filesDelete = json_decode($request->input('files_delete_ids'));
         $filesAdd = $request->file('file_attach_invoice');
         $invoiceId = $request->input("fk_invoice");
         $data = $this->invoiceSrevice
