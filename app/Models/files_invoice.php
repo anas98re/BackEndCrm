@@ -16,6 +16,6 @@ class files_invoice extends Model
         'id',
         'fk_invoice',
         'file_attach_invoice',
-        'is_support_employee'
+        'type_file'
     ];
 }

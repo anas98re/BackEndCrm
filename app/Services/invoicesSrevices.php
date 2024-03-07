@@ -20,7 +20,7 @@ class invoicesSrevices extends JsonResponeService
     {
         try {
             DB::beginTransaction();
-
+            $response = '';
             if (!empty($filesDelete) && is_array($filesDelete)) {
                 foreach ($filesDelete as $fileId) {
                     $fileInvoice = files_invoice::where('id', $fileId)->first();
@@ -30,21 +30,24 @@ class invoicesSrevices extends JsonResponeService
                         $fileInvoice->delete();
                     }
                 }
+                $response = 'deleteed successfully';
             }
             info($filesAdd);
             $fileInvoice = [];
-            foreach ($filesAdd as $index => $file) {
-                $filsHandled = $this->myService->handlingfileInvoiceName($file);
+            if (!empty($filesAdd) && is_array($filesAdd)) {
+                foreach ($filesAdd as $index => $file) {
+                    $filsHandled = $this->myService->handlingfileInvoiceName($file);
 
-                $fileInvoice[$index] = new files_invoice();
-                $fileInvoice[$index]->file_attach_invoice = $filsHandled;
-                $fileInvoice[$index]->fk_invoice = $invoiceId;
-                $fileInvoice[$index]->is_support_employee = 1;
-                $fileInvoice[$index]->save();
+                    $fileInvoice[$index] = new files_invoice();
+                    $fileInvoice[$index]->file_attach_invoice = $filsHandled;
+                    $fileInvoice[$index]->fk_invoice = $invoiceId;
+                    $fileInvoice[$index]->type_file = 1;
+                    $fileInvoice[$index]->save();
+                }
+                $response = $fileInvoice;
             }
-
             DB::commit();
-            return $fileInvoice;
+            return $response;
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
