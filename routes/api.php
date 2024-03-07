@@ -119,7 +119,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
     //invoices
-    Route::post('addInvoiceFiles', [FilesInvoiceController::class, 'addInvoiceFiles']);
+    Route::post('InvoiceFiles', [FilesInvoiceController::class, 'InvoiceFiles']);
     Route::post('updateInvoiceFile/{id}', [FilesInvoiceController::class, 'updateInvoiceFile']);
     Route::post('deleteInvoiceFile/{id}', [FilesInvoiceController::class, 'deleteInvoiceFile']);
 
