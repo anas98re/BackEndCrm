@@ -35,7 +35,10 @@ class FilesInvoiceController extends Controller
 
     public function getFilesInvoices()
     {
-        $filesInvoices = files_invoice::where('type_file', 1)->get();
+        $fk_invoice = request()->query('fk_invoice');
+        $filesInvoices = files_invoice::where('type_file', 1)
+            ->where('fk_invoice', $fk_invoice)
+            ->get();
         return $this->sendSucssas($filesInvoices);
     }
 
