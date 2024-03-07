@@ -125,7 +125,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('updateInvoiceFile/{id}', [FilesInvoiceController::class, 'updateInvoiceFile']);
     Route::post('deleteInvoiceFile/{id}', [FilesInvoiceController::class, 'deleteInvoiceFile']);
     //series invoice
-    Route::get('getSeriesInvoiceAll/{status}', [SeriesInvoiceacceptController::class, 'getSeriesInvoiceAll']);
+    Route::get('getSeriesInvoiceAll', [SeriesInvoiceacceptController::class, 'getSeriesInvoiceAll']);
 
 
     //company ...

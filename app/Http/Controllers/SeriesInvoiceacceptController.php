@@ -18,8 +18,9 @@ class SeriesInvoiceacceptController extends Controller
         $this->MyService = $MyService;
     }
 
-    function getSeriesInvoiceAll($status)
+    function getSeriesInvoiceAll()
     {
+        $status = request()->query('status');
         $selectArray = [
             'inv.*',
             'us.nameUser',
