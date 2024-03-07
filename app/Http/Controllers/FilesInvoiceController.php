@@ -33,6 +33,11 @@ class FilesInvoiceController extends Controller
         return $this->sendSucssas($data);
     }
 
+    public function getFilesInvoices()
+    {
+        $filesInvoices = files_invoice::where('type_file', 1)->get();
+        return $this->sendSucssas($filesInvoices);
+    }
 
     //for test if we want just add files without update or delete
     public function addInvoiceFiles(Storefiles_invoiceRequest $request)

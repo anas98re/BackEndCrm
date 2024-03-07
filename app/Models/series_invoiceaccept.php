@@ -17,6 +17,7 @@ class series_invoiceaccept extends Model
         'fk_invoice',
         'is_approve',
         'date_approve',
-        'priority_approve'
+        'priority_approve',
+        'notes_approve'
     ];
 }
