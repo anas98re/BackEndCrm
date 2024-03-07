@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class series_invoiceaccept extends Model
+class series_invoiceAccept extends Model
 {
     use HasFactory;
 
-    protected $table = 'series_invoiceaccept';
+    protected $table = 'series_invoiceAccept';
 
     protected $fillable = [
         'idApprove_series',
