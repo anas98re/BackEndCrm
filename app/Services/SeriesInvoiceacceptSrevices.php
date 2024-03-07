@@ -29,7 +29,7 @@ class SeriesInvoiceacceptSrevices extends JsonResponeService
             ->join('regoin as rrgoin', 'rrgoin.id_regoin', '=', 'inv.fk_regoin_invoice')
             ->join('series_invoiceAccept as si', 'si.fk_invoice', '=', 'inv.id_invoice') // Added join here
             ->where(function ($query) {
-                $query->where('si.fk_user', $this->currectUserId)
+                $query->where('si.fk_user', auth('sanctum')->user()->id_user)
                     ->where(function ($q) {
                         $q->whereNull('si.is_approve');
                     })

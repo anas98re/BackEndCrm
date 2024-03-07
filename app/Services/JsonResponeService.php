@@ -4,12 +4,12 @@ namespace App\Services;
 
 class JsonResponeService
 {
-    public $currectUserId;
+    // public $currectUserId;
 
-    public function __construct()
-    {
-        $this->currectUserId = auth('sanctum')->user()->id_user;
-    }
+    // public function __construct()
+    // {
+    //     $this->currectUserId = auth('sanctum')->user()->id_user;
+    // }
 
     public function sendResponse($result, $message)
     {
