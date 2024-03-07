@@ -55,6 +55,6 @@ class SeriesInvoiceacceptController extends Controller
                 ->filteByAnotherStatutesForInvoiceaccept($status, $selectArray);
         }
 
-        return $results;
+        return $this->sendSucssas($results);
     }
 }
