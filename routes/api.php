@@ -18,6 +18,7 @@ use App\Http\Controllers\ParticipateController;
 use App\Http\Controllers\PaymentDetailController;
 use App\Http\Controllers\PrivgLevelUserController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\SeriesInvoiceacceptController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskProceduresController;
 use Illuminate\Http\Request;
@@ -120,8 +121,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //invoices
     Route::post('InvoiceFiles', [FilesInvoiceController::class, 'InvoiceFiles']);
+    Route::get('getFilesInvoices', [FilesInvoiceController::class, 'getFilesInvoices']);
     Route::post('updateInvoiceFile/{id}', [FilesInvoiceController::class, 'updateInvoiceFile']);
     Route::post('deleteInvoiceFile/{id}', [FilesInvoiceController::class, 'deleteInvoiceFile']);
+    //series invoice
+    Route::get('getSeriesInvoiceAll/{status}', [SeriesInvoiceacceptController::class, 'getSeriesInvoiceAll']);
 
 
     //company ...
