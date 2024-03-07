@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\series_invoiceaccept;
-use App\Http\Requests\Storeseries_invoiceacceptRequest;
-use App\Http\Requests\Updateseries_invoiceacceptRequest;
+use App\Models\series_invoiceAccept;
+use App\Http\Requests\Storeseries_invoiceAcceptRequest;
+use App\Http\Requests\Updateseries_invoiceAcceptRequest;
 use App\Services\SeriesInvoiceacceptSrevices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +17,7 @@ class SeriesInvoiceacceptController extends Controller
     {
         $this->MyService = $MyService;
     }
-    
+
     function getSeriesInvoiceAll($status)
     {
         $selectArray = [

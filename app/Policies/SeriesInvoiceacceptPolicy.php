@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\series_invoiceaccept;
+use App\Models\series_invoiceAccept;
 use Illuminate\Auth\Access\Response;
 
 class SeriesInvoiceacceptPolicy
@@ -19,7 +19,7 @@ class SeriesInvoiceacceptPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, series_invoiceaccept $seriesInvoiceaccept): bool
+    public function view(User $user, series_invoiceAccept $seriesInvoiceaccept): bool
     {
         //
     }
@@ -35,7 +35,7 @@ class SeriesInvoiceacceptPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, series_invoiceaccept $seriesInvoiceaccept): bool
+    public function update(User $user, series_invoiceAccept $seriesInvoiceaccept): bool
     {
         //
     }
@@ -43,7 +43,7 @@ class SeriesInvoiceacceptPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, series_invoiceaccept $seriesInvoiceaccept): bool
+    public function delete(User $user, series_invoiceAccept $seriesInvoiceaccept): bool
     {
         //
     }
@@ -51,7 +51,7 @@ class SeriesInvoiceacceptPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, series_invoiceaccept $seriesInvoiceaccept): bool
+    public function restore(User $user, series_invoiceAccept $seriesInvoiceaccept): bool
     {
         //
     }
@@ -59,7 +59,7 @@ class SeriesInvoiceacceptPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, series_invoiceaccept $seriesInvoiceaccept): bool
+    public function forceDelete(User $user, series_invoiceAccept $seriesInvoiceaccept): bool
     {
         //
     }

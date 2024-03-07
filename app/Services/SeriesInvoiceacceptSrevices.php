@@ -27,7 +27,7 @@ class SeriesInvoiceacceptSrevices extends JsonResponeService
             ->leftJoin('users as usertask', 'usertask.id_user', '=', 'inv.fkusertask')
             ->join('regoin as rr', 'rr.id_regoin', '=', 'cc.fk_regoin')
             ->join('regoin as rrgoin', 'rrgoin.id_regoin', '=', 'inv.fk_regoin_invoice')
-            ->join('series_invoiceaccept as si', 'si.fk_invoice', '=', 'inv.id_invoice') // Added join here
+            ->join('series_invoiceAccept as si', 'si.fk_invoice', '=', 'inv.id_invoice') // Added join here
             ->where(function ($query) {
                 $query->where('si.fk_user', $this->currectUserId)
                     ->where(function ($q) {
@@ -36,7 +36,7 @@ class SeriesInvoiceacceptSrevices extends JsonResponeService
                     ->where(function ($q) {
                         $q->where(
                             DB::raw('(SELECT is_approve
-                                FROM series_invoiceaccept
+                                FROM series_invoiceAccept
                                 WHERE idApprove_series < si.idApprove_series
                                 ORDER BY idApprove_series DESC LIMIT 1)'),
                             '=',
