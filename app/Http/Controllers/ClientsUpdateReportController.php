@@ -20,7 +20,7 @@ class ClientsUpdateReportController extends Controller
         info('request->dataAfterUpdate: ', array($request->dataAfterUpdate));
         info('dataAfterUpdate: ', array($dataAfterUpdate));
         // $differences = array_diff_assoc($dataBeforeUpdate, $clientBefore);
-        $differences = array_diff_assoc($dataAfterUpdate, $clientBefore);
+        $differences = array_diff_assoc($dataAfterUpdate, $dataBeforeUpdate);
 
         info('$differences: ', $differences);
 
