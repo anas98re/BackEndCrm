@@ -36,6 +36,7 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
      */
     public function handle()
     {
+        info('fourth');
         $dataBeforeUpdate = $this->dataBeforeUpdate;
         $dataAfterUpdate = $this->dataAfterUpdate;
 
