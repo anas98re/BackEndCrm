@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Arr;
 
 class StorageInvoicesUpdatesJob implements ShouldQueue
 {
@@ -39,7 +40,7 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
         $dataAfterUpdate = $this->dataAfterUpdate;
 
         $differences = array_diff_assoc($dataAfterUpdate, $dataBeforeUpdate);
-
+        info('$differences for invoicess: ', array($differences));
         $report = [];
         foreach ($differences as $key => $value) {
             // if ($key == 'city') {
@@ -53,13 +54,14 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
                 $report[] = $key . ' ( ' . $value . ' ) ';
             // }
         }
-
+        info('$report for invoicess: ', array($report));
         $reportMessage = implode("\n", $report);
 
         $clientsUpdateReport = new invoicesUpdateReport();
         $clientsUpdateReport->changesData = $reportMessage;
         $clientsUpdateReport->edit_date = $this->dateUpdate;
         $clientsUpdateReport->user_id = $this->userId;
+        $clientsUpdateReport->invoice_id = $this->invoiceId;
         $clientsUpdateReport->save();
     }
 }
