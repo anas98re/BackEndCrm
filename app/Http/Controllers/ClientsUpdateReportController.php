@@ -14,16 +14,24 @@ class ClientsUpdateReportController extends Controller
     {
         $client = clients::where('id_clients', $request->id_client)->first();
 
-        $clientAfter = $client->getDirty();
         $clientBefore = $client->getOriginal();
         $dataBeforeUpdate = json_decode($request->dataBeforeUpdate, true)[0];
 
-        $differences = array_diff_assoc($clientBefore, $dataBeforeUpdate);
+        $differences = [];
+
+        foreach ($clientBefore as $key => $value) {
+            if ($value !== $dataBeforeUpdate[$key]) {
+                $differences[$key] = [
+                    'old_value' => $value,
+                    'new_value' => $dataBeforeUpdate[$key]
+                ];
+            }
+        }
 
         info('$differences: ', $differences);
         info('$clientBefore: ', array($clientBefore));
-        info('$clientAfter: ', array($clientAfter));
+        // info('$clientAfter: ', array($clientAfter));
         info('$dataBeforeUpdate: ', array(json_decode($request->dataBeforeUpdate, true)));
-        info('$values: ', array($request->values->getDirty()));
+        // info('$values: ', array($request->values->getDirty()));
     }
 }
