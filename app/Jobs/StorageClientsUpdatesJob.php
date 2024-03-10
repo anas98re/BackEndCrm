@@ -18,7 +18,7 @@ class StorageClientsUpdatesJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $invoiceId;
+    protected $clientId;
     protected $dataBeforeUpdate;
     protected $dataAfterUpdate;
     protected $dateUpdate;
@@ -26,9 +26,9 @@ class StorageClientsUpdatesJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct($invoiceId, $dataBeforeUpdate, $dataAfterUpdate, $dateUpdate, $userId)
+    public function __construct($clientId, $dataBeforeUpdate, $dataAfterUpdate, $dateUpdate, $userId)
     {
-        $this->invoiceId = $invoiceId;
+        $this->clientId = $clientId;
         $this->dataBeforeUpdate = $dataBeforeUpdate;
         $this->dataAfterUpdate = $dataAfterUpdate;
         $this->dateUpdate = $dateUpdate;
@@ -47,21 +47,21 @@ class StorageClientsUpdatesJob implements ShouldQueue
 
         $report = [];
         foreach ($differences as $key => $value) {
-            // if ($key == 'city') {
-            //     $cityValue = city::where('id_city', $value)->first()->name_city;
-            //     $report[] = $key . ' ( ' . $cityValue . ' ) ';
-            // } elseif ($key == 'activity_type_fk') {
-            //     $id_activity_type_value = activity_type::where('id_activity_type', $value)
-            //         ->first()->name_activity_type;
-            //     $report[] = 'activity_type' . ' ( ' . $id_activity_type_value . ' ) ';
-            // } else {
+            if ($key == 'city') {
+                $cityValue = city::where('id_city', $value)->first()->name_city;
+                $report[] = $key . ' ( ' . $cityValue . ' ) ';
+            } elseif ($key == 'activity_type_fk') {
+                $id_activity_type_value = activity_type::where('id_activity_type', $value)
+                    ->first()->name_activity_type;
+                $report[] = 'activity_type' . ' ( ' . $id_activity_type_value . ' ) ';
+            } else {
                 $report[] = $key . ' ( ' . $value . ' ) ';
-            // }
+            }
         }
 
         $reportMessage = implode("\n", $report);
 
-        $clientsUpdateReport = new invoicesUpdateReport();
+        $clientsUpdateReport = new clientsUpdateReport();
         $clientsUpdateReport->changesData = $reportMessage;
         $clientsUpdateReport->edit_date = $this->dateUpdate;
         $clientsUpdateReport->user_id = $this->userId;
