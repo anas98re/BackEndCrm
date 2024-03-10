@@ -142,6 +142,7 @@ class InvoicesUpdateReportController extends Controller
 
     public function addInvoicesUpdateReport(Request $request)
     {
+        info('request->all() for addInvoicesUpdateReport:', $request->all());
         info('first');
         $invoiceId = $request->input('id_invoice');
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
