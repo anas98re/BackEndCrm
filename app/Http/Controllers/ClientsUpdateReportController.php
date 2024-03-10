@@ -30,10 +30,12 @@ class ClientsUpdateReportController extends Controller
         foreach ($differences as $key => $value) {
             if ($key == 'city') {
                 $cityValue = city::where('id_city', $value)->first()->name_city;
+                info('cityValue: ', array($dataAfterUpdate));
                 $report[] = $key . ' ( ' . $cityValue . ' ) ';
             } elseif ($key == 'activity_type_fk') {
                 $id_activity_type_value = activity_type::where('id_activity_type', $value)
                     ->first()->name_activity_type;
+                    info('id_activity_type_value: ', array($dataAfterUpdate));
                 $report[] = $key . ' ( ' . $id_activity_type_value . ' ) ';
             } else {
                 $report[] = $key . ' ( ' . $value . ' ) ';
