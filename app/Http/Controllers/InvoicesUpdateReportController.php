@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\invoicesUpdateReport;
 use App\Http\Requests\StoreinvoicesUpdateReportRequest;
 use App\Http\Requests\UpdateinvoicesUpdateReportRequest;
+use App\Jobs\StorageInvoicesUpdatesJob;
 use App\Models\client_invoice;
 use App\Models\clients;
 use App\Models\regoin;
@@ -137,5 +138,16 @@ class InvoicesUpdateReportController extends Controller
         $invoicesUpdateReport->save();
 
         return $this->sendResponse($invoicesUpdateReport, 'Updated success');
+    }
+
+    public function addInvoicesUpdateReport(Request $request)
+    {
+        $invoiceId = $request->input('id_invoice');
+        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+        $dateUpdate = $request->input('dateUpdate');
+        $userId = $request->input('fk_idUser');
+
+        StorageInvoicesUpdatesJob::dispatch($invoiceId, $dataBeforeUpdate, $dataAfterUpdate, $dateUpdate, $userId);
     }
 }
