@@ -147,7 +147,7 @@ class InvoicesUpdateReportController extends Controller
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
         $dateUpdate = $request->input('dateUpdate');
         $userId = $request->input('fk_idUser');
-
+        
         StorageInvoicesUpdatesJob::dispatch($invoiceId, $dataBeforeUpdate, $dataAfterUpdate, $dateUpdate, $userId);
     }
 }
