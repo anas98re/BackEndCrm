@@ -5,6 +5,7 @@ use App\Http\Controllers\AgentController;
 use App\Http\Controllers\ClientCommentMentionController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ClientsDateController;
+use App\Http\Controllers\ClientsUpdateReportController;
 use App\Http\Controllers\CommentParticipateController;
 use App\Http\Controllers\CompanyCommentController;
 use App\Http\Controllers\CompanyController;
@@ -60,6 +61,8 @@ Route::post('addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days', [TaskP
 Route::post('addCommentClientMention', [ClientCommentMentionController::class, 'addCommentClientMention']);
 //cllients Invoices
 Route::post('storageInvoicesUpdates', [InvoicesUpdateReportController::class, 'storageInvoicesUpdates']);
+//cllients
+Route::post('storageClientsUpdates', [ClientsUpdateReportController::class, 'storageClientsUpdates']);
 
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
 
