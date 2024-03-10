@@ -15,7 +15,13 @@ class ClientsUpdateReportController extends Controller
 {
     public function storageClientsUpdates(Request $request)
     {
-        StorageClientsUpdatesJob::dispatch($request);
+        $clientId = $request->input('id_client');
+        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+        $dateUpdate = $request->input('dateUpdate');
+        $userId = $request->input('fk_idUser');
+
+        StorageClientsUpdatesJob::dispatch($clientId, $dataBeforeUpdate, $dataAfterUpdate, $dateUpdate, $userId);
         // $client = clients::where('id_clients', $request->id_client)->first();
 
         // $clientBefore = $client->getOriginal();

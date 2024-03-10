@@ -17,29 +17,37 @@ class StorageClientsUpdatesJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $request;
+    protected $clientId;
+    protected $dataBeforeUpdate;
+    protected $dataAfterUpdate;
+    protected $dateUpdate;
+    protected $userId;
     /**
      * Create a new job instance.
      */
-    public function __construct(Request $request)
+    public function __construct($clientId, $dataBeforeUpdate, $dataAfterUpdate, $dateUpdate, $userId)
     {
-        $this->request = $request;
+        $this->clientId = $clientId;
+        $this->dataBeforeUpdate = $dataBeforeUpdate;
+        $this->dataAfterUpdate = $dataAfterUpdate;
+        $this->dateUpdate = $dateUpdate;
+        $this->userId = $userId;
     }
 
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle()
     {
-
-        $client = clients::where('id_clients', $this->request->id_client)->first();
+        $client = clients::where('id_clients', $this->clientId)->first();
 
         $clientBefore = $client->getOriginal();
-        $dataBeforeUpdate = json_decode($this->request->dataBeforeUpdate, true)[0];
-        $dataAfterUpdate = json_decode($this->request->dataAfterUpdate, true)[0];
+        $dataBeforeUpdate = $this->dataBeforeUpdate;
+        $dataAfterUpdate = $this->dataAfterUpdate;
 
         $differences = array_diff_assoc($dataAfterUpdate, $dataBeforeUpdate);
 
+        $report = [];
         foreach ($differences as $key => $value) {
             if ($key == 'city') {
                 $cityValue = city::where('id_city', $value)->first()->name_city;
@@ -57,8 +65,8 @@ class StorageClientsUpdatesJob implements ShouldQueue
 
         $clientsUpdateReport = new clientsUpdateReport();
         $clientsUpdateReport->changesData = $reportMessage;
-        $clientsUpdateReport->edit_date = $this->request->dateUpdate;
-        $clientsUpdateReport->fk_user = $this->request->fk_idUser;
+        $clientsUpdateReport->edit_date = $this->dateUpdate;
+        $clientsUpdateReport->fk_user = $this->userId;
         $clientsUpdateReport->save();
     }
 }
