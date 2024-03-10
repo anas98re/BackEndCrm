@@ -26,11 +26,11 @@ class ClientsUpdateReportController extends Controller
         }
 
         $reportMessage = implode("\n", $report);
-        
+
         $clientsUpdateReport = new clientsUpdateReport();
         $clientsUpdateReport->changesData = $reportMessage;
         $clientsUpdateReport->edit_date = $request->dateUpdate;
         $clientsUpdateReport->fk_user = $request->fk_idUser;
-
+        $clientsUpdateReport->save();
     }
 }
