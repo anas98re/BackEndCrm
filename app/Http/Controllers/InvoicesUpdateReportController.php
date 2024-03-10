@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 class InvoicesUpdateReportController extends Controller
 {
-    public function storageInvoicesUpdates(Request $request)
+    public function storageInvoicesUpdates1(Request $request)
     {
         info('****************************************************************');
         info('$request->all() for storageInvoicesUpdates:', $request->all());
@@ -138,6 +138,42 @@ class InvoicesUpdateReportController extends Controller
         $invoicesUpdateReport->save();
 
         return $this->sendResponse($invoicesUpdateReport, 'Updated success');
+    }
+
+    public function storageInvoicesUpdates(Request $request)
+    {
+        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+
+        $differences = array_diff_assoc($dataAfterUpdate, $dataBeforeUpdate);
+        info('$differences for invoicess: ', array($differences));
+        $report = [];
+        foreach ($differences as $key => $value) {
+            // if ($key == 'city') {
+            //     $cityValue = city::where('id_city', $value)->first()->name_city;
+            //     $report[] = $key . ' ( ' . $cityValue . ' ) ';
+            // } elseif ($key == 'activity_type_fk') {
+            //     $id_activity_type_value = activity_type::where('id_activity_type', $value)
+            //         ->first()->name_activity_type;
+            //     $report[] = 'activity_type' . ' ( ' . $id_activity_type_value . ' ) ';
+            // } else {
+                $report[] = $key . ' ( ' . $value . ' ) ';
+            // }
+        }
+        info('$report for invoicess: ', array($report));
+        $reportMessage = implode("\n", $report);
+
+        $invoiceData = client_invoice::where('id_invoice', $request->id_invoice)->first();
+        $isApprove = $invoiceData->isApprove === "1" ? 'true' : 'false';
+        info('$invoiceData is: ', array($invoiceData));
+        info('$invoiceData->isApprove is: ', array($invoiceData->isApprove));
+        $invoicesUpdateReport = new invoicesUpdateReport();
+        $invoicesUpdateReport->changesData = $reportMessage;
+        $invoicesUpdateReport->afterApprove = $isApprove;
+        $invoicesUpdateReport->invoice_id = $request->id_invoice;
+        $invoicesUpdateReport->edit_date = Carbon::now('Asia/Riyadh')->toDateTimeString();
+        $invoicesUpdateReport->user_id = $request->fk_idUser;
+        $invoicesUpdateReport->save();
     }
 
     public function addInvoicesUpdateReport(Request $request)
