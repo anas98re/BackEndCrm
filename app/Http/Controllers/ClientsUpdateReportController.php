@@ -14,9 +14,9 @@ class ClientsUpdateReportController extends Controller
     {
         $client = clients::where('id_clients', $request->id_client)->first();
 
-        // Convert $client array to model instance
+        // Convert $client array into model instance
         $clientModel = new clients();
-        $clientModel->forceFill($client);
+        $clientModel->setRawAttributes($client);
 
         $clientAfter = $clientModel->getDirty();
         $clientBefore = $clientModel->getOriginal();
