@@ -19,11 +19,11 @@ class ClientsUpdateReportController extends Controller
 
         $differences = [];
 
-        foreach ($clientBefore as $key => $value) {
-            if ($value !== $dataBeforeUpdate[$key]) {
+        foreach ($dataBeforeUpdate as $key => $value) {
+            if (isset($clientBefore[$key]) && $value !== $clientBefore[$key]) {
                 $differences[$key] = [
-                    'old_value' => $value,
-                    'new_value' => $dataBeforeUpdate[$key]
+                    'old_value' => $clientBefore[$key],
+                    'new_value' => $value,
                 ];
             }
         }
