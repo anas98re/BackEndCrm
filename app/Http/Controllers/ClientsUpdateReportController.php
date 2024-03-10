@@ -17,15 +17,16 @@ class ClientsUpdateReportController extends Controller
         $clientBefore = $client->getOriginal();
         $dataBeforeUpdate = json_decode($request->dataBeforeUpdate, true)[0];
         $dataAfterUpdate = json_decode($request->dataAfterUpdate, true)[0];
+
         info('request->dataAfterUpdate: ', array($request->dataAfterUpdate));
         info('dataAfterUpdate: ', array($dataAfterUpdate));
-        // $differences = array_diff_assoc($dataBeforeUpdate, $clientBefore);
+
         $differences = array_diff_assoc($dataAfterUpdate, $dataBeforeUpdate);
 
-        info('$differences: ', $differences);
+        info('differences: ', $differences);
 
         foreach ($differences as $key => $value) {
-            $report[] = $key . '(' . $value . ')';
+            $report[] = $key . ' ( ' . $value . ' ) ';
         }
 
         $reportMessage = implode("\n", $report);
