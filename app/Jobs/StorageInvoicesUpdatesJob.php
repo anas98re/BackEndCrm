@@ -61,7 +61,7 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
         $clientsUpdateReport = new invoicesUpdateReport();
         $clientsUpdateReport->changesData = $reportMessage;
         $clientsUpdateReport->edit_date = $this->dateUpdate;
-        $clientsUpdateReport->user_id = $this->userId;
+        $clientsUpdateReport->user_id = (int) $this->userId;
         $clientsUpdateReport->invoice_id = $this->invoiceId;
         $clientsUpdateReport->save();
     }
