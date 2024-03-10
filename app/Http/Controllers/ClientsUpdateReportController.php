@@ -17,21 +17,20 @@ class ClientsUpdateReportController extends Controller
         $clientBefore = $client->getOriginal();
         $dataBeforeUpdate = json_decode($request->dataBeforeUpdate, true)[0];
 
-        $differences = [];
-
-        foreach ($dataBeforeUpdate as $key => $value) {
-            if (isset($clientBefore[$key]) && $value !== $clientBefore[$key]) {
-                $differences[$key] = [
-                    'old_value' => $clientBefore[$key],
-                    'new_value' => $value,
-                ];
-            }
-        }
+        $differences = array_diff_assoc($dataBeforeUpdate, $clientBefore);
 
         info('$differences: ', $differences);
-        info('$clientBefore: ', array($clientBefore));
-        // info('$clientAfter: ', array($clientAfter));
-        info('$dataBeforeUpdate: ', array(json_decode($request->dataBeforeUpdate, true)));
-        // info('$values: ', array($request->values->getDirty()));
+
+        foreach ($differences as $key => $value) {
+            $report[] = $key . '(' . $value . ')';
+        }
+
+        $reportMessage = implode("\n", $report);
+        
+        $clientsUpdateReport = new clientsUpdateReport();
+        $clientsUpdateReport->changesData = $reportMessage;
+        $clientsUpdateReport->edit_date = $request->dateUpdate;
+        $clientsUpdateReport->fk_user = $request->fk_idUser;
+
     }
 }
