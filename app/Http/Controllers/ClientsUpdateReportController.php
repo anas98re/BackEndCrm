@@ -13,10 +13,15 @@ class ClientsUpdateReportController extends Controller
     public function storageClientsUpdates(Request $request)
     {
         $client = clients::where('id_clients', $request->id_client)->first();
-        $clientAfter = $request->values->getDirty();
-        $clientBefore = $client->getOriginal();
 
-        info('$clientBefore: ',array($clientBefore));
-        info('$clientAfter: ',array($clientAfter));
+        // Convert $client array to model instance
+        $clientModel = new clients();
+        $clientModel->forceFill($client);
+
+        $clientAfter = $clientModel->getDirty();
+        $clientBefore = $clientModel->getOriginal();
+
+        info('$clientBefore: ', array($clientBefore));
+        info('$clientAfter: ', array($clientAfter));
     }
 }
