@@ -18,6 +18,9 @@ class ClientsUpdateReportController extends Controller
         $dataBeforeUpdate = json_decode($request->dataBeforeUpdate, true)[0];
         $dataAfterUpdate = $request->values;
 
+        ksort($clientBefore);
+        ksort($dataAfterUpdate);
+
         $Orginal = array_diff_assoc($dataBeforeUpdate, $clientBefore);
         $differences = array_diff_assoc($dataAfterUpdate, $clientBefore);
 
