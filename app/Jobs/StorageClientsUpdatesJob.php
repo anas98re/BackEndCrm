@@ -64,7 +64,7 @@ class StorageClientsUpdatesJob implements ShouldQueue
         $clientsUpdateReport = new clientsUpdateReport();
         $clientsUpdateReport->changesData = $reportMessage;
         $clientsUpdateReport->edit_date = $this->dateUpdate;
-        $clientsUpdateReport->user_id = $this->userId;
+        $clientsUpdateReport->fk_user = $this->userId;
         $clientsUpdateReport->save();
     }
 }
