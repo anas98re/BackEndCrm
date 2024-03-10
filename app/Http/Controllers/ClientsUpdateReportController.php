@@ -19,5 +19,7 @@ class ClientsUpdateReportController extends Controller
 
         info('$clientBefore: ', array($clientBefore));
         info('$clientAfter: ', array($clientAfter));
+        info('$dataBeforeUpdate: ', array($request->dataBeforeUpdate));
+        info('$values: ', array($request->values));
     }
 }
