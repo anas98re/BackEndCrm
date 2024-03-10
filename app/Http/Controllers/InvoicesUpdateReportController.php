@@ -142,6 +142,7 @@ class InvoicesUpdateReportController extends Controller
 
     public function storageInvoicesUpdates(Request $request)
     {
+        info('$request->all() for storageInvoicesUpdates:', $request->all());
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
 
