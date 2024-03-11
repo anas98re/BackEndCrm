@@ -542,8 +542,23 @@ class TaskService extends JsonResponeService
     {
         $task = task::find($id);
         $attachment = new attachment();
-        $filePath = $request->file_path->store('public/Files');
-        $attachment->file_path = $filePath;
+        // $filePath = $request->file_path->store('public/Files');
+
+        $originalFilename = $request->file_path->getClientOriginalName();
+        $fileExtension = $request->file_path->getClientOriginalExtension();
+        $randomNumber = mt_rand(10000, 99999);
+
+        // Remove the file extension from the original filename
+        $filenameWithoutExtension = pathinfo($originalFilename, PATHINFO_FILENAME);
+
+        $modifiedFilename = str_replace(' ', '_', $filenameWithoutExtension) . '_' . $randomNumber;
+
+        // Combine the filename and extension
+        $generatedFilename = $modifiedFilename . '.' . $fileExtension;
+
+        $generatedPath = $request->file_path->storeAs('Files', $generatedFilename,'public');
+
+        $attachment->file_path = $generatedPath;
         $attachment->task_id = $task->id;
         $attachment->create_date = $task->start_date;
         $attachment->created_by = $request->id_user;
