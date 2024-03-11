@@ -59,7 +59,7 @@ class StorageClientsUpdatesJob implements ShouldQueue
         $combinedReportMessage = implode("\n", $combinedReport);
 
         $clientsUpdateReport = new clientsUpdateReport();
-        $clientsUpdateReport->changesData = $reportMessageOld;
+        $clientsUpdateReport->changesData = $combinedReportMessage;
         $clientsUpdateReport->edit_date = $this->dateUpdate;
         $clientsUpdateReport->fk_user = $this->userId;
         $clientsUpdateReport->save();
