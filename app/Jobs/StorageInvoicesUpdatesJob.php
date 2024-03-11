@@ -2,7 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Models\agent;
 use App\Models\invoicesUpdateReport;
+use App\Models\participate;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -19,16 +21,18 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
     protected $dataAfterUpdate;
     protected $dateUpdate;
     protected $userId;
+    protected $update_source;
     /**
      * Create a new job instance.
      */
-    public function __construct($invoiceId, $dataBeforeUpdate, $dataAfterUpdate, $dateUpdate, $userId)
+    public function __construct($invoiceId, $dataBeforeUpdate, $dataAfterUpdate, $dateUpdate, $userId, $update_source)
     {
         $this->invoiceId = $invoiceId;
         $this->dataBeforeUpdate = $dataBeforeUpdate;
         $this->dataAfterUpdate = $dataAfterUpdate;
         $this->dateUpdate = $dateUpdate;
         $this->userId = $userId;
+        $this->update_source = $update_source;
     }
 
     /**
@@ -41,19 +45,40 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
         $dataAfterUpdate = $this->dataAfterUpdate;
 
         $differences = array_diff_assoc($dataAfterUpdate, $dataBeforeUpdate);
+
+        $report = $this->generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate);
+
+        $reportMessage = implode("\n", $report);
+
+        $clientsUpdateReport = new invoicesUpdateReport();
+        $clientsUpdateReport->changesData = $reportMessage;
+        $clientsUpdateReport->edit_date = $this->dateUpdate;
+        $clientsUpdateReport->user_id = (int) $this->userId;
+        $clientsUpdateReport->invoice_id = $this->invoiceId;
+        $clientsUpdateReport->update_source = $this->update_source;
+        $clientsUpdateReport->save();
+    }
+
+    private function generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate)
+    {
         info('$differences for invoicess: ', array($differences));
         $report = [];
         foreach ($differences as $key => $value) {
-            // if ($key == 'city') {
-            //     $cityValue = city::where('id_city', $value)->first()->name_city;
-            //     $report[] = $key . ' ( ' . $cityValue . ' ) ';
-            // } elseif ($key == 'activity_type_fk') {
-            //     $id_activity_type_value = activity_type::where('id_activity_type', $value)
-            //         ->first()->name_activity_type;
-            //     $report[] = 'activity_type' . ' ( ' . $id_activity_type_value . ' ) ';
-            // } else {
-                $report[] = $key . ' ( ' . $value . ' ) ';
-            // }
+            switch ($key) {
+                case 'participate_fk':
+                    $participateBefore = participate::where('id_participate', $dataBeforeUpdate[$key])->first()->name_participate;
+                    $participateAfter = participate::where('id_participate', $dataAfterUpdate[$key])->first()->name_participate;
+                    $report[] = $key . ': (' . $participateBefore . ') TO (' . $participateAfter . ')';
+                    break;
+                case 'fk_agent':
+                    $agentBefore = agent::where('id_agent', $dataBeforeUpdate[$key])->first()->name_agent;
+                    $agentAfter = agent::where('id_agent', $dataBeforeUpdate[$key])->first()->name_agent;
+                    $report[] = $key . ': (' . $agentBefore . ') TO (' . $agentAfter . ')';
+                    break;
+                default:
+                    $report[] = $key . ': ( ' . $dataBeforeUpdate[$key] . ') TO (' . $dataAfterUpdate[$key] . ' ) ';
+                    break;
+            }
         }
         info('$report for invoicess: ', array($report));
         $reportMessage = implode("\n", $report);
@@ -63,6 +88,7 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
         $clientsUpdateReport->edit_date = $this->dateUpdate;
         $clientsUpdateReport->user_id = (int) $this->userId;
         $clientsUpdateReport->invoice_id = $this->invoiceId;
+        $clientsUpdateReport->update_source = $this->update_source;
         $clientsUpdateReport->save();
     }
 }
