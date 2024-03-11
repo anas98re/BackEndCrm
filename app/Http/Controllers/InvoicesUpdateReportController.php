@@ -81,7 +81,7 @@ class InvoicesUpdateReportController extends Controller
 
         $updates = [];
         foreach ($changes as $key => $change) {
-            if($change['infoKays'] == 'fk_idUser'){
+            if ($change['infoKays'] == 'fk_idUser') {
                 $nameUserBefor = users::where(
                     'id_user',
                     is_array($change['before'])
@@ -98,7 +98,7 @@ class InvoicesUpdateReportController extends Controller
                     ->first()->nameUser;
                 $infoKay = 'nameUser';
                 $updates[] = $infoKay . ' : ' . $nameUserBefor . ' TO ' . $nameUserAfter;
-            } elseif($change['infoKays'] == 'fk_regoin_invoice'){
+            } elseif ($change['infoKays'] == 'fk_regoin_invoice') {
                 $nameRegoinBefor = regoin::where(
                     'id_regoin',
                     is_array($change['before'])
@@ -158,7 +158,7 @@ class InvoicesUpdateReportController extends Controller
             //         ->first()->name_activity_type;
             //     $report[] = 'activity_type' . ' ( ' . $id_activity_type_value . ' ) ';
             // } else {
-                $report[] = $key . ' ( ' . $value . ' ) ';
+            $report[] = $key . ' ( ' . $value . ' ) ';
             // }
         }
         info('$report for invoicess: ', array($report));
@@ -185,7 +185,11 @@ class InvoicesUpdateReportController extends Controller
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
         $dateUpdate = $request->input('dateUpdate');
-        $userId = $request->input('fk_idUser');
+        if ($request->input('fk_idUser') != 'Error: Failed to fetch data from the API') {
+            $userId = $request->input('fk_idUser');
+        } else {
+            $userId = auth('sanctum')->user()->id_user;
+        }
         info('second');
         StorageInvoicesUpdatesJob::dispatch($invoiceId, $dataBeforeUpdate, $dataAfterUpdate, $dateUpdate, $userId);
         info('third');
