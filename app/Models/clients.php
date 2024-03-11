@@ -23,6 +23,6 @@ class clients extends Model
         'done_visit', 'tag', 'size_activity', 'fk_client_source', 'email',
         'fk_rejectClient', 'SerialNumber', 'is_comments_check','type_record',
         'reason_class','type_classification','date_update', 'fkuser_update','received_date',
-        'approveIduser_reject'
+        'approveIduser_reject','date_reject','fk_user_reject','date_approve_reject'
     ];
 }
