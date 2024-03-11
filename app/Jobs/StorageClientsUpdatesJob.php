@@ -48,19 +48,24 @@ class StorageClientsUpdatesJob implements ShouldQueue
 
         $report = [];
         foreach ($differences as $key => $value) {
-            if ($key == 'city') {
-                $cityValue = city::where('id_city', $value)->first()->name_city;
-                $report[] = $key . ' ( ' . $cityValue . ' ) ';
-            } elseif ($key == 'activity_type_fk') {
-                $id_activity_type_value = activity_type::where('id_activity_type', $value)
-                    ->first()->name_activity_type;
-                $report[] = 'activity_type' . ' ( ' . $id_activity_type_value . ' ) ';
-            } elseif ($key == 'presystem') {
-                $presystem_value = company::where('id_Company', $value)
-                    ->first()->name_company;
-                $report[] = 'presystem' . ' ( ' . $presystem_value . ' ) ';
-            } else {
-                $report[] = $key . ' ( ' . $value . ' ) ';
+            switch ($key) {
+                case 'city':
+                    $cityValue = city::where('id_city', $value)->first()->name_city;
+                    $report[] = $key . ' ( ' . $cityValue . ' ) ';
+                    break;
+                case 'activity_type_fk':
+                    $id_activity_type_value = activity_type::where('id_activity_type', $value)
+                        ->first()->name_activity_type;
+                    $report[] = 'activity_type' . ' ( ' . $id_activity_type_value . ' ) ';
+                    break;
+                case 'presystem':
+                    $presystem_value = company::where('id_Company', $value)
+                        ->first()->name_company;
+                    $report[] = 'presystem' . ' ( ' . $presystem_value . ' ) ';
+                    break;
+                default:
+                    $report[] = $key . ' ( ' . $value . ' ) ';
+                    break;
             }
         }
 
