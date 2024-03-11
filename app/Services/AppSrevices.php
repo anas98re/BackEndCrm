@@ -33,7 +33,7 @@ class AppSrevices extends JsonResponeService
         $generatedFilename = $modifiedFilename . '.' . $fileExtension;
 
         // Store the file with the modified filename
-        $generatedPath = $file->storeAs('invoiceFiles', $generatedFilename);
+        $generatedPath = $file->storeAs('invoiceFiles', $generatedFilename, 'public');
         return $generatedPath;
     }
 }
