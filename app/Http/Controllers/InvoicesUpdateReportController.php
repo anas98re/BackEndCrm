@@ -140,7 +140,7 @@ class InvoicesUpdateReportController extends Controller
         return $this->sendResponse($invoicesUpdateReport, 'Updated success');
     }
 
-    public function storageInvoicesUpdates(Request $request)
+    public function storageInvoicesUpdates2(Request $request)
     {
         info('$request->all() for storageInvoicesUpdates:', $request->all());
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
@@ -177,6 +177,24 @@ class InvoicesUpdateReportController extends Controller
         $invoicesUpdateReport->save();
     }
 
+    public function storageInvoicesUpdates(Request $request)
+    {
+        $invoiceId = $request->input('id_invoice');
+        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+        $dateUpdate = $request->input('dateUpdate');
+        $userId = $request->input('fk_idUser');
+        $update_source = 'تغيرر بيانات الفاتورة';
+
+        StorageInvoicesUpdatesJob::dispatch(
+            $invoiceId,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $dateUpdate,
+            $userId,
+            $update_source
+        );
+    }
     public function addInvoicesUpdateReport(Request $request)
     {
         info('request->all() for addInvoicesUpdateReport:', $request->all());
@@ -185,13 +203,22 @@ class InvoicesUpdateReportController extends Controller
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
         $dateUpdate = $request->input('dateUpdate');
-        if ($request->input('fk_idUser') != 'Error: Failed to fetch data from the API') {
+        // if ($request->input('fk_idUser') != 'Error: Failed to fetch data from the API') {
             $userId = $request->input('fk_idUser');
-        } else {
-            $userId = auth('sanctum')->user()->id_user;
-        }
+        // } else {
+        //     $userId = auth('sanctum')->user()->id_user;
+        // }
+        $update_source = 'تعديل الفاتورة';
+
         info('second');
-        StorageInvoicesUpdatesJob::dispatch($invoiceId, $dataBeforeUpdate, $dataAfterUpdate, $dateUpdate, $userId);
+        StorageInvoicesUpdatesJob::dispatch(
+            $invoiceId,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $dateUpdate,
+            $userId,
+            $update_source
+        );
         info('third');
     }
 }
