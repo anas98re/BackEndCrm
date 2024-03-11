@@ -65,20 +65,20 @@ class StorageClientsUpdatesJob implements ShouldQueue
                 case 'city':
                     $cityBefore = city::where('id_city', $dataBeforeUpdate[$key])->first()->name_city;
                     $cityAfter = city::where('id_city', $dataAfterUpdate[$key])->first()->name_city;
-                    $report[] = $key . ' ( ' . $cityBefore . ' ) to ( ' . $cityAfter . ' )';
+                    $report[] = $key . ': ( ' . $cityBefore . ' ) to ( ' . $cityAfter . ' )';
                     break;
                 case 'activity_type_fk':
                     $activityBefore = activity_type::where('id_activity_type', $dataBeforeUpdate[$key])->first()->name_activity_type;
                     $activityAfter = activity_type::where('id_activity_type', $dataAfterUpdate[$key])->first()->name_activity_type;
-                    $report[] = 'activity_type' . ' ( ' . $activityBefore . ' ) to ( ' . $activityAfter . ' )';
+                    $report[] = 'activity_type' . ': ( ' . $activityBefore . ' ) to ( ' . $activityAfter . ' )';
                     break;
                 case 'presystem':
                     $presystemBefore = company::where('id_Company', $dataBeforeUpdate[$key])->first()->name_company;
                     $presystemAfter = company::where('id_Company', $dataAfterUpdate[$key])->first()->name_company;
-                    $report[] = 'presystem' . ' ( ' . $presystemBefore . ' ) to ( ' . $presystemAfter . ' )';
+                    $report[] = 'presystem' . ': ( ' . $presystemBefore . ' ) to ( ' . $presystemAfter . ' )';
                     break;
                 default:
-                    $report[] = $key . ' ( ' . $dataBeforeUpdate[$key] . ' ) to ( ' . $dataAfterUpdate[$key] . ' )';
+                    $report[] = $key . ': ( ' . $dataBeforeUpdate[$key] . ' ) to ( ' . $dataAfterUpdate[$key] . ' )';
                     break;
             }
         }
