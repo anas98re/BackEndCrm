@@ -57,8 +57,7 @@ class StorageClientsUpdatesJob implements ShouldQueue
         $clientsUpdateReport->save();
     }
 
-    private
-    function generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate)
+    private function generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate)
     {
         $report = [];
         foreach ($differences as $key => $value) {
