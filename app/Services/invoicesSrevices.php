@@ -26,7 +26,7 @@ class invoicesSrevices extends JsonResponeService
                     $fileInvoice = files_invoice::where('id', $fileId)->first();
                     if ($fileInvoice) {
                         $oldFilePath = $fileInvoice->file_attach_invoice;
-                        Storage::delete($oldFilePath);
+                        Storage::delete('public/' . $oldFilePath);
                         $fileInvoice->delete();
                     }
                 }
