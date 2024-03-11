@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('series_invoiceAccepts', function (Blueprint $table) {
+        Schema::create('clients_update_reports', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->text('changesData')->nullable();
+            $table->dateTime('edit_date')->nullable();
+            $table->unsignedBigInteger('fk_user')->nullable();
         });
     }
 
@@ -22,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('series_invoiceAccepts');
+        Schema::dropIfExists('clients_update_reports');
     }
 };

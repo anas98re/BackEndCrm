@@ -2,65 +2,60 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\series_invoiceaccept;
-use App\Http\Requests\Storeseries_invoiceacceptRequest;
-use App\Http\Requests\Updateseries_invoiceacceptRequest;
+use App\Models\series_invoiceAccept;
+use App\Http\Requests\Storeseries_invoiceAcceptRequest;
+use App\Http\Requests\Updateseries_invoiceAcceptRequest;
+use App\Services\SeriesInvoiceacceptSrevices;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SeriesInvoiceacceptController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private $MyService;
+
+    public function __construct(SeriesInvoiceacceptSrevices $MyService)
     {
-        //
+        $this->MyService = $MyService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    function getSeriesInvoiceAll()
     {
-        //
-    }
+        $status = request()->query('status');
+        $selectArray = [
+            'inv.*',
+            'us.nameUser',
+            'cc.name_client',
+            'cc.name_enterprise',
+            'cc.fk_regoin',
+            'rr.name_regoin',
+            'rrgoin.name_regoin as name_regoin_invoice',
+            'cc.type_client',
+            'cc.mobile',
+            'cc.ismarketing',
+            'usr.nameUser as lastuserupdateName',
+            'usr1.nameUser as nameuserinstall',
+            'usr2.nameUser as nameuserApprove',
+            'rr.fk_country',
+            'usrback.nameUser as nameuserback',
+            'userreplay.nameUser as nameuserreplay',
+            'usertask.nameUser as nameusertask',
+            'cc.city',
+            'cy.name_city',
+            'mcit.namemaincity',
+            'mcit.id_maincity',
+            'usrinst.nameUser as nameuser_ready_install',
+            'usrninst.nameUser as nameuser_notready_install'
+        ];
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Storeseries_invoiceacceptRequest $request)
-    {
-        //
-    }
+        if ($status == 'user') {
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(series_invoiceaccept $series_invoiceaccept)
-    {
-        //
-    }
+            $results = $this->MyService
+                ->filteByCurrentUserForInvoiceaccept($status, $selectArray);
+        } else {
+            $results = $this->MyService
+                ->filteByAnotherStatutesForInvoiceaccept($status, $selectArray);
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(series_invoiceaccept $series_invoiceaccept)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Updateseries_invoiceacceptRequest $request, series_invoiceaccept $series_invoiceaccept)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(series_invoiceaccept $series_invoiceaccept)
-    {
-        //
+        return $this->sendSucssas($results);
     }
 }

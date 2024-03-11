@@ -5,17 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class files_invoice extends Model
+class clientsUpdateReport extends Model
 {
     use HasFactory;
 
-    protected $table = 'files_invoice';
-
+    protected $table = 'clients_update_reports';
     public $timestamps = false;
+
     protected $fillable = [
-        'id',
-        'fk_invoice',
-        'file_attach_invoice',
-        'type_file'
+        'changesData',
+        'edit_date',
+        'fk_user'
     ];
 }

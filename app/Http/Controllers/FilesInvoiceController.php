@@ -6,19 +6,43 @@ use App\Models\files_invoice;
 use App\Http\Requests\Storefiles_invoiceRequest;
 use App\Http\Requests\Updatefiles_invoiceRequest;
 use App\Services\AppSrevices;
+use App\Services\invoicesSrevices;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class FilesInvoiceController extends Controller
 {
+    //thses Api's for support employees
     private $myService;
+    private $invoiceSrevice;
 
-    public function __construct(AppSrevices $myService)
+    public function __construct(AppSrevices $myService, invoicesSrevices $invoiceSrevice)
     {
         $this->myService = $myService;
+        $this->invoiceSrevice = $invoiceSrevice;
     }
 
-    //thses Api's for support employees
+    //this is the api we use for all procesess add, update and delete..
+    public function InvoiceFiles(Storefiles_invoiceRequest $request)
+    {
+        $filesDelete = json_decode($request->input('files_delete_ids'));
+        $filesAdd = $request->file('file_attach_invoice');
+        $invoiceId = $request->input("fk_invoice");
+        $data = $this->invoiceSrevice
+            ->addAndUpdateInvoiceFiles($filesDelete, $filesAdd, $invoiceId);
+        return $this->sendSucssas($data);
+    }
+
+    public function getFilesInvoices()
+    {
+        $fk_invoice = request()->query('fk_invoice');
+        $filesInvoices = files_invoice::where('type_file', 1)
+            ->where('fk_invoice', $fk_invoice)
+            ->get();
+        return $this->sendSucssas($filesInvoices);
+    }
+
+    //for test if we want just add files without update or delete
     public function addInvoiceFiles(Storefiles_invoiceRequest $request)
     {
         try {
@@ -43,6 +67,7 @@ class FilesInvoiceController extends Controller
         }
     }
 
+    //just update, for test
     public function updateInvoiceFile(Updatefiles_invoiceRequest $request, $id)
     {
         try {
@@ -67,6 +92,7 @@ class FilesInvoiceController extends Controller
         }
     }
 
+    //just delete, for test
     public function deleteInvoiceFile($id)
     {
         try {

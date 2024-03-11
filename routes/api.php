@@ -5,6 +5,7 @@ use App\Http\Controllers\AgentController;
 use App\Http\Controllers\ClientCommentMentionController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ClientsDateController;
+use App\Http\Controllers\ClientsUpdateReportController;
 use App\Http\Controllers\CommentParticipateController;
 use App\Http\Controllers\CompanyCommentController;
 use App\Http\Controllers\CompanyController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\ParticipateController;
 use App\Http\Controllers\PaymentDetailController;
 use App\Http\Controllers\PrivgLevelUserController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\SeriesInvoiceacceptController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskProceduresController;
 use Illuminate\Http\Request;
@@ -59,6 +61,9 @@ Route::post('addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days', [TaskP
 Route::post('addCommentClientMention', [ClientCommentMentionController::class, 'addCommentClientMention']);
 //cllients Invoices
 Route::post('storageInvoicesUpdates', [InvoicesUpdateReportController::class, 'storageInvoicesUpdates']);
+Route::post('addInvoicesUpdateReport', [InvoicesUpdateReportController::class, 'addInvoicesUpdateReport']);
+//cllients
+Route::post('storageClientsUpdates', [ClientsUpdateReportController::class, 'storageClientsUpdates']);
 
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
 
@@ -118,9 +123,12 @@ Route::get('getPaymaentsViaInvoiceId/{id}', [PaymentDetailController::class, 'ge
 
 
     //invoices
-    Route::post('addInvoiceFiles', [FilesInvoiceController::class, 'addInvoiceFiles']);
+    Route::post('InvoiceFiles', [FilesInvoiceController::class, 'InvoiceFiles']);
+    Route::get('getFilesInvoices', [FilesInvoiceController::class, 'getFilesInvoices']);
     Route::post('updateInvoiceFile/{id}', [FilesInvoiceController::class, 'updateInvoiceFile']);
     Route::post('deleteInvoiceFile/{id}', [FilesInvoiceController::class, 'deleteInvoiceFile']);
+    //series invoice
+    Route::get('getSeriesInvoiceAll', [SeriesInvoiceacceptController::class, 'getSeriesInvoiceAll']);
 
 
     //company ...
