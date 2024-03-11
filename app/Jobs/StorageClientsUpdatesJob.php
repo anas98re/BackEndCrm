@@ -56,9 +56,9 @@ class StorageClientsUpdatesJob implements ShouldQueue
                     ->first()->name_activity_type;
                 $report[] = 'activity_type' . ' ( ' . $id_activity_type_value . ' ) ';
             } elseif ($key == 'presystem') {
-                $id_activity_type_value = company::where('id_Company', $value)
+                $presystem_value = company::where('id_Company', $value)
                     ->first()->name_company;
-                $report[] = 'activity_type' . ' ( ' . $id_activity_type_value . ' ) ';
+                $report[] = 'presystem' . ' ( ' . $presystem_value . ' ) ';
             } else {
                 $report[] = $key . ' ( ' . $value . ' ) ';
             }
