@@ -6,6 +6,7 @@ use App\Models\activity_type;
 use App\Models\city;
 use App\Models\clients;
 use App\Models\clientsUpdateReport;
+use App\Models\company;
 use App\Models\invoicesUpdateReport;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -53,6 +54,10 @@ class StorageClientsUpdatesJob implements ShouldQueue
             } elseif ($key == 'activity_type_fk') {
                 $id_activity_type_value = activity_type::where('id_activity_type', $value)
                     ->first()->name_activity_type;
+                $report[] = 'activity_type' . ' ( ' . $id_activity_type_value . ' ) ';
+            } elseif ($key == 'presystem') {
+                $id_activity_type_value = company::where('id_Company', $value)
+                    ->first()->name_company;
                 $report[] = 'activity_type' . ' ( ' . $id_activity_type_value . ' ) ';
             } else {
                 $report[] = $key . ' ( ' . $value . ' ) ';
