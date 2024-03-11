@@ -46,46 +46,39 @@ class StorageClientsUpdatesJob implements ShouldQueue
 
         // to storage new data
         $differences = array_diff_assoc($dataAfterUpdate, $dataBeforeUpdate);
-        $report = $this->generateReport($differences);
-
-        // to storage old data
-        $differences = array_diff_assoc($dataBeforeUpdate, $dataAfterUpdate);
-        $reportOld = $this->generateReport($differences);
+        $report = $this->generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate);
 
         $reportMessage = implode("\n", $report);
-        $reportMessageOld = implode("\n", $reportOld);
-
-        $combinedReport = array_merge($reportOld, $report);
-        $combinedReportMessage = implode("\n", $combinedReport);
 
         $clientsUpdateReport = new clientsUpdateReport();
-        $clientsUpdateReport->changesData = $combinedReportMessage;
+        $clientsUpdateReport->changesData = $reportMessage;
         $clientsUpdateReport->edit_date = $this->dateUpdate;
         $clientsUpdateReport->fk_user = $this->userId;
         $clientsUpdateReport->save();
     }
 
-    private function generateReport($differences)
+    private function generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate)
     {
         $report = [];
         foreach ($differences as $key => $value) {
             switch ($key) {
                 case 'city':
-                    $cityValue = city::where('id_city', $value)->first()->name_city;
-                    $report[] = $key . ' ( ' . $cityValue . ' ) ';
+                    $cityBefore = city::where('id_city', $dataBeforeUpdate[$key])->first()->name_city;
+                    $cityAfter = city::where('id_city', $dataAfterUpdate[$key])->first()->name_city;
+                    $report[] = $key . ' ( ' . $cityBefore . ' ) to ( ' . $cityAfter . ' )';
                     break;
                 case 'activity_type_fk':
-                    $id_activity_type_value = activity_type::where('id_activity_type', $value)
-                        ->first()->name_activity_type;
-                    $report[] = 'activity_type' . ' ( ' . $id_activity_type_value . ' ) ';
+                    $activityBefore = activity_type::where('id_activity_type', $dataBeforeUpdate[$key])->first()->name_activity_type;
+                    $activityAfter = activity_type::where('id_activity_type', $dataAfterUpdate[$key])->first()->name_activity_type;
+                    $report[] = 'activity_type' . ' ( ' . $activityBefore . ' ) to ( ' . $activityAfter . ' )';
                     break;
                 case 'presystem':
-                    $presystem_value = company::where('id_Company', $value)
-                        ->first()->name_company;
-                    $report[] = 'presystem' . ' ( ' . $presystem_value . ' ) ';
+                    $presystemBefore = company::where('id_Company', $dataBeforeUpdate[$key])->first()->name_company;
+                    $presystemAfter = company::where('id_Company', $dataAfterUpdate[$key])->first()->name_company;
+                    $report[] = 'presystem' . ' ( ' . $presystemBefore . ' ) to ( ' . $presystemAfter . ' )';
                     break;
                 default:
-                    $report[] = $key . ' ( ' . $value . ' ) ';
+                    $report[] = $key . ' ( ' . $dataBeforeUpdate[$key] . ' ) to ( ' . $dataAfterUpdate[$key] . ' )';
                     break;
             }
         }
