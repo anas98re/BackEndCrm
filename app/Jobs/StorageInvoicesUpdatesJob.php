@@ -112,15 +112,16 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
                     break;
             }
         }
-        info('$report for invoicess: ', array($report));
-        $reportMessage = implode("\n", $report);
+        return $report;
+        // info('$report for invoicess: ', array($report));
+        // $reportMessage = implode("\n", $report);
 
-        $clientsUpdateReport = new invoicesUpdateReport();
-        $clientsUpdateReport->changesData = $reportMessage;
-        $clientsUpdateReport->edit_date = $this->dateUpdate;
-        $clientsUpdateReport->user_id = (int) $this->userId;
-        $clientsUpdateReport->invoice_id = $this->invoiceId;
-        $clientsUpdateReport->update_source = $this->update_source;
-        $clientsUpdateReport->save();
+        // $clientsUpdateReport = new invoicesUpdateReport();
+        // $clientsUpdateReport->changesData = $reportMessage;
+        // $clientsUpdateReport->edit_date = $this->dateUpdate;
+        // $clientsUpdateReport->user_id = (int) $this->userId;
+        // $clientsUpdateReport->invoice_id = $this->invoiceId;
+        // $clientsUpdateReport->update_source = $this->update_source;
+        // $clientsUpdateReport->save();
     }
 }
