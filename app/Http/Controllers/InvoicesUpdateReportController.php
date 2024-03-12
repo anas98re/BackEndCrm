@@ -190,20 +190,20 @@ class InvoicesUpdateReportController extends Controller
             $userId = null;
         }
         $update_source = 'تغيير بيانات الفاتورة';
-
+        $id_invoice_product = null;
         StorageInvoicesUpdatesJob::dispatch(
             $invoiceId,
             $dataBeforeUpdate,
             $dataAfterUpdate,
             $dateUpdate,
             $userId,
-            $update_source
+            $update_source,
+            $id_invoice_product
         );
     }
     public function addInvoicesUpdateReport(Request $request)
     {
         info('request->all() for addInvoicesUpdateReport:', $request->all());
-        info('first');
         $invoiceId = $request->input('id_invoice');
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
@@ -215,14 +215,15 @@ class InvoicesUpdateReportController extends Controller
         }
         $update_source = 'تعديل الفاتورة';
 
-        info('second');
+        $id_invoice_product = null;
         StorageInvoicesUpdatesJob::dispatch(
             $invoiceId,
             $dataBeforeUpdate,
             $dataAfterUpdate,
             $dateUpdate,
             $userId,
-            $update_source
+            $update_source,
+            $id_invoice_product
         );
         info('third');
     }
