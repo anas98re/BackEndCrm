@@ -87,8 +87,35 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
                     }
                     $report[] = $key . ': (' . $agentBefore . ') TO (' . $agentAfter . ')';
                     break;
+                case 'type_seller':
+                    // if($dataAfterUpdate[$key] == 0)
+                    // $agentAfter = 'موزع';
+                    // elseif($dataAfterUpdate[$key] == 1)
+                    // $agentAfter = 'وكيل';
+                    // elseif($dataAfterUpdate[$key] == 2)
+                    // $agentAfter = 'متعاون';
+                    // else
+                    // $agentAfter = 'موظف';
+
+                    // if($dataBeforeUpdate[$key] == 0)
+                    // $agentBefore = 'موزع';
+                    // elseif($dataBeforeUpdate[$key] == 1)
+                    // $agentBefore = 'وكيل';
+                    // elseif($dataBeforeUpdate[$key] == 2)
+                    // $agentBefore = 'متعاون';
+                    // else
+                    // $agentBefore = 'موظف';
+
+                    // $report[] = $key . ': (' . $agentBefore . ') TO (' . $agentAfter . ')';
+
+                    $typeSellerOptions = ['موزع', 'وكيل', 'متعاون', 'موظف'];
+
+                    $typeSellerAfter = $typeSellerOptions[$dataAfterUpdate[$key]] ?? 'موظف';
+                    $typeSellerBefore = $typeSellerOptions[$dataBeforeUpdate[$key]] ?? 'موظف';
+
+                    $report[] = $key . ': (' . $typeSellerBefore . ') TO (' . $typeSellerAfter . ')';
                 default:
-                    $report[] = $key . ': ( ' . $dataBeforeUpdate[$key] . ') TO (' . $dataAfterUpdate[$key] . ' ) ';
+                    $report[] = $key . ': (' . $dataBeforeUpdate[$key] . ') TO (' . $dataAfterUpdate[$key] . ' ) ';
                     break;
             }
         }
