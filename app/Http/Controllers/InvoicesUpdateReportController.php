@@ -182,9 +182,13 @@ class InvoicesUpdateReportController extends Controller
         $invoiceId = $request->input('id_invoice');
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
-        $dateUpdate = $request->input('dateUpdate');
-        $userId = $request->input('fk_idUser');
-        $update_source = 'تغيرر بيانات الفاتورة';
+        $dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();
+        if ($request->input('fk_idUser') != 'Error: Failed to fetch data from the API') {
+            $userId = $request->input('fk_idUser');
+        } else {
+            $userId = null;
+        }
+        $update_source = 'تغيير بيانات الفاتورة';
 
         StorageInvoicesUpdatesJob::dispatch(
             $invoiceId,
