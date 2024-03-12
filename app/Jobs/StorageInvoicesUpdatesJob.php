@@ -47,18 +47,19 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
         $dataAfterUpdate = $this->dataAfterUpdate;
 
         $differences = array_diff_assoc($dataAfterUpdate, $dataBeforeUpdate);
+        if ($differences) {
+            $report = $this->generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate);
 
-        $report = $this->generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate);
+            $reportMessage = implode("\n", $report);
 
-        $reportMessage = implode("\n", $report);
-
-        $clientsUpdateReport = new invoicesUpdateReport();
-        $clientsUpdateReport->changesData = $reportMessage;
-        $clientsUpdateReport->edit_date = $this->dateUpdate;
-        $clientsUpdateReport->user_id = (int) $this->userId;
-        $clientsUpdateReport->invoice_id = $this->invoiceId;
-        $clientsUpdateReport->update_source = $this->update_source;
-        $clientsUpdateReport->save();
+            $clientsUpdateReport = new invoicesUpdateReport();
+            $clientsUpdateReport->changesData = $reportMessage;
+            $clientsUpdateReport->edit_date = $this->dateUpdate;
+            $clientsUpdateReport->user_id = (int) $this->userId;
+            $clientsUpdateReport->invoice_id = $this->invoiceId;
+            $clientsUpdateReport->update_source = $this->update_source;
+            $clientsUpdateReport->save();
+        }
     }
 
     private function generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate)
