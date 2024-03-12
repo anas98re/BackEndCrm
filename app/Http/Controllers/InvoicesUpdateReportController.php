@@ -203,11 +203,11 @@ class InvoicesUpdateReportController extends Controller
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
         $dateUpdate = $request->input('dateUpdate');
-        // if ($request->input('fk_idUser') != 'Error: Failed to fetch data from the API') {
+        if ($request->input('fk_idUser') != 'Error: Failed to fetch data from the API') {
             $userId = $request->input('fk_idUser');
-        // } else {
-        //     $userId = auth('sanctum')->user()->id_user;
-        // }
+        } else {
+            $userId = null;
+        }
         $update_source = 'تعديل الفاتورة';
 
         info('second');
