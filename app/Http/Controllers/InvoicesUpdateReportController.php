@@ -236,7 +236,7 @@ class InvoicesUpdateReportController extends Controller
         $dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();
         $fk_user_update = $request->input('fk_user_update');
 
-        $update_source = 'منتجات الفاتورة';
+        $update_source = 'تعديل منتجات الفاتورة';
 
         $id_invoice = invoice_product::where('id_invoice_product', $id_invoice_product)
             ->first()->fk_id_invoice;
@@ -246,7 +246,8 @@ class InvoicesUpdateReportController extends Controller
             $dataAfterUpdate,
             $dateUpdate,
             $fk_user_update,
-            $update_source
+            $update_source,
+            $id_invoice_product
         );
     }
 }
