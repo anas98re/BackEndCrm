@@ -239,10 +239,10 @@ class InvoicesUpdateReportController extends Controller
 
         $update_source = 'تعديل منتجات الفاتورة';
 
-        $id_invoice = invoice_product::where('id_invoice_product', $id_invoice_product)
+        $invoiceId = invoice_product::where('id_invoice_product', $id_invoice_product)
             ->first()->fk_id_invoice;
         StorageInvoicesUpdatesJob::dispatch(
-            $id_invoice,
+            $invoiceId,
             $dataBeforeUpdate,
             $dataAfterUpdate,
             $dateUpdate,
