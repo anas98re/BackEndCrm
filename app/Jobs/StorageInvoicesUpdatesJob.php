@@ -71,8 +71,14 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
                     $report[] = $key . ': (' . $participateBefore . ') TO (' . $participateAfter . ')';
                     break;
                 case 'fk_agent':
-                    $agentBefore = agent::where('id_agent', $dataBeforeUpdate[$key])->first()->name_agent;
-                    $agentAfter = agent::where('id_agent', $dataBeforeUpdate[$key])->first()->name_agent;
+                    $agentBefore = 'not_found';
+                    $agentAfter = 'not_found';
+                    if ($dataBeforeUpdate[$key]) {
+                        $agentBefore = agent::where('id_agent', $dataBeforeUpdate[$key])->first()->name_agent;
+                    }
+                    if ($dataAfterUpdate[$key]) {
+                        $agentAfter = agent::where('id_agent', $dataAfterUpdate[$key])->first()->name_agent;
+                    }
                     $report[] = $key . ': (' . $agentBefore . ') TO (' . $agentAfter . ')';
                     break;
                 default:
