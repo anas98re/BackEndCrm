@@ -24,17 +24,26 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
     protected $dateUpdate;
     protected $userId;
     protected $update_source;
+    protected $id_invoice_product;
     /**
      * Create a new job instance.
      */
-    public function __construct($invoiceId, $dataBeforeUpdate, $dataAfterUpdate, $dateUpdate, $userId, $update_source)
-    {
+    public function __construct(
+        $invoiceId,
+        $dataBeforeUpdate,
+        $dataAfterUpdate,
+        $dateUpdate,
+        $userId,
+        $update_source,
+        $id_invoice_product
+    ) {
         $this->invoiceId = $invoiceId;
         $this->dataBeforeUpdate = $dataBeforeUpdate;
         $this->dataAfterUpdate = $dataAfterUpdate;
         $this->dateUpdate = $dateUpdate;
         $this->userId = $userId;
         $this->update_source = $update_source;
+        $this->id_invoice_product = $id_invoice_product;
     }
 
     /**
@@ -58,6 +67,7 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
             $clientsUpdateReport->user_id = (int) $this->userId;
             $clientsUpdateReport->invoice_id = $this->invoiceId;
             $clientsUpdateReport->update_source = $this->update_source;
+            $clientsUpdateReport->id_invoice_product = $this->id_invoice_product;
             $clientsUpdateReport->save();
         }
     }
