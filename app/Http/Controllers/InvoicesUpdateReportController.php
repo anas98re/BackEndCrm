@@ -225,4 +225,25 @@ class InvoicesUpdateReportController extends Controller
         );
         info('third');
     }
+
+    public function addInvoiceProductReport(Request $request)
+    {
+        info('request->all() for addInvoiceProductReport:', $request->all());
+        $id_invoice_product = $request->input('id_invoice_product');
+        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+        $dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();
+        $fk_user_update = $request->input('fk_user_update');
+
+        $update_source = 'اضافة منتجات الفاتورة';
+
+        StorageInvoicesUpdatesJob::dispatch(
+            $id_invoice_product,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $dateUpdate,
+            $fk_user_update,
+            $update_source
+        );
+    }
 }
