@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateinvoicesUpdateReportRequest;
 use App\Jobs\StorageInvoicesUpdatesJob;
 use App\Models\client_invoice;
 use App\Models\clients;
+use App\Models\invoice_product;
 use App\Models\regoin;
 use App\Models\users;
 use Carbon\Carbon;
@@ -237,8 +238,10 @@ class InvoicesUpdateReportController extends Controller
 
         $update_source = 'اضافة منتجات الفاتورة';
 
+        $id_invoice = invoice_product::where('id_invoice_product', $id_invoice_product)
+            ->first()->fk_id_invoice;
         StorageInvoicesUpdatesJob::dispatch(
-            $id_invoice_product,
+            $id_invoice,
             $dataBeforeUpdate,
             $dataAfterUpdate,
             $dateUpdate,
