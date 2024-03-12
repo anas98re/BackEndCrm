@@ -29,6 +29,9 @@ class AppSrevices extends JsonResponeService
 
         $modifiedFilename = str_replace(' ', '_', $filenameWithoutExtension) . '_' . $randomNumber;
 
+        // Apply the regular expression to remove special characters
+        $modifiedFilename = preg_replace('/[^A-Za-z0-9_.]/', '', $modifiedFilename);
+
         // Combine the filename and extension
         $generatedFilename = $modifiedFilename . '.' . $fileExtension;
 
