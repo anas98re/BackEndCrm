@@ -66,8 +66,14 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
         foreach ($differences as $key => $value) {
             switch ($key) {
                 case 'participate_fk':
-                    $participateBefore = participate::where('id_participate', $dataBeforeUpdate[$key])->first()->name_participate;
-                    $participateAfter = participate::where('id_participate', $dataAfterUpdate[$key])->first()->name_participate;
+                    $participateBefore = 'not_found';
+                    $participateAfter = 'not_found';
+                    if ($dataBeforeUpdate[$key]) {
+                        $participateBefore = participate::where('id_participate', $dataBeforeUpdate[$key])->first()->name_participate;
+                    }
+                    if ($dataAfterUpdate[$key]) {
+                        $participateAfter = participate::where('id_participate', $dataAfterUpdate[$key])->first()->name_participate;
+                    }
                     $report[] = $key . ': (' . $participateBefore . ') TO (' . $participateAfter . ')';
                     break;
                 case 'fk_agent':
