@@ -5,6 +5,8 @@ namespace App\Jobs;
 use App\Models\agent;
 use App\Models\invoicesUpdateReport;
 use App\Models\participate;
+use App\Models\regoin;
+use App\Models\users;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -88,32 +90,23 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
                     $report[] = $key . ': (' . $agentBefore . ') TO (' . $agentAfter . ')';
                     break;
                 case 'type_seller':
-                    // if($dataAfterUpdate[$key] == 0)
-                    // $agentAfter = 'موزع';
-                    // elseif($dataAfterUpdate[$key] == 1)
-                    // $agentAfter = 'وكيل';
-                    // elseif($dataAfterUpdate[$key] == 2)
-                    // $agentAfter = 'متعاون';
-                    // else
-                    // $agentAfter = 'موظف';
-
-                    // if($dataBeforeUpdate[$key] == 0)
-                    // $agentBefore = 'موزع';
-                    // elseif($dataBeforeUpdate[$key] == 1)
-                    // $agentBefore = 'وكيل';
-                    // elseif($dataBeforeUpdate[$key] == 2)
-                    // $agentBefore = 'متعاون';
-                    // else
-                    // $agentBefore = 'موظف';
-
-                    // $report[] = $key . ': (' . $agentBefore . ') TO (' . $agentAfter . ')';
-
                     $typeSellerOptions = ['موزع', 'وكيل', 'متعاون', 'موظف'];
 
                     $typeSellerAfter = $typeSellerOptions[$dataAfterUpdate[$key]] ?? 'موظف';
                     $typeSellerBefore = $typeSellerOptions[$dataBeforeUpdate[$key]] ?? 'موظف';
 
-                    $report[] = $key . ': (' . $typeSellerBefore . ') TO (' . $typeSellerAfter . ')';
+                    $report[] = 'typeSellerName' . ': (' . $typeSellerBefore . ') TO (' . $typeSellerAfter . ')';
+                    break;
+                case 'fk_idUser':
+                    $userBefore = users::where('id_user', $dataBeforeUpdate[$key])->first()->nameUser;
+                    $userAfter = users::where('id_user', $dataAfterUpdate[$key])->first()->nameUser;
+                    $report[] = 'userName' . ': (' . $userBefore . ') TO (' . $userAfter . ') ';
+                    break;
+                case 'fk_regoin_invoice':
+                    $regoinBefore = regoin::where('id_regoin', $dataBeforeUpdate[$key])->first()->name_regoin;
+                    $regoinAfter = regoin::where('id_regoin', $dataAfterUpdate[$key])->first()->name_regoin;
+                    $report[] = 'regoinName' . ': (' . $regoinBefore . ') TO (' . $regoinAfter . ') ';
+                    break;
                 default:
                     $report[] = $key . ': (' . $dataBeforeUpdate[$key] . ') TO (' . $dataAfterUpdate[$key] . ' ) ';
                     break;
