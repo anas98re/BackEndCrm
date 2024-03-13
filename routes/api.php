@@ -80,6 +80,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('addTask', [TaskController::class, 'addTask']);
     Route::post('editTask/{id}', [TaskController::class, 'editTask']);
     Route::post('addGroup', [GroupController::class, 'addGroup']);
+    Route::post('editGroup/{id}', [GroupController::class, 'editGroup']);
     Route::post('assignTaskToEmployee/{id}', [TaskController::class, 'assignTaskToEmployee']);
     Route::post('changeStatuseTask/{id}', [TaskController::class, 'changeStatuseTask']);
     Route::get('viewTasksByIdAssigned/{id}', [TaskController::class, 'viewTasksByIdAssigned']);

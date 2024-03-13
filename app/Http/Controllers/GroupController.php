@@ -7,6 +7,7 @@ use App\Http\Requests\StoretaskRequest;
 use App\Http\Requests\TaskManagementRequests\GroupRequest;
 
 use App\Services\TaskManangement\GroupService;
+use Illuminate\Http\Request;
 
 class GroupController extends Controller
 {
@@ -20,6 +21,12 @@ class GroupController extends Controller
     public function addGroup(GroupRequest $request)
     {
         $data = $this->MyService->addGroup($request);
-        return $this->sendResponse($data,'Done');
+        return $this->sendResponse($data, 'Done');
+    }
+
+    public function editGroup(Request $request, $id)
+    {
+        $data = $this->MyService->editGroup($request, $id);
+        return $this->sendResponse($data, 'Done');
     }
 }
