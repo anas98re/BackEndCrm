@@ -2,7 +2,12 @@
 
 namespace App\Jobs;
 
+use App\Models\activity_type;
 use App\Models\agent;
+use App\Models\city;
+use App\Models\company;
+use App\Models\level;
+use App\Models\managements;
 use App\Models\participate;
 use App\Models\regoin;
 use App\Models\updatesReport;
@@ -78,6 +83,23 @@ class StorageUpdates implements ShouldQueue
         $report = [];
         foreach ($differences as $key => $value) {
             switch ($key) {
+                //clients
+                case 'city':
+                    $cityBefore = city::where('id_city', $dataBeforeUpdate[$key])->first()->name_city;
+                    $cityAfter = city::where('id_city', $dataAfterUpdate[$key])->first()->name_city;
+                    $report[] = $key . ': (' . $cityBefore . ') TO (' . $cityAfter . ')';
+                    break;
+                case 'activity_type_fk':
+                    $activityBefore = activity_type::where('id_activity_type', $dataBeforeUpdate[$key])->first()->name_activity_type;
+                    $activityAfter = activity_type::where('id_activity_type', $dataAfterUpdate[$key])->first()->name_activity_type;
+                    $report[] = 'activity_type' . ': (' . $activityBefore . ') TO (' . $activityAfter . ')';
+                    break;
+                case 'presystem':
+                    $presystemBefore = company::where('id_Company', $dataBeforeUpdate[$key])->first()->name_company;
+                    $presystemAfter = company::where('id_Company', $dataAfterUpdate[$key])->first()->name_company;
+                    $report[] = 'presystem' . ': (' . $presystemBefore . ') TO (' . $presystemAfter . ')';
+                    break;
+                //Invoices
                 case 'participate_fk':
                     $participateBefore = 'not_found';
                     $participateAfter = 'not_found';
@@ -117,6 +139,22 @@ class StorageUpdates implements ShouldQueue
                     $regoinBefore = regoin::where('id_regoin', $dataBeforeUpdate[$key])->first()->name_regoin;
                     $regoinAfter = regoin::where('id_regoin', $dataAfterUpdate[$key])->first()->name_regoin;
                     $report[] = 'regoinName' . ': (' . $regoinBefore . ') TO (' . $regoinAfter . ') ';
+                    break;
+                //users
+                case 'type_administration':
+                    $type_administrationBefore = managements::where('idmange', $dataBeforeUpdate[$key])->first()->name_mange;
+                    $type_administrationAfter = managements::where('idmange', $dataAfterUpdate[$key])->first()->name_mange;
+                    $report[] = 'type_administration' . ': (' . $type_administrationBefore . ') TO (' . $type_administrationAfter . ') ';
+                    break;
+                case 'fk_regoin':
+                    $regoinBefore = regoin::where('id_regoin', $dataBeforeUpdate[$key])->first()->name_regoin;
+                    $regoinAfter = regoin::where('id_regoin', $dataAfterUpdate[$key])->first()->name_regoin;
+                    $report[] = 'regoinName' . ': (' . $regoinBefore . ') TO (' . $regoinAfter . ') ';
+                    break;
+                case 'type_level':
+                    $levelBefore = level::where('id_level', $dataBeforeUpdate[$key])->first()->name_level;
+                    $levelAfter = level::where('id_level', $dataAfterUpdate[$key])->first()->name_level;
+                    $report[] = 'levelName' . ': (' . $levelBefore . ') TO (' . $levelAfter . ') ';
                     break;
                 default:
                     $report[] = $key . ': (' . $dataBeforeUpdate[$key] . ') TO (' . $dataAfterUpdate[$key] . ' ) ';
