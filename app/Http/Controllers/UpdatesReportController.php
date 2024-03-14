@@ -28,10 +28,24 @@ class UpdatesReportController extends Controller
     {
         info('request->all() for addUserUpdateReport:', $request->all());
 
-        $dataAfterUpdateForMainCity = json_decode($request->input('dataAfterUpdateForMainCity'), true)[0];
-        $dataBeforeUpdateForMainCity = json_decode($request->input('dataBeforeUpdateForMainCity'), true)[0];
-        info('dataAfterUpdateForMainCity ', array($dataAfterUpdateForMainCity));
-        info('dataBeforeUpdateForMainCity ', array($dataBeforeUpdateForMainCity));
+        $dataAfterUpdateForMainCity = json_decode($request->input('dataAfterUpdateForMainCity'), true);
+
+        $nameMainCitiesAfter = [];
+        foreach ($dataAfterUpdateForMainCity as $item) {
+            $namemaincity = $item['namemaincity'];
+            $nameMainCitiesAfter[] = $namemaincity;
+        }
+
+        $dataBeforeUpdateForMainCity = json_decode($request->input('dataBeforeUpdateForMainCity'), true);
+
+        $nameMainCitiesBefor = [];
+        foreach ($dataBeforeUpdateForMainCity as $item) {
+            $namemaincity = $item['namemaincity'];
+            $nameMainCitiesBefor[] = $namemaincity;
+        }
+
+        info('dataAfterUpdateForMainCity ', array($nameMainCitiesAfter));
+        info('dataBeforeUpdateForMainCity ', array($nameMainCitiesBefor));
         $differencesMainCity = array_diff_assoc($dataAfterUpdateForMainCity, $dataBeforeUpdateForMainCity);
 
         info('$differences for MainCity: ', array($differencesMainCity));
