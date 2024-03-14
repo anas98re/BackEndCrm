@@ -78,7 +78,8 @@ class UpdatesReportController extends Controller
             $dataAfterUpdate,
             $userId,
             $update_source,
-            $description
+            $description,
+            $nameMainCitiesBefor
         );
     }
 }

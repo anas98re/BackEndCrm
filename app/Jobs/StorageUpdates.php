@@ -31,6 +31,7 @@ class StorageUpdates implements ShouldQueue
     protected $userId;
     protected $update_source;
     protected $description;
+    protected $nameMainCitiesBefor;
     /**
      * Create a new job instance.
      */
@@ -41,7 +42,8 @@ class StorageUpdates implements ShouldQueue
         $dataAfterUpdate,
         $userId,
         $update_source,
-        $description
+        $description,
+        $nameMainCitiesBefor
     ) {
         $this->modelId = $modelId;
         $this->model = $model;
@@ -51,6 +53,7 @@ class StorageUpdates implements ShouldQueue
         $this->userId = $userId;
         $this->update_source = $update_source;
         $this->description = $description;
+        $this->nameMainCitiesBefor = $nameMainCitiesBefor;
     }
 
     public function handle(): void
@@ -58,9 +61,11 @@ class StorageUpdates implements ShouldQueue
         $dataBeforeUpdate = $this->dataBeforeUpdate;
         $dataAfterUpdate = $this->dataAfterUpdate;
 
+        //for just user
+        $nameMainCitiesBefor = $this->nameMainCitiesBefor ? $this->nameMainCitiesBefor : null;
         $differences = array_diff_assoc($dataAfterUpdate, $dataBeforeUpdate);
         if ($differences) {
-            $report = $this->generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate);
+            $report = $this->generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate, $nameMainCitiesBefor);
 
             $reportMessage = implode("\n", $report);
 
@@ -76,7 +81,7 @@ class StorageUpdates implements ShouldQueue
         }
     }
 
-    private function generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate)
+    private function generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate, $nameMainCitiesBefor)
     {
         info('$differences for invoicess: ', array($differences));
         $report = [];
@@ -172,7 +177,7 @@ class StorageUpdates implements ShouldQueue
                 //     break;
                 case 'nameMainCitiesAfter':
                     $nameMainCitiesAfter = implode(', ', $dataAfterUpdate[$key]);
-                    $nameMainCitiesBefore = implode(', ', $dataBeforeUpdate[$key]);
+                    $nameMainCitiesBefore = implode(', ', $nameMainCitiesBefor);
                     $report[] = 'MainCities: (' .$nameMainCitiesBefore.') TO (' . $nameMainCitiesAfter . ')';
                     break;
 
