@@ -166,13 +166,14 @@ class StorageUpdates implements ShouldQueue
                 //         $report[] = $key . ': (not found) TO (not found)';
                 //     }
                 //     break;
-                case 'nameMainCitiesBefore':
-                    $nameMainCitiesBefore = implode(', ', $dataBeforeUpdate[$key]);
-                    $report[] = $key . ': (' . $nameMainCitiesBefore . ') TO (not found)';
-                    break;
+                // case 'nameMainCitiesBefore':
+                //     $nameMainCitiesBefore = implode(', ', $dataBeforeUpdate[$key]);
+                //     $report[] = $key . ': (' . $nameMainCitiesBefore . ') TO (not found)';
+                //     break;
                 case 'nameMainCitiesAfter':
                     $nameMainCitiesAfter = implode(', ', $dataAfterUpdate[$key]);
-                    $report[] = $key . ': (not found) TO (' . $nameMainCitiesAfter . ')';
+                    $nameMainCitiesBefore = implode(', ', $dataBeforeUpdate[$key]);
+                    $report[] = 'MainCities: (' .$nameMainCitiesBefore.') TO (' . $nameMainCitiesAfter . ')';
                     break;
 
                 default:
