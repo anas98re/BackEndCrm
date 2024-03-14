@@ -25,7 +25,7 @@ class UpdatesReportController extends Controller
 
     public function addUserUpdateReport(Request $request)
     {
-        info('request->all() for addInvoiceProductReport:', $request->all());
+        info('request->all() for addUserUpdateReport:', $request->all());
         $modelId = $request->input('id_user');
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
