@@ -11,6 +11,8 @@ class updatesReport extends Model
 
     protected $table = 'updates_reports';
 
+    public $timestamps = false;
+    
     protected $fillable = [
         'changesData',
         'model',
