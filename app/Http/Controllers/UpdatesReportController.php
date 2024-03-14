@@ -31,7 +31,7 @@ class UpdatesReportController extends Controller
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
         $userId = $request->input('fk_user_update');
-        $userName = users::where('id_user', $userId)->nameUser;
+        $userName = users::where('id_user', $userId)->first()->nameUser;
         $description = "User updated by $userName, using route: $this->routePattern from IP: $this->ip.";
         $update_source = 'تعديل بيانات المستخدم ';
         $model = 'users';
