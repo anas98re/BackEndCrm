@@ -64,8 +64,7 @@ Route::post('addCommentClientMention', [ClientCommentMentionController::class, '
 Route::post('storageInvoicesUpdates', [InvoicesUpdateReportController::class, 'storageInvoicesUpdates']);
 Route::post('addInvoicesUpdateReport', [InvoicesUpdateReportController::class, 'addInvoicesUpdateReport']);
 Route::post('addInvoiceProductReport', [InvoicesUpdateReportController::class, 'addInvoiceProductReport']);
-//reports
-Route::post('addUserUpdateReport', [UpdatesReportController::class, 'addUserUpdateReport']);
+
 //cllients
 Route::post('storageClientsUpdates', [ClientsUpdateReportController::class, 'storageClientsUpdates']);
 
@@ -153,6 +152,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // links Excel
     Route::get('export', [ImportantLinkController::class, 'export']);
     Route::post('import', [ImportantLinkController::class, 'import']);
+
+    //reports
+    Route::post('addUserUpdateReport', [UpdatesReportController::class, 'addUserUpdateReport']);
 });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);
