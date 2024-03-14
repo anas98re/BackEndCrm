@@ -55,7 +55,6 @@ class StorageUpdates implements ShouldQueue
 
     public function handle(): void
     {
-        info('fourth');
         $dataBeforeUpdate = $this->dataBeforeUpdate;
         $dataAfterUpdate = $this->dataAfterUpdate;
 
