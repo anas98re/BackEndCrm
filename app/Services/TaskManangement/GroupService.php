@@ -31,4 +31,23 @@ class GroupService extends JsonResponeService
             DB::rollBack();
         }
     }
+
+    public function editGroup($request, $id)
+    {
+
+        try {
+            DB::beginTransaction();
+
+            $tsks_group = tsks_group::find($id);
+            $tsks_group->update($request->all());
+            // $tsks_group->save();
+
+            DB::commit();
+
+            return $tsks_group;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
 }

@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateinvoicesUpdateReportRequest;
 use App\Jobs\StorageInvoicesUpdatesJob;
 use App\Models\client_invoice;
 use App\Models\clients;
+use App\Models\invoice_product;
 use App\Models\regoin;
 use App\Models\users;
 use Carbon\Carbon;
@@ -140,7 +141,7 @@ class InvoicesUpdateReportController extends Controller
         return $this->sendResponse($invoicesUpdateReport, 'Updated success');
     }
 
-    public function storageInvoicesUpdates(Request $request)
+    public function storageInvoicesUpdates2(Request $request)
     {
         info('$request->all() for storageInvoicesUpdates:', $request->all());
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
@@ -177,10 +178,32 @@ class InvoicesUpdateReportController extends Controller
         $invoicesUpdateReport->save();
     }
 
+    public function storageInvoicesUpdates(Request $request)
+    {
+        $invoiceId = $request->input('id_invoice');
+        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+        $dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();
+        if ($request->input('fk_idUser') != 'Error: Failed to fetch data from the API') {
+            $userId = $request->input('fk_idUser');
+        } else {
+            $userId = null;
+        }
+        $update_source = 'تغيير بيانات الفاتورة';
+        $id_invoice_product = null;
+        StorageInvoicesUpdatesJob::dispatch(
+            $invoiceId,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $dateUpdate,
+            $userId,
+            $update_source,
+            $id_invoice_product
+        );
+    }
     public function addInvoicesUpdateReport(Request $request)
     {
         info('request->all() for addInvoicesUpdateReport:', $request->all());
-        info('first');
         $invoiceId = $request->input('id_invoice');
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
@@ -188,10 +211,44 @@ class InvoicesUpdateReportController extends Controller
         if ($request->input('fk_idUser') != 'Error: Failed to fetch data from the API') {
             $userId = $request->input('fk_idUser');
         } else {
-            $userId = auth('sanctum')->user()->id_user;
+            $userId = null;
         }
-        info('second');
-        StorageInvoicesUpdatesJob::dispatch($invoiceId, $dataBeforeUpdate, $dataAfterUpdate, $dateUpdate, $userId);
+        $update_source = 'تعديل الفاتورة';
+
+        $id_invoice_product = null;
+        StorageInvoicesUpdatesJob::dispatch(
+            $invoiceId,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $dateUpdate,
+            $userId,
+            $update_source,
+            $id_invoice_product
+        );
         info('third');
+    }
+
+    public function addInvoiceProductReport(Request $request)
+    {
+        info('request->all() for addInvoiceProductReport:', $request->all());
+        $id_invoice_product = $request->input('id_invoice_product');
+        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+        $dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();
+        $fk_user_update = $request->input('fk_user_update');
+
+        $update_source = 'تعديل منتجات الفاتورة';
+
+        $invoiceId = invoice_product::where('id_invoice_product', $id_invoice_product)
+            ->first()->fk_id_invoice;
+        StorageInvoicesUpdatesJob::dispatch(
+            $invoiceId,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $dateUpdate,
+            $fk_user_update,
+            $update_source,
+            $id_invoice_product
+        );
     }
 }

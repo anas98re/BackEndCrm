@@ -2,82 +2,108 @@
 
 namespace App\Jobs;
 
+use App\Models\activity_type;
 use App\Models\agent;
-use App\Models\invoicesUpdateReport;
+use App\Models\city;
+use App\Models\company;
+use App\Models\level;
+use App\Models\managements;
 use App\Models\participate;
 use App\Models\regoin;
+use App\Models\updatesReport;
 use App\Models\users;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Arr;
 
-class StorageInvoicesUpdatesJob implements ShouldQueue
+class StorageUpdates implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $invoiceId;
+    protected $modelId;
+    protected $model;
     protected $dataBeforeUpdate;
     protected $dataAfterUpdate;
     protected $dateUpdate;
     protected $userId;
     protected $update_source;
-    protected $id_invoice_product;
+    protected $description;
+    protected $nameMainCitiesBefor;
     /**
      * Create a new job instance.
      */
     public function __construct(
-        $invoiceId,
+        $modelId,
+        $model,
         $dataBeforeUpdate,
         $dataAfterUpdate,
-        $dateUpdate,
         $userId,
         $update_source,
-        $id_invoice_product
+        $description,
+        $nameMainCitiesBefor
     ) {
-        $this->invoiceId = $invoiceId;
+        $this->modelId = $modelId;
+        $this->model = $model;
         $this->dataBeforeUpdate = $dataBeforeUpdate;
         $this->dataAfterUpdate = $dataAfterUpdate;
-        $this->dateUpdate = $dateUpdate;
+        $this->dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();;
         $this->userId = $userId;
         $this->update_source = $update_source;
-        $this->id_invoice_product = $id_invoice_product;
+        $this->description = $description;
+        $this->nameMainCitiesBefor = $nameMainCitiesBefor;
     }
 
-    /**
-     * Execute the job.
-     */
-    public function handle()
+    public function handle(): void
     {
-        info('fourth');
         $dataBeforeUpdate = $this->dataBeforeUpdate;
         $dataAfterUpdate = $this->dataAfterUpdate;
 
+        //for just user
+        $nameMainCitiesBefor = $this->nameMainCitiesBefor ? $this->nameMainCitiesBefor : null;
         $differences = array_diff_assoc($dataAfterUpdate, $dataBeforeUpdate);
         if ($differences) {
-            $report = $this->generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate);
+            $report = $this->generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate, $nameMainCitiesBefor);
 
             $reportMessage = implode("\n", $report);
 
-            $clientsUpdateReport = new invoicesUpdateReport();
+            $clientsUpdateReport = new updatesReport();
             $clientsUpdateReport->changesData = $reportMessage;
-            $clientsUpdateReport->edit_date = $this->dateUpdate;
+            $clientsUpdateReport->model = $this->model;
+            $clientsUpdateReport->model_id = $this->modelId;
             $clientsUpdateReport->user_id = (int) $this->userId;
-            $clientsUpdateReport->invoice_id = $this->invoiceId;
-            $clientsUpdateReport->update_source = $this->update_source;
-            $clientsUpdateReport->id_invoice_product = $this->id_invoice_product ? $this->id_invoice_product : null;
+            $clientsUpdateReport->edit_date = $this->dateUpdate;
+            $clientsUpdateReport->source = $this->update_source;
+            $clientsUpdateReport->description = $this->description;
             $clientsUpdateReport->save();
         }
     }
 
-    private function generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate)
+    private function generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate, $nameMainCitiesBefor)
     {
         info('$differences for invoicess: ', array($differences));
         $report = [];
         foreach ($differences as $key => $value) {
             switch ($key) {
+                //clients
+                case 'city':
+                    $cityBefore = city::where('id_city', $dataBeforeUpdate[$key])->first()->name_city;
+                    $cityAfter = city::where('id_city', $dataAfterUpdate[$key])->first()->name_city;
+                    $report[] = $key . ': (' . $cityBefore . ') TO (' . $cityAfter . ')';
+                    break;
+                case 'activity_type_fk':
+                    $activityBefore = activity_type::where('id_activity_type', $dataBeforeUpdate[$key])->first()->name_activity_type;
+                    $activityAfter = activity_type::where('id_activity_type', $dataAfterUpdate[$key])->first()->name_activity_type;
+                    $report[] = 'activity_type' . ': (' . $activityBefore . ') TO (' . $activityAfter . ')';
+                    break;
+                case 'presystem':
+                    $presystemBefore = company::where('id_Company', $dataBeforeUpdate[$key])->first()->name_company;
+                    $presystemAfter = company::where('id_Company', $dataAfterUpdate[$key])->first()->name_company;
+                    $report[] = 'presystem' . ': (' . $presystemBefore . ') TO (' . $presystemAfter . ')';
+                    break;
+                //Invoices
                 case 'participate_fk':
                     $participateBefore = 'not_found';
                     $participateAfter = 'not_found';
@@ -118,6 +144,28 @@ class StorageInvoicesUpdatesJob implements ShouldQueue
                     $regoinAfter = regoin::where('id_regoin', $dataAfterUpdate[$key])->first()->name_regoin;
                     $report[] = 'regoinName' . ': (' . $regoinBefore . ') TO (' . $regoinAfter . ') ';
                     break;
+                //users
+                case 'type_administration':
+                    $type_administrationBefore = managements::where('idmange', $dataBeforeUpdate[$key])->first()->name_mange;
+                    $type_administrationAfter = managements::where('idmange', $dataAfterUpdate[$key])->first()->name_mange;
+                    $report[] = 'type_administration' . ': (' . $type_administrationBefore . ') TO (' . $type_administrationAfter . ') ';
+                    break;
+                case 'fk_regoin':
+                    $regoinBefore = regoin::where('id_regoin', $dataBeforeUpdate[$key])->first()->name_regoin;
+                    $regoinAfter = regoin::where('id_regoin', $dataAfterUpdate[$key])->first()->name_regoin;
+                    $report[] = 'regoinName' . ': (' . $regoinBefore . ') TO (' . $regoinAfter . ') ';
+                    break;
+                case 'type_level':
+                    $levelBefore = level::where('id_level', $dataBeforeUpdate[$key])->first()->name_level;
+                    $levelAfter = level::where('id_level', $dataAfterUpdate[$key])->first()->name_level;
+                    $report[] = 'levelName' . ': (' . $levelBefore . ') TO (' . $levelAfter . ') ';
+                    break;
+                case 'nameMainCitiesAfter':
+                    $nameMainCitiesAfter = implode(', ', $dataAfterUpdate[$key]);
+                    $nameMainCitiesBefore = implode(', ', $nameMainCitiesBefor);
+                    $report[] = 'MainCities: (' .$nameMainCitiesBefore.') TO (' . $nameMainCitiesAfter . ')';
+                    break;
+
                 default:
                     $report[] = $key . ': (' . $dataBeforeUpdate[$key] . ') TO (' . $dataAfterUpdate[$key] . ' ) ';
                     break;
