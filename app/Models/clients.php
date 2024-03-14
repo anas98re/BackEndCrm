@@ -4,12 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class clients extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
+    // use HasFactory;
 
     protected $table = 'clients';
+    protected $primaryKey = 'id_clients';
 
     public $timestamps = false;
     protected $fillable = [
@@ -23,6 +27,20 @@ class clients extends Model
         'done_visit', 'tag', 'size_activity', 'fk_client_source', 'email',
         'fk_rejectClient', 'SerialNumber', 'is_comments_check','type_record',
         'reason_class','type_classification','date_update', 'fkuser_update','received_date',
-        'approveIduser_reject'
+        'approveIduser_reject','date_reject','fk_user_reject','date_approve_reject'
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+        ->logOnly(['name_client'])
+        ->logOnlyDirty();
+        // Chain fluent methods for configuration options
+    }
+
+    public function getQualifiedKeyName()
+    {
+        return $this->table . '.' . $this->primaryKey;
+    }
+
 }

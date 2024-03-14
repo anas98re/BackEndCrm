@@ -5,9 +5,11 @@ use App\Http\Controllers\AgentController;
 use App\Http\Controllers\ClientCommentMentionController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ClientsDateController;
+use App\Http\Controllers\ClientsUpdateReportController;
 use App\Http\Controllers\CommentParticipateController;
 use App\Http\Controllers\CompanyCommentController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\FilesInvoiceController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ImportantLinkController;
 use App\Http\Controllers\InvoicesUpdateReportController;
@@ -17,8 +19,10 @@ use App\Http\Controllers\ParticipateController;
 use App\Http\Controllers\PaymentDetailController;
 use App\Http\Controllers\PrivgLevelUserController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\SeriesInvoiceacceptController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskProceduresController;
+use App\Http\Controllers\UpdatesReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 // use
@@ -58,6 +62,12 @@ Route::post('addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days', [TaskP
 Route::post('addCommentClientMention', [ClientCommentMentionController::class, 'addCommentClientMention']);
 //cllients Invoices
 Route::post('storageInvoicesUpdates', [InvoicesUpdateReportController::class, 'storageInvoicesUpdates']);
+Route::post('addInvoicesUpdateReport', [InvoicesUpdateReportController::class, 'addInvoicesUpdateReport']);
+Route::post('addInvoiceProductReport', [InvoicesUpdateReportController::class, 'addInvoiceProductReport']);
+//reports
+Route::post('addUserUpdateReport', [UpdatesReportController::class, 'addUserUpdateReport']);
+//cllients
+Route::post('storageClientsUpdates', [ClientsUpdateReportController::class, 'storageClientsUpdates']);
 
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
 
@@ -73,6 +83,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('addTask', [TaskController::class, 'addTask']);
     Route::post('editTask/{id}', [TaskController::class, 'editTask']);
     Route::post('addGroup', [GroupController::class, 'addGroup']);
+    Route::post('editGroup/{id}', [GroupController::class, 'editGroup']);
     Route::post('assignTaskToEmployee/{id}', [TaskController::class, 'assignTaskToEmployee']);
     Route::post('changeStatuseTask/{id}', [TaskController::class, 'changeStatuseTask']);
     Route::get('viewTasksByIdAssigned/{id}', [TaskController::class, 'viewTasksByIdAssigned']);
@@ -117,6 +128,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('importAnotherClints', [ClientsController::class, 'importAnotherClints']);
 
 
+    //invoices
+    Route::post('InvoiceFiles', [FilesInvoiceController::class, 'InvoiceFiles']);
+    Route::get('getFilesInvoices', [FilesInvoiceController::class, 'getFilesInvoices']);
+    Route::post('updateInvoiceFile/{id}', [FilesInvoiceController::class, 'updateInvoiceFile']);
+    Route::post('deleteInvoiceFile/{id}', [FilesInvoiceController::class, 'deleteInvoiceFile']);
+    //series invoice
+    Route::get('getSeriesInvoiceAll', [SeriesInvoiceacceptController::class, 'getSeriesInvoiceAll']);
 
 
     //company ...
@@ -135,6 +153,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // links Excel
     Route::get('export', [ImportantLinkController::class, 'export']);
     Route::post('import', [ImportantLinkController::class, 'import']);
+
+
 });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);

@@ -5,62 +5,107 @@ namespace App\Http\Controllers;
 use App\Models\files_invoice;
 use App\Http\Requests\Storefiles_invoiceRequest;
 use App\Http\Requests\Updatefiles_invoiceRequest;
+use App\Services\AppSrevices;
+use App\Services\invoicesSrevices;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class FilesInvoiceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    //thses Api's for support employees
+    private $myService;
+    private $invoiceSrevice;
+
+    public function __construct(AppSrevices $myService, invoicesSrevices $invoiceSrevice)
     {
-        //
+        $this->myService = $myService;
+        $this->invoiceSrevice = $invoiceSrevice;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    //this is the api we use for all procesess add, update and delete..
+    public function InvoiceFiles(Storefiles_invoiceRequest $request)
     {
-        //
+        $filesDelete = json_decode($request->input('files_delete_ids'));
+        $filesAdd = $request->file('file_attach_invoice');
+        $invoiceId = $request->input("fk_invoice");
+        $data = $this->invoiceSrevice
+            ->addAndUpdateInvoiceFiles($filesDelete, $filesAdd, $invoiceId);
+        return $this->sendSucssas($data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Storefiles_invoiceRequest $request)
+    public function getFilesInvoices()
     {
-        //
+        $fk_invoice = request()->query('fk_invoice');
+        $filesInvoices = files_invoice::where('type_file', 1)
+            ->where('fk_invoice', $fk_invoice)
+            ->get();
+        return $this->sendSucssas($filesInvoices);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(files_invoice $files_invoice)
+    //for test if we want just add files without update or delete
+    public function addInvoiceFiles(Storefiles_invoiceRequest $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+            info($request->file('file_attach_invoice'));
+            $fileInvoice = [];
+            foreach ($request->file('file_attach_invoice') as $index => $file) {
+                $filsHandled = $this->myService->handlingfileInvoiceName($file);
+
+                $fileInvoice[$index] = new files_invoice();
+                $fileInvoice[$index]->file_attach_invoice = $filsHandled;
+                $fileInvoice[$index]->fk_invoice = $request->input("fk_invoice.$index");
+                $fileInvoice[$index]->is_support_employee = 1;
+                $fileInvoice[$index]->save();
+            }
+
+            DB::commit();
+            return $this->sendSucssas($fileInvoice);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(files_invoice $files_invoice)
+    //just update, for test
+    public function updateInvoiceFile(Updatefiles_invoiceRequest $request, $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $filsHandled = $this->myService->handlingfileInvoiceName($request->file_attach_invoice);
+
+            $fileInvoice = files_invoice::where('id', $id)->first();
+            $oldFilePath = $fileInvoice->file_attach_invoice;
+
+            $fileInvoice->file_attach_invoice = $filsHandled;
+            $fileInvoice->fk_invoice = $request->fk_invoice;
+            $fileInvoice->save();
+
+            Storage::delete($oldFilePath);
+
+            DB::commit();
+            return $this->sendSucssas($fileInvoice);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Updatefiles_invoiceRequest $request, files_invoice $files_invoice)
+    //just delete, for test
+    public function deleteInvoiceFile($id)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(files_invoice $files_invoice)
-    {
-        //
+        try {
+            DB::beginTransaction();
+            $fileInvoice = files_invoice::where('id', $id)->first();
+            $oldFilePath = $fileInvoice->file_attach_invoice;
+            Storage::delete($oldFilePath);
+            $fileInvoice->delete();
+            DB::commit();
+            return $this->sendSucssas('Deleted dode');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
     }
 }

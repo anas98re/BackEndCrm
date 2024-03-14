@@ -11,7 +11,7 @@ class Storefiles_invoiceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,7 @@ class Storefiles_invoiceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            // 'file_attach_invoice' => 'file'
         ];
     }
 }

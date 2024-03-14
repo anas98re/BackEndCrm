@@ -106,4 +106,30 @@ class AuthTest extends TestCase
         $result = $response->decodeResponseJson()['data'];
         $this->assertEquals($result, $responseData['data']);
     }
+
+    public function testPhoneAppLogin()
+    {
+        $PhoneAppEmail = 'smartlife2@gmail.com';
+        $requestData = [
+            'email' => $PhoneAppEmail,
+            'otp' => 902461
+        ];
+
+        $response = $this->withHeaders([])->post('/api/login', $requestData);
+        $responseData = $response->json();
+
+        $userExists = users::where('email', $PhoneAppEmail)->exists();
+        $otpEsists = users::where('code_verfiy', 902461)->exists();
+
+        $this->assertTrue($userExists);
+        $this->assertTrue($otpEsists);
+        $response->assertStatus(200);
+        $this->assertTrue($responseData['success']);
+
+        $result = $response->decodeResponseJson()['data'];
+        $this->assertEquals($result, $responseData['data']);
+    }
+
+
+
 }

@@ -41,7 +41,7 @@ class ClientsController extends Controller
                     ->update(
                         [
                             'type_client' => $request->type_client,
-                            'date_changetype' => Carbon::now('Asia/Riyadh'),
+                            'date_changetype' => Carbon::now('Asia/Riyadh')->toDateTimeString(),
                             'offer_price' => $request->offer_price,
                             'date_price' => $request->date_price,
                             'user_do' => $request->id_user,
@@ -54,7 +54,7 @@ class ClientsController extends Controller
                     ->update(
                         [
                             'type_client' => $request->type_client,
-                            'date_changetype' => Carbon::now('Asia/Riyadh'),
+                            'date_changetype' => Carbon::now('Asia/Riyadh')->toDateTimeString(),
                             'offer_price' => $request->offer_price,
                             'date_price' => $request->date_price,
                             'user_do' => $request->id_user,
@@ -67,7 +67,7 @@ class ClientsController extends Controller
                     ->update(
                         [
                             'type_client' => 'معلق استبعاد',
-                            'date_reject' => Carbon::now('Asia/Riyadh'),
+                            'date_reject' => Carbon::now('Asia/Riyadh')->toDateTimeString(),
                             'fk_rejectClient' => $request->fk_rejectClient,
                             'reason_change' => $request->reason_change,
                             'fk_user_reject' => $request->id_user,
@@ -157,7 +157,7 @@ class ClientsController extends Controller
                 ->update(
                     [
                         'type_client' => 'مستبعد',
-                        'date_approve_reject' => Carbon::now('Asia/Riyadh'),
+                        'date_approve_reject' => Carbon::now('Asia/Riyadh')->toDateTimeString(),
                         'approveIduser_reject' => auth('sanctum')->user()->id_user,
                     ]
                 );
@@ -167,8 +167,8 @@ class ClientsController extends Controller
                 ->update(
                     [
                         'type_client' => 'تفاوض',
-                        'date_approve_reject' => Carbon::now('Asia/Riyadh'),
-                        'date_changetype' => Carbon::now('Asia/Riyadh'),
+                        'date_approve_reject' => Carbon::now('Asia/Riyadh')->toDateTimeString(),
+                        'date_changetype' => Carbon::now('Asia/Riyadh')->toDateTimeString(),
                         'approveIduser_reject' => auth('sanctum')->user()->id_user,
                     ]
                 );
