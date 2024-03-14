@@ -22,6 +22,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SeriesInvoiceacceptController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskProceduresController;
+use App\Http\Controllers\UpdatesReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 // use
@@ -63,6 +64,8 @@ Route::post('addCommentClientMention', [ClientCommentMentionController::class, '
 Route::post('storageInvoicesUpdates', [InvoicesUpdateReportController::class, 'storageInvoicesUpdates']);
 Route::post('addInvoicesUpdateReport', [InvoicesUpdateReportController::class, 'addInvoicesUpdateReport']);
 Route::post('addInvoiceProductReport', [InvoicesUpdateReportController::class, 'addInvoiceProductReport']);
+//reports
+Route::post('addUserUpdateReport', [UpdatesReportController::class, 'addUserUpdateReport']);
 //cllients
 Route::post('storageClientsUpdates', [ClientsUpdateReportController::class, 'storageClientsUpdates']);
 
