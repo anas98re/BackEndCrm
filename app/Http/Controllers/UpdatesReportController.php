@@ -30,7 +30,8 @@ class UpdatesReportController extends Controller
 
         $dataAfterUpdateForMainCity = json_decode($request->input('dataAfterUpdateForMainCity'), true)[0];
         $dataBeforeUpdateForMainCity = json_decode($request->input('dataBeforeUpdateForMainCity'), true)[0];
-
+        info('dataAfterUpdateForMainCity ', array($dataAfterUpdateForMainCity));
+        info('dataBeforeUpdateForMainCity ', array($dataBeforeUpdateForMainCity));
         $differencesMainCity = array_diff_assoc($dataAfterUpdateForMainCity, $dataBeforeUpdateForMainCity);
 
         info('$differences for MainCity: ', array($differencesMainCity));
