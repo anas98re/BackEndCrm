@@ -59,7 +59,10 @@ class UpdatesReportController extends Controller
 
         $dataBeforeUpdate['nameMainCitiesBefore'] = $nameMainCitiesBefor;
         $dataAfterUpdate['nameMainCitiesAfter'] = $nameMainCitiesAfter;
-        
+
+        info('$dataBeforeUpdate[nameMainCitiesBefore] ', array($dataBeforeUpdate));
+        info('$dataAfterUpdate[nameMainCitiesAfter] ', array($dataAfterUpdate));
+
         $userId = $request->input('fk_user_update');
 
         $userName = users::where('id_user', $userId)->first()->nameUser;
