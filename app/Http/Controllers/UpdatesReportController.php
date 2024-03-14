@@ -30,29 +30,36 @@ class UpdatesReportController extends Controller
 
         $dataAfterUpdateForMainCity = json_decode($request->input('dataAfterUpdateForMainCity'), true);
 
+
         $nameMainCitiesAfter = [];
-        foreach ($dataAfterUpdateForMainCity as $item) {
-            $namemaincity = $item['namemaincity'];
-            $nameMainCitiesAfter[] = $namemaincity;
+        if ($dataAfterUpdateForMainCity) {
+            foreach ($dataAfterUpdateForMainCity as $item) {
+                $namemaincity = $item['namemaincity'];
+                $nameMainCitiesAfter[] = $namemaincity;
+            }
         }
 
         $dataBeforeUpdateForMainCity = json_decode($request->input('dataBeforeUpdateForMainCity'), true);
 
         $nameMainCitiesBefor = [];
-        foreach ($dataBeforeUpdateForMainCity as $item) {
-            $namemaincity = $item['namemaincity'];
-            $nameMainCitiesBefor[] = $namemaincity;
+        if ($dataBeforeUpdateForMainCity) {
+            foreach ($dataBeforeUpdateForMainCity as $item) {
+                $namemaincity = $item['namemaincity'];
+                $nameMainCitiesBefor[] = $namemaincity;
+            }
         }
 
         info('dataAfterUpdateForMainCity ', array($nameMainCitiesAfter));
         info('dataBeforeUpdateForMainCity ', array($nameMainCitiesBefor));
-        $differencesMainCity = array_diff_assoc($dataAfterUpdateForMainCity, $dataBeforeUpdateForMainCity);
 
-        info('$differences for MainCity: ', array($differencesMainCity));
 
         $modelId = $request->input('id_user');
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+
+        $dataBeforeUpdate['nameMainCitiesBefore'] = $nameMainCitiesBefor;
+        $dataAfterUpdate['nameMainCitiesAfter'] = $nameMainCitiesAfter;
+        
         $userId = $request->input('fk_user_update');
 
         $userName = users::where('id_user', $userId)->first()->nameUser;
