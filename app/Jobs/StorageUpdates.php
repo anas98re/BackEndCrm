@@ -160,21 +160,6 @@ class StorageUpdates implements ShouldQueue
                     $levelAfter = level::where('id_level', $dataAfterUpdate[$key])->first()->name_level;
                     $report[] = 'levelName' . ': (' . $levelBefore . ') TO (' . $levelAfter . ') ';
                     break;
-                // case 'nameMainCitiesAfter':
-                //     if (isset($dataBeforeUpdate[$key]) && isset($dataAfterUpdate[$key])) {
-                //         $report[] = $key . ': (' . $dataBeforeUpdate[$key] . ') TO (' . $dataAfterUpdate[$key] . ')';
-                //     } elseif (isset($dataBeforeUpdate[$key])) {
-                //         $report[] = $key . ': (' . $dataBeforeUpdate[$key] . ') TO (not found)';
-                //     } elseif (isset($dataAfterUpdate[$key])) {
-                //         $report[] = $key . ': (not found) TO (' . $dataAfterUpdate[$key] . ')';
-                //     } else {
-                //         $report[] = $key . ': (not found) TO (not found)';
-                //     }
-                //     break;
-                // case 'nameMainCitiesBefore':
-                //     $nameMainCitiesBefore = implode(', ', $dataBeforeUpdate[$key]);
-                //     $report[] = $key . ': (' . $nameMainCitiesBefore . ') TO (not found)';
-                //     break;
                 case 'nameMainCitiesAfter':
                     $nameMainCitiesAfter = implode(', ', $dataAfterUpdate[$key]);
                     $nameMainCitiesBefore = implode(', ', $nameMainCitiesBefor);
