@@ -1,0 +1,128 @@
+<?php
+
+namespace App\Jobs;
+
+use App\Models\agent;
+use App\Models\participate;
+use App\Models\regoin;
+use App\Models\updatesReport;
+use App\Models\users;
+use Carbon\Carbon;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+
+class StorageUpdates implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    protected $modelId;
+    protected $model;
+    protected $dataBeforeUpdate;
+    protected $dataAfterUpdate;
+    protected $dateUpdate;
+    protected $userId;
+    protected $update_source;
+    protected $description;
+    /**
+     * Create a new job instance.
+     */
+    public function __construct(
+        $modelId,
+        $model,
+        $dataBeforeUpdate,
+        $dataAfterUpdate,
+        $userId,
+        $update_source,
+        $description
+    ) {
+        $this->modelId = $modelId;
+        $this->model = $model;
+        $this->dataBeforeUpdate = $dataBeforeUpdate;
+        $this->dataAfterUpdate = $dataAfterUpdate;
+        $this->dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();;
+        $this->userId = $userId;
+        $this->update_source = $update_source;
+        $this->description = $description;
+    }
+
+    public function handle(): void
+    {
+        info('fourth');
+        $dataBeforeUpdate = $this->dataBeforeUpdate;
+        $dataAfterUpdate = $this->dataAfterUpdate;
+
+        $differences = array_diff_assoc($dataAfterUpdate, $dataBeforeUpdate);
+        if ($differences) {
+            $report = $this->generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate);
+
+            $reportMessage = implode("\n", $report);
+
+            $clientsUpdateReport = new updatesReport();
+            $clientsUpdateReport->changesData = $reportMessage;
+            $clientsUpdateReport->model = $this->model;
+            $clientsUpdateReport->model_id = $this->modelId;
+            $clientsUpdateReport->user_id = (int) $this->userId;
+            $clientsUpdateReport->edit_date = $this->dateUpdate;
+            $clientsUpdateReport->source = $this->update_source;
+            $clientsUpdateReport->description = $this->description;
+            $clientsUpdateReport->save();
+        }
+    }
+
+    private function generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate)
+    {
+        info('$differences for invoicess: ', array($differences));
+        $report = [];
+        foreach ($differences as $key => $value) {
+            switch ($key) {
+                case 'participate_fk':
+                    $participateBefore = 'not_found';
+                    $participateAfter = 'not_found';
+                    if ($dataBeforeUpdate[$key]) {
+                        $participateBefore = participate::where('id_participate', $dataBeforeUpdate[$key])->first()->name_participate;
+                    }
+                    if ($dataAfterUpdate[$key]) {
+                        $participateAfter = participate::where('id_participate', $dataAfterUpdate[$key])->first()->name_participate;
+                    }
+                    $report[] = $key . ': (' . $participateBefore . ') TO (' . $participateAfter . ')';
+                    break;
+                case 'fk_agent':
+                    $agentBefore = 'not_found';
+                    $agentAfter = 'not_found';
+                    if ($dataBeforeUpdate[$key]) {
+                        $agentBefore = agent::where('id_agent', $dataBeforeUpdate[$key])->first()->name_agent;
+                    }
+                    if ($dataAfterUpdate[$key]) {
+                        $agentAfter = agent::where('id_agent', $dataAfterUpdate[$key])->first()->name_agent;
+                    }
+                    $report[] = $key . ': (' . $agentBefore . ') TO (' . $agentAfter . ')';
+                    break;
+                case 'type_seller':
+                    $typeSellerOptions = ['موزع', 'وكيل', 'متعاون', 'موظف'];
+
+                    $typeSellerAfter = $typeSellerOptions[$dataAfterUpdate[$key]] ?? 'موظف';
+                    $typeSellerBefore = $typeSellerOptions[$dataBeforeUpdate[$key]] ?? 'موظف';
+
+                    $report[] = 'typeSellerName' . ': (' . $typeSellerBefore . ') TO (' . $typeSellerAfter . ')';
+                    break;
+                case 'fk_idUser':
+                    $userBefore = users::where('id_user', $dataBeforeUpdate[$key])->first()->nameUser;
+                    $userAfter = users::where('id_user', $dataAfterUpdate[$key])->first()->nameUser;
+                    $report[] = 'userName' . ': (' . $userBefore . ') TO (' . $userAfter . ') ';
+                    break;
+                case 'fk_regoin_invoice':
+                    $regoinBefore = regoin::where('id_regoin', $dataBeforeUpdate[$key])->first()->name_regoin;
+                    $regoinAfter = regoin::where('id_regoin', $dataAfterUpdate[$key])->first()->name_regoin;
+                    $report[] = 'regoinName' . ': (' . $regoinBefore . ') TO (' . $regoinAfter . ') ';
+                    break;
+                default:
+                    $report[] = $key . ': (' . $dataBeforeUpdate[$key] . ') TO (' . $dataAfterUpdate[$key] . ' ) ';
+                    break;
+            }
+        }
+        return $report;
+    }
+}
