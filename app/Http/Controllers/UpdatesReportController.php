@@ -89,7 +89,7 @@ class UpdatesReportController extends Controller
         $modelId = $request->input('id_client');
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
-        $userId = $request->input('fk_user_update');
+        $userId = $request->input('fk_idUser');
 
         $userName = users::where('id_user', $userId)->first()->nameUser;
         $routePattern = 'clientUpdate.php';
@@ -97,11 +97,11 @@ class UpdatesReportController extends Controller
         $update_source = 'تعديل بيانات العميل ';
         $model = 'clients';
 
-        $clientId = $request->input('id_client');
-        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
-        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
-        $dateUpdate = $request->input('dateUpdate');
-        $userId = $request->input('fk_idUser');
+        // $clientId = $request->input('id_client');
+        // $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        // $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+        // $dateUpdate = $request->input('dateUpdate');
+        // $userId = $request->input('fk_idUser');
 
         $nameMainCitiesBefor = null;
         StorageUpdates::dispatch(
