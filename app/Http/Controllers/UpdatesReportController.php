@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\updatesReport;
 use App\Http\Requests\StoreupdatesReportRequest;
 use App\Http\Requests\UpdateupdatesReportRequest;
+use App\Jobs\StorageClientsUpdatesJob;
 use App\Jobs\StorageUpdates;
 use App\Models\users;
 use Carbon\Carbon;
@@ -71,6 +72,110 @@ class UpdatesReportController extends Controller
         $update_source = 'تعديل بيانات المستخدم ';
         $model = 'users';
 
+        StorageUpdates::dispatch(
+            $modelId,
+            $model,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $userId,
+            $update_source,
+            $description,
+            $nameMainCitiesBefor
+        );
+    }
+
+    public function storageClientsUpdates(Request $request)
+    {
+        $modelId = $request->input('id_client');
+        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+        $userId = $request->input('fk_idUser');
+
+        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $routePattern = 'clientUpdate.php';
+        $description = "Client updated by $userName, using route: $routePattern from IP: $this->ip.";
+        $update_source = 'تعديل بيانات العميل ';
+        $model = 'clients';
+
+        $nameMainCitiesBefor = null;
+        StorageUpdates::dispatch(
+            $modelId,
+            $model,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $userId,
+            $update_source,
+            $description,
+            $nameMainCitiesBefor
+        );
+    }
+
+    public function storageInvoicesUpdates(Request $request)
+    {
+        $modelId = $request->input('id_invoice');
+        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+        $userId = $request->input('fk_idUser');
+
+        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $routePattern = 'edit_invoices.php';
+        $description = "Invoice data changed by $userName, using route: $routePattern from IP: $this->ip.";
+        $update_source = 'تغيير بيانات الفاتورة';
+        $model = 'client_invoice';
+
+        $nameMainCitiesBefor = null;
+        StorageUpdates::dispatch(
+            $modelId,
+            $model,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $userId,
+            $update_source,
+            $description,
+            $nameMainCitiesBefor
+        );
+    }
+
+    public function addInvoicesUpdateReport(Request $request)
+    {
+        $modelId = $request->input('id_invoice');
+        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+        $userId = $request->input('fk_idUser');
+
+        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $routePattern = 'updateinvoice.php';
+        $description = "Invoice updated by $userName, using route: $routePattern from IP: $this->ip.";
+        $update_source = 'تعديل الفاتورة';
+        $model = 'client_invoice';
+
+        $nameMainCitiesBefor = null;
+        StorageUpdates::dispatch(
+            $modelId,
+            $model,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $userId,
+            $update_source,
+            $description,
+            $nameMainCitiesBefor
+        );
+    }
+
+    public function addInvoiceProductReport(Request $request)
+    {
+        $modelId = $request->input('id_invoice_product');
+        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+        $userId = $request->input('fk_user_update');
+
+        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $routePattern = 'updateinvoice_product.php';
+        $description = "invoice product updated by $userName, using route: $routePattern from IP: $this->ip.";
+        $update_source = 'تعديل منتجات الفاتورة';
+        $model = 'invoice_product';
+
+        $nameMainCitiesBefor = null;
         StorageUpdates::dispatch(
             $modelId,
             $model,

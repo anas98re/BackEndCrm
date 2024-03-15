@@ -148,6 +148,7 @@ class ClientsController extends Controller
             DB::rollBack();
         }
     }
+    
 
     public function appproveAdmin($id_clients, Request $request)
     {
