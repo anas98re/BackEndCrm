@@ -161,4 +161,30 @@ class UpdatesReportController extends Controller
             $nameMainCitiesBefor
         );
     }
+
+    public function addInvoiceProductReport(Request $request)
+    {
+        $modelId = $request->input('id_invoice_product');
+        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+        $userId = $request->input('fk_user_update');
+
+        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $routePattern = 'updateinvoice_product.php';
+        $description = "invoice product updated by $userName, using route: $routePattern from IP: $this->ip.";
+        $update_source = 'تعديل منتجات الفاتورة';
+        $model = 'invoice_product';
+
+        $nameMainCitiesBefor = null;
+        StorageUpdates::dispatch(
+            $modelId,
+            $model,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $userId,
+            $update_source,
+            $description,
+            $nameMainCitiesBefor
+        );
+    }
 }
