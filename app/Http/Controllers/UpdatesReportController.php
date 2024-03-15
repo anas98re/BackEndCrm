@@ -118,9 +118,35 @@ class UpdatesReportController extends Controller
         $userId = $request->input('fk_idUser');
 
         $userName = users::where('id_user', $userId)->first()->nameUser;
-        $routePattern = 'clientUpdate.php';
+        $routePattern = 'edit_invoices.php';
         $description = "Invoice data changed by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تغيير بيانات الفاتورة';
+        $model = 'client_invoice';
+
+        $nameMainCitiesBefor = null;
+        StorageUpdates::dispatch(
+            $modelId,
+            $model,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $userId,
+            $update_source,
+            $description,
+            $nameMainCitiesBefor
+        );
+    }
+
+    public function addInvoicesUpdateReport(Request $request)
+    {
+        $modelId = $request->input('id_invoice');
+        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+        $userId = $request->input('fk_idUser');
+
+        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $routePattern = 'updateinvoice.php';
+        $description = "Invoice updated by $userName, using route: $routePattern from IP: $this->ip.";
+        $update_source = 'تعديل الفاتورة';
         $model = 'client_invoice';
 
         $nameMainCitiesBefor = null;
