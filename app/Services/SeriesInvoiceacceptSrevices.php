@@ -34,14 +34,22 @@ class SeriesInvoiceacceptSrevices extends JsonResponeService
                         $q->whereNull('si.is_approve');
                     })
                     ->where(function ($q) {
-                        $q->where(
-                            DB::raw('(SELECT is_approve
-                                FROM series_invoiceAccept
-                                WHERE idApprove_series < si.idApprove_series
-                                ORDER BY idApprove_series DESC LIMIT 1)'),
-                            '=',
-                            1
-                        );
+                        $q->whereExists(function ($subquery) {
+                            $subquery->select(DB::raw(1))
+                                ->from('series_invoiceAccept AS sia')
+                                ->whereColumn('sia.fk_invoice', '=', 'si.fk_invoice')
+                                ->whereRaw('sia.priority_approve = si.priority_approve - 1')
+                                ->where('sia.is_approve', '=', 1);
+                        })
+                        ->orWhere(function ($q) {
+                            $q->whereExists(function ($subquery) {
+                                $subquery->select(DB::raw(1))
+                                    ->from('series_invoiceAccept AS sia')
+                                    ->whereColumn('sia.fk_invoice', '=', 'si.fk_invoice')
+                                    ->where('si.priority_approve', '=', 0)
+                                    ->where('sia.is_approve', '=', null);
+                            });
+                        });
                     });
             })
             ->whereNull('inv.isdelete')
@@ -91,4 +99,48 @@ class SeriesInvoiceacceptSrevices extends JsonResponeService
 
         return $results = $query->get();
     }
+
+
+        // public function filteByCurrentUserForInvoiceaccept($status, $selectArray)
+    // {
+    //     $query = DB::table('client_invoice as inv')
+    //         ->select($selectArray)
+    //         ->join('users as us', 'us.id_user', '=', 'inv.fk_idUser')
+    //         ->leftJoin('users as usr', 'usr.id_user', '=', 'inv.lastuserupdate')
+    //         ->leftJoin('users as usr1', 'usr1.id_user', '=', 'inv.userinstall')
+    //         ->leftJoin('users as usrinst', 'usrinst.id_user', '=', 'inv.user_ready_install')
+    //         ->leftJoin('users as usrninst', 'usrninst.id_user', '=', 'inv.user_not_ready_install')
+    //         ->join('clients as cc', 'cc.id_clients', '=', 'inv.fk_idClient')
+    //         ->join('city as cy', 'cy.id_city', '=', 'cc.city')
+    //         ->leftJoin('maincity as mcit', 'mcit.id_maincity', '=', 'cy.fk_maincity')
+    //         ->leftJoin('users as usr2', 'usr2.id_user', '=', 'inv.iduser_approve')
+    //         ->leftJoin('users as usrback', 'usrback.id_user', '=', 'inv.fkuser_back')
+    //         ->leftJoin('users as userreplay', 'userreplay.id_user', '=', 'inv.fkuserdatareplay')
+    //         ->leftJoin('users as usertask', 'usertask.id_user', '=', 'inv.fkusertask')
+    //         ->join('regoin as rr', 'rr.id_regoin', '=', 'cc.fk_regoin')
+    //         ->join('regoin as rrgoin', 'rrgoin.id_regoin', '=', 'inv.fk_regoin_invoice')
+    //         ->join('series_invoiceAccept as si', 'si.fk_invoice', '=', 'inv.id_invoice') // Added join here
+    //         ->where(function ($query) {
+    //             $query->where('si.fk_user', auth('sanctum')->user()->id_user)
+    //                 ->where(function ($q) {
+    //                     $q->whereNull('si.is_approve');
+    //                 })
+    //                 ->where(function ($q) {
+    //                     $q->where(
+    //                         DB::raw('(SELECT is_approve
+    //                             FROM series_invoiceAccept
+    //                             WHERE idApprove_series < si.idApprove_series
+    //                             ORDER BY idApprove_series DESC LIMIT 1)'),
+    //                         '=',
+    //                         1
+    //                     );
+    //                 });
+    //         })
+    //         ->whereNull('inv.isdelete')
+    //         ->orderByDesc('inv.date_back_now');
+
+
+    //     return $results = $query->get();
+    // }
+
 }
