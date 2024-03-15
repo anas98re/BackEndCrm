@@ -67,7 +67,8 @@ Route::post('addInvoiceProductReport', [InvoicesUpdateReportController::class, '
 //reports
 Route::post('addUserUpdateReport', [UpdatesReportController::class, 'addUserUpdateReport']);
 //cllients
-Route::post('storageClientsUpdates', [ClientsUpdateReportController::class, 'storageClientsUpdates']);
+Route::post('storageClientsUpdates', [UpdatesReportController::class, 'storageClientsUpdates']);
+// Route::post('storageClientsUpdates', [ClientsUpdateReportController::class, 'storageClientsUpdates']);
 
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
 
