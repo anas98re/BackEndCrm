@@ -61,9 +61,6 @@ Route::post('addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days', [TaskP
 //clients comments mentions
 Route::post('addCommentClientMention', [ClientCommentMentionController::class, 'addCommentClientMention']);
 //cllients Invoices
-// Route::post('storageInvoicesUpdates', [InvoicesUpdateReportController::class, 'storageInvoicesUpdates']);
-// Route::post('addInvoicesUpdateReport', [InvoicesUpdateReportController::class, 'addInvoicesUpdateReport']);
-// Route::post('addInvoiceProductReport', [InvoicesUpdateReportController::class, 'addInvoiceProductReport']);
 Route::post('storageInvoicesUpdates', [UpdatesReportController::class, 'storageInvoicesUpdates']);
 Route::post('addInvoicesUpdateReport', [UpdatesReportController::class, 'addInvoicesUpdateReport']);
 Route::post('addInvoiceProductReport', [UpdatesReportController::class, 'addInvoiceProductReport']);
@@ -71,7 +68,6 @@ Route::post('addInvoiceProductReport', [UpdatesReportController::class, 'addInvo
 Route::post('addUserUpdateReport', [UpdatesReportController::class, 'addUserUpdateReport']);
 //cllients
 Route::post('storageClientsUpdates', [UpdatesReportController::class, 'storageClientsUpdates']);
-// Route::post('storageClientsUpdates', [ClientsUpdateReportController::class, 'storageClientsUpdates']);
 
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
 

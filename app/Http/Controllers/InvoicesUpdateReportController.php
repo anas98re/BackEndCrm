@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 
 class InvoicesUpdateReportController extends Controller
 {
+    //all down to testing
     public function storageInvoicesUpdates1(Request $request)
     {
         info('****************************************************************');
@@ -201,6 +202,7 @@ class InvoicesUpdateReportController extends Controller
             $id_invoice_product
         );
     }
+    
     public function addInvoicesUpdateReport(Request $request)
     {
         info('request->all() for addInvoicesUpdateReport:', $request->all());
