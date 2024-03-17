@@ -37,7 +37,7 @@ class clients extends Model
         $routePattern = $request->route()->uri();
         $ip = $request->ip();
         $user = auth('sanctum')->user();
-        $userName = $user->nameUser;
+        $userName = $user ? $user->nameUser : null;
         return LogOptions::defaults()
             ->logOnly(['*'])
             ->logOnlyDirty()

@@ -10,7 +10,8 @@ class client_communication_new extends Model
     use HasFactory;
 
     protected $table = 'client_communication_new';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id_communication',
         'fk_client',

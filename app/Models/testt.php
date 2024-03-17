@@ -10,7 +10,8 @@ class testt extends Model
     use HasFactory;
 
     protected $table = 'testt';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id',
         'created_at',

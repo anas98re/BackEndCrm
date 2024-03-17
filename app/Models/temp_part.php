@@ -10,7 +10,8 @@ class temp_part extends Model
     use HasFactory;
 
     protected $table = 'temp_part';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id_temp',
         'fk_part',

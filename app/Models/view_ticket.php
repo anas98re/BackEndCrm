@@ -10,7 +10,8 @@ class view_ticket extends Model
     use HasFactory;
 
     protected $table = 'view_ticket';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'fk_client',
         'type_problem',

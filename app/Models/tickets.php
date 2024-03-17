@@ -10,6 +10,7 @@ class tickets extends Model
     use HasFactory;
 
     protected $table = 'tickets';
+    public $timestamps = false;
 
     protected $fillable = [
         'fk_client',

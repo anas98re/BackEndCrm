@@ -7,6 +7,7 @@ use App\Models\agent;
 use App\Models\city;
 use App\Models\company;
 use App\Models\level;
+use App\Models\levelModel;
 use App\Models\managements;
 use App\Models\participate;
 use App\Models\regoin;
@@ -49,7 +50,7 @@ class StorageUpdates implements ShouldQueue
         $this->model = $model;
         $this->dataBeforeUpdate = $dataBeforeUpdate;
         $this->dataAfterUpdate = $dataAfterUpdate;
-        $this->dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();;
+        $this->dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();
         $this->userId = $userId;
         $this->update_source = $update_source;
         $this->description = $description;
@@ -156,13 +157,13 @@ class StorageUpdates implements ShouldQueue
                     $report[] = 'regoinName' . ': (' . $regoinBefore . ') TO (' . $regoinAfter . ') ';
                     break;
                 case 'type_level':
-                    $levelBefore = level::where('id_level', $dataBeforeUpdate[$key])->first()->name_level;
-                    $levelAfter = level::where('id_level', $dataAfterUpdate[$key])->first()->name_level;
+                    $levelBefore = levelModel::where('id_level', $dataBeforeUpdate[$key])->first()->name_level;
+                    $levelAfter = levelModel::where('id_level', $dataAfterUpdate[$key])->first()->name_level;
                     $report[] = 'levelName' . ': (' . $levelBefore . ') TO (' . $levelAfter . ') ';
                     break;
                 case 'nameMainCitiesAfter':
                     $nameMainCitiesAfter = implode(', ', $dataAfterUpdate[$key]);
-                    $nameMainCitiesBefore = implode(', ', $nameMainCitiesBefor);
+                    $nameMainCitiesBefore = implode(', ', array($nameMainCitiesBefor));
                     $report[] = 'MainCities: (' .$nameMainCitiesBefore.') TO (' . $nameMainCitiesAfter . ')';
                     break;
 
