@@ -128,13 +128,13 @@ class UpdatesReportController extends Controller
         if ($userId) {
             $userName = users::where('id_user', $userId)->first()->nameUser;
         }
-        $isApprove = false;
-        if ($request->input('id_invoice')) {
-            $isApprove = true;
+        $isApprove = 'false';
+        if ($request->input('isApprove')) {
+            $isApprove = 'true';
         }
         $routePattern = 'edit_invoices.php';
         $description = "Invoice data changed by $userName, using route: $routePattern from IP: $this->ip.";
-        $update_source = $isApprove . '،تغيير بيانات الفاتورة';
+        $update_source = '('.$isApprove.')' . '،تغيير بيانات الفاتورة';
         $model = 'client_invoice';
 
         $nameMainCitiesBefor = null;
@@ -161,13 +161,13 @@ class UpdatesReportController extends Controller
         if ($userId) {
             $userName = users::where('id_user', $userId)->first()->nameUser;
         }
-        $isApprove = false;
-        if ($request->input('id_invoice')) {
-            $isApprove = true;
+        $isApprove = 'false';
+        if ($request->input('isApprove')) {
+            $isApprove = 'true';
         }
         $routePattern = 'updateinvoice.php';
         $description = "Invoice updated by $userName, using route: $routePattern from IP: $this->ip.";
-        $update_source = $isApprove . '،تعديل الفاتورة';
+        $update_source = '('.$isApprove.')' . '،تعديل الفاتورة';
         $model = 'client_invoice';
 
         $nameMainCitiesBefor = null;
