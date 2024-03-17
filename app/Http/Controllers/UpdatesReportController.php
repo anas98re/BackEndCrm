@@ -166,10 +166,14 @@ class UpdatesReportController extends Controller
         if ($userId) {
             $userName = users::where('id_user', $userId)->first()->nameUser;
         }
-        $isApprove = 'false';
-        if ($request->input('isApprove')) {
+        $data = json_decode($request->input('IsAprrove'), true); // Decode the JSON string into an associative array
+
+        if ($data[0]['isApprove'] === '1') {
             $isApprove = 'true';
+        } else {
+            $isApprove = 'false';
         }
+
         $routePattern = 'updateinvoice.php';
         $description = "Invoice updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = '(' . $isApprove . ')' . '،تعديل الفاتورة';
