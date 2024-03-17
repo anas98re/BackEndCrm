@@ -163,12 +163,12 @@ class StorageUpdates implements ShouldQueue
                     break;
                 case 'nameMainCitiesAfter':
                     $nameMainCitiesAfter = implode(', ', $dataAfterUpdate[$key]);
-                    // $nameMainCitiesBefore = implode(', ', array($nameMainCitiesBefor));
+                    $nameMainCitiesBefore = implode(', ', $nameMainCitiesBefor);
                     // if (!is_array($nameMainCitiesBefor)) {
                     //     $nameMainCitiesBefore = [$nameMainCitiesBefor];
                     // }
 
-                    $nameMainCitiesBefore = implode(', ', [$nameMainCitiesBefor]);
+                    // $nameMainCitiesBefore = implode(', ', [$nameMainCitiesBefor]);
 
                     $report[] = 'MainCities: (' .$nameMainCitiesBefore.') TO (' . $nameMainCitiesAfter . ')';
                     break;
