@@ -10,7 +10,8 @@ class series_invoiceAccept extends Model
     use HasFactory;
 
     protected $table = 'series_invoiceAccept';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'idApprove_series',
         'fk_user',

@@ -36,35 +36,33 @@ class clients_date extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        info('dddd');
         $request = app(Request::class);
         $routePattern = $request->route()->uri();
         $ip = $request->ip();
         $user = auth('sanctum')->user();
-        info('fgh');
-        $userName = $user->nameUser;
+        $userName = $user ? $user->nameUser : null;
         return LogOptions::defaults()
             ->logOnly(['*'])
             ->logOnlyDirty()
-            ->useLogName('Client Date Log')
+            ->useLogName('clients_date Log')
             ->setDescriptionForEvent(function (string $eventName) use ($routePattern, $ip, $userName) {
                 // Provide the description for the event based on the event name, route pattern, and IP
                 if ($eventName === 'created') {
-                    return "Client Date created by $userName, using route: $routePattern from IP: $ip.";
+                    return "clients_date created by $userName, using route: $routePattern from IP: $ip.";
                 } elseif ($eventName === 'updated') {
-                    return "Client Date updated by $userName, using route: $routePattern from IP: $ip.";
+                    return "clients_date updated by $userName, using route: $routePattern from IP: $ip.";
                 } elseif ($eventName === 'deleted') {
-                    return "Client Date deleted by $userName, using route: $routePattern from IP: $ip.";
+                    return "clients_date deleted by $userName, using route: $routePattern from IP: $ip.";
                 }
 
                 // Default description if the event name is not recognized
-                return "Client Date action occurred by $userName, using route: $routePattern from IP: $ip.";
+                return "clients_date action occurred by $userName, using route: $routePattern from IP: $ip.";
             });
     }
 
     public function getQualifiedKeyName()
     {
-        info('bbbb');
         return $this->table . '.' . $this->primaryKey;
     }
+
 }

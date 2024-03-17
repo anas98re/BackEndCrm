@@ -8,33 +8,18 @@ use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Http\Request;
 
-class agent extends Model
+class levelModel extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected $table = 'agent';
+    protected $table = 'level';
     public $timestamps = false;
-    protected $primaryKey = 'id_agent';
 
     protected $fillable = [
-        'id_agent',
-        'name_agent',
-        'type_agent',
-        'email_egent',
-        'mobile_agent',
-        'fk_country',
-        'description',
-        'image_agent',
-        'cityId',
-        'add_date',
-        'update_date',
-        'fk_user_add',
-        'fk_user_update',
-        'fkuser_training',
-        'is_training',
-        'date_training',
+        'id_level',
+        'name_level',
+        'periorty'
     ];
-
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -46,19 +31,19 @@ class agent extends Model
         return LogOptions::defaults()
             ->logOnly(['*'])
             ->logOnlyDirty()
-            ->useLogName('agent Log')
+            ->useLogName('level Log')
             ->setDescriptionForEvent(function (string $eventName) use ($routePattern, $ip, $userName) {
                 // Provide the description for the event based on the event name, route pattern, and IP
                 if ($eventName === 'created') {
-                    return "agent created by $userName, using route: $routePattern from IP: $ip.";
+                    return "level created by $userName, using route: $routePattern from IP: $ip.";
                 } elseif ($eventName === 'updated') {
-                    return "agent updated by $userName, using route: $routePattern from IP: $ip.";
+                    return "level updated by $userName, using route: $routePattern from IP: $ip.";
                 } elseif ($eventName === 'deleted') {
-                    return "agent deleted by $userName, using route: $routePattern from IP: $ip.";
+                    return "level deleted by $userName, using route: $routePattern from IP: $ip.";
                 }
 
                 // Default description if the event name is not recognized
-                return "agent action occurred by $userName, using route: $routePattern from IP: $ip.";
+                return "level action occurred by $userName, using route: $routePattern from IP: $ip.";
             });
     }
 
@@ -67,5 +52,3 @@ class agent extends Model
         return $this->table . '.' . $this->primaryKey;
     }
 }
-
-

@@ -4,37 +4,47 @@ namespace App\Logger;
 
 use Spatie\Activitylog\ActivityLogger;
 use Spatie\Activitylog\Models\Activity;
+use Illuminate\Support\Facades\App;
 
 class CustomActivityLogger extends ActivityLogger
 {
-    protected function attributeValuesToBeLogged(string $processingEvent): array
+    protected $subject;
+    
+    public function __construct($subject)
     {
-        $properties = parent::attributeValuesToBeLogged($processingEvent);
-
-        if (isset($properties['attributes'])) {
-            $properties['attributes'] = $this->convertArabicCharacters($properties['attributes']);
-        }
-
-        if (isset($properties['old'])) {
-            $properties['old'] = $this->convertArabicCharacters($properties['old']);
-        }
-
-        return $properties;
+        $this->subject = $subject;
+        info('nnnnnn');
     }
 
-    protected function convertArabicCharacters(array $data): array
+    protected function attributesToBeLogged($subject): array
     {
-        $encodedData = json_encode($data, JSON_UNESCAPED_UNICODE);
+        info('mmmmmmm');
+        $model = $subject;
 
-        return json_decode(
-            preg_replace_callback(
-                '/\\\\u([0-9a-f]{4})/i',
-                function ($match) {
-                    return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UTF-16');
-                },
-                $encodedData
-            ),
-            true
-        );
+        $attributes = $model->getDirty();
+
+        // Decode Unicode escape sequences for the 'groupName' attribute
+        if (isset($attributes['groupName']) && $this->isAttributeArabic($attributes['groupName'])) {
+            $attributes['groupName'] = $this->decodeUnicodeEscapes($attributes['groupName']);
+        }
+
+        return $this->cleanAttributes($attributes);
+    }
+
+    // Rest of the class implementation...
+
+    protected function isAttributeArabic($attribute): bool
+    {
+        // Implement your logic to determine if the attribute is Arabic
+        // For example, you can check if the attribute contains Arabic characters
+        // and return true if it does, otherwise return false.
+        // Modify this logic based on your requirements.
+
+        return preg_match('/\p{Arabic}/u', $attribute) === 1;
+    }
+
+    protected function decodeUnicodeEscapes($string): string
+    {
+        return json_decode('"' . $string . '"');
     }
 }

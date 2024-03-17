@@ -10,6 +10,7 @@ class transferticket extends Model
     use HasFactory;
 
     protected $table = 'transferticket';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_tr_ticket',

@@ -10,7 +10,8 @@ class reasonsofout extends Model
     use HasFactory;
 
     protected $table = 'reasonsofout';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id_reason',
         'name_reason',

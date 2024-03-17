@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class tsks_group extends Model
 {
-    use HasFactory, LogsActivity;
+    use LogsActivity;
 
     protected static $activityLoggerClass = CustomActivityLogger::class;
 
@@ -23,7 +23,6 @@ class tsks_group extends Model
         'created_by',
     ];
 
-
     public $incrementing = true;
 
     public function getActivitylogOptions(): LogOptions
@@ -32,8 +31,8 @@ class tsks_group extends Model
         $routePattern = $request->route()->uri();
         $ip = $request->ip();
         $user = auth('sanctum')->user();
-        info($user);
         $userName = $user->nameUser;
+
         return LogOptions::defaults()
             ->logOnly(['*'])
             ->logOnlyDirty()
@@ -51,6 +50,11 @@ class tsks_group extends Model
                 // Default description if the event name is not recognized
                 return "Task group action occurred by $userName, using route: $routePattern from IP: $ip.";
             });
+    }
+
+    public function getActivityLogger()
+    {
+        return new CustomActivityLogger($this);
     }
 }
 

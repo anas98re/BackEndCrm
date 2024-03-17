@@ -10,7 +10,8 @@ class client_support_care extends Model
     use HasFactory;
 
     protected $table = 'client_support_care';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id_client_supportCare',
         'fk_idclient',

@@ -17,7 +17,7 @@ class CommentParticipateController extends Controller
         $data = $request->all();
         $data['participate_id'] = intval($data['participate_id']);
         $data['date_comment'] = Carbon::now('Asia/Riyadh')->format('Y-m-d H:i:s');
-        $data['user_id'] = auth('sanctum')->user()->id_user;
+        $data['user_id'] = auth('sanctum')->user() ? auth('sanctum')->user()->id_user : null;
         $comment = commentParticipate::create($data);
 
         $user = users::find(auth('sanctum')->user()->id_user);

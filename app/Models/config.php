@@ -10,6 +10,7 @@ class config extends Model
     use HasFactory;
 
     protected $table = 'config';
+    public $timestamps = false;
 
     protected $fillable = [
         'idconfig',

@@ -6,11 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Http\Request;
 
 class users extends Model
 {
     // use HasFactory;
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, LogsActivity;
     protected $table = 'users';
 
     protected $primaryKey = 'id_user';
@@ -41,6 +44,31 @@ class users extends Model
         'password',
         'remember_token',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        $request = app(Request::class);
+        $routePattern = $request->route()->uri();
+        $ip = $request->ip();
+        if ($routePattern == 'api/checkEmail') {
+
+            $userName = 'New User';
+            return LogOptions::defaults()
+                ->logOnly(['*'])
+                ->logOnlyDirty()
+                ->useLogName('users Log')
+                ->setDescriptionForEvent(function (string $eventName) use ($routePattern, $ip, $userName) {
+                    // Provide the description for the event based on the event name, route pattern, and IP
+                    if ($eventName === 'updated')
+                        return "otp updated , using route: $routePattern from IP: $ip.";
+                });
+        } 
+    }
+
+    public function getQualifiedKeyName()
+    {
+        return $this->table . '.' . $this->primaryKey;
+    }
 
     public function managements()
     {

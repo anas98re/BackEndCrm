@@ -25,7 +25,7 @@ class AgentCommentService extends JsonResponeService
         $data = $request->all();
         $data['agent_id'] = intval($data['agent_id']);
         $data['date_comment'] = Carbon::now('Asia/Riyadh')->format('Y-m-d H:i:s');
-        $data['user_id'] = auth('sanctum')->user()->id_user;
+        $data['user_id'] = auth('sanctum')->user() ? auth('sanctum')->user()->id_user : null;
         $comment = agentComment::create($data);
 
         $user = users::find(auth('sanctum')->user()->id_user);

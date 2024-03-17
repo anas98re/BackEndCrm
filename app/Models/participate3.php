@@ -10,6 +10,7 @@ class participate3 extends Model
     use HasFactory;
 
     protected $table = 'participate3';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_participate',

@@ -66,7 +66,10 @@ class UpdatesReportController extends Controller
 
         $userId = $request->input('fk_user_update');
 
-        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $userName = null;
+        if ($userId) {
+            $userName = users::where('id_user', $userId)->first()->nameUser;
+        }
         $routePattern = 'updateuser_patch.php';
         $description = "User updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل بيانات المستخدم ';
@@ -91,7 +94,11 @@ class UpdatesReportController extends Controller
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
         $userId = $request->input('fk_idUser');
 
-        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $userName = null;
+        if ($userId) {
+            $userName = users::where('id_user', $userId)->first()->nameUser;
+        }
+
         $routePattern = 'clientUpdate.php';
         $description = "Client updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل بيانات العميل ';
@@ -117,10 +124,17 @@ class UpdatesReportController extends Controller
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
         $userId = $request->input('fk_idUser');
 
-        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $userName = null;
+        if ($userId) {
+            $userName = users::where('id_user', $userId)->first()->nameUser;
+        }
+        $isApprove = false;
+        if ($request->input('id_invoice')) {
+            $isApprove = true;
+        }
         $routePattern = 'edit_invoices.php';
         $description = "Invoice data changed by $userName, using route: $routePattern from IP: $this->ip.";
-        $update_source = 'تغيير بيانات الفاتورة';
+        $update_source = $isApprove . '،تغيير بيانات الفاتورة';
         $model = 'client_invoice';
 
         $nameMainCitiesBefor = null;
@@ -143,10 +157,17 @@ class UpdatesReportController extends Controller
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
         $userId = $request->input('fk_idUser');
 
-        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $userName = null;
+        if ($userId) {
+            $userName = users::where('id_user', $userId)->first()->nameUser;
+        }
+        $isApprove = false;
+        if ($request->input('id_invoice')) {
+            $isApprove = true;
+        }
         $routePattern = 'updateinvoice.php';
         $description = "Invoice updated by $userName, using route: $routePattern from IP: $this->ip.";
-        $update_source = 'تعديل الفاتورة';
+        $update_source = $isApprove . '،تعديل الفاتورة';
         $model = 'client_invoice';
 
         $nameMainCitiesBefor = null;
@@ -169,7 +190,10 @@ class UpdatesReportController extends Controller
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
         $userId = $request->input('fk_user_update');
 
-        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $userName = null;
+        if ($userId) {
+            $userName = users::where('id_user', $userId)->first()->nameUser;
+        }
         $routePattern = 'updateinvoice_product.php';
         $description = "invoice product updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل منتجات الفاتورة';
