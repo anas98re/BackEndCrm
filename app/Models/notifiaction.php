@@ -11,7 +11,7 @@ class notifiaction extends Model
 
     protected $table = 'notifiaction';
     public $timestamps = false;
-
+    
     protected $fillable = [
         'id_notify',
         'message',

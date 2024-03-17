@@ -10,7 +10,8 @@ class series_accept extends Model
     use HasFactory;
 
     protected $table = 'series_accept';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id_series',
         'name_series',

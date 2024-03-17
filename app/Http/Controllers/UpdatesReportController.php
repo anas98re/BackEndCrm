@@ -66,7 +66,10 @@ class UpdatesReportController extends Controller
 
         $userId = $request->input('fk_user_update');
 
-        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $userName = null;
+        if ($userId) {
+            $userName = users::where('id_user', $userId)->first()->nameUser;
+        }
         $routePattern = 'updateuser_patch.php';
         $description = "User updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل بيانات المستخدم ';
@@ -91,7 +94,11 @@ class UpdatesReportController extends Controller
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
         $userId = $request->input('fk_idUser');
 
-        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $userName = null;
+        if ($userId) {
+            $userName = users::where('id_user', $userId)->first()->nameUser;
+        }
+
         $routePattern = 'clientUpdate.php';
         $description = "Client updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل بيانات العميل ';
@@ -112,15 +119,27 @@ class UpdatesReportController extends Controller
 
     public function storageInvoicesUpdates(Request $request)
     {
+        info('request->all() for storageInvoicesUpdates:', $request->all());
         $modelId = $request->input('id_invoice');
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
         $userId = $request->input('fk_idUser');
 
-        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $userName = null;
+        if ($userId) {
+            $userName = users::where('id_user', $userId)->first()->nameUser;
+        }
+        $isApprove = 'o';
+        $data = json_decode($request->input('IsAprrove'), true); // Decode the JSON string into an associative array
+
+        if ($data[0]['isApprove'] === '1') {
+            $isApprove = 'true';
+        } else {
+            $isApprove = 'false';
+        }
         $routePattern = 'edit_invoices.php';
         $description = "Invoice data changed by $userName, using route: $routePattern from IP: $this->ip.";
-        $update_source = 'تغيير بيانات الفاتورة';
+        $update_source = '(' . $isApprove . ')' . '،تغيير بيانات الفاتورة';
         $model = 'client_invoice';
 
         $nameMainCitiesBefor = null;
@@ -143,10 +162,21 @@ class UpdatesReportController extends Controller
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
         $userId = $request->input('fk_idUser');
 
-        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $userName = null;
+        if ($userId) {
+            $userName = users::where('id_user', $userId)->first()->nameUser;
+        }
+        $data = json_decode($request->input('IsAprrove'), true); // Decode the JSON string into an associative array
+
+        if ($data[0]['isApprove'] === '1') {
+            $isApprove = 'true';
+        } else {
+            $isApprove = 'false';
+        }
+
         $routePattern = 'updateinvoice.php';
         $description = "Invoice updated by $userName, using route: $routePattern from IP: $this->ip.";
-        $update_source = 'تعديل الفاتورة';
+        $update_source = '(' . $isApprove . ')' . '،تعديل الفاتورة';
         $model = 'client_invoice';
 
         $nameMainCitiesBefor = null;
@@ -169,7 +199,10 @@ class UpdatesReportController extends Controller
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
         $userId = $request->input('fk_user_update');
 
-        $userName = users::where('id_user', $userId)->first()->nameUser;
+        $userName = null;
+        if ($userId) {
+            $userName = users::where('id_user', $userId)->first()->nameUser;
+        }
         $routePattern = 'updateinvoice_product.php';
         $description = "invoice product updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل منتجات الفاتورة';

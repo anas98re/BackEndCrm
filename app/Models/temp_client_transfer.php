@@ -10,7 +10,8 @@ class temp_client_transfer extends Model
     use HasFactory;
 
     protected $table = 'temp_client_transfer';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id_temp_client_transfer',
         'fk_usertransfer',

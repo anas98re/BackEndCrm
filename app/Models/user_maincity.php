@@ -10,6 +10,7 @@ class user_maincity extends Model
     use HasFactory;
 
     protected $table = 'user_maincity';
+    public $timestamps = false;
 
     protected $fillable = [
         'iduser_maincity',

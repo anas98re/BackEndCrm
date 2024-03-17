@@ -10,6 +10,7 @@ class newtabel extends Model
     use HasFactory;
 
     protected $table = 'newtabel';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_prod',

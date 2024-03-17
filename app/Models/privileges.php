@@ -10,7 +10,8 @@ class privileges extends Model
     use HasFactory;
 
     protected $table = 'privileges';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id_privilege',
         'name_privilege',
