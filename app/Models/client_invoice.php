@@ -4,12 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Illuminate\Http\Request;
 
 class client_invoice extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
+
+    protected $primaryKey = 'id_invoice';
 
     protected $table = 'client_invoice';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_invoice',
@@ -84,4 +90,35 @@ class client_invoice extends Model
         'notes_ready',
         'reason_suspend'
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        $request = app(Request::class);
+        $routePattern = $request->route()->uri();
+        $ip = $request->ip();
+        $user = auth('sanctum')->user();
+        $userName = $user ? $user->nameUser : null;
+        return LogOptions::defaults()
+            ->logOnly(['*'])
+            ->logOnlyDirty()
+            ->useLogName('client_invoice Log')
+            ->setDescriptionForEvent(function (string $eventName) use ($routePattern, $ip, $userName) {
+                // Provide the description for the event based on the event name, route pattern, and IP
+                if ($eventName === 'created') {
+                    return "client_invoice created by $userName, using route: $routePattern from IP: $ip.";
+                } elseif ($eventName === 'updated') {
+                    return "client_invoice updated by $userName, using route: $routePattern from IP: $ip.";
+                } elseif ($eventName === 'deleted') {
+                    return "client_invoice deleted by $userName, using route: $routePattern from IP: $ip.";
+                }
+
+                // Default description if the event name is not recognized
+                return "client_invoice action occurred by $userName, using route: $routePattern from IP: $ip.";
+            });
+    }
+
+    public function getQualifiedKeyName()
+    {
+        return $this->table . '.' . $this->primaryKey;
+    }
 }

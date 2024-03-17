@@ -10,6 +10,7 @@ class reason_client_reject extends Model
     use HasFactory;
 
     protected $table = 'reason_client_reject';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_rejectClient',

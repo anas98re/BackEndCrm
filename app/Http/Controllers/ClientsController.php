@@ -13,6 +13,8 @@ use App\Mail\sendStactictesConvretClientsTothabetEmail;
 use App\Models\client_comment;
 use App\Models\convertClintsStaticts;
 use App\Models\notifiaction;
+use App\Models\user_token;
+use App\Models\users;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,48 +37,25 @@ class ClientsController extends Controller
     {
         try {
             DB::beginTransaction();
-            if ($request->type_client == 'عرض سعر') {
-                $updateClientData = DB::table('clients')
-                    ->where('id_clients', $id_clients)
-                    ->update(
-                        [
-                            'type_client' => $request->type_client,
-                            'date_changetype' => Carbon::now('Asia/Riyadh')->toDateTimeString(),
-                            'offer_price' => $request->offer_price,
-                            'date_price' => $request->date_price,
-                            'user_do' => $request->id_user,
-                        ]
-                    );
-            }
-            if ($request->type_client == 'تفاوض') {
-                $updateClientData = DB::table('clients')
-                    ->where('id_clients', $id_clients)
-                    ->update(
-                        [
-                            'type_client' => $request->type_client,
-                            'date_changetype' => Carbon::now('Asia/Riyadh')->toDateTimeString(),
-                            'offer_price' => $request->offer_price,
-                            'date_price' => $request->date_price,
-                            'user_do' => $request->id_user,
-                        ]
-                    );
-            }
-            if ($request->type_client == 'مستبعد') {
-                $updateClientData = DB::table('clients')
-                    ->where('id_clients', $id_clients)
-                    ->update(
-                        [
-                            'type_client' => 'معلق استبعاد',
-                            'date_reject' => Carbon::now('Asia/Riyadh')->toDateTimeString(),
-                            'fk_rejectClient' => $request->fk_rejectClient,
-                            'reason_change' => $request->reason_change,
-                            'fk_user_reject' => $request->id_user,
-                        ]
-                    );
-                //add comment to client comment table.
-                $lastId = DB::table('client_comment')
-                    ->orderBy('id_comment', 'desc')
-                    ->value('id_comment');
+            $client = clients::find($id_clients);
+
+            if ($request->type_client == 'عرض سعر' || $request->type_client == 'تفاوض') {
+                $client->type_client = $request->type_client;
+                $client->date_changetype = Carbon::now('Asia/Riyadh')->toDateTimeString();
+                $client->offer_price = $request->offer_price;
+                $client->date_price = $request->date_price;
+                $client->user_do = $request->id_user;
+                $client->save();
+            } elseif ($request->type_client == 'مستبعد') {
+                $client->type_client = 'معلق استبعاد';
+                $client->date_reject = Carbon::now('Asia/Riyadh')->toDateTimeString();
+                $client->fk_rejectClient = $request->fk_rejectClient;
+                $client->reason_change = $request->reason_change;
+                $client->fk_user_reject = $request->id_user;
+                $client->save();
+
+                // Add comment to client comment table.
+                $lastId = client_comment::orderBy('id_comment', 'desc')->value('id_comment');
 
                 $idComment = $lastId + 1;
                 $comment = new client_comment();
@@ -88,27 +67,21 @@ class ClientsController extends Controller
                 $comment->fk_user = $request->id_user;
                 $comment->save();
 
-                //send notification to supervisor salse for client's brunch
-                $brunchClient = DB::table('clients')
-                    ->where('id_clients', $id_clients)
-                    ->first()
-                    ->fk_regoin;
+                // Send notification to supervisor salse for client's brunch
+                $brunchClient = $client->fk_regoin;
 
-                $usersId = DB::table('users')
-                    ->where('fk_regoin', $brunchClient)
+                $usersId = users::where('fk_regoin', $brunchClient)
                     ->where('isActive', 1)
                     ->where('type_level', 14)
                     ->pluck('id_user');
 
-                $nameClient = DB::table('clients')
-                    ->where('id_clients', $id_clients)
-                    ->first()->name_enterprise;
+                $nameClient = $client->name_enterprise;
 
                 $message1 = 'العميل ? يحتاج لموافقة على الاستبعاد';
                 $messageNotifi = str_replace('?', $nameClient, $message1);
 
                 foreach ($usersId as $Id) {
-                    $userToken = DB::table('user_token')->where('fkuser', $Id)
+                    $userToken = user_token::where('fkuser', $Id)
                         ->where('token', '!=', null)
                         ->latest('date_create')
                         ->first();
@@ -133,16 +106,16 @@ class ClientsController extends Controller
                         'type_notify' => 'exclude',
                         'to_user' => $Id,
                         'isread' => 0,
-                        'data' =>  $id_clients,
+                        'data' => $id_clients,
                         'from_user' => 1,
                         'dateNotify' => Carbon::now('Asia/Riyadh')
                     ]);
                 }
             }
-            $ClientData = DB::table('clients')
-                ->where('id_clients', $id_clients)->first();
+
+            $clientData = clients::find($id_clients);
             DB::commit();
-            return $this->sendResponse($ClientData, 'updated');
+            return $this->sendResponse($clientData, 'updated');
         } catch (\Throwable $th) {
             throw $th;
             DB::rollBack();
@@ -151,31 +124,20 @@ class ClientsController extends Controller
 
     public function appproveAdmin($id_clients, Request $request)
     {
+        $client = clients::find($id_clients);
+
         if ($request->isAppprove) {
-            $updateClientData = DB::table('clients')
-                ->where('id_clients', $id_clients)
-                ->update(
-                    [
-                        'type_client' => 'مستبعد',
-                        'date_approve_reject' => Carbon::now('Asia/Riyadh')->toDateTimeString(),
-                        'approveIduser_reject' => auth('sanctum')->user()->id_user,
-                    ]
-                );
+            $client->type_client = 'مستبعد';
         } else {
-            $updateClientData = DB::table('clients')
-                ->where('id_clients', $id_clients)
-                ->update(
-                    [
-                        'type_client' => 'تفاوض',
-                        'date_approve_reject' => Carbon::now('Asia/Riyadh')->toDateTimeString(),
-                        'date_changetype' => Carbon::now('Asia/Riyadh')->toDateTimeString(),
-                        'approveIduser_reject' => auth('sanctum')->user()->id_user,
-                    ]
-                );
+            $client->type_client = 'تفاوض';
+            $client->date_changetype = Carbon::now('Asia/Riyadh')->toDateTimeString();
         }
-        $ClientData = DB::table('clients')
-            ->where('id_clients', $id_clients)->first();
-        return $this->sendResponse($ClientData, 'Done');
+
+        $client->date_approve_reject = Carbon::now('Asia/Riyadh')->toDateTimeString();
+        $client->approveIduser_reject = auth('sanctum')->user()->id_user;
+        $client->save();
+
+        return $this->sendResponse($client, 'Done');
     }
 
     public function transformClientsFromMarketingIfOverrideLimit8Days()
@@ -197,17 +159,6 @@ class ClientsController extends Controller
 
             $this->MyService
                 ->sendNotificationsToResponsapilUserOfClient($formattedDate);
-
-            // $updateClientData = DB::table('clients')
-            //     ->where('ismarketing', 1)
-            //     ->where('is_check_marketing', 0)
-            //     ->whereDate('date_create', '>=', Carbon::createFromDate(2024, 1, 1)->endOfDay())
-            //     ->where('date_create', '<', $formattedDate)
-            //     ->update([
-            //         // 'oldSourceClient' => DB::raw('sourcclient'), // Assuming 'oldSourceClient' is the column where you want to store old values
-            //         // 'sourcclient' => Constants::MAIDANI,
-            //         'is_check_marketing' => 1,
-            //     ]);
 
             $this->MyService
                 ->sendNotificationsToBranchSupervisorsAndWhoHasPrivilage($branchesIdsWithNumberRepetitions);
@@ -336,7 +287,7 @@ class ClientsController extends Controller
             if ($datePrice !== null) {
                 $formattedDatetime = Carbon::parse($datePrice)->format('Y-m-d H:i:s');
                 clients::where('id_clients', $clientId)->update(['date_price1' => $formattedDatetime]);
-                $dataUpdatedAndOld[] = 'Client Id is: '.$clientId. ', '.$datePrice.' -> '.$formattedDatetime;
+                $dataUpdatedAndOld[] = 'Client Id is: ' . $clientId . ', ' . $datePrice . ' -> ' . $formattedDatetime;
             }
         }
         return $dataUpdatedAndOld;

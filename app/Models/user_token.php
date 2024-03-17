@@ -10,7 +10,7 @@ class user_token extends Model
     use HasFactory;
     public $timestamps = false;
     protected $table = 'user_token';
-
+    
     protected $fillable = [
         'id_token',
         'fkuser',

@@ -10,7 +10,8 @@ class usertest extends Model
     use HasFactory;
 
     protected $table = 'usertest';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id_usertest',
         'nameusertest',

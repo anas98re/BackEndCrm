@@ -10,7 +10,8 @@ class details_traceinvoice extends Model
     use HasFactory;
 
     protected $table = 'details_traceinvoice';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id_detail_trace',
         'fk_trace',

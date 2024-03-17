@@ -13,7 +13,7 @@ class files_invoice extends Model
     use HasFactory, LogsActivity;
 
     protected $table = 'files_invoice';
-
+    protected $primaryKey = 'id';
     public $timestamps = false;
     protected $fillable = [
         'id',
@@ -28,8 +28,7 @@ class files_invoice extends Model
         $routePattern = $request->route()->uri();
         $ip = $request->ip();
         $user = auth('sanctum')->user();
-        info($user);
-        $userName = $user->nameUser;
+        $userName = $user ? $user->nameUser : null;
         return LogOptions::defaults()
             ->logOnly(['*'])
             ->logOnlyDirty()
@@ -47,5 +46,10 @@ class files_invoice extends Model
                 // Default description if the event name is not recognized
                 return "files_invoice action occurred by $userName, using route: $routePattern from IP: $ip.";
             });
+    }
+
+    public function getQualifiedKeyName()
+    {
+        return $this->table . '.' . $this->primaryKey;
     }
 }

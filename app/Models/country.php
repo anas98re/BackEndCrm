@@ -10,7 +10,8 @@ class country extends Model
     use HasFactory;
 
     protected $table = 'country';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id_country',
         'nameCountry',
