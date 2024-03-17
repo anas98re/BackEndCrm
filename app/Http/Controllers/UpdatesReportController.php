@@ -131,8 +131,8 @@ class UpdatesReportController extends Controller
         }
         $isApprove = 'o';
         $data = json_decode($request->input('IsAprrove'), true); // Decode the JSON string into an associative array
-        
-        if ($data['isApprove'] === '1') {
+
+        if ($data[0]['isApprove'] === '1') {
             $isApprove = 'true';
         } else {
             $isApprove = 'false';
