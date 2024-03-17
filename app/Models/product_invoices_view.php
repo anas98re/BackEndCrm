@@ -10,7 +10,8 @@ class product_invoices_view extends Model
     use HasFactory;
 
     protected $table = 'product_invoices_view';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id_invoice_product',
         'fk_id_invoice',

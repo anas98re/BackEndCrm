@@ -5,15 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class level extends Model
+class clientsUpdateReport extends Model
 {
     use HasFactory;
 
-    protected $table = 'level';
+    protected $table = 'clients_update_reports';
+    public $timestamps = false;
 
     protected $fillable = [
-        'id_level',
-        'name_level',
-        'periorty'
+        'changesData',
+        'edit_date',
+        'fk_user'
     ];
 }

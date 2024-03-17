@@ -10,7 +10,8 @@ class deleteinvoice extends Model
     use HasFactory;
 
     protected $table = 'deleteinvoice';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id_deleteInvoice',
         'fk_user',

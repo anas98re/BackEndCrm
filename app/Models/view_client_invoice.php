@@ -10,7 +10,8 @@ class view_client_invoice extends Model
     use HasFactory;
 
     protected $table = 'view_client_invoice';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'date_create_client',
         'IDcustomer',

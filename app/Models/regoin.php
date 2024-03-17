@@ -10,7 +10,8 @@ class regoin extends Model
     use HasFactory;
 
     protected $table = 'regoin';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'id_regoin',
         'name_regoin',

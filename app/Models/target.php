@@ -10,6 +10,7 @@ class target extends Model
     use HasFactory;
 
     protected $table = 'target';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_target',

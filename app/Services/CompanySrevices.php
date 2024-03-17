@@ -33,7 +33,7 @@ class CompanySrevices extends JsonResponeService
         $generatedFilename = $modifiedFilename . '.' . $fileExtension;
 
         // Store the file with the modified filename
-        $generatedPath = $path_logo->storeAs('companiesLogo', $generatedFilename);
+        $generatedPath = $path_logo->storeAs('companiesLogo', $generatedFilename,'public');
         return $generatedPath;
     }
 }

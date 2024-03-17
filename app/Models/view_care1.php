@@ -10,7 +10,8 @@ class view_care1 extends Model
     use HasFactory;
 
     protected $table = 'view_care1';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'date_approve',
         'id_invoice',
