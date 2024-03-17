@@ -119,6 +119,7 @@ class UpdatesReportController extends Controller
 
     public function storageInvoicesUpdates(Request $request)
     {
+        info('request->all() for storageInvoicesUpdates:', $request->all());
         $modelId = $request->input('id_invoice');
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
@@ -128,9 +129,11 @@ class UpdatesReportController extends Controller
         if ($userId) {
             $userName = users::where('id_user', $userId)->first()->nameUser;
         }
-        $isApprove = 'false';
-        if ($request->input('isApprove')) {
+        $isApprove = 'o';
+        if ($request->input('IsAprrove')) {
             $isApprove = 'true';
+        }else{
+            $isApprove = 'false';
         }
         $routePattern = 'edit_invoices.php';
         $description = "Invoice data changed by $userName, using route: $routePattern from IP: $this->ip.";
