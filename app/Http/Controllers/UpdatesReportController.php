@@ -130,14 +130,16 @@ class UpdatesReportController extends Controller
             $userName = users::where('id_user', $userId)->first()->nameUser;
         }
         $isApprove = 'o';
-        if ($request->input('IsAprrove') === 1  ) {
+        $data = json_decode($request->input('IsAprrove'), true); // Decode the JSON string into an associative array
+        
+        if ($data['isApprove'] === '1') {
             $isApprove = 'true';
-        }else{
+        } else {
             $isApprove = 'false';
         }
         $routePattern = 'edit_invoices.php';
         $description = "Invoice data changed by $userName, using route: $routePattern from IP: $this->ip.";
-        $update_source = '('.$isApprove.')' . '،تغيير بيانات الفاتورة';
+        $update_source = '(' . $isApprove . ')' . '،تغيير بيانات الفاتورة';
         $model = 'client_invoice';
 
         $nameMainCitiesBefor = null;
@@ -170,7 +172,7 @@ class UpdatesReportController extends Controller
         }
         $routePattern = 'updateinvoice.php';
         $description = "Invoice updated by $userName, using route: $routePattern from IP: $this->ip.";
-        $update_source = '('.$isApprove.')' . '،تعديل الفاتورة';
+        $update_source = '(' . $isApprove . ')' . '،تعديل الفاتورة';
         $model = 'client_invoice';
 
         $nameMainCitiesBefor = null;
