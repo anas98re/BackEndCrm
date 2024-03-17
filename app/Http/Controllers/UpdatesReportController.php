@@ -130,7 +130,7 @@ class UpdatesReportController extends Controller
             $userName = users::where('id_user', $userId)->first()->nameUser;
         }
         $isApprove = 'o';
-        if ($request->input('IsAprrove')) {
+        if ($request->input('IsAprrove') === 1  ) {
             $isApprove = 'true';
         }else{
             $isApprove = 'false';
