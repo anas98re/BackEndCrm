@@ -22,6 +22,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SeriesInvoiceacceptController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskProceduresController;
+use App\Http\Controllers\TicketsController;
 use App\Http\Controllers\UpdatesReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -154,6 +155,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('export', [ImportantLinkController::class, 'export']);
     Route::post('import', [ImportantLinkController::class, 'import']);
 
+    //subcategories_ticketImport Excel
+    Route::post('importCategoriesTicket', [TicketsController::class, 'importCategoriesTicket']);
+    Route::post('importSubCategoriesTicket', [TicketsController::class, 'importSubCategoriesTicket']);
+    Route::get('getSubCategoriesTicket', [TicketsController::class, 'getSubCategoriesTicket']);
+    Route::get('getCategoriesTicket', [TicketsController::class, 'getCategoriesTicket']);
 
 });
 
