@@ -68,8 +68,12 @@ class UpdatesReportController extends Controller
 
         $userName = null;
         if ($userId) {
-            $userName = users::where('id_user', $userId)->first()->nameUser;
+            $user = users::where('id_user', $userId)->first();
+            if ($user) {
+                $userName = $user->nameUser;
+            }
         }
+        
         $routePattern = 'updateuser_patch.php';
         $description = "User updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل بيانات المستخدم ';
@@ -96,9 +100,11 @@ class UpdatesReportController extends Controller
 
         $userName = null;
         if ($userId) {
-            $userName = users::where('id_user', $userId)->first()->nameUser;
+            $user = users::where('id_user', $userId)->first();
+            if ($user) {
+                $userName = $user->nameUser;
+            }
         }
-
         $routePattern = 'clientUpdate.php';
         $description = "Client updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل بيانات العميل ';
@@ -127,7 +133,10 @@ class UpdatesReportController extends Controller
 
         $userName = null;
         if ($userId) {
-            $userName = users::where('id_user', $userId)->first()->nameUser;
+            $user = users::where('id_user', $userId)->first();
+            if ($user) {
+                $userName = $user->nameUser;
+            }
         }
         $isApprove = 'o';
         $data = json_decode($request->input('IsAprrove'), true); // Decode the JSON string into an associative array
@@ -164,7 +173,10 @@ class UpdatesReportController extends Controller
 
         $userName = null;
         if ($userId) {
-            $userName = users::where('id_user', $userId)->first()->nameUser;
+            $user = users::where('id_user', $userId)->first();
+            if ($user) {
+                $userName = $user->nameUser;
+            }
         }
         $data = json_decode($request->input('IsAprrove'), true); // Decode the JSON string into an associative array
 
@@ -201,7 +213,10 @@ class UpdatesReportController extends Controller
 
         $userName = null;
         if ($userId) {
-            $userName = users::where('id_user', $userId)->first()->nameUser;
+            $user = users::where('id_user', $userId)->first();
+            if ($user) {
+                $userName = $user->nameUser;
+            }
         }
         $routePattern = 'updateinvoice_product.php';
         $description = "invoice product updated by $userName, using route: $routePattern from IP: $this->ip.";
