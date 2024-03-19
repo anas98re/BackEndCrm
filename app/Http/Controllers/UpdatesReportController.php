@@ -141,11 +141,17 @@ class UpdatesReportController extends Controller
         $isApprove = 'o';
         $data = json_decode($request->input('IsAprrove'), true); // Decode the JSON string into an associative array
 
-        if ($data[0]['isApprove'] === '1') {
-            $isApprove = 'true';
+        if ($data !== null && count($data) > 0 && isset($data[0]['isApprove'])) {
+            if ($data[0]['isApprove'] === '1') {
+                $isApprove = 'true';
+            } else {
+                $isApprove = 'false';
+            }
         } else {
-            $isApprove = 'false';
+            // Handle the case when $data is null or empty
+            $isApprove = 'Not Found'; // or any other default value you want to set
         }
+        
         $routePattern = 'edit_invoices.php';
         $description = "Invoice data changed by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = '(' . $isApprove . ')' . '،تغيير بيانات الفاتورة';
@@ -179,12 +185,6 @@ class UpdatesReportController extends Controller
             }
         }
         $data = json_decode($request->input('IsAprrove'), true); // Decode the JSON string into an associative array
-
-        // if ($data[0]['isApprove'] === '1') {
-        //     $isApprove = 'true';
-        // } else {
-        //     $isApprove = 'false';
-        // }
 
         if ($data !== null && count($data) > 0 && isset($data[0]['isApprove'])) {
             if ($data[0]['isApprove'] === '1') {
