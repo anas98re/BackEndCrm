@@ -5,62 +5,43 @@ namespace App\Http\Controllers;
 use App\Models\tickets;
 use App\Http\Requests\StoreticketsRequest;
 use App\Http\Requests\UpdateticketsRequest;
+use App\Imports\categories_ticketImport;
+use App\Imports\subcategories_ticketImport;
+use App\Models\categorie_tiket;
+use App\Models\subcategorie_ticket;
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class TicketsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function importCategoriesTicket(Request $request)
     {
-        //
+        $file = $request->file('file');
+
+        Excel::import(new categories_ticketImport, $file);
+
+        return $this->sendResponse('success', 'categories_ticket imported successfully.');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function importSubCategoriesTicket(Request $request)
     {
-        //
+        $file = $request->file('file');
+
+        Excel::import(new subcategories_ticketImport, $file);
+
+        return $this->sendResponse('success', 'sub_categories_ticket imported successfully.');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreticketsRequest $request)
+    public function getCategoriesTicket()
     {
-        //
+        $CategoriesTicket = categorie_tiket::all();
+        return $this->sendSucssas($CategoriesTicket);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(tickets $tickets)
+    public function getSubCategoriesTicket()
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(tickets $tickets)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateticketsRequest $request, tickets $tickets)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(tickets $tickets)
-    {
-        //
+        $CategoriesTicket = subcategorie_ticket::all();
+        return $this->sendSucssas($CategoriesTicket);
     }
 }
