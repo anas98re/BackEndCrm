@@ -10,7 +10,7 @@ class categorie_tiket extends Model
 {
     use HasFactory;
 
-    protected $table = 'categories_tiket';
+    protected $table = 'categories_ticket';
     public $timestamps = false;
 
     protected $fillable = [
