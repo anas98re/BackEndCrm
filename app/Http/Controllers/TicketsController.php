@@ -39,7 +39,21 @@ class TicketsController extends Controller
     public function closeTicket(Request $request, $id_ticket)
     {
         $respons = $this->MyService->closeTicketService($request, $id_ticket);
-        return $this->sendSucssas($respons);
+        return $this->closeTicketResponse($respons);
+    }
+
+    private function closeTicketResponse($result)
+    {
+        $response = [
+            'result' => 'success',
+            'code' => 200,
+            'message' => [
+                'ticket' => $result['ticket'],
+                'Categories' => $result['Categories'],
+                'Subcategories' => $result['Subcategories']
+            ]
+        ];
+        return response()->json($response, 200);
     }
 
     public function importCategoriesTicket(Request $request)
