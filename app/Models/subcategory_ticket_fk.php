@@ -5,18 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-
-class categorie_tiket extends Model
+class subcategory_ticket_fk extends Model
 {
     use HasFactory;
 
-    protected $table = 'categories_ticket';
+    protected $table = 'subcategories_ticket_fks';
     public $timestamps = false;
 
     protected $fillable = [
-        'category_ar',
-        'category_en',
-        'classification'
+        'fk_subcategory',
+        'fk_ticket'
     ];
-
 }

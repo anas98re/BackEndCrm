@@ -153,6 +153,18 @@ Route::get('getPaymaentsViaInvoiceId/{id}', [PaymentDetailController::class, 'ge
     // links Excel
     Route::get('export', [ImportantLinkController::class, 'export']);
     Route::post('import', [ImportantLinkController::class, 'import']);
+
+    //subcategories_ticketImport Excel
+    Route::post('importCategoriesTicket', [TicketsController::class, 'importCategoriesTicket']);
+    Route::post('importSubCategoriesTicket', [TicketsController::class, 'importSubCategoriesTicket']);
+    Route::get('getSubCategoriesTicket', [TicketsController::class, 'getSubCategoriesTicket']);
+    Route::get('getCategoriesTicket', [TicketsController::class, 'getCategoriesTicket']);
+
+    //Tickets
+    Route::post('addOrReOpenTicketService', [TicketsController::class, 'addOrReOpenTicket']);
+    Route::post('editTicketType/{id_ticket_detail}', [TicketsController::class, 'editTicketType']);
+    Route::post('closeTicket/{id_ticket}', [TicketsController::class, 'closeTicket']);
+
 // });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);
