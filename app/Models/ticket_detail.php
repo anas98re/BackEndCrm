@@ -25,6 +25,8 @@ class ticket_detail extends Model
         'fk_user_open',
         'fk_user_close',
         'fk_user_recive',
+        'fk_user_reopen',
+        'date_reopen',
         'date_open',
         'date_close',
         'date_recive',

@@ -26,19 +26,20 @@ class TicketsController extends Controller
 
     public function addOrReOpenTicket(Request $request)
     {
-        try {
-            DB::beginTransaction();
-            DB::commit();
-            return $this->sendResponse('', 'updated');
-        } catch (\Throwable $th) {
-            throw $th;
-            DB::rollBack();
-        }
+        $respons = $this->MyService->addOrReOpenTicketService($request);
+        return $this->sendSucssas($respons);
     }
 
-    public function editTicketType(Request $request)
+    public function editTicketType(Request $request, $id_ticket_detail)
     {
+        $respons = $this->MyService->editTicketTypeService($request, $id_ticket_detail);
+        return $this->sendSucssas($respons);
+    }
 
+    public function closeTicket(Request $request, $id_ticket)
+    {
+        $respons = $this->MyService->closeTicketService($request, $id_ticket);
+        return $this->sendSucssas($respons);
     }
 
     public function importCategoriesTicket(Request $request)

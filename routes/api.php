@@ -161,6 +161,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('getSubCategoriesTicket', [TicketsController::class, 'getSubCategoriesTicket']);
     Route::get('getCategoriesTicket', [TicketsController::class, 'getCategoriesTicket']);
 
+    //Tickets
+    Route::post('addOrReOpenTicketService', [TicketsController::class, 'addOrReOpenTicket']);
+    Route::post('editTicketType/{id_ticket_detail}', [TicketsController::class, 'editTicketType']);
+    Route::post('closeTicket/{id_ticket}', [TicketsController::class, 'closeTicket']);
+
 });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);
