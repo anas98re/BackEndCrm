@@ -47,12 +47,12 @@ class TicketsController extends Controller
         $response = [
             'result' => 'success',
             'code' => 200,
-            'message' => [
-                'ticket' => $result['ticket'],
-                'Categories' => $result['Categories'],
-                'Subcategories' => $result['Subcategories']
-            ]
+            'message' => $result['ticket']
         ];
+
+        $response['message']['categories_ticket_fk'] = $result['Categories'];
+        $response['message']['subcategories_ticket_fk'] = $result['Subcategories'];
+
         return response()->json($response, 200);
     }
 
