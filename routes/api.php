@@ -76,7 +76,7 @@ Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class,
 Route::post('createPaymentDetails', [PaymentDetailController::class, 'createPaymentDetails']);
 Route::get('getPaymaentsViaInvoiceId/{id}', [PaymentDetailController::class, 'getPaymaentsViaInvoiceId']);
 
-// Route::middleware(['auth:sanctum', 'knowCurrentUser'])->group(function () {
+Route::middleware(['auth:sanctum', 'knowCurrentUser'])->group(function () {
     Route::post('test', [RegisterController::class, 'test']);
 
     //Tasks
@@ -165,7 +165,7 @@ Route::get('getPaymaentsViaInvoiceId/{id}', [PaymentDetailController::class, 'ge
     Route::post('editTicketType/{id_ticket_detail}', [TicketsController::class, 'editTicketType']);
     Route::post('closeTicket/{id_ticket}', [TicketsController::class, 'closeTicket']);
 
-// });
+});
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);
 Route::get('getCurrentUser', [RegisterController::class, 'getCurrentUser']);
