@@ -126,6 +126,7 @@ class TicketDetailSrevices extends JsonResponeService
                         'category_ar' => $category->category_ar,
                         'category_en' => $category->category_en,
                         'id' => $category->id,
+                        'classification' => $category->classification,
                         'row_id' => $categoryTicketFk->id
                     ];
                 }
@@ -158,6 +159,7 @@ class TicketDetailSrevices extends JsonResponeService
                         'sub_category_ar' => $subcategory->sub_category_ar,
                         'sub_category_en' => $subcategory->sub_category_en,
                         'id' => $subcategory->id,
+                        'classification' => $subcategory->classification,
                         'row_id' => $subcategoryTicketFk->id
                     ];
                 }
