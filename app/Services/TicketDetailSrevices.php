@@ -120,12 +120,14 @@ class TicketDetailSrevices extends JsonResponeService
 
                 // Retrieve category name from categories_ticket table
                 $category = categorie_tiket::where('id', $fk)->first();
-                $categoryTicketResponse = [
-                    'category_ar' => $category->category_ar,
-                    'category_en' => $category->category_en,
-                    'id' => $category->id,
-                    'row_id' => $categoryTicketFk->id
-                ];
+                if ($category) {
+                    $categoryTicketResponse = [
+                        'category_ar' => $category->category_ar,
+                        'category_en' => $category->category_en,
+                        'id' => $category->id,
+                        'row_id' => $categoryTicketFk->id
+                    ];
+                }
 
                 $createdCategories[] = $categoryTicketResponse;
             }
@@ -147,14 +149,16 @@ class TicketDetailSrevices extends JsonResponeService
 
                 // Retrieve subcategory name from subcategories_ticket table
                 $subcategory = subcategorie_ticket::where('id', $fk)->first();
-                $subcategoryTicketFk->sub_category_ar = $subcategory->sub_category_ar;
-                $subcategoryTicketFk->sub_category_en = $subcategory->sub_category_en;
-                $subcategoryTicketResponse = [
-                    'sub_category_ar' => $subcategory->sub_category_ar,
-                    'sub_category_en' => $subcategory->sub_category_en,
-                    'id' => $subcategory->id,
-                    'row_id' => $subcategoryTicketFk->id
-                ];
+                if ($subcategory) {
+                    $subcategoryTicketFk->sub_category_ar = $subcategory->sub_category_ar;
+                    $subcategoryTicketFk->sub_category_en = $subcategory->sub_category_en;
+                    $subcategoryTicketResponse = [
+                        'sub_category_ar' => $subcategory->sub_category_ar,
+                        'sub_category_en' => $subcategory->sub_category_en,
+                        'id' => $subcategory->id,
+                        'row_id' => $subcategoryTicketFk->id
+                    ];
+                }
 
                 $createdSubcategories[] = $subcategoryTicketResponse;
             }
