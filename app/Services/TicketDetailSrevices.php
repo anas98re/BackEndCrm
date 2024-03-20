@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\categorie_tiket;
 use App\Models\category_ticket_fk;
+use App\Models\subcategorie_ticket;
 use App\Models\subcategory_ticket_fk;
 use App\Models\ticket_detail;
 use App\Models\tickets;
@@ -88,30 +90,76 @@ class TicketDetailSrevices extends JsonResponeService
                     'notes_ticket' => $request->input('notes_ticket')
                 ]);
             }
-            $categoriesTicketFks = json_decode($request->input('categories_ticket_fk'));
-            if (is_array($categoriesTicketFks)) {
-                foreach ($categoriesTicketFks as $fk) {
-                    category_ticket_fk::create([
-                        'fk_category' => $fk,
-                        'fk_ticket'=> $id_ticket
-                    ]);
-                }
-            }
 
-            $subcategoriesTicketFks = json_decode($request->input('subcategories_ticket'));
-            if (is_array($categoriesTicketFks)) {
-                foreach ($subcategoriesTicketFks as $fk) {
-                    subcategory_ticket_fk::create([
-                        'fk_subcategory' => $fk,
-                        'fk_ticket'=> $id_ticket
-                    ]);
-                }
-            }
+            $createdCategories = $this->createCategories($request, $id_ticket);
+            $createdSubcategories = $this->createSubcategories($request, $id_ticket);
+
             DB::commit();
-            return $ticket;
+
+            return [
+                'ticket' => $ticket,
+                'Categories' => $createdCategories,
+                'Subcategories' => $createdSubcategories
+            ];
         } catch (\Throwable $th) {
-            throw $th;
             DB::rollBack();
+            throw $th;
         }
+    }
+
+    private function createCategories($request, $id_ticket)
+    {
+        $categoriesTicketFks = json_decode($request->input('categories_ticket_fk'));
+        $createdCategories = [];
+        if (is_array($categoriesTicketFks)) {
+            foreach ($categoriesTicketFks as $fk) {
+                $categoryTicketFk = category_ticket_fk::create([
+                    'fk_category' => $fk,
+                    'fk_ticket' => $id_ticket
+                ]);
+
+                // Retrieve category name from categories_ticket table
+                $category = categorie_tiket::where('id', $fk)->first();
+                $categoryTicketResponse = [
+                    'category_ar' => $category->category_ar,
+                    'category_en' => $category->category_en,
+                    'id' => $category->id,
+                    'row_id' => $categoryTicketFk->id
+                ];
+
+                $createdCategories[] = $categoryTicketResponse;
+            }
+        }
+
+        return $createdCategories;
+    }
+
+    private function createSubcategories($request, $id_ticket)
+    {
+        $subcategoriesTicketFks = json_decode($request->input('subcategories_ticket'));
+        $createdSubcategories = [];
+        if (is_array($subcategoriesTicketFks)) {
+            foreach ($subcategoriesTicketFks as $fk) {
+                $subcategoryTicketFk = subcategory_ticket_fk::create([
+                    'fk_subcategory' => $fk,
+                    'fk_ticket' => $id_ticket
+                ]);
+
+                // Retrieve subcategory name from subcategories_ticket table
+                $subcategory = subcategorie_ticket::where('id', $fk)->first();
+                $subcategoryTicketFk->sub_category_ar = $subcategory->sub_category_ar;
+                $subcategoryTicketFk->sub_category_en = $subcategory->sub_category_en;
+                $subcategoryTicketResponse = [
+                    'sub_category_ar' => $subcategory->sub_category_ar,
+                    'sub_category_en' => $subcategory->sub_category_en,
+                    'id' => $subcategory->id,
+                    'row_id' => $subcategoryTicketFk->id
+                ];
+
+                $createdSubcategories[] = $subcategoryTicketResponse;
+            }
+        }
+
+        return $createdSubcategories;
     }
 }
