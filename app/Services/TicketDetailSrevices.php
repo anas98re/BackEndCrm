@@ -119,6 +119,7 @@ class TicketDetailSrevices extends JsonResponeService
                 ]);
 
                 // Retrieve category name from categories_ticket table
+                $categoryTicketResponse = null;
                 $category = categorie_tiket::where('id', $fk)->first();
                 if ($category) {
                     $categoryTicketResponse = [
@@ -148,6 +149,7 @@ class TicketDetailSrevices extends JsonResponeService
                 ]);
 
                 // Retrieve subcategory name from subcategories_ticket table
+                $subcategoryTicketResponse = null;
                 $subcategory = subcategorie_ticket::where('id', $fk)->first();
                 if ($subcategory) {
                     $subcategoryTicketFk->sub_category_ar = $subcategory->sub_category_ar;
