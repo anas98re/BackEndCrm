@@ -11,6 +11,7 @@ class tickets extends Model
 
     protected $table = 'tickets';
     public $timestamps = false;
+    protected $primaryKey = 'id_ticket';
 
     protected $fillable = [
         'fk_client',
