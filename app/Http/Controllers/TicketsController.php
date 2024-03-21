@@ -55,7 +55,7 @@ class TicketsController extends Controller
             return $this->sendError('wrong', 'This id not found');
         }
         $respons = $this->MyService->getTicketByIdService($ticket_detail);
-        return $this->closeTicketResponse($respons);
+        return $this->editTicketTypeResponse($respons);
     }
 
     public function importCategoriesTicket(Request $request)
