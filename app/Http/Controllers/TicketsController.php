@@ -33,14 +33,14 @@ class TicketsController extends Controller
     public function editTicketType(Request $request, $id_ticket_detail)
     {
         $respons = $this->MyService->editTicketTypeService($request, $id_ticket_detail);
-        return $this->sendSucssas($respons);
-    }
-
-    public function closeTicket(Request $request, $id_ticket)
-    {
-        $respons = $this->MyService->closeTicketService($request, $id_ticket);
         return $this->closeTicketResponse($respons);
     }
+
+    // public function closeTicket(Request $request, $id_ticket)
+    // {
+    //     $respons = $this->MyService->closeTicketService($request, $id_ticket);
+    //     return $this->closeTicketResponse($respons);
+    // }
 
     private function closeTicketResponse($result)
     {
@@ -49,7 +49,8 @@ class TicketsController extends Controller
             'code' => 200,
             'message' => $result['ticket']
         ];
-
+        $response['message']['name_enterprise'] = $result['name_enterprise'];
+        $response['message']['nameUser'] = $result['nameUser'];
         $response['message']['categories_ticket_fk'] = $result['Categories'];
         $response['message']['subcategories_ticket_fk'] = $result['Subcategories'];
 

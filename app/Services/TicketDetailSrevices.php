@@ -4,10 +4,12 @@ namespace App\Services;
 
 use App\Models\categorie_tiket;
 use App\Models\category_ticket_fk;
+use App\Models\clients;
 use App\Models\subcategorie_ticket;
 use App\Models\subcategory_ticket_fk;
 use App\Models\ticket_detail;
 use App\Models\tickets;
+use App\Models\users;
 use App\Services\JsonResponeService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,13 +23,15 @@ class TicketDetailSrevices extends JsonResponeService
         try {
             DB::beginTransaction();
             $requestHandle = $request->all();
-            if ($request->has('type_ticket')) {
-                $requestHandle['type_ticket'] = 0;
+            if ($request->input('open_type') == 0) {
+                $requestHandle['type_ticket_reopen'] = 0;
+                $requestHandle['type_ticket'] = 'جديدة';
                 $requestHandle['fk_user_open'] = auth('sanctum')->user()->id_user;
                 $requestHandle['date_open'] = Carbon::now('Asia/Riyadh')->toDateTimeString();
             }
-            if ($request->has('type_ticket_reopen')) {
+            if ($request->input('open_type') == 1) {
                 $requestHandle['type_ticket_reopen'] = 1;
+                $requestHandle['type_ticket'] = 'اعادة فتح';
                 $requestHandle['fk_user_reopen'] = auth('sanctum')->user()->id_user;
                 $requestHandle['date_reopen'] = Carbon::now('Asia/Riyadh')->toDateTimeString();
             }
@@ -42,69 +46,64 @@ class TicketDetailSrevices extends JsonResponeService
 
     public function editTicketTypeService($request, $id_ticket_detail)
     {
-        try {
-            DB::beginTransaction();
-            $ticket_detail = ticket_detail::find($id_ticket_detail);
-            $currentUserId = auth('sanctum')->user()->id_user;
-            $nowDate = Carbon::now('Asia/Riyadh')->toDateTimeString();
-            switch ($request->type_ticket) {
-                case 'استلام التذكرة':
-                    $ticket_detail->type_ticket = 'قيد التنفيذ';
-                    $ticket_detail->fk_user_recive = $currentUserId;
-                    $ticket_detail->date_recive = $nowDate;
-                    break;
-                case 'اغلاق التذكرة':
+        $createdCategories = null;
+        $createdSubcategories = null;
+        $ticket_detail = ticket_detail::find($id_ticket_detail);
+        $Client = clients::find($ticket_detail->fk_client);
+        $name_enterprise = $Client ? $Client->name_enterprise : null;
+        $currentUserId = auth('sanctum')->user()->id_user;
+        $nameUser = users::find($currentUserId)->nameUser;
+        $nowDate = Carbon::now('Asia/Riyadh')->toDateTimeString();
+        switch ($request->type_ticket) {
+            case 'قيد التنفيذ':
+                $ticket_detail->type_ticket = 'قيد التنفيذ';
+                $ticket_detail->fk_user_recive = $currentUserId;
+                $ticket_detail->date_recive = $nowDate;
+                break;
+            case 'مغلقة':
+                try {
+                    DB::beginTransaction();
                     $ticket_detail->type_ticket = 'مغلقة';
                     $ticket_detail->fk_user_close = $currentUserId;
                     $ticket_detail->date_close = $nowDate;
-                    break;
-                case 'تقييم بعد الاغلاق':
-                    $ticket_detail->type_ticket = 'تم التقييم';
-                    $ticket_detail->fkuser_rate = $currentUserId;
-                    $ticket_detail->date_rate = $nowDate;
-                    $ticket_detail->notes_rate = $request->notes_rate;
-                    $ticket_detail->rate = $request->rate;
-                    break;
-                default:
-                    break;
-            }
-            $ticket_detail->save();
-            DB::commit();
-            return $ticket_detail;
-        } catch (\Throwable $th) {
-            throw $th;
-            DB::rollBack();
+                    $ticket_detail->notes_ticket = $request->notes_ticket;;
+                    $ticket_detail->save();
+
+                    $createdCategories = $this->createCategories($request, $id_ticket_detail);
+                    $createdSubcategories = $this->createSubcategories($request, $id_ticket_detail);
+
+                    DB::commit();
+                    return [
+                        'ticket' => $ticket_detail,
+                        'Categories' => $createdCategories,
+                        'Subcategories' => $createdSubcategories,
+                        'nameUser' =>  $nameUser,
+                        'name_enterprise' => $name_enterprise
+                    ];
+                } catch (\Throwable $th) {
+                    DB::rollBack();
+                    throw $th;
+                }
+                break;
+            case 'تم التقييم':
+                $ticket_detail->type_ticket = 'تم التقييم';
+                $ticket_detail->fkuser_rate = $currentUserId;
+                $ticket_detail->date_rate = $nowDate;
+                $ticket_detail->notes_rate = $request->notes_rate;
+                $ticket_detail->rate = $request->rate;
+                break;
+
+            default:
+                break;
         }
-    }
-
-    public function closeTicketService($request, $id_ticket)
-    {
-        try {
-            DB::beginTransaction();
-            $ticket = tickets::find($id_ticket);
-            if ($ticket) {
-                $ticket->update([
-                    'fk_user_close' => auth('sanctum')->user()->id_user,
-                    'date_close' => Carbon::now('Asia/Riyadh')->toDateTimeString(),
-                    'type_ticket' => $request->input('type_ticket'),
-                    'notes_ticket' => $request->input('notes_ticket')
-                ]);
-            }
-
-            $createdCategories = $this->createCategories($request, $id_ticket);
-            $createdSubcategories = $this->createSubcategories($request, $id_ticket);
-
-            DB::commit();
-
-            return [
-                'ticket' => $ticket,
-                'Categories' => $createdCategories,
-                'Subcategories' => $createdSubcategories
-            ];
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
+        $ticket_detail->save();
+        return [
+            'ticket' => $ticket_detail,
+            'Categories' => $createdCategories,
+            'Subcategories' => $createdSubcategories,
+            'nameUser' =>  $nameUser,
+            'name_enterprise' => $name_enterprise
+        ];
     }
 
     private function createCategories($request, $id_ticket)
@@ -134,7 +133,6 @@ class TicketDetailSrevices extends JsonResponeService
                 $createdCategories[] = $categoryTicketResponse;
             }
         }
-
         return $createdCategories;
     }
 
