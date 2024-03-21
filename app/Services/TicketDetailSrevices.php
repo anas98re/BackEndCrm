@@ -168,4 +168,59 @@ class TicketDetailSrevices extends JsonResponeService
 
         return $createdSubcategories;
     }
+
+    public function getTicketByIdService($ticket_detail)
+    {
+        $client = clients::find($ticket_detail->fk_client);
+        $name_enterprise = $client ? $client->name_enterprise : null;
+
+        $User = users::find(
+            $ticket_detail->fk_user_open ?
+                $ticket_detail->fk_user_open :
+                $ticket_detail->fk_user_reopen
+        );
+        $nameUser = $User->nameUser;
+
+        $Subcategories = null;
+        $subcategory_ticket_fks = subcategory_ticket_fk::where(
+            'fk_ticket',
+            $ticket_detail->id_ticket_detail
+        )->get();
+        info($subcategory_ticket_fks);
+        foreach ($subcategory_ticket_fks as $fk) {
+            $subcategory = subcategorie_ticket::where('id', $fk->fk_subcategory)->first();
+            $subcategoryTicketResponse = [
+                'sub_category_ar' => $subcategory->sub_category_ar,
+                'sub_category_en' => $subcategory->sub_category_en,
+                'id' => $subcategory->id,
+                'classification' => $subcategory->classification
+            ];
+            $Subcategories[] = $subcategoryTicketResponse;
+        }
+
+        $categories = null;
+        $category_ticket_fks = category_ticket_fk::where(
+            'fk_ticket',
+            $ticket_detail->id_ticket_detail
+        )->get();
+        foreach ($category_ticket_fks as $fk) {
+            $category = categorie_tiket::where('id', $fk->fk_category)->first();
+            $categoryTicketResponse = [
+                'category_ar' => $category->category_ar,
+                'category_en' => $category->category_en,
+                'id' => $category->id,
+                'classification' => $category->classification
+            ];
+            $categories[] = $categoryTicketResponse;
+        }
+
+        $response = [
+            'ticket' => $ticket_detail,
+            'name_enterprise' => $name_enterprise,
+            'nameUser' => $nameUser,
+            'Categories' => $categories,
+            'Subcategories' => $Subcategories
+        ];
+        return $response;
+    }
 }

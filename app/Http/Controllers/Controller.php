@@ -37,7 +37,7 @@ class Controller extends BaseController
         return response()->json($response, 200);
     }
 
-    public function sendError($error, $errorMessage = [], $code = 404)
+    public function sendError($error, $errorMessage = [], $code = 200)
     {
         $response = [
             'success' => false,
@@ -59,6 +59,21 @@ class Controller extends BaseController
             $response['data'] = $errorMessage;
         }
         return response()->json($response, $code);
+    }
+
+    public function editTicketTypeResponse($result)
+    {
+        $response = [
+            'result' => 'success',
+            'code' => 200,
+            'message' => $result['ticket']
+        ];
+        $response['message']['name_enterprise'] = $result['name_enterprise'];
+        $response['message']['nameUser'] = $result['nameUser'];
+        $response['message']['categories_ticket_fk'] = $result['Categories'];
+        $response['message']['subcategories_ticket_fk'] = $result['Subcategories'];
+
+        return response()->json($response, 200);
     }
 }
 
