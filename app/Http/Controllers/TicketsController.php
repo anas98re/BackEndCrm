@@ -9,6 +9,7 @@ use App\Imports\categories_ticketImport;
 use App\Imports\subcategories_ticketImport;
 use App\Models\categorie_tiket;
 use App\Models\subcategorie_ticket;
+use App\Models\ticket_detail;
 use App\Services\TicketDetailSrevices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,8 +33,12 @@ class TicketsController extends Controller
 
     public function editTicketType(Request $request, $id_ticket_detail)
     {
+        $ticket_detail = ticket_detail::find($id_ticket_detail);
+        if (!$ticket_detail) {
+            return $this->sendError('wrong', 'This id not found');
+        }
         $respons = $this->MyService->editTicketTypeService($request, $id_ticket_detail);
-        return $this->closeTicketResponse($respons);
+        return $this->editTicketTypeResponse($respons);
     }
 
     // public function closeTicket(Request $request, $id_ticket)
@@ -42,19 +47,15 @@ class TicketsController extends Controller
     //     return $this->closeTicketResponse($respons);
     // }
 
-    private function closeTicketResponse($result)
-    {
-        $response = [
-            'result' => 'success',
-            'code' => 200,
-            'message' => $result['ticket']
-        ];
-        $response['message']['name_enterprise'] = $result['name_enterprise'];
-        $response['message']['nameUser'] = $result['nameUser'];
-        $response['message']['categories_ticket_fk'] = $result['Categories'];
-        $response['message']['subcategories_ticket_fk'] = $result['Subcategories'];
 
-        return response()->json($response, 200);
+    public function getTicketById($id)
+    {
+        $ticket_detail = ticket_detail::find($id);
+        if (!$ticket_detail) {
+            return $this->sendError('wrong', 'This id not found');
+        }
+        $respons = $this->MyService->getTicketByIdService($ticket_detail);
+        return $this->editTicketTypeResponse($respons);
     }
 
     public function importCategoriesTicket(Request $request)

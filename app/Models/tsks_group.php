@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Logger\CustomActivityLogger;
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
@@ -11,7 +12,7 @@ use Illuminate\Http\Request;
 
 class tsks_group extends Model
 {
-    use LogsActivity;
+    use LogsActivity, Loggable;
 
     protected static $activityLoggerClass = CustomActivityLogger::class;
 

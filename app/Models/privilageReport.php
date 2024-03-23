@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
@@ -10,11 +11,11 @@ use Illuminate\Http\Request;
 
 class privilageReport extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, Loggable;
 
     protected $table = 'privilages_report';
     public $timestamps = false;
-    
+
     protected $fillable = [
         'changes_data',
         'level_name',

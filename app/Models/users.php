@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
@@ -13,7 +14,7 @@ use Illuminate\Http\Request;
 class users extends Model
 {
     // use HasFactory;
-    use HasApiTokens, HasFactory, Notifiable, LogsActivity;
+    use HasApiTokens, HasFactory, Notifiable, LogsActivity, Loggable;
     protected $table = 'users';
 
     protected $primaryKey = 'id_user';
@@ -62,7 +63,7 @@ class users extends Model
                     if ($eventName === 'updated')
                         return "otp updated , using route: $routePattern from IP: $ip.";
                 });
-        } 
+        }
     }
 
     public function getQualifiedKeyName()
