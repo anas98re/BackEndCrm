@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
@@ -11,7 +12,7 @@ use Illuminate\Http\Request;
 
 class company extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity,Loggable;
 
     protected $table = 'company';
     public $timestamps = false;

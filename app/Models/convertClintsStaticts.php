@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class convertClintsStaticts extends Model
 {
-    use HasFactory;
+    use HasFactory, Loggable;
 
     public $timestamps = false;
     protected $fillable = [

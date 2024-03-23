@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class tickets_old extends Model
 {
-    use HasFactory;
+    use HasFactory, Loggable;
 
     protected $table = 'tickets_old';
     public $timestamps = false;
-    
+
     protected $fillable = [
         'id_ticket',
         'fk_client',

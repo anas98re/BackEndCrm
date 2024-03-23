@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
@@ -10,7 +11,8 @@ use Illuminate\Http\Request;
 
 class clients_date extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, Loggable;
+    // use Loggable;
 
     protected $table = 'clients_date';
     public $timestamps = false;
