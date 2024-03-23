@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class product_invoices_view extends Model
 {
-    use HasFactory;
+    use HasFactory, Loggable;
 
     protected $table = 'product_invoices_view';
     public $timestamps = false;
-    
+
     protected $fillable = [
         'id_invoice_product',
         'fk_id_invoice',

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class managements extends Model
 {
-    use HasFactory;
+    use HasFactory, Loggable;
 
     protected $table = 'managements';
     public $timestamps = false;
