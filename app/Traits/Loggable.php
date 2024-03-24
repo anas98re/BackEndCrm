@@ -18,17 +18,14 @@ trait Loggable
         $userId = $user ? $user->id_user : null;
 
         static::updating(function ($model) use ($user, $routeName, $ip, $userName, $userId) {
-            // Retrieve the original attributes
             $originalAttributes = $model->getOriginal();
 
-            // Get the updated attributes
             $updatedAttributes = $model->getDirty();
 
             // Filter the modified attributes
             $modifiedAttributesBefore = array_intersect_key($originalAttributes, $updatedAttributes);
             $modifiedAttributesAfter = array_intersect_key($updatedAttributes, $originalAttributes);
 
-            // Log the update with the modified data
             ChangeLog::create([
                 'model' => get_class($model),
                 'action' => 'updated',
@@ -43,7 +40,6 @@ trait Loggable
         });
 
         static::deleting(function ($model) use ($user, $routeName, $ip, $userName, $userId) {
-            // Log the deletion
             ChangeLog::create([
                 'model' => get_class($model),
                 'action' => 'deleted',
