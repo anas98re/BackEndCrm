@@ -31,6 +31,9 @@ class TicketDetailSrevices extends JsonResponeService
             $requestHandle = $request->all();
             $openType = $request->input('open_type');
             $requestHandle['type_ticket'] = $openType;
+            $requestHandle['ticket_source'] =  $request->input('ticket_source');
+            $requestHandle['client_type'] =  $request->input('client_type');
+            $requestHandle['notes_ticket'] =  $request->input('notes');
             $ticket = tickets::create($requestHandle);
             $ticketState = ($openType == 'open') ? Constants::TICKET_OPEN : Constants::TICKET_REOPEN;
 
