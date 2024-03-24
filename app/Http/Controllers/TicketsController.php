@@ -33,29 +33,28 @@ class TicketsController extends Controller
 
     public function editTicketType(Request $request, $id_ticket_detail)
     {
-        $ticket_detail = ticket_detail::find($id_ticket_detail);
+        $ticket_detail = tickets::find($id_ticket_detail);
         if (!$ticket_detail) {
             return $this->sendError('wrong', 'This id not found');
         }
         $respons = $this->MyService->editTicketTypeService($request, $id_ticket_detail);
-        return $this->editTicketTypeResponse($respons);
+        return $this->TicketResponse($respons);
     }
-
-    // public function closeTicket(Request $request, $id_ticket)
-    // {
-    //     $respons = $this->MyService->closeTicketService($request, $id_ticket);
-    //     return $this->closeTicketResponse($respons);
-    // }
 
 
     public function getTicketById($id)
     {
-        $ticket_detail = ticket_detail::find($id);
-        if (!$ticket_detail) {
+        $ticket = tickets::find($id);
+        if (!$ticket) {
             return $this->sendError('wrong', 'This id not found');
         }
-        $respons = $this->MyService->getTicketByIdService($ticket_detail);
-        return $this->editTicketTypeResponse($respons);
+        $respons = $this->MyService->getTicketByIdService($ticket);
+        return $this->TicketResponse($respons);
+    }
+
+    public function getTickets()
+    {
+        return $this->MyService->getTicketsService();
     }
 
     public function importCategoriesTicket(Request $request)
