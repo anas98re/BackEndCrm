@@ -6,20 +6,14 @@ use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ticket_detail extends Model
+class ticket_state extends Model
 {
     use HasFactory, Loggable;
 
-    protected $table = 'tickets_detail';
+    protected $table = 'ticket_state';
     public $timestamps = false;
-    protected $primaryKey = 'id_ticket_detail';
 
     protected $fillable = [
-        'id_ticket_detail',
-        'fk_ticket',
-        'fk_state',
-        'notes',
-        'fk_user',
-        'date_state'
+        'name_state'
     ];
 }

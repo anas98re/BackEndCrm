@@ -61,7 +61,7 @@ class Controller extends BaseController
         return response()->json($response, $code);
     }
 
-    public function editTicketTypeResponse($result)
+    public function TicketResponse($result)
     {
         $response = [
             'result' => 'success',
@@ -75,7 +75,29 @@ class Controller extends BaseController
 
         return response()->json($response, 200);
     }
+
+    public function allTicketResponse($result)
+    {
+        $tickets = [];
+
+        foreach ($result as $ticket) {
+            $ticketData = [
+                'ticket' => $ticket['ticket'],
+                'name_enterprise' => $ticket['name_enterprise'],
+                'nameUser' => $ticket['nameUser'],
+                'categories_ticket_fk' => $ticket['Categories'],
+                'subcategories_ticket_fk' => $ticket['Subcategories'],
+            ];
+
+            $tickets[] = $ticketData;
+        }
+
+        $response = [
+            'result' => 'success',
+            'code' => 200,
+            'message' => $tickets
+        ];
+
+        return response()->json($response, 200);
+    }
 }
-
-
-
