@@ -30,7 +30,7 @@ class TicketDetailSrevices extends JsonResponeService
 
             $requestHandle = $request->all();
             $openType = $request->input('open_type');
-
+            $requestHandle['type_ticket'] = $openType;
             $ticket = tickets::create($requestHandle);
             $ticketState = ($openType == 'open') ? Constants::TICKET_OPEN : Constants::TICKET_REOPEN;
 
@@ -43,8 +43,8 @@ class TicketDetailSrevices extends JsonResponeService
             ]);
 
             DB::commit();
-
-            return $ticket;
+            $ticketResponse = tickets::find($ticket->id_ticket);
+            return $ticketResponse;
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
