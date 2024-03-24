@@ -33,6 +33,7 @@ class StorageUpdates implements ShouldQueue
     protected $update_source;
     protected $description;
     protected $nameMainCitiesBefor;
+    protected $isApprove;
     /**
      * Create a new job instance.
      */
@@ -44,7 +45,8 @@ class StorageUpdates implements ShouldQueue
         $userId,
         $update_source,
         $description,
-        $nameMainCitiesBefor
+        $nameMainCitiesBefor,
+        $isApprove
     ) {
         $this->modelId = $modelId;
         $this->model = $model;
@@ -55,6 +57,7 @@ class StorageUpdates implements ShouldQueue
         $this->update_source = $update_source;
         $this->description = $description;
         $this->nameMainCitiesBefor = $nameMainCitiesBefor;
+        $this->isApprove = $isApprove;
     }
 
     public function handle(): void
@@ -78,6 +81,7 @@ class StorageUpdates implements ShouldQueue
             $clientsUpdateReport->edit_date = $this->dateUpdate;
             $clientsUpdateReport->source = $this->update_source;
             $clientsUpdateReport->description = $this->description;
+            $clientsUpdateReport->afterApprove = $this->isApprove;
             $clientsUpdateReport->save();
         }
     }

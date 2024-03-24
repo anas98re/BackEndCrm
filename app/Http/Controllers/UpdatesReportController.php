@@ -74,6 +74,7 @@ class UpdatesReportController extends Controller
             }
         }
 
+        $isApprove = null;
         $routePattern = 'updateuser_patch.php';
         $description = "User updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل بيانات المستخدم ';
@@ -87,7 +88,8 @@ class UpdatesReportController extends Controller
             $userId,
             $update_source,
             $description,
-            $nameMainCitiesBefor
+            $nameMainCitiesBefor,
+            $isApprove
         );
     }
 
@@ -105,6 +107,7 @@ class UpdatesReportController extends Controller
                 $userName = $user->nameUser;
             }
         }
+        $isApprove = null;
         $routePattern = 'clientUpdate.php';
         $description = "Client updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل بيانات العميل ';
@@ -119,7 +122,8 @@ class UpdatesReportController extends Controller
             $userId,
             $update_source,
             $description,
-            $nameMainCitiesBefor
+            $nameMainCitiesBefor,
+            $isApprove
         );
     }
 
@@ -138,9 +142,8 @@ class UpdatesReportController extends Controller
                 $userName = $user->nameUser;
             }
         }
-        $isApprove = 'o';
+        $isApprove = null;
         $data = json_decode($request->input('IsAprrove'), true); // Decode the JSON string into an associative array
-
         if ($data !== null && count($data) > 0 && isset($data[0]['isApprove'])) {
             if ($data[0]['isApprove'] === '1') {
                 $isApprove = 'true';
@@ -151,7 +154,7 @@ class UpdatesReportController extends Controller
             // Handle the case when $data is null or empty
             $isApprove = 'Not Found'; // or any other default value you want to set
         }
-        
+
         $routePattern = 'edit_invoices.php';
         $description = "Invoice data changed by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = '(' . $isApprove . ')' . '،تغيير بيانات الفاتورة';
@@ -166,7 +169,8 @@ class UpdatesReportController extends Controller
             $userId,
             $update_source,
             $description,
-            $nameMainCitiesBefor
+            $nameMainCitiesBefor,
+            $isApprove
         );
     }
 
@@ -184,6 +188,7 @@ class UpdatesReportController extends Controller
                 $userName = $user->nameUser;
             }
         }
+        $isApprove = null;
         $data = json_decode($request->input('IsAprrove'), true); // Decode the JSON string into an associative array
 
         if ($data !== null && count($data) > 0 && isset($data[0]['isApprove'])) {
@@ -211,7 +216,8 @@ class UpdatesReportController extends Controller
             $userId,
             $update_source,
             $description,
-            $nameMainCitiesBefor
+            $nameMainCitiesBefor,
+            $isApprove
         );
     }
 
@@ -229,6 +235,7 @@ class UpdatesReportController extends Controller
                 $userName = $user->nameUser;
             }
         }
+        $isApprove = null;
         $routePattern = 'updateinvoice_product.php';
         $description = "invoice product updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل منتجات الفاتورة';
@@ -243,7 +250,8 @@ class UpdatesReportController extends Controller
             $userId,
             $update_source,
             $description,
-            $nameMainCitiesBefor
+            $nameMainCitiesBefor,
+            $isApprove
         );
     }
 }
