@@ -32,7 +32,7 @@ class TicketDetailSrevices extends JsonResponeService
             $openType = $request->input('open_type');
 
             $ticket = tickets::create($requestHandle);
-            $ticketState = ($openType == 0) ? Constants::TICKET_OPEN : Constants::TICKET_REOPEN;
+            $ticketState = ($openType == 'open') ? Constants::TICKET_OPEN : Constants::TICKET_REOPEN;
 
             ticket_detail::create([
                 'fk_ticket' => $ticket->id_ticket,
@@ -64,11 +64,11 @@ class TicketDetailSrevices extends JsonResponeService
         $nowDate = Carbon::now('Asia/Riyadh')->toDateTimeString();
 
         switch ($request->type_ticket) {
-            case 'قيد التنفيذ':
+            case 'recive':
                 $ticket->update($request->all());
                 $this->updateTicketState($id, Constants::TICKET_RECIVE, $currentUserId, $nowDate, $request->notes);
                 break;
-            case 'مغلقة':
+            case 'close':
                 try {
                     DB::beginTransaction();
                     $ticket->update($request->all());
@@ -82,7 +82,7 @@ class TicketDetailSrevices extends JsonResponeService
                     DB::rollBack();
                     throw $th;
                 }
-            case 'تم التقييم':
+            case 'rate':
                 $ticket->update($request->all());
                 $this->updateTicketState($id, Constants::TICKET_RATE, $currentUserId, $nowDate, $request->notes);
                 break;
