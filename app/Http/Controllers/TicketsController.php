@@ -25,7 +25,7 @@ class TicketsController extends Controller
         $this->MyService = $MyService;
     }
 
-    public function addOrReOpenTicket(Request $request)
+    public function addTicket(Request $request)
     {
         $respons = $this->MyService->addOrReOpenTicketService($request);
         return $this->sendSucssas($respons);
@@ -49,7 +49,7 @@ class TicketsController extends Controller
             return $this->sendError('wrong', 'This id not found');
         }
         $respons = $this->MyService->getTicketByIdService($ticket);
-        return $this->TicketResponse($respons);
+        return $this->TicketResponseToGet($respons);
     }
 
     public function getTickets()

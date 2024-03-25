@@ -18,6 +18,7 @@ class ticket_detail extends Model
         'id_ticket_detail',
         'fk_ticket',
         'fk_state',
+        'tag',
         'notes',
         'fk_user',
         'date_state'

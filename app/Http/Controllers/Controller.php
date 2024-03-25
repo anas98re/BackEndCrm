@@ -76,28 +76,24 @@ class Controller extends BaseController
         return response()->json($response, 200);
     }
 
-    public function allTicketResponse($result)
+    public function TicketResponseToGet($result)
     {
-        $tickets = [];
-
-        foreach ($result as $ticket) {
-            $ticketData = [
-                'ticket' => $ticket['ticket'],
-                'name_enterprise' => $ticket['name_enterprise'],
-                'nameUser' => $ticket['nameUser'],
-                'categories_ticket_fk' => $ticket['Categories'],
-                'subcategories_ticket_fk' => $ticket['Subcategories'],
-            ];
-
-            $tickets[] = $ticketData;
-        }
-
         $response = [
             'result' => 'success',
             'code' => 200,
-            'message' => $tickets
+            'message' => $result['ticket']
         ];
+        $response['message']['name_enterprise'] = $result['name_enterprise'];
+        $response['message']['nameUser'] = $result['nameUser'];
+        $response['message']['categories_ticket_fk'] = $result['Categories'];
+        $response['message']['subcategories_ticket_fk'] = $result['Subcategories'];
+        $response['message']['status'] = $result['status'];
 
         return response()->json($response, 200);
     }
+
 }
+
+
+
+
