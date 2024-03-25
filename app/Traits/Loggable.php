@@ -41,7 +41,7 @@ trait Loggable
                 'description' => get_class($model) . ' updated by ' . $userName . ', using route: ' . $routeName . ' from IP: ' . $ip,
                 'user_id' => $userId,
                 'model_id' => $model->getKey(),
-                'edit_date' =>  Carbon::now('Asia/Riyadh'),
+                'edit_date' =>  Carbon::now('Asia/Riyadh')->toDateTimeString(),
                 'route' => $routeName,
                 'ip' => $ip
             ]);
