@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\activity_type;
 use App\Models\agent;
+use App\Models\ChangeLog;
 use App\Models\city;
 use App\Models\company;
 use App\Models\level;
@@ -73,16 +74,29 @@ class StorageUpdates implements ShouldQueue
 
             $reportMessage = implode("\n", $report);
 
-            $clientsUpdateReport = new updatesReport();
-            $clientsUpdateReport->changesData = $reportMessage;
-            $clientsUpdateReport->model = $this->model;
-            $clientsUpdateReport->model_id = $this->modelId;
-            $clientsUpdateReport->user_id = (int) $this->userId;
-            $clientsUpdateReport->edit_date = $this->dateUpdate;
-            $clientsUpdateReport->source = $this->update_source;
-            $clientsUpdateReport->description = $this->description;
-            $clientsUpdateReport->afterApprove = $this->isApprove;
-            $clientsUpdateReport->save();
+            // $clientsUpdateReport = new updatesReport();
+            // $clientsUpdateReport->changesData = $reportMessage;
+            // $clientsUpdateReport->model = $this->model;
+            // $clientsUpdateReport->model_id = $this->modelId;
+            // $clientsUpdateReport->user_id = (int) $this->userId;
+            // $clientsUpdateReport->edit_date = $this->dateUpdate;
+            // $clientsUpdateReport->source = $this->update_source;
+            // $clientsUpdateReport->description = $this->description;
+            // $clientsUpdateReport->afterApprove = $this->isApprove;
+            // $clientsUpdateReport->save();
+
+            ChangeLog::create([
+                'model' => $this->model,
+                'action' => 'updated',
+                'changesData' => $reportMessage,
+                'description' => $this->description,
+                'user_id' => (int) $this->userId,
+                'model_id' => $this->modelId,
+                'edit_date' => $this->dateUpdate,
+                'route' => $this->update_source,
+                'isApprove' => $this->isApprove,
+                'ip' => null
+            ]);
         }
     }
 
