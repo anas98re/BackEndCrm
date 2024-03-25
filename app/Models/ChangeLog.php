@@ -9,13 +9,14 @@ class ChangeLog extends Model
     protected $fillable = [
         'model',
         'action',
-        'old_data',
-        'new_data',
+        'changesData',
         'description',
         'user_id',
         'model_id',
+        'edit_date',
         'route',
         'ip',
+        'afterApprove'
     ];
 
     // Define any relationships or additional methods for the ChangeLog model

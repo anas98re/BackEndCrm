@@ -17,4 +17,9 @@ class subcategory_ticket_fk extends Model
         'fk_subcategory',
         'fk_ticket'
     ];
+
+    public function subcategories_ticket()
+    {
+        return $this->belongsTo(subcategorie_ticket::class, 'fk_subcategory', 'id');
+    }
 }

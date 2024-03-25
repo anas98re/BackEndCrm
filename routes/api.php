@@ -162,10 +162,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('getCategoriesTicket', [TicketsController::class, 'getCategoriesTicket']);
 
     //Tickets
-    Route::post('addOrReOpenTicketService', [TicketsController::class, 'addOrReOpenTicket']);
-    Route::post('editTicketType/{id_ticket_detail}', [TicketsController::class, 'editTicketType']);
-    Route::post('closeTicket/{id_ticket}', [TicketsController::class, 'closeTicket']);
+    Route::post('addTicket', [TicketsController::class, 'addTicket']);
+    Route::post('editTicketType/{id}', [TicketsController::class, 'editTicketType']);
     Route::get('getTicketById/{id}', [TicketsController::class, 'getTicketById']);
+    Route::get('getTickets', [TicketsController::class, 'getTickets']);
 
 });
 
