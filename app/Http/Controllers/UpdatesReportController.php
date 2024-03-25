@@ -279,7 +279,7 @@ class UpdatesReportController extends Controller
         $description = "Client Communication updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل جدول العناية للعميل ';
         $model = 'App\Models\client_communication';
-
+        info(1);
         $nameMainCitiesBefor = null;
         StorageUpdates::dispatch(
             $modelId,
