@@ -25,7 +25,7 @@ class TicketsController extends Controller
         $this->MyService = $MyService;
     }
 
-    public function addOrReOpenTicket(Request $request)
+    public function addTicket(Request $request)
     {
         $respons = $this->MyService->addOrReOpenTicketService($request);
         return $this->sendSucssas($respons);
