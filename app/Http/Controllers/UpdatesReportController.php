@@ -87,6 +87,7 @@ class UpdatesReportController extends Controller
             $dataAfterUpdate,
             $userId,
             $update_source,
+            $routePattern,
             $description,
             $nameMainCitiesBefor,
             $isApprove
@@ -121,6 +122,7 @@ class UpdatesReportController extends Controller
             $dataAfterUpdate,
             $userId,
             $update_source,
+            $routePattern,
             $description,
             $nameMainCitiesBefor,
             $isApprove
@@ -168,6 +170,7 @@ class UpdatesReportController extends Controller
             $dataAfterUpdate,
             $userId,
             $update_source,
+            $routePattern,
             $description,
             $nameMainCitiesBefor,
             $isApprove
@@ -215,6 +218,7 @@ class UpdatesReportController extends Controller
             $dataAfterUpdate,
             $userId,
             $update_source,
+            $routePattern,
             $description,
             $nameMainCitiesBefor,
             $isApprove
@@ -249,6 +253,7 @@ class UpdatesReportController extends Controller
             $dataAfterUpdate,
             $userId,
             $update_source,
+            $routePattern,
             $description,
             $nameMainCitiesBefor,
             $isApprove
