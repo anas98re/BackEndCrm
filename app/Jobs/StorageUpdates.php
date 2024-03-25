@@ -32,6 +32,7 @@ class StorageUpdates implements ShouldQueue
     protected $dateUpdate;
     protected $userId;
     protected $update_source;
+    protected $routePattern;
     protected $description;
     protected $nameMainCitiesBefor;
     protected $isApprove;
@@ -45,6 +46,7 @@ class StorageUpdates implements ShouldQueue
         $dataAfterUpdate,
         $userId,
         $update_source,
+        $routePattern,
         $description,
         $nameMainCitiesBefor,
         $isApprove
@@ -56,6 +58,7 @@ class StorageUpdates implements ShouldQueue
         $this->dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();
         $this->userId = $userId;
         $this->update_source = $update_source;
+        $this->routePattern = $routePattern;
         $this->description = $description;
         $this->nameMainCitiesBefor = $nameMainCitiesBefor;
         $this->isApprove = $isApprove;
@@ -93,7 +96,8 @@ class StorageUpdates implements ShouldQueue
                 'user_id' => (int) $this->userId,
                 'model_id' => $this->modelId,
                 'edit_date' => $this->dateUpdate,
-                'route' => $this->update_source,
+                'source' => $this->update_source,
+                'route' => $this->routePattern,
                 'isApprove' => $this->isApprove,
                 'ip' => null
             ]);

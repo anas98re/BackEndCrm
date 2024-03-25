@@ -14,6 +14,7 @@ class ChangeLog extends Model
         'user_id',
         'model_id',
         'edit_date',
+        'source',
         'route',
         'ip',
         'afterApprove'
