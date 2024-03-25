@@ -277,7 +277,8 @@ class UpdatesReportController extends Controller
         $isApprove = null;
         $routePattern = 'care/updateCommunication.php';
         $description = "Client Communication updated by $userName, using route: $routePattern from IP: $this->ip.";
-        $update_source = 'تعديل جدول العناية للعميل ';
+        $update_source = 'تعديل التقييم';
+
         $model = 'App\Models\client_communication';
         info(1);
         $nameMainCitiesBefor = null;
