@@ -78,7 +78,7 @@ class UpdatesReportController extends Controller
         $routePattern = 'updateuser_patch.php';
         $description = "User updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل بيانات المستخدم ';
-        $model = 'users';
+        $model = 'App\Models\users';
 
         StorageUpdates::dispatch(
             $modelId,
@@ -112,7 +112,7 @@ class UpdatesReportController extends Controller
         $routePattern = 'clientUpdate.php';
         $description = "Client updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل بيانات العميل ';
-        $model = 'clients';
+        $model = 'App\Models\clients';
 
         $nameMainCitiesBefor = null;
         StorageUpdates::dispatch(
@@ -131,7 +131,6 @@ class UpdatesReportController extends Controller
 
     public function storageInvoicesUpdates(Request $request)
     {
-        info('request->all() for storageInvoicesUpdates:', $request->all());
         $modelId = $request->input('id_invoice');
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
         $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
@@ -160,7 +159,7 @@ class UpdatesReportController extends Controller
         $routePattern = 'edit_invoices.php';
         $description = "Invoice data changed by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = '(' . $isApprove . ')' . '،تغيير بيانات الفاتورة';
-        $model = 'client_invoice';
+        $model = 'App\Models\client_invoice';
 
         $nameMainCitiesBefor = null;
         StorageUpdates::dispatch(
@@ -208,7 +207,7 @@ class UpdatesReportController extends Controller
         $routePattern = 'updateinvoice.php';
         $description = "Invoice updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = '(' . $isApprove . ')' . '،تعديل الفاتورة';
-        $model = 'client_invoice';
+        $model = 'App\Models\client_invoice';
 
         $nameMainCitiesBefor = null;
         StorageUpdates::dispatch(
@@ -243,7 +242,43 @@ class UpdatesReportController extends Controller
         $routePattern = 'updateinvoice_product.php';
         $description = "invoice product updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل منتجات الفاتورة';
-        $model = 'invoice_product';
+        $model = 'App\Models\invoice_product';
+
+        $nameMainCitiesBefor = null;
+        StorageUpdates::dispatch(
+            $modelId,
+            $model,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $userId,
+            $update_source,
+            $routePattern,
+            $description,
+            $nameMainCitiesBefor,
+            $isApprove
+        );
+    }
+
+    public function storageClientCommunicationUpdates(Request $request)
+    {
+        info('all request storageClientCommunicationUpdates:', $request->all());
+        $modelId = $request->input('id_communication');
+        $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
+        $dataAfterUpdate = json_decode($request->input('dataAfterUpdate'), true)[0];
+        $userId = $request->input('fk_idUser');
+
+        $userName = null;
+        if ($userId) {
+            $user = users::where('id_user', $userId)->first();
+            if ($user) {
+                $userName = $user->nameUser;
+            }
+        }
+        $isApprove = null;
+        $routePattern = 'care/updateCommunication.php';
+        $description = "Client Communication updated by $userName, using route: $routePattern from IP: $this->ip.";
+        $update_source = 'تعديل جدول العناية للعميل ';
+        $model = 'App\Models\client_communication';
 
         $nameMainCitiesBefor = null;
         StorageUpdates::dispatch(
