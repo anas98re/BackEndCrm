@@ -66,6 +66,7 @@ class StorageUpdates implements ShouldQueue
 
     public function handle(): void
     {
+        info(2);
         $dataBeforeUpdate = $this->dataBeforeUpdate;
         $dataAfterUpdate = $this->dataAfterUpdate;
 
@@ -73,8 +74,9 @@ class StorageUpdates implements ShouldQueue
         $nameMainCitiesBefor = $this->nameMainCitiesBefor ? $this->nameMainCitiesBefor : null;
         $differences = array_diff_assoc($dataAfterUpdate, $dataBeforeUpdate);
         if ($differences) {
+            info(3);
             $report = $this->generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate, $nameMainCitiesBefor);
-
+            info(4);
             $reportMessage = implode("\n", $report);
 
             // $clientsUpdateReport = new updatesReport();
