@@ -98,7 +98,7 @@ class StorageUpdates implements ShouldQueue
                 'edit_date' => $this->dateUpdate,
                 'source' => $this->update_source,
                 'route' => $this->routePattern,
-                'isApprove' => $this->isApprove,
+                'afterApprove' => $this->isApprove,
                 'ip' => null
             ]);
         }
