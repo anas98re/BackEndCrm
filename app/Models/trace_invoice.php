@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class trace_invoice extends Model
 {
-    use HasFactory;
+    use HasFactory, Loggable;
 
     protected $table = 'trace_invoice';
     public $timestamps = false;
-    
+
     protected $fillable = [
         'idR_invoice',
         'fk_user',

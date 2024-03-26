@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class view_care_repeat extends Model
 {
-    use HasFactory;
+    use HasFactory, Loggable;
 
     protected $table = 'view_care_repeat';
     public $timestamps = false;
-    
+
     protected $fillable = [
         'use_system',
         'rate',

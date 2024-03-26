@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\activity_type;
 use App\Models\agent;
+use App\Models\ChangeLog;
 use App\Models\city;
 use App\Models\company;
 use App\Models\level;
@@ -31,8 +32,10 @@ class StorageUpdates implements ShouldQueue
     protected $dateUpdate;
     protected $userId;
     protected $update_source;
+    protected $routePattern;
     protected $description;
     protected $nameMainCitiesBefor;
+    protected $isApprove;
     /**
      * Create a new job instance.
      */
@@ -43,8 +46,10 @@ class StorageUpdates implements ShouldQueue
         $dataAfterUpdate,
         $userId,
         $update_source,
+        $routePattern,
         $description,
-        $nameMainCitiesBefor
+        $nameMainCitiesBefor,
+        $isApprove
     ) {
         $this->modelId = $modelId;
         $this->model = $model;
@@ -53,12 +58,15 @@ class StorageUpdates implements ShouldQueue
         $this->dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();
         $this->userId = $userId;
         $this->update_source = $update_source;
+        $this->routePattern = $routePattern;
         $this->description = $description;
         $this->nameMainCitiesBefor = $nameMainCitiesBefor;
+        $this->isApprove = $isApprove;
     }
 
     public function handle(): void
     {
+        info(2);
         $dataBeforeUpdate = $this->dataBeforeUpdate;
         $dataAfterUpdate = $this->dataAfterUpdate;
 
@@ -66,19 +74,35 @@ class StorageUpdates implements ShouldQueue
         $nameMainCitiesBefor = $this->nameMainCitiesBefor ? $this->nameMainCitiesBefor : null;
         $differences = array_diff_assoc($dataAfterUpdate, $dataBeforeUpdate);
         if ($differences) {
+            info(3);
             $report = $this->generateReport($differences, $dataBeforeUpdate, $dataAfterUpdate, $nameMainCitiesBefor);
-
+            info(4);
             $reportMessage = implode("\n", $report);
 
-            $clientsUpdateReport = new updatesReport();
-            $clientsUpdateReport->changesData = $reportMessage;
-            $clientsUpdateReport->model = $this->model;
-            $clientsUpdateReport->model_id = $this->modelId;
-            $clientsUpdateReport->user_id = (int) $this->userId;
-            $clientsUpdateReport->edit_date = $this->dateUpdate;
-            $clientsUpdateReport->source = $this->update_source;
-            $clientsUpdateReport->description = $this->description;
-            $clientsUpdateReport->save();
+            // $clientsUpdateReport = new updatesReport();
+            // $clientsUpdateReport->changesData = $reportMessage;
+            // $clientsUpdateReport->model = $this->model;
+            // $clientsUpdateReport->model_id = $this->modelId;
+            // $clientsUpdateReport->user_id = (int) $this->userId;
+            // $clientsUpdateReport->edit_date = $this->dateUpdate;
+            // $clientsUpdateReport->source = $this->update_source;
+            // $clientsUpdateReport->description = $this->description;
+            // $clientsUpdateReport->afterApprove = $this->isApprove;
+            // $clientsUpdateReport->save();
+
+            ChangeLog::create([
+                'model' => $this->model,
+                'action' => 'updated',
+                'changesData' => $reportMessage,
+                'description' => $this->description,
+                'user_id' => (int) $this->userId,
+                'model_id' => $this->modelId,
+                'edit_date' => $this->dateUpdate,
+                'source' => $this->update_source,
+                'route' => $this->routePattern,
+                'afterApprove' => $this->isApprove,
+                'ip' => null
+            ]);
         }
     }
 
@@ -163,7 +187,13 @@ class StorageUpdates implements ShouldQueue
                     break;
                 case 'nameMainCitiesAfter':
                     $nameMainCitiesAfter = implode(', ', $dataAfterUpdate[$key]);
-                    $nameMainCitiesBefore = implode(', ', array($nameMainCitiesBefor));
+                    $nameMainCitiesBefore = implode(', ', $nameMainCitiesBefor);
+                    // if (!is_array($nameMainCitiesBefor)) {
+                    //     $nameMainCitiesBefore = [$nameMainCitiesBefor];
+                    // }
+
+                    // $nameMainCitiesBefore = implode(', ', [$nameMainCitiesBefor]);
+
                     $report[] = 'MainCities: (' .$nameMainCitiesBefore.') TO (' . $nameMainCitiesAfter . ')';
                     break;
 

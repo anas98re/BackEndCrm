@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class view_ticket extends Model
 {
-    use HasFactory;
+    use HasFactory, Loggable;
 
     protected $table = 'view_ticket';
     public $timestamps = false;
-    
+
     protected $fillable = [
         'fk_client',
         'type_problem',

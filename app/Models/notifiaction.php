@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class notifiaction extends Model
 {
-    use HasFactory;
+    use HasFactory, Loggable;
 
     protected $table = 'notifiaction';
     public $timestamps = false;
-    
+
     protected $fillable = [
         'id_notify',
         'message',

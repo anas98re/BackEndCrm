@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class view_client_invoice extends Model
 {
-    use HasFactory;
+    use HasFactory, Loggable;
 
     protected $table = 'view_client_invoice';
     public $timestamps = false;
-    
+
     protected $fillable = [
         'date_create_client',
         'IDcustomer',

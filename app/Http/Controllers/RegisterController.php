@@ -49,8 +49,8 @@ class RegisterController extends Controller
 
     public function checkEmail(CheckEmailRequest $request)
     {
-        try {
-            DB::beginTransaction();
+        // try {
+        //     DB::beginTransaction();
             $email  = trim($request->email);
             $existingEmail = users::where('email', $email)->exists();
 
@@ -108,10 +108,10 @@ class RegisterController extends Controller
             return $this->sendUnauthenticated(['Error'], 'This email not exist');
             // return $this->sendUnauthenticated(['Error'], 'Unauthenticated');
 
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        // } catch (\Exception $e) {
+        //     DB::rollBack();
+        //     return response()->json(['error' => $e->getMessage()], 500);
+        // }
     }
     public function login1(RegisterationRequest $request)
     {

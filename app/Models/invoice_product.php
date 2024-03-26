@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -10,7 +11,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class invoice_product extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, Loggable;
     protected $primaryKey = 'id_invoice_product';
 
     protected $table = 'invoice_product';
