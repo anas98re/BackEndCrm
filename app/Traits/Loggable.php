@@ -21,6 +21,7 @@ trait Loggable
 
 
         static::updating(function ($model) use ($user, $routeName, $ip, $userName, $userId) {
+
             $originalAttributes = $model->getOriginal();
             $updatedAttributes = $model->getDirty();
 

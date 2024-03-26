@@ -113,7 +113,7 @@ class TicketDetailSrevices extends JsonResponeService
             $lastTicketState = ticket_detail::where('fk_ticket', $ticketId)
                 ->latest('date_state')
                 ->first();
-            $tag = $lastTicketState->tag;
+            $tag = $lastTicketState ? $lastTicketState->tag : null;
         }
         $ticketState = new ticket_detail();
         $ticketState->fk_ticket =  $ticketId;
