@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class series_accept extends Model
 {
-    use HasFactory;
+    use HasFactory, Loggable;
 
     protected $table = 'series_accept';
     public $timestamps = false;
-    
+
     protected $fillable = [
         'id_series',
         'name_series',

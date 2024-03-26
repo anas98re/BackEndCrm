@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class view_lastcomment_clientsuspend extends Model
 {
-    use HasFactory;
+    use HasFactory, Loggable;
 
     protected $table = 'view_lastcomment_clientsuspend';
     public $timestamps = false;
-    
+
     protected $fillable = [
         'id_clients',
         'date_create',

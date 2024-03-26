@@ -10,13 +10,6 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    // public $currectUserId;
-
-    // public function __construct()
-    // {
-    //     $this->currectUserId = auth('sanctum')->user()->id_user;
-    // }
-
     public function sendResponse($result, $message)
     {
         $response = [
@@ -37,7 +30,7 @@ class Controller extends BaseController
         return response()->json($response, 200);
     }
 
-    public function sendError($error, $errorMessage = [], $code = 404)
+    public function sendError($error, $errorMessage = [], $code = 200)
     {
         $response = [
             'success' => false,
@@ -60,4 +53,40 @@ class Controller extends BaseController
         }
         return response()->json($response, $code);
     }
+
+    public function TicketResponse($result)
+    {
+        $response = [
+            'result' => 'success',
+            'code' => 200,
+            'message' => $result['ticket']
+        ];
+        $response['message']['name_enterprise'] = $result['name_enterprise'];
+        $response['message']['nameUser'] = $result['nameUser'];
+        $response['message']['categories_ticket_fk'] = $result['Categories'];
+        $response['message']['subcategories_ticket_fk'] = $result['Subcategories'];
+
+        return response()->json($response, 200);
+    }
+
+    public function TicketResponseToGet($result)
+    {
+        $response = [
+            'result' => 'success',
+            'code' => 200,
+            'message' => $result['ticket']
+        ];
+        $response['message']['name_enterprise'] = $result['name_enterprise'];
+        $response['message']['nameUser'] = $result['nameUser'];
+        $response['message']['categories_ticket_fk'] = $result['Categories'];
+        $response['message']['subcategories_ticket_fk'] = $result['Subcategories'];
+        $response['message']['status'] = $result['status'];
+
+        return response()->json($response, 200);
+    }
+
 }
+
+
+
+

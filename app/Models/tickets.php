@@ -2,15 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class tickets extends Model
 {
-    use HasFactory;
+    use HasFactory, Loggable;
 
     protected $table = 'tickets';
     public $timestamps = false;
+    protected $primaryKey = 'id_ticket';
 
     protected $fillable = [
         'fk_client',

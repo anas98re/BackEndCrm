@@ -21,7 +21,7 @@ class JsonResponeService
         return response()->json($response, 200);
     }
 
-    public function sendError($error, $errorMessage = [], $code = 404)
+    public function sendError($error, $errorMessage = [], $code = 200)
     {
         $response = [
             'success' => false,

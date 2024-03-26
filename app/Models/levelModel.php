@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
@@ -10,7 +11,7 @@ use Illuminate\Http\Request;
 
 class levelModel extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, Loggable;
 
     protected $table = 'level';
     public $timestamps = false;

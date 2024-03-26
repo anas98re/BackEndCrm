@@ -22,6 +22,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SeriesInvoiceacceptController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskProceduresController;
+use App\Http\Controllers\TicketsController;
 use App\Http\Controllers\UpdatesReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -68,6 +69,7 @@ Route::post('addInvoiceProductReport', [UpdatesReportController::class, 'addInvo
 Route::post('addUserUpdateReport', [UpdatesReportController::class, 'addUserUpdateReport']);
 //cllients
 Route::post('storageClientsUpdates', [UpdatesReportController::class, 'storageClientsUpdates']);
+Route::post('storageClientCommunicationUpdates', [UpdatesReportController::class, 'storageClientCommunicationUpdates']);
 
 Route::post('getUsersByTypeAdministrationAndRegion', [RegisterController::class, 'getUsersByTypeAdministrationAndRegion']);
 
@@ -154,6 +156,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('export', [ImportantLinkController::class, 'export']);
     Route::post('import', [ImportantLinkController::class, 'import']);
 
+    //subcategories_ticketImport Excel
+    Route::post('importCategoriesTicket', [TicketsController::class, 'importCategoriesTicket']);
+    Route::post('importSubCategoriesTicket', [TicketsController::class, 'importSubCategoriesTicket']);
+    Route::get('getSubCategoriesTicket', [TicketsController::class, 'getSubCategoriesTicket']);
+    Route::get('getCategoriesTicket', [TicketsController::class, 'getCategoriesTicket']);
+
+    //Tickets
+    Route::post('addTicket', [TicketsController::class, 'addTicket']);
+    Route::post('editTicketType/{id}', [TicketsController::class, 'editTicketType']);
+    Route::get('getTicketById/{id}', [TicketsController::class, 'getTicketById']);
+    Route::get('getTickets', [TicketsController::class, 'getTickets']);
 
 });
 
