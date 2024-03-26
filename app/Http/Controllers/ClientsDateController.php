@@ -31,34 +31,42 @@ class ClientsDateController extends Controller
 
         try {
             if ($request->typeProcess == 'reschedule') {
-                $client = clients_date::where('idclients_date', $idclients_date)
-                    ->update([
-                        'is_done' => 3,
-                        'date_client_visit' => $request->date_client_visit,
-                        'processReason' => $request->processReason,
-                        'type_date' => $request->type_date,
-                        'fk_user_update' => auth('sanctum')->user()->id_user,
-                        'date_end' => $request->date_end,
-                        'fk_user' => $request->fk_user,
-                        'date_update_visit' => Carbon::now('Asia/Riyadh')
-                    ]);
 
-                    $this->myService->handleNotificationAndComments(
+                $client = clients_date::find($idclients_date);
+
+                if ($client) {
+                    $client->is_done = 3;
+                    $client->date_client_visit = $request->date_client_visit;
+                    $client->processReason = $request->processReason;
+                    $client->type_date = $request->type_date;
+                    $client->fk_user_update = auth('sanctum')->user()->id_user;
+                    $client->date_end = $request->date_end;
+                    $client->fk_user = $request->fk_user;
+                    $client->date_update_visit = Carbon::now('Asia/Riyadh');
+
+                    $client->save();
+                }
+
+                $this->myService->handleNotificationAndComments(
                     $privilage_id = 59,
                     $typeProcess = 'اعادة جدولة زيارة',
                     $idclients_date,
                     $processReason = $request->processReason
                 );
             } elseif ($request->typeProcess == 'cancel') {
-                $client = clients_date::where('idclients_date', $idclients_date)
-                    ->update([
-                        'is_done' => 2,
-                        'processReason' => $request->processReason,
-                        'fk_user_update' => auth('sanctum')->user()->id_user,
-                        'date_update_visit' => Carbon::now('Asia/Riyadh')
-                    ]);
 
-                    $this->myService->handleNotificationAndComments(
+                $client = clients_date::find($idclients_date);
+
+                if ($client) {
+                    $client->is_done = 2;
+                    $client->processReason = $request->processReason;
+                    $client->fk_user_update = auth('sanctum')->user()->id_user;
+                    $client->date_update_visit = Carbon::now('Asia/Riyadh');
+
+                    $client->save();
+                }
+
+                $this->myService->handleNotificationAndComments(
                     $privilage_id = 181,
                     $typeProcess = 'الغاء زيارة',
                     $idclients_date,
