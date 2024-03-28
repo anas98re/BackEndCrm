@@ -93,3 +93,61 @@ class TicketsController extends Controller
         return $this->sendSucssas($CategoriesTicket);
     }
 }
+
+// "status": [
+//         {
+//             "id_ticket_detail": 18,
+//             "fk_ticket": 1255,
+//             "fk_state": 1,
+//             "tag": "KAZry",
+//             "notes": "..",
+//             "fk_user": 334,
+//             "userName": "tt",
+//             "date_state": "2024-03-24 20:30:13",
+//             "stateName": "open"
+//         },
+//         {
+//             "id_ticket_detail": 19,
+//             "fk_ticket": 1255,
+//             "fk_state": 2,
+//             "tag": "KAZry",
+//             "notes": "..",
+//             "fk_user": 334,
+//             "userName": "tt",
+//             "date_state": "2024-03-24 20:32:23",
+//             "stateName": "recive"
+//         },
+//         {
+//             "id_ticket_detail": 20,
+//             "fk_ticket": 1255,
+//             "fk_state": 3,
+//             "tag": "KAZry",
+//             "notes": "..",
+//             "fk_user": 334,
+//             "userName": "tt",
+//             "date_state": "2024-03-24 20:32:41",
+//             "stateName": "close"
+//         }
+//         {
+//             "id_ticket_detail": 23,
+//             "fk_ticket": 1255,
+//             "fk_state": 6,
+//             "tag": "aKfAp",
+//             "notes": "..",
+//             "fk_user": 334,
+//             "userName": "tt",
+//             "date_state": "2024-03-24 20:36:03",
+//             "stateName": "reopen"
+//         },
+//         {
+//             "id_ticket_detail": 24,
+//             "fk_ticket": 1255,
+//             "fk_state": 2,
+//             "tag": "aKfAp",
+//             "notes": "..",
+//             "fk_user": 334,
+//             "userName": "tt",
+//             "date_state": "2024-03-24 20:36:35",
+//             "stateName": "recive"
+//         }
+// ]
