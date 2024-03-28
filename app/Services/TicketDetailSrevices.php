@@ -216,6 +216,7 @@ class TicketDetailSrevices extends JsonResponeService
         return $response;
     }
 
+
     public function getStatusTicket($id_ticket)
     {
         $ticketDetails = ticket_detail::where('fk_ticket', $id_ticket)->get();
@@ -253,7 +254,7 @@ class TicketDetailSrevices extends JsonResponeService
         foreach ($statusObjects as $tag => $statuses) {
             $groupedStatuses = $statuses;
             $groupedStatuses[0]['tag'] = $tag;
-            $response[] = $groupedStatuses;
+            $response = array_merge($response, $groupedStatuses);
         }
 
         return $response;
