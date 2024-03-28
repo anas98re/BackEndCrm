@@ -11,6 +11,7 @@ use App\Models\subcategory_ticket_fk;
 use App\Models\ticket_detail;
 use App\Models\ticket_state;
 use App\Models\tickets;
+use App\Models\transferticket;
 use App\Models\users;
 use App\Services\JsonResponeService;
 use Carbon\Carbon;
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\Notification;
 use PHPUnit\TextUI\Configuration\Constant;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use PhpParser\Node\Stmt\TryCatch;
 
 class TicketDetailSrevices extends JsonResponeService
 {
@@ -350,9 +352,31 @@ class TicketDetailSrevices extends JsonResponeService
         return response()->json($response, 200);
     }
 
+    public function transferTicketService($id, $request)
+    {
+        try {
+            DB::beginTransaction();
+            $data = $request->all();
+            $data['date_assigntr'] = Carbon::now();
+            $data['fk_ticket'] = $id;
+            $data['fkuserfrom'] = auth('sanctum')->user()->id_user;
+            $data['resoantransfer_ticket'] = $request->ReasonTransfer;
+            $transferTicket = transferticket::create($data);
 
+            $ticketDetail = ticket_detail::where('fk_ticket', $id)
+                ->latest('id_ticket_detail')->first();
+            $tag = $ticketDetail ? $ticketDetail->tag : null;
+            ticket_detail::where('tag', $tag)->update([
+                'fk_user' => $request->fkuser_to
+            ]);
 
-
+            DB::commit();
+            return $transferTicket;
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+    }
 
 
 

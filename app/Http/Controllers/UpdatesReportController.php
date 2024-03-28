@@ -295,4 +295,41 @@ class UpdatesReportController extends Controller
             $isApprove
         );
     }
+
+    public function reportDeletedIdsFillesInvoice(Request $request)
+    {
+        info('all request reportDeletedIdsFillesInvoice:', $request->all());
+        $modelId = $request->input('id_communication');
+        $dataBeforeUpdate = json_decode($request->input('ids'), true)[0];
+        $userId = $request->input('fk_idUser');
+
+        $userName = null;
+        if ($userId) {
+            $user = users::where('id_user', $userId)->first();
+            if ($user) {
+                $userName = $user->nameUser;
+            }
+        }
+        $isApprove = null;
+        $routePattern = 'care/updateCommunication.php';
+        $description = "Client Communication updated by $userName, using route: $routePattern from IP: $this->ip.";
+        $update_source = 'المرفقات المحذوفة للفواتير';
+
+        $model = 'App\Models\client_communication';
+        info(1);
+        $nameMainCitiesBefor = null;
+
+        StorageUpdates::dispatch(
+            $modelId,
+            $model,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $userId,
+            $update_source,
+            $routePattern,
+            $description,
+            $nameMainCitiesBefor,
+            $isApprove
+        );
+    }
 }

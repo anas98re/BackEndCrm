@@ -57,6 +57,12 @@ class TicketsController extends Controller
         return $this->MyService->getTicketsService();
     }
 
+    public function TransferTicket($id, Request $request)
+    {
+        $respons = $this->MyService->transferTicketService($id, $request);
+        return $this->sendSucssas($respons);
+    }
+
     public function importCategoriesTicket(Request $request)
     {
         $file = $request->file('file');
