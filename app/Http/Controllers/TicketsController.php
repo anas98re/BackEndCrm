@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants;
 use App\Models\tickets;
 use App\Http\Requests\StoreticketsRequest;
 use App\Http\Requests\UpdateticketsRequest;
@@ -11,6 +12,7 @@ use App\Models\categorie_tiket;
 use App\Models\subcategorie_ticket;
 use App\Models\ticket_detail;
 use App\Services\TicketDetailSrevices;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -92,6 +94,25 @@ class TicketsController extends Controller
         $CategoriesTicket = subcategorie_ticket::all();
         return $this->sendSucssas($CategoriesTicket);
     }
+
+    public function reopenReport($ticket, Request $request)
+    {
+        $ticketDetails = ticket_detail::query()
+            ->where('fk_ticket', $ticket)
+            ->get();
+        $reopenDates = ticket_detail::query()
+            ->where('fk_ticket', $ticket)
+            ->where('fk_state', Constants::TICKET_REOPEN)
+            ->get()
+            ->pluck('date_state');
+
+        $response = [
+            'number_of_reopen' => $ticketDetails->groupBy('tag')->count() - 1,
+            'reopen_dates' => $reopenDates,
+        ];
+        return $this->sendSucssas($response);
+    }
+
 }
 
 // "status": [
