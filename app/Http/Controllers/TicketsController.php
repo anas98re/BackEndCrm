@@ -11,6 +11,7 @@ use App\Models\categorie_tiket;
 use App\Models\subcategorie_ticket;
 use App\Models\ticket_detail;
 use App\Services\TicketDetailSrevices;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -86,4 +87,5 @@ class TicketsController extends Controller
         $CategoriesTicket = subcategorie_ticket::all();
         return $this->sendSucssas($CategoriesTicket);
     }
+
 }
