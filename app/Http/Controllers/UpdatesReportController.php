@@ -301,21 +301,9 @@ class UpdatesReportController extends Controller
 
     public function reportDeletedIdsFillesInvoice(Request $request)
     {
-        info('all request reportDeletedIdsFillesInvoice:', $request->all());
         $modelId = $request->input('id_invoice');
-        // $id_files = json_decode($request->input('id_files'), true)[0];
-        // $id_files = $request->input('id_files')[0];
         $id_files = $request->input('id_files');
-        info('First_id_files:', [$id_files]);
-
-        // if (is_array($id_files)) {
-        //     $id_files = $id_files[0];
-        // } else {
-        //     $id_files = json_decode($id_files, true)[0];
-        // }
-
         $userId = $request->input('id_user_updated');
-        info('id_files:', [$id_files]);
 
         $userName = null;
         if ($userId) {
@@ -328,8 +316,7 @@ class UpdatesReportController extends Controller
         $description = "FilesInvoice deleted by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'المرفقات المحذوفة للفواتير';
 
-        $model = 'App\Models\files_invoice';
-        info('reportDeletedIdsFillesInvoice 1');
+        $model = 'App\Models\client_invoice';
 
         $dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();
 
@@ -340,11 +327,9 @@ class UpdatesReportController extends Controller
                 ->file_attach_invoice;
             $data[] = $file_attach_invoice;
         }
-        info('data:', [$data]);
 
         $reportMessage = implode("\n", $data);
 
-        info('reportDeletedIdsFillesInvoice 2');
         ChangeLog::create([
             'model' => $model,
             'action' => 'updated',
