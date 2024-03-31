@@ -168,6 +168,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('editTicketType/{id}', [TicketsController::class, 'editTicketType']);
     Route::get('getTicketById/{id}', [TicketsController::class, 'getTicketById']);
     Route::get('getTickets', [TicketsController::class, 'getTickets']);
+    Route::post('TransferTicket/{id}', [TicketsController::class, 'TransferTicket']);
+
 });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);
