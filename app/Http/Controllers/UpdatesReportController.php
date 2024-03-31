@@ -324,8 +324,10 @@ class UpdatesReportController extends Controller
         $dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();
 
         $data = [];
-        foreach($id_files as $id){
-            $file_attach_invoice = files_invoice::where()->first()->file_attach_invoice;
+        foreach ($id_files as $id) {
+            $file_attach_invoice = files_invoice::where('id', $id)
+                ->first()
+                ->file_attach_invoice;
             $data[] = $file_attach_invoice;
             $reportMessage =  str_replace(',', $file_attach_invoice, '..');
         }
@@ -343,6 +345,5 @@ class UpdatesReportController extends Controller
             'afterApprove' => null,
             'ip' => null
         ]);
-
     }
 }
