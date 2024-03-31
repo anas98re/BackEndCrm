@@ -329,7 +329,7 @@ class UpdatesReportController extends Controller
                 ->first()
                 ->file_attach_invoice;
             $data[] = $file_attach_invoice;
-            $reportMessage =  str_replace(',', $file_attach_invoice, '..');
+            $reportMessage =  str_replace(',', $file_attach_invoice, $file_attach_invoice);
         }
         info('reportDeletedIdsFillesInvoice 2');
         ChangeLog::create([
