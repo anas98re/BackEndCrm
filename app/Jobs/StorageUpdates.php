@@ -205,3 +205,53 @@ class StorageUpdates implements ShouldQueue
         return $report;
     }
 }
+
+
+// [
+//     ['main_1', 'Main Item 1'],
+//     ['main_2', 'Main Item 2'],
+//     ['main_3', 'Main Item 3'],
+//     ['main_1.sub_1', 'sub Item 1'],
+//     ['main_1.sub_1', 'sub Item 2'],
+//     ['main_1.sub_1', 'sub Item 3'],
+//     ['main_2.sub_1', 'sub Item 1'],
+//     ['main_2.sub_1', 'sub Item 2'],
+//     ['main_2.sub_1', 'sub Item 3'],
+//     ['main_3.sub_1', 'sub Item 1'],
+//     ['main_3.sub_1', 'sub Item 2'],
+//     ['main_3.sub_1', 'sub Item 3'],
+//     ['main_1.sub_1.level_3', 'level 3'],
+//     ['main_1.sub_2.level_3', 'level 3'],
+//     ['main_1.sub_3.level_3', 'level 3'],
+//     ['main_2.sub_1.level_3', 'level 3'],
+//     ['main_2.sub_2.level_3', 'level 3'],
+//     ['main_2.sub_3.level_3', 'level 3'],
+//     ['main_3.sub_1.level_3', 'level 3'],
+//     ['main_3.sub_2.level_3', 'level 3'],
+//     ['main_3.sub_3.level_3', 'level 3'],
+// ];
+
+// [
+//     'main_1' => [
+//         'title' => 'Main Item 1',
+//         'items' => [
+//             'sub_1' => [
+//                 'title' => 'Sub Item 1',
+//                 'items' => [
+//                     'level_3' => [
+//                         'title' => 'Level 3',
+//                         'items' => [],
+//                     ],
+//                 ],
+//             ],
+//             'sub_2' => [...
+//             ],
+//             'sub_3' => [...
+//             ],
+//             ...
+//         ],
+//     ],
+//     ...
+// ]
+
+

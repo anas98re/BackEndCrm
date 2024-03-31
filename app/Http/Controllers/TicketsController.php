@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants;
 use App\Models\tickets;
 use App\Http\Requests\StoreticketsRequest;
 use App\Http\Requests\UpdateticketsRequest;
@@ -11,6 +12,7 @@ use App\Models\categorie_tiket;
 use App\Models\subcategorie_ticket;
 use App\Models\ticket_detail;
 use App\Services\TicketDetailSrevices;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -57,6 +59,12 @@ class TicketsController extends Controller
         return $this->MyService->getTicketsService();
     }
 
+    public function TransferTicket($id, Request $request)
+    {
+        $respons = $this->MyService->transferTicketService($id, $request);
+        return $this->sendSucssas($respons);
+    }
+
     public function importCategoriesTicket(Request $request)
     {
         $file = $request->file('file');
@@ -86,4 +94,81 @@ class TicketsController extends Controller
         $CategoriesTicket = subcategorie_ticket::all();
         return $this->sendSucssas($CategoriesTicket);
     }
+
+    public function reopenReport($ticket, Request $request)
+    {
+        $ticketDetails = ticket_detail::query()
+            ->where('fk_ticket', $ticket)
+            ->get();
+        $reopenDates = ticket_detail::query()
+            ->where('fk_ticket', $ticket)
+            ->where('fk_state', Constants::TICKET_REOPEN)
+            ->get()
+            ->pluck('date_state');
+
+        $response = [
+            'number_of_reopen' => $ticketDetails->groupBy('tag')->count() - 1,
+            'reopen_dates' => $reopenDates,
+        ];
+        return $this->sendSucssas($response);
+    }
+
 }
+
+// "status": [
+//         {
+//             "id_ticket_detail": 18,
+//             "fk_ticket": 1255,
+//             "fk_state": 1,
+//             "tag": "KAZry",
+//             "notes": "..",
+//             "fk_user": 334,
+//             "userName": "tt",
+//             "date_state": "2024-03-24 20:30:13",
+//             "stateName": "open"
+//         },
+//         {
+//             "id_ticket_detail": 19,
+//             "fk_ticket": 1255,
+//             "fk_state": 2,
+//             "tag": "KAZry",
+//             "notes": "..",
+//             "fk_user": 334,
+//             "userName": "tt",
+//             "date_state": "2024-03-24 20:32:23",
+//             "stateName": "recive"
+//         },
+//         {
+//             "id_ticket_detail": 20,
+//             "fk_ticket": 1255,
+//             "fk_state": 3,
+//             "tag": "KAZry",
+//             "notes": "..",
+//             "fk_user": 334,
+//             "userName": "tt",
+//             "date_state": "2024-03-24 20:32:41",
+//             "stateName": "close"
+//         }
+//         {
+//             "id_ticket_detail": 23,
+//             "fk_ticket": 1255,
+//             "fk_state": 6,
+//             "tag": "aKfAp",
+//             "notes": "..",
+//             "fk_user": 334,
+//             "userName": "tt",
+//             "date_state": "2024-03-24 20:36:03",
+//             "stateName": "reopen"
+//         },
+//         {
+//             "id_ticket_detail": 24,
+//             "fk_ticket": 1255,
+//             "fk_state": 2,
+//             "tag": "aKfAp",
+//             "notes": "..",
+//             "fk_user": 334,
+//             "userName": "tt",
+//             "date_state": "2024-03-24 20:36:35",
+//             "stateName": "recive"
+//         }
+// ]
