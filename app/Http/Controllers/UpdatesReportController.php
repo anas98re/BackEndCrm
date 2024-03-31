@@ -332,7 +332,7 @@ class UpdatesReportController extends Controller
 
         ChangeLog::create([
             'model' => $model,
-            'action' => 'updated',
+            'action' => 'deleted',
             'changesData' => $reportMessage,
             'description' => $description,
             'user_id' => (int) $userId,
