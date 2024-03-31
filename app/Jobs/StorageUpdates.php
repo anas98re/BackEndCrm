@@ -79,17 +79,6 @@ class StorageUpdates implements ShouldQueue
             info(4);
             $reportMessage = implode("\n", $report);
 
-            // $clientsUpdateReport = new updatesReport();
-            // $clientsUpdateReport->changesData = $reportMessage;
-            // $clientsUpdateReport->model = $this->model;
-            // $clientsUpdateReport->model_id = $this->modelId;
-            // $clientsUpdateReport->user_id = (int) $this->userId;
-            // $clientsUpdateReport->edit_date = $this->dateUpdate;
-            // $clientsUpdateReport->source = $this->update_source;
-            // $clientsUpdateReport->description = $this->description;
-            // $clientsUpdateReport->afterApprove = $this->isApprove;
-            // $clientsUpdateReport->save();
-
             ChangeLog::create([
                 'model' => $this->model,
                 'action' => 'updated',

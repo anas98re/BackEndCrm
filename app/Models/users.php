@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 class users extends Model
 {
     // use HasFactory;
-    use HasApiTokens, HasFactory, Notifiable, LogsActivity, Loggable;
+    use HasApiTokens, HasFactory, Notifiable, Loggable;
     protected $table = 'users';
 
     protected $primaryKey = 'id_user';

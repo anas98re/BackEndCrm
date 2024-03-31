@@ -39,6 +39,7 @@ class tickets extends Model
         'date_rate',
         'department',
         'suspend_id',
-        'suspend_date'
+        'suspend_date',
+        'ticket_source'
     ];
 }
