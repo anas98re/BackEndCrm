@@ -324,7 +324,7 @@ class UpdatesReportController extends Controller
         $dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();
 
         $data = [];
-        foreach ($id_files as $id) {
+        foreach (array($id_files) as $id) {
             $file_attach_invoice = files_invoice::where('id', $id)
                 ->first()
                 ->file_attach_invoice;
