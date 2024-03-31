@@ -306,6 +306,7 @@ class UpdatesReportController extends Controller
         // $id_files = json_decode($request->input('id_files'), true)[0];
         $id_files = $request->input('id_files')[0];
         $userId = $request->input('id_user_updated');
+        info('id_files:', $id_files);
 
         $userName = null;
         if ($userId) {
@@ -325,9 +326,13 @@ class UpdatesReportController extends Controller
 
         $data = [];
         foreach ((array)$id_files as $id) {
-            $file_attach_invoice = optional(files_invoice::where('id', $id)->first())->file_attach_invoice;
+            $file_attach_invoice = optional(files_invoice::where('id', $id)
+                ->first())
+                ->file_attach_invoice;
             $data[] = $file_attach_invoice;
         }
+        info('data:', $data);
+
         $reportMessage = implode("\n", $data);
 
         info('reportDeletedIdsFillesInvoice 2');
