@@ -6,6 +6,7 @@ use App\Models\updatesReport;
 use App\Http\Requests\StoreupdatesReportRequest;
 use App\Http\Requests\UpdateupdatesReportRequest;
 use App\Jobs\StorageClientsUpdatesJob;
+use App\Jobs\StorageFilesInvoiseDeletedJob;
 use App\Jobs\StorageUpdates;
 use App\Models\users;
 use Carbon\Carbon;
@@ -299,9 +300,9 @@ class UpdatesReportController extends Controller
     public function reportDeletedIdsFillesInvoice(Request $request)
     {
         info('all request reportDeletedIdsFillesInvoice:', $request->all());
-        $modelId = $request->input('id_communication');
-        $dataBeforeUpdate = json_decode($request->input('ids'), true)[0];
-        $userId = $request->input('fk_idUser');
+        $modelId = $request->input('id_invoice');
+        $id_files = json_decode($request->input('id_files'), true)[0];
+        $userId = $request->input('id_user_updated');
 
         $userName = null;
         if ($userId) {
@@ -311,25 +312,21 @@ class UpdatesReportController extends Controller
             }
         }
         $isApprove = null;
-        $routePattern = 'care/updateCommunication.php';
-        $description = "Client Communication updated by $userName, using route: $routePattern from IP: $this->ip.";
+        $routePattern = 'FilesInvoice/crud_files_invoice.php';
+        $description = "FilesInvoice deleted by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'المرفقات المحذوفة للفواتير';
 
-        $model = 'App\Models\client_communication';
+        $model = 'App\Models\files_invoice';
         info(1);
         $nameMainCitiesBefor = null;
 
-        StorageUpdates::dispatch(
+        StorageFilesInvoiseDeletedJob::dispatch(
             $modelId,
             $model,
-            $dataBeforeUpdate,
-            $dataAfterUpdate,
             $userId,
             $update_source,
             $routePattern,
             $description,
-            $nameMainCitiesBefor,
-            $isApprove
         );
     }
 }
