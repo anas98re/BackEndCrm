@@ -8,6 +8,8 @@ use App\Http\Requests\UpdateupdatesReportRequest;
 use App\Jobs\StorageClientsUpdatesJob;
 use App\Jobs\StorageFilesInvoiseDeletedJob;
 use App\Jobs\StorageUpdates;
+use App\Models\ChangeLog;
+use App\Models\files_invoice;
 use App\Models\users;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -311,22 +313,35 @@ class UpdatesReportController extends Controller
                 $userName = $user->nameUser;
             }
         }
-        $isApprove = null;
         $routePattern = 'FilesInvoice/crud_files_invoice.php';
         $description = "FilesInvoice deleted by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'المرفقات المحذوفة للفواتير';
 
         $model = 'App\Models\files_invoice';
-        info(1);
-        $nameMainCitiesBefor = null;
+        info('reportDeletedIdsFillesInvoice 1');
 
-        StorageFilesInvoiseDeletedJob::dispatch(
-            $modelId,
-            $model,
-            $userId,
-            $update_source,
-            $routePattern,
-            $description,
-        );
+        $dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();
+
+        $data = [];
+        foreach($id_files as $id){
+            $file_attach_invoice = files_invoice::where()->first()->file_attach_invoice;
+            $data[] = $file_attach_invoice;
+            $reportMessage =  str_replace(',', $file_attach_invoice, '..');
+        }
+        info('reportDeletedIdsFillesInvoice 2');
+        ChangeLog::create([
+            'model' => $model,
+            'action' => 'updated',
+            'changesData' => $reportMessage,
+            'description' => $description,
+            'user_id' => (int) $userId,
+            'model_id' => $modelId,
+            'edit_date' => $dateUpdate,
+            'source' => $update_source,
+            'route' => $routePattern,
+            'afterApprove' => null,
+            'ip' => null
+        ]);
+
     }
 }
