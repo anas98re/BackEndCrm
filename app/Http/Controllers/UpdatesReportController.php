@@ -308,11 +308,11 @@ class UpdatesReportController extends Controller
         $id_files = $request->input('id_files');
         info('First_id_files:', [$id_files]);
 
-        if (is_array($id_files)) {
-            $id_files = $id_files[0];
-        } else {
-            $id_files = json_decode($id_files, true)[0];
-        }
+        // if (is_array($id_files)) {
+        //     $id_files = $id_files[0];
+        // } else {
+        //     $id_files = json_decode($id_files, true)[0];
+        // }
 
         $userId = $request->input('id_user_updated');
         info('id_files:', [$id_files]);
