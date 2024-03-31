@@ -304,7 +304,15 @@ class UpdatesReportController extends Controller
         info('all request reportDeletedIdsFillesInvoice:', $request->all());
         $modelId = $request->input('id_invoice');
         // $id_files = json_decode($request->input('id_files'), true)[0];
-        $id_files = $request->input('id_files')[0];
+        // $id_files = $request->input('id_files')[0];
+        $id_files = $request->input('id_files');
+
+        if (is_array($id_files)) {
+            $id_files = reset($id_files);
+        } else {
+            $id_files = json_decode($id_files, true)[0];
+        }
+        
         $userId = $request->input('id_user_updated');
         info('id_files:', [$id_files]);
 
