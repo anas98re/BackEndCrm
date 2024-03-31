@@ -367,7 +367,7 @@ class TicketDetailSrevices extends JsonResponeService
             $ticketDetail = ticket_detail::where('fk_ticket', $id)
                 ->latest('id_ticket_detail')->first();
             $tag = $ticketDetail ? $ticketDetail->tag : null;
-            ticket_detail::where('tag', $tag)->update([
+            ticket_detail::where('tag', $tag)->where('fk_state', Constants::TICKET_RECIVE)?->update([
                 'fk_user' => $request->fkuser_to
             ]);
 
