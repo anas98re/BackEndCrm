@@ -306,7 +306,7 @@ class UpdatesReportController extends Controller
         // $id_files = json_decode($request->input('id_files'), true)[0];
         $id_files = $request->input('id_files')[0];
         $userId = $request->input('id_user_updated');
-        info('id_files:', $id_files);
+        info('id_files:', [$id_files]);
 
         $userName = null;
         if ($userId) {
@@ -331,7 +331,7 @@ class UpdatesReportController extends Controller
                 ->file_attach_invoice;
             $data[] = $file_attach_invoice;
         }
-        info('data:', $data);
+        info('data:', [$data]);
 
         $reportMessage = implode("\n", $data);
 
