@@ -161,7 +161,7 @@ class UpdatesReportController extends Controller
 
         $routePattern = 'edit_invoices.php';
         $description = "Invoice data changed by $userName, using route: $routePattern from IP: $this->ip.";
-        $update_source = '(' . $isApprove . ')' . '،تغيير بيانات الفاتورة';
+        $update_source = 'تغيير بيانات الفاتورة';
         $model = 'App\Models\client_invoice';
 
         $nameMainCitiesBefor = null;
@@ -209,7 +209,7 @@ class UpdatesReportController extends Controller
 
         $routePattern = 'updateinvoice.php';
         $description = "Invoice updated by $userName, using route: $routePattern from IP: $this->ip.";
-        $update_source = '(' . $isApprove . ')' . '،تعديل الفاتورة';
+        $update_source = 'تعديل الفاتورة';
         $model = 'App\Models\client_invoice';
 
         $nameMainCitiesBefor = null;
