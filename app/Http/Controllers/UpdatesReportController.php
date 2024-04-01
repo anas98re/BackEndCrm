@@ -6,7 +6,10 @@ use App\Models\updatesReport;
 use App\Http\Requests\StoreupdatesReportRequest;
 use App\Http\Requests\UpdateupdatesReportRequest;
 use App\Jobs\StorageClientsUpdatesJob;
+use App\Jobs\StorageFilesInvoiseDeletedJob;
 use App\Jobs\StorageUpdates;
+use App\Models\ChangeLog;
+use App\Models\files_invoice;
 use App\Models\users;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -158,7 +161,7 @@ class UpdatesReportController extends Controller
 
         $routePattern = 'edit_invoices.php';
         $description = "Invoice data changed by $userName, using route: $routePattern from IP: $this->ip.";
-        $update_source = '(' . $isApprove . ')' . '،تغيير بيانات الفاتورة';
+        $update_source = 'تغيير بيانات الفاتورة';
         $model = 'App\Models\client_invoice';
 
         $nameMainCitiesBefor = null;
@@ -206,7 +209,7 @@ class UpdatesReportController extends Controller
 
         $routePattern = 'updateinvoice.php';
         $description = "Invoice updated by $userName, using route: $routePattern from IP: $this->ip.";
-        $update_source = '(' . $isApprove . ')' . '،تعديل الفاتورة';
+        $update_source = 'تعديل الفاتورة';
         $model = 'App\Models\client_invoice';
 
         $nameMainCitiesBefor = null;
@@ -298,10 +301,9 @@ class UpdatesReportController extends Controller
 
     public function reportDeletedIdsFillesInvoice(Request $request)
     {
-        info('all request reportDeletedIdsFillesInvoice:', $request->all());
-        $modelId = $request->input('id_communication');
-        $dataBeforeUpdate = json_decode($request->input('ids'), true)[0];
-        $userId = $request->input('fk_idUser');
+        $modelId = $request->input('id_invoice');
+        $id_files = $request->input('id_files');
+        $userId = $request->input('id_user_updated');
 
         $userName = null;
         if ($userId) {
@@ -310,26 +312,36 @@ class UpdatesReportController extends Controller
                 $userName = $user->nameUser;
             }
         }
-        $isApprove = null;
-        $routePattern = 'care/updateCommunication.php';
-        $description = "Client Communication updated by $userName, using route: $routePattern from IP: $this->ip.";
+        $routePattern = 'FilesInvoice/crud_files_invoice.php';
+        $description = "FilesInvoice deleted by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'المرفقات المحذوفة للفواتير';
 
-        $model = 'App\Models\client_communication';
-        info(1);
-        $nameMainCitiesBefor = null;
+        $model = 'App\Models\client_invoice';
 
-        StorageUpdates::dispatch(
-            $modelId,
-            $model,
-            $dataBeforeUpdate,
-            $dataAfterUpdate,
-            $userId,
-            $update_source,
-            $routePattern,
-            $description,
-            $nameMainCitiesBefor,
-            $isApprove
-        );
+        $dateUpdate = Carbon::now('Asia/Riyadh')->toDateTimeString();
+
+        $data = [];
+        foreach ((array)$id_files as $id) {
+            $file_attach_invoice = optional(files_invoice::where('id', $id)
+                ->first())
+                ->file_attach_invoice;
+            $data[] = $file_attach_invoice;
+        }
+
+        $reportMessage = implode("\n", $data);
+
+        ChangeLog::create([
+            'model' => $model,
+            'action' => 'deleted',
+            'changesData' => $reportMessage,
+            'description' => $description,
+            'user_id' => (int) $userId,
+            'model_id' => $modelId,
+            'edit_date' => $dateUpdate,
+            'source' => $update_source,
+            'route' => $routePattern,
+            'afterApprove' => null,
+            'ip' => null
+        ]);
     }
 }

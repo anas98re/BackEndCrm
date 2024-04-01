@@ -65,6 +65,7 @@ Route::post('addCommentClientMention', [ClientCommentMentionController::class, '
 Route::post('storageInvoicesUpdates', [UpdatesReportController::class, 'storageInvoicesUpdates']);
 Route::post('addInvoicesUpdateReport', [UpdatesReportController::class, 'addInvoicesUpdateReport']);
 Route::post('addInvoiceProductReport', [UpdatesReportController::class, 'addInvoiceProductReport']);
+Route::post('reportDeletedIdsFillesInvoice', [UpdatesReportController::class, 'reportDeletedIdsFillesInvoice']);
 //reports
 Route::post('addUserUpdateReport', [UpdatesReportController::class, 'addUserUpdateReport']);
 //cllients
@@ -169,7 +170,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('getTicketById/{id}', [TicketsController::class, 'getTicketById']);
     Route::get('getTickets', [TicketsController::class, 'getTickets']);
     Route::post('TransferTicket/{id}', [TicketsController::class, 'TransferTicket']);
-    Route::get('reopenReport/{ticket}', [TicketsController::class, 'reopenReport']);
+    Route::get('reopenReportTickets', [TicketsController::class, 'reopenReport']);
+    Route::post('transferTicketsTable', [TicketsController::class, 'transferTable']);
 
 });
 

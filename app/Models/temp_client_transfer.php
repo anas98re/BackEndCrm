@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class temp_client_transfer extends Model
 {
-    use HasFactory,Loggable;
+    use HasFactory, Loggable;
 
     protected $table = 'temp_client_transfer';
     public $timestamps = false;
