@@ -17,5 +17,6 @@ class  Constants
     const TICKET_REOPEN = 6;
     const TICKET_RECIVE = 2;
     const TICKET_CLOSE = 3;
+    const TICKET_SUSPEND = 4;
     const TICKET_RATE = 5;
 }

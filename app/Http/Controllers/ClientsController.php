@@ -191,7 +191,7 @@ class ClientsController extends Controller
 
     public function SimilarClientsNames(Request $request)
     {
-        //Temporarily due to a malfunction
+       //Temporarily due to a malfunction
         // return response()->json();
 
         //..
