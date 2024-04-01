@@ -11,6 +11,7 @@ use App\Imports\subcategories_ticketImport;
 use App\Models\categorie_tiket;
 use App\Models\subcategorie_ticket;
 use App\Models\ticket_detail;
+use App\Scripts\TransferTicketTable;
 use App\Services\TicketDetailSrevices;
 use Exception;
 use Illuminate\Http\Request;
@@ -95,22 +96,38 @@ class TicketsController extends Controller
         return $this->sendSucssas($CategoriesTicket);
     }
 
-    public function reopenReport($ticket, Request $request)
+    public function reopenReport(Request $request)
     {
-        $ticketDetails = ticket_detail::query()
-            ->where('fk_ticket', $ticket)
-            ->get();
+        $ticketDetails = ticket_detail::query()->where('fk_state', Constants::TICKET_REOPEN)->get();
         $reopenDates = ticket_detail::query()
-            ->where('fk_ticket', $ticket)
             ->where('fk_state', Constants::TICKET_REOPEN)
             ->get()
             ->pluck('date_state');
 
         $response = [
-            'number_of_reopen' => $ticketDetails->groupBy('tag')->count() - 1,
+            'number_of_reopen' => ($ticketDetails->groupBy('tag')->count() - 1 == -1)?  0 : $ticketDetails->groupBy('tag')->count() - 1,
             'reopen_dates' => $reopenDates,
         ];
         return $this->sendSucssas($response);
+    }
+
+    public function transferTable()
+    {
+        DB::beginTransaction();
+        try
+        {
+            TransferTicketTable::transfer();
+
+            DB::commit();
+            return response()->json([
+                'message' => 'success'
+            ], 200);
+        }
+        catch(Exception $e)
+        {
+            DB::rollBack();
+            return response()->json($e->getMessage(), 200);
+        }
     }
 
 }

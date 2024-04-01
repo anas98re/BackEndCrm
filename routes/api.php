@@ -170,7 +170,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('getTicketById/{id}', [TicketsController::class, 'getTicketById']);
     Route::get('getTickets', [TicketsController::class, 'getTickets']);
     Route::post('TransferTicket/{id}', [TicketsController::class, 'TransferTicket']);
-    Route::get('reopenReport/{ticket}', [TicketsController::class, 'reopenReport']);
+    Route::get('reopenReportTickets', [TicketsController::class, 'reopenReport']);
+    Route::post('transferTicketsTable', [TicketsController::class, 'transferTable']);
 
 });
 
