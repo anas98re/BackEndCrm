@@ -186,7 +186,7 @@ class clientSrevices extends JsonResponeService
         $day = Carbon::parse($date_create)->format('d');
         $m = Carbon::parse($date_create)->format('m');
         $yy = Carbon::parse($date_create)->format('y');
-        $num = rand(1111, 9999);
+        $num = random_int(1111, 9999);
         $index1 = sprintf("%'.05d", $index);
 
         $serialNumber = $yy . $m . $day . $num . $index1;
@@ -211,9 +211,9 @@ class clientSrevices extends JsonResponeService
             } else {
                 $index = intval(substr($serialnum, 11)) + 1;
             }
-
+            // dd($index);
             // Assuming you have a 'generate_serialnumber' function
-            $res = $this->generate_serialnumber($date_create, $index);
+            $res = $this->generate_serialnumber($date_create_client, $index);
 
             return $res;
         }
