@@ -194,6 +194,8 @@ class ClientsController extends Controller
         //Temporarily due to a malfunction
         // return response()->json();
 
+        //..
+        
         $selectFields = [
             'name_client',
             'name_enterprise',
