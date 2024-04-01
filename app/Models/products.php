@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class products extends Model
 {
-    use HasFactory, LogsActivity, Loggable;
+    use HasFactory, Loggable;
 
     protected $primaryKey = 'id_product';
 
@@ -32,38 +32,6 @@ class products extends Model
         'fkuserupdate',
         'type_prod_renew'
     ];
-
-    public function getActivitylogOptions(): LogOptions
-    {
-        $request = app(Request::class);
-        $routePattern = $request->route()->uri();
-        $ip = $request->ip();
-        $user = auth('sanctum')->user();
-        $userName = $user ? $user->nameUser : null;
-        return LogOptions::defaults()
-            ->logOnly(['*'])
-            ->logOnlyDirty()
-            ->useLogName('products Log')
-            ->setDescriptionForEvent(function (string $eventName) use ($routePattern, $ip, $userName) {
-                // Provide the description for the event based on the event name, route pattern, and IP
-                if ($eventName === 'created') {
-                    return "products created by $userName, using route: $routePattern from IP: $ip.";
-                } elseif ($eventName === 'updated') {
-                    return "products updated by $userName, using route: $routePattern from IP: $ip.";
-                } elseif ($eventName === 'deleted') {
-                    return "products deleted by $userName, using route: $routePattern from IP: $ip.";
-                }
-
-                // Default description if the event name is not recognized
-                return "products action occurred, using route: $routePattern from IP: $ip.";
-            });
-    }
-
-
-    public function getQualifiedKeyName()
-    {
-        return $this->table . '.' . $this->primaryKey;
-    }
 
     public function user()
     {
