@@ -192,8 +192,10 @@ class ClientsController extends Controller
     public function SimilarClientsNames(Request $request)
     {
         //Temporarily due to a malfunction
-        return response()->json();
-        
+        // return response()->json();
+
+        //..
+
         $selectFields = [
             'name_client',
             'name_enterprise',
