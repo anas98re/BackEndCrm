@@ -78,7 +78,7 @@ class UpdatesReportController extends Controller
         }
 
         $isApprove = null;
-        $routePattern = 'updateuser_patch.php';
+        $routePattern = 'users/updateuser_patch.php';
         $description = "User updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل بيانات المستخدم ';
         $model = 'App\Models\users';
@@ -112,7 +112,7 @@ class UpdatesReportController extends Controller
             }
         }
         $isApprove = null;
-        $routePattern = 'clientUpdate.php';
+        $routePattern = 'client/clientUpdate.php';
         $description = "Client updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل بيانات العميل ';
         $model = 'App\Models\clients';
@@ -159,7 +159,7 @@ class UpdatesReportController extends Controller
             $isApprove = 'Not Found'; // or any other default value you want to set
         }
 
-        $routePattern = 'edit_invoices.php';
+        $routePattern = 'client/invoice/edit_invoices.php';
         $description = "Invoice data changed by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تغيير بيانات الفاتورة';
         $model = 'App\Models\client_invoice';
@@ -207,7 +207,7 @@ class UpdatesReportController extends Controller
             $isApprove = 'Not Found'; // or any other default value you want to set
         }
 
-        $routePattern = 'updateinvoice.php';
+        $routePattern = 'client/invoice/updateinvoice.php';
         $description = "Invoice updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل الفاتورة';
         $model = 'App\Models\client_invoice';
@@ -242,7 +242,7 @@ class UpdatesReportController extends Controller
             }
         }
         $isApprove = null;
-        $routePattern = 'updateinvoice_product.php';
+        $routePattern = 'client/invoice/updateinvoice_product.php';
         $description = "invoice product updated by $userName, using route: $routePattern from IP: $this->ip.";
         $update_source = 'تعديل منتجات الفاتورة';
         $model = 'App\Models\invoice_product';
