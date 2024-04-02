@@ -180,7 +180,7 @@ class ClientsController extends Controller
         $data = $request->validated();
         $serialnumber =
             $this->MyService->generate_serialnumber_InsertedClient(
-                $data['date_create'],
+                Carbon::now(),
             );
 
         $data = $request->all();
