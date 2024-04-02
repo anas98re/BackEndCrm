@@ -108,6 +108,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('clientAppproveAdmin/{id_clients}', [ClientsController::class, 'appproveAdmin']);
     Route::post('transformClientsFromMarketingIfOverrideLimit8Days', [ClientsController::class, 'transformClientsFromMarketingIfOverrideLimit8Days']);
     Route::post('addClient', [ClientsController::class, 'addClient']);
+    Route::post('updateClient/{id}', [ClientsController::class, 'updateClient']);
     Route::post('SimilarClientsNames', [ClientsController::class, 'SimilarClientsNames']);
     Route::post('convertClientsFromAnEmployeeToEmployee', [ClientsController::class, 'convertClientsFromAnEmployeeToEmployee']);
     Route::post('sendStactictesConvretClientsToEmail', [ClientsController::class, 'sendStactictesConvretClientsToEmail']);

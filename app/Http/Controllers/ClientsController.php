@@ -6,6 +6,7 @@ use App\Constants;
 use App\Http\Resources\ClientResource;
 use App\Models\clients;
 use App\Http\Requests\StoreclientsRequest;
+use App\Http\Requests\UpdateClientRequest;
 use App\Http\Requests\UpdateclientsRequest;
 use App\Imports\AnotherDateClientsImport;
 use App\Imports\ClientsImport;
@@ -190,6 +191,19 @@ class ClientsController extends Controller
 
         $client = clients::create($data);
 
+        $result = new ClientResource($client);
+
+        return response()->json(array("result" => "success", "code" => "200", "message" => $result));
+    }
+
+    public function updateClient(UpdateClientRequest $request, string $id)
+    {
+        $data = $request->validated();
+
+        $query = clients::query()->where('id_clients', $id);
+
+        $query->update($data);
+        $client = $query->first();
         $result = new ClientResource($client);
 
         return response()->json(array("result" => "success", "code" => "200", "message" => $result));
