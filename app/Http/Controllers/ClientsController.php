@@ -186,7 +186,7 @@ class ClientsController extends Controller
         $data = $request->all();
         $data['SerialNumber'] = $serialnumber;
         $data['date_create'] = Carbon::now();
-        $data['fk_user'] = auth('sanctum')->user()->id_user;;
+        $data['user_add'] = auth('sanctum')->user()->id_user;;
 
         $client = clients::create($data);
 
