@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Constants;
+use App\Http\Resources\ClientResource;
 use App\Models\clients;
 use App\Http\Requests\StoreclientsRequest;
 use App\Http\Requests\UpdateclientsRequest;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\SendNotification;
 use App\Services\clientSrevices;
+use Exception;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -175,18 +177,24 @@ class ClientsController extends Controller
 
     public function addClient(StoreclientsRequest $request)
     {
+        $data = $request->validated();
         $serialnumber =
             $this->MyService->generate_serialnumber_InsertedClient(
-                $request->input('date_create')
+                Carbon::now(),
             );
 
         $data = $request->all();
         $data['SerialNumber'] = $serialnumber;
+        $data['date_create'] = Carbon::now();
+        $data['user_add'] = auth('sanctum')->user()->id_user;;
 
-        clients::create($data);
+        $client = clients::create($data);
 
-        return response()->json(['message' => 'Client created successfully']);
+        $result = new ClientResource($client);
+
+        return response()->json(array("result" => "success", "code" => "200", "message" => $result));
     }
+
 
 
     public function SimilarClientsNames(Request $request)
@@ -314,5 +322,20 @@ class ClientsController extends Controller
         Excel::import(new AnotherDateClientsImport, $file);
 
         return $this->sendResponse('success', 'Important clients imported successfully.');
+    }
+
+    public function getClientByID($id)
+    {
+        try
+        {
+            $client = clients::find($id);
+            $result = new ClientResource($client);
+
+            return response()->json(array("result" => "success", "code" => "200", "message" => $result));
+        }
+        catch(Exception $e)
+        {
+            return response()->json(['message' => $e->getMessage()]);
+        }
     }
 }

@@ -105,7 +105,7 @@ class TicketsController extends Controller
             ->pluck('date_state');
 
         $response = [
-            'number_of_reopen' => ($ticketDetails->groupBy('tag')->count() - 1 == -1)?  0 : $ticketDetails->groupBy('tag')->count() - 1,
+            'number_of_reopen' => $ticketDetails->groupBy('tag')->count(),
             'reopen_dates' => $reopenDates,
         ];
         return $this->sendSucssas($response);
