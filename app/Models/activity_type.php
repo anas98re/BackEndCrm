@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class activity_type extends Model
 {
-    use HasFactory, LogsActivity, Loggable;
+    use HasFactory, Loggable;
 
     protected $table = 'activity_type';
     public $timestamps = false;

@@ -5,13 +5,14 @@ namespace App\Models;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Http\Request;
 
 class city extends Model
 {
-    use HasFactory, LogsActivity, Loggable;
+    use HasFactory, Loggable;
 
     protected $primaryKey = 'id_city';
     protected $table = 'city';
@@ -53,5 +54,10 @@ class city extends Model
     public function getQualifiedKeyName()
     {
         return $this->table . '.' . $this->primaryKey;
+    }
+
+    public function mainCity(): BelongsTo
+    {
+        return $this->belongsTo(maincity::class, 'fk_maincity', 'id_maincity');
     }
 }

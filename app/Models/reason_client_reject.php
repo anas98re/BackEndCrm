@@ -12,6 +12,7 @@ class reason_client_reject extends Model
 
     protected $table = 'reason_client_reject';
     public $timestamps = false;
+    protected $primaryKey = 'id_rejectClient';
 
     protected $fillable = [
         'id_rejectClient',

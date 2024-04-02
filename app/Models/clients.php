@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class clients extends Model
         'id_clients', 'name_client', 'name_enterprise', 'type_job',
         'city', 'location', 'fk_regoin', 'date_create', 'type_client',
         'fk_user', 'date_transfer', 'fkusertrasfer', 'mobile', 'date_changetype',
-        'reason_change', 'reason_transfer', 'offer_price', 'date_price', 'user_do',
+        'reason_change', 'reason_transfer', 'offer_price', 'date_price', 'date_price2', 'user_do',
         'ismarketing', 'address_client', 'date_recive', 'userAdd_email', 'phone',
         'IDcustomer', 'descActivController', 'presystem', 'sourcclient',
         'activity_type_fk', 'user_add', 'date_visit_Client', 'done_transfer',
@@ -63,4 +64,58 @@ class clients extends Model
         return $this->table . '.' . $this->primaryKey;
     }
 
+    public function clientSource(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'fk_client_source', 'id_clients');
+    }
+
+    public function regoin(): BelongsTo
+    {
+        return $this->belongsTo(regoin::class, 'fk_regoin', 'id_regoin');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'fk_user', 'id_user');
+    }
+
+    public function userDo(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_do', 'id_user');
+    }
+
+    public function userTransfer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'fkusertrasfer', 'id_user');
+    }
+
+    public function cityRelation(): BelongsTo
+    {
+        return $this->belongsTo(city::class, 'city', 'id_city');
+    }
+
+    public function activityType(): BelongsTo
+    {
+        return $this->belongsTo(activity_type::class, 'activity_type_fk', 'id_activity_type');
+    }
+
+    public function preSystemRelation(): BelongsTo
+    {
+        return $this->belongsTo(company::class, 'presystem', 'id_Company');
+    }
+
+    public function userAdd(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_add', 'id_user');
+    }
+
+    public function reasonReject(): BelongsTo
+    {
+        return $this->belongsTo(reason_client_reject::class, 'fk_rejectClient', 'id_rejectClient');
+    }
+
+    public function transferTo(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reason_transfer', 'id_user');
+    }
 }

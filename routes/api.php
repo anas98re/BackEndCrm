@@ -102,6 +102,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
     //Clients
+    Route::get('getClientByID/{id}', [ClientsController::class, 'getClientByID']);
     Route::post('editClientByTypeClient/{id_clients}', [ClientsController::class, 'editClientByTypeClient']);
     Route::post('clientAppproveAdmin/{id_clients}', [ClientsController::class, 'appproveAdmin']);
     Route::post('transformClientsFromMarketingIfOverrideLimit8Days', [ClientsController::class, 'transformClientsFromMarketingIfOverrideLimit8Days']);
