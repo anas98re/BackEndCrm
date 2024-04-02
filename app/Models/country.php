@@ -12,6 +12,7 @@ class country extends Model
 
     protected $table = 'country';
     public $timestamps = false;
+    protected $primaryKey = 'id_country';
 
     protected $fillable = [
         'id_country',
