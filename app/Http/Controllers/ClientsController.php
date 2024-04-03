@@ -15,6 +15,7 @@ use App\Mail\sendStactictesConvretClientsTothabetEmail;
 use App\Models\client_comment;
 use App\Models\convertClintsStaticts;
 use App\Models\notifiaction;
+use App\Models\User;
 use App\Models\user_token;
 use App\Models\users;
 use Carbon\Carbon;
@@ -198,10 +199,10 @@ class ClientsController extends Controller
     {
         $data = $request->validated();
 
-        $query = clients::query()->where('id_clients', $id);
+        $client = clients::query()->where('id_clients', $id)->first();
 
-        $query->update($data);
-        $client = $query->first();
+        $client->fill($data);
+        $client->save();
         $result = new ClientResource($client);
 
         return response()->json(array("result" => "success", "code" => "200", "message" => $result));
@@ -345,6 +346,42 @@ class ClientsController extends Controller
         }
         catch(Exception $e)
         {
+            return response()->json(['message' => $e->getMessage()]);
+        }
+    }
+
+    public function transferClient(Request $request, string $id)
+    {
+        DB::beginTransaction();
+        $data = $request->validate([
+            'fk_user' => 'required|numeric',
+            // 'fkusertrasfer' => 'required|numeric',
+            // 'name_enterprise' => 'required',
+            // 'nameusertransfer' => 'required',
+            // 'date_transfer' => 'required',
+        ]);
+        try
+        {
+            $data['fkusertrasfer'] = auth()->user()->id_user;
+
+            $update = array();
+            $user = User::query()->where('id_user', $data['fk_user'])->first();
+
+            $update['fk_regoin'] = $user->fk_regoin;
+            $update['fk_user'] = $data['fk_user'];
+            $update['date_transfer'] = Carbon::now();
+
+            $client = clients::query()->where('id_clients', $id)->first();
+            $client->fill($update);
+            $client->save();
+
+            $response = array("result" => "success", "code" => "200", "message" => new ClientResource($client));
+            DB::commit();
+            return response()->json($response);
+        }
+        catch(Exception $e)
+        {
+            DB::rollBack();
             return response()->json(['message' => $e->getMessage()]);
         }
     }
