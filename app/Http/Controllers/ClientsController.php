@@ -177,9 +177,9 @@ class ClientsController extends Controller
         }
     }
 
-    public function addClient(StoreclientsRequest $request)
+    public function addClient(Request $request)
     {
-        $data = $request->validated();
+        $data = $request->all();
         $serialnumber =
             $this->MyService->generate_serialnumber_InsertedClient(
                 $data['date_create'],
