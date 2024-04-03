@@ -195,9 +195,9 @@ class ClientsController extends Controller
         return response()->json(array("result" => "success", "code" => "200", "message" => $result));
     }
 
-    public function updateClient(UpdateClientRequest $request, string $id)
+    public function updateClient(Request $request, string $id)
     {
-        $data = $request->validated();
+        $data = $request->all();
 
         $client = clients::query()->where('id_clients', $id)->first();
 
@@ -353,13 +353,14 @@ class ClientsController extends Controller
     public function transferClient(Request $request, string $id)
     {
         DB::beginTransaction();
-        $data = $request->validate([
-            'fk_user' => 'required|numeric',
-            // 'fkusertrasfer' => 'required|numeric',
-            // 'name_enterprise' => 'required',
-            // 'nameusertransfer' => 'required',
-            // 'date_transfer' => 'required',
-        ]);
+        // $data = $request->validate([
+        //     'fk_user' => 'required|numeric',
+        //     // 'fkusertrasfer' => 'required|numeric',
+        //     // 'name_enterprise' => 'required',
+        //     // 'nameusertransfer' => 'required',
+        //     // 'date_transfer' => 'required',
+        // ]);
+        $data = $request->all();
         try
         {
 
