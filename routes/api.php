@@ -103,14 +103,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
     //Clients
+    Route::get('getClientByID/{id}', [ClientsController::class, 'getClientByID']);
     Route::post('editClientByTypeClient/{id_clients}', [ClientsController::class, 'editClientByTypeClient']);
     Route::post('clientAppproveAdmin/{id_clients}', [ClientsController::class, 'appproveAdmin']);
     Route::post('transformClientsFromMarketingIfOverrideLimit8Days', [ClientsController::class, 'transformClientsFromMarketingIfOverrideLimit8Days']);
     Route::post('addClient', [ClientsController::class, 'addClient']);
+    Route::post('updateClient/{id}', [ClientsController::class, 'updateClient']);
     Route::post('SimilarClientsNames', [ClientsController::class, 'SimilarClientsNames']);
     Route::post('convertClientsFromAnEmployeeToEmployee', [ClientsController::class, 'convertClientsFromAnEmployeeToEmployee']);
     Route::post('sendStactictesConvretClientsToEmail', [ClientsController::class, 'sendStactictesConvretClientsToEmail']);
     Route::get('editDatePriceDataToCorrectFormatt', [ClientsController::class, 'editDatePriceDataToCorrectFormatt']);
+    Route::post('transferClient/{id}', [ClientsController::class, 'transferClient']);
     //Clients Participate
     Route::get('getParticipateClints/{id}', [ParticipateController::class, 'getParticipateClints']);
     Route::get('getParticipateInvoices/{id}', [ParticipateController::class, 'getParticipateInvoices']);
@@ -181,6 +184,7 @@ Route::get('getCurrentUser', [RegisterController::class, 'getCurrentUser']);
 Route::get('getHashToken', [RegisterController::class, 'getHashToken']);
 Route::post('checkEmail', [RegisterController::class, 'checkEmail']);
 Route::post('login', [RegisterController::class, 'login']);
+Route::post('isTokenAuthenticated', [RegisterController::class, 'isTokenAuthenticated']);
 Route::post('updatePermissions', [PrivgLevelUserController::class, 'updatePermissions']);
 Route::post('sendupdatePermissionsReportToEmail', [PrivgLevelUserController::class, 'sendupdatePermissionsReportToEmail']);
 

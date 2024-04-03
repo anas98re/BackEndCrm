@@ -19,7 +19,6 @@ trait Loggable
         $userName = $user ? $user->nameUser : null;
         $userId = $user ? $user->id_user : null;
 
-
         static::updating(function ($model) use ($user, $routeName, $ip, $userName, $userId) {
 
             $originalAttributes = $model->getOriginal();
@@ -34,7 +33,6 @@ trait Loggable
                     $modifiedAttributes[$attribute] = " ($oldValue) TO ($newValue)";
                 }
             }
-
             ChangeLog::create([
                 'model' => get_class($model),
                 'action' => 'updated',

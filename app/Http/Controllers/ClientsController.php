@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Constants;
+use App\Http\Resources\ClientResource;
 use App\Models\clients;
 use App\Http\Requests\StoreclientsRequest;
+use App\Http\Requests\UpdateClientRequest;
 use App\Http\Requests\UpdateclientsRequest;
 use App\Imports\AnotherDateClientsImport;
 use App\Imports\ClientsImport;
@@ -13,6 +15,7 @@ use App\Mail\sendStactictesConvretClientsTothabetEmail;
 use App\Models\client_comment;
 use App\Models\convertClintsStaticts;
 use App\Models\notifiaction;
+use App\Models\User;
 use App\Models\user_token;
 use App\Models\users;
 use Carbon\Carbon;
@@ -21,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\SendNotification;
 use App\Services\clientSrevices;
+use Exception;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -175,18 +179,37 @@ class ClientsController extends Controller
 
     public function addClient(StoreclientsRequest $request)
     {
+        $data = $request->validated();
         $serialnumber =
             $this->MyService->generate_serialnumber_InsertedClient(
-                $request->input('date_create')
+                Carbon::now(),
             );
 
         $data = $request->all();
         $data['SerialNumber'] = $serialnumber;
+        $data['date_create'] = Carbon::now();
+        $data['user_add'] = auth('sanctum')->user()->id_user;;
 
-        clients::create($data);
+        $client = clients::create($data);
 
-        return response()->json(['message' => 'Client created successfully']);
+        $result = new ClientResource($client);
+
+        return response()->json(array("result" => "success", "code" => "200", "message" => $result));
     }
+
+    public function updateClient(UpdateClientRequest $request, string $id)
+    {
+        $data = $request->validated();
+
+        $client = clients::query()->where('id_clients', $id)->first();
+
+        $client->fill($data);
+        $client->save();
+        $result = new ClientResource($client);
+
+        return response()->json(array("result" => "success", "code" => "200", "message" => $result));
+    }
+
 
 
     public function SimilarClientsNames(Request $request)
@@ -314,5 +337,56 @@ class ClientsController extends Controller
         Excel::import(new AnotherDateClientsImport, $file);
 
         return $this->sendResponse('success', 'Important clients imported successfully.');
+    }
+
+    public function getClientByID($id)
+    {
+        try
+        {
+            $client = clients::find($id);
+            $result = new ClientResource($client);
+
+            return response()->json(array("result" => "success", "code" => "200", "message" => $result));
+        }
+        catch(Exception $e)
+        {
+            return response()->json(['message' => $e->getMessage()]);
+        }
+    }
+
+    public function transferClient(Request $request, string $id)
+    {
+        DB::beginTransaction();
+        $data = $request->validate([
+            'fk_user' => 'required|numeric',
+            // 'fkusertrasfer' => 'required|numeric',
+            // 'name_enterprise' => 'required',
+            // 'nameusertransfer' => 'required',
+            // 'date_transfer' => 'required',
+        ]);
+        try
+        {
+            $data['fkusertrasfer'] = auth()->user()->id_user;
+
+            $update = array();
+            $user = User::query()->where('id_user', $data['fk_user'])->first();
+
+            $update['fk_regoin'] = $user->fk_regoin;
+            $update['fk_user'] = $data['fk_user'];
+            $update['date_transfer'] = Carbon::now();
+
+            $client = clients::query()->where('id_clients', $id)->first();
+            $client->fill($update);
+            $client->save();
+
+            $response = array("result" => "success", "code" => "200", "message" => new ClientResource($client));
+            DB::commit();
+            return response()->json($response);
+        }
+        catch(Exception $e)
+        {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()]);
+        }
     }
 }

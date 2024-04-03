@@ -4,21 +4,27 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreclientsRequest extends FormRequest
+class UpdateClientRequest extends FormRequest
 {
-    public function authorize()
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
     {
         return true;
     }
 
-    public function rules()
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
     {
-        $clientId = $this->route('client') ?? null; // Get the client ID if it exists
-
         return [
-            'name_client' => 'required|string' ,
-            'phone' => 'required|numeric',
-            'fk_user' => 'required|numeric',
+            'name_client' => 'nullable|string',
+            'phone' => 'nullable|numeric',
+            'fk_user' => 'nullable|numeric',
             'name_enterprise' => 'nullable|string',
             'address_client' => 'nullable|string',
             'type_job' => 'nullable|string',
@@ -35,7 +41,6 @@ class StoreclientsRequest extends FormRequest
             'user_do' => 'nullable|numeric',
             'courcclient' => 'nullable|string',
             'ismarketing' => 'nullable|numeric',
-            // Add other rules as needed
         ];
     }
 }
