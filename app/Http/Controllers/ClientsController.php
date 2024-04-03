@@ -372,8 +372,7 @@ class ClientsController extends Controller
             $update['date_transfer'] = Carbon::now();
 
             $client = clients::query()->where('id_clients', $id)->first();
-            $client->fill($update);
-            $client->save();
+            $client->update($update);
 
             $response = array("result" => "success", "code" => "200", "message" => new ClientResource($client));
             DB::commit();

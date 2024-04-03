@@ -17,7 +17,7 @@ class StoreclientsRequest extends FormRequest
 
         return [
             'name_client' => 'required|string' ,
-            'phone' => 'required|numeric',
+            'phone' => 'nullable|numeric',
             'fk_user' => 'required|numeric',
             'name_enterprise' => 'nullable|string',
             'address_client' => 'nullable|string',
