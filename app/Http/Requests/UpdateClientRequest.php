@@ -22,7 +22,7 @@ class UpdateClientRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name_client' => 'nullable|string' ,
+            'name_client' => 'nullable|string',
             'phone' => 'nullable|numeric',
             'fk_user' => 'nullable|numeric',
             'name_enterprise' => 'nullable|string',

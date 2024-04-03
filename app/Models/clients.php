@@ -33,6 +33,11 @@ class clients extends Model
     ];
 
 
+    public function getQualifiedKeyName()
+    {
+        return $this->table . '.' . $this->primaryKey;
+    }
+
     public function clientSource(): BelongsTo
     {
         return $this->belongsTo(self::class, 'fk_client_source', 'id_clients');
