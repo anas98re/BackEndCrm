@@ -185,4 +185,11 @@ class RegisterController extends Controller
         $tokenable_type = PersonalAccessToken::findToken($bearerToken);
         return $tokenable_type ? 1 : 0;
     }
+
+    public function isTokenAuthenticated(Request $request)
+    {
+        $bearerToken = $request->bearerToken();
+        $tokenable_type = PersonalAccessToken::findToken($bearerToken);
+        return $tokenable_type ? $this->sendSucssas(true)  : $this->sendSucssas(false);
+    }
 }
