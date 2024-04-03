@@ -362,17 +362,48 @@ class ClientsController extends Controller
         ]);
         try
         {
-            $data['fkusertrasfer'] = auth()->user()->id_user;
 
             $update = array();
-            $user = User::query()->where('id_user', $data['fk_user'])->first();
+            $user = users::query()->where('id_user', $data['fk_user'])->first();
+            $user_transfer = users::query()->where('id_user', $data['fk_user'])->first();
 
-            $update['fk_regoin'] = $user->fk_regoin;
-            $update['fk_user'] = $data['fk_user'];
+            $update['fk_regoin'] = $user?->fk_regoin;
+            $update['fkusertrasfer'] = auth()->user()->id_user;
             $update['date_transfer'] = Carbon::now();
 
             $client = clients::query()->where('id_clients', $id)->first();
             $client->update($update);
+
+            $name_enterprise = $client->name_enterprise;
+            $nameApprove = $user_transfer->nameUser;
+
+            $titlenameapprove = "تم تحويل العميل ";
+            $nametitle = "من قبل";
+            $message = "$titlenameapprove $name_enterprise \r$nametitle \r $nameApprove";
+            $userToken = user_token::where('fkuser', $user->id_user)
+                        ->where('token', '!=', null)
+                        ->latest('date_create')
+                        ->first();
+
+            Notification::send(
+                null,
+                new SendNotification(
+                    'نقل عميل',
+                    $message,
+                    $message,
+                    ($userToken != null ? $userToken->token : null)
+                )
+            );
+
+            notifiaction::create([
+                'message' => $message,
+                'type_notify' => 'transfer',
+                'to_user' => $user->id_user,
+                'isread' => 0,
+                'data' => $id,
+                'from_user' => $user_transfer->id_user,
+                'dateNotify' => Carbon::now('Asia/Riyadh')
+            ]);
 
             $response = array("result" => "success", "code" => "200", "message" => new ClientResource($client));
             DB::commit();
