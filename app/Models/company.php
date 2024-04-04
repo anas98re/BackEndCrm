@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class company extends Model
 {
-    use HasFactory, Loggable;
+    use HasFactory ,Loggable;
 
     protected $table = 'company';
     public $timestamps = false;
