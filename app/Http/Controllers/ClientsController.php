@@ -374,6 +374,7 @@ class ClientsController extends Controller
             $update['fk_regoin'] = $user->fk_regoin;
             $update['fk_user'] = $data['fk_user'];
             $update['date_transfer'] = Carbon::now();
+            $update['reason_transfer'] = $data['fk_user'];
 
             $client = clients::query()->where('id_clients', $id)->first();
             $client->fill($update);
@@ -382,6 +383,22 @@ class ClientsController extends Controller
             $response = array("result" => "success", "code" => "200", "message" => new ClientResource($client));
             DB::commit();
             return response()->json($response);
+        }
+        catch(Exception $e)
+        {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()]);
+        }
+    }
+
+    public function approveOrRefuseTransferClient(Request $request, string $id)
+    {
+        DB::beginTransaction();
+        try
+        {
+            $name_enterprise = $_POST["name_enterprise"];
+            $id_clients = $_GET["id_clients"];
+            $fkuser = $_POST["fkuser"];
         }
         catch(Exception $e)
         {
