@@ -15,6 +15,7 @@ use App\Mail\sendStactictesConvretClientsTothabetEmail;
 use App\Models\client_comment;
 use App\Models\convertClintsStaticts;
 use App\Models\notifiaction;
+use App\Models\privg_level_user;
 use App\Models\User;
 use App\Models\user_token;
 use App\Models\users;
@@ -25,6 +26,7 @@ use Illuminate\Support\Facades\Notification;
 use App\Notifications\SendNotification;
 use App\Services\clientSrevices;
 use Exception;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -210,7 +212,7 @@ class ClientsController extends Controller
         if ($type_record == "صحيح")
             $data['type_classification'] = null;
         else
-            $data['type_classification'] = $data['type_classification'] == 'null' ?  $client->type_classification : $data["type_classification"];
+            $data['type_classification'] = $data["type_classification"]?? $client->type_classification;
 
         $client->fill($data);
         $client->save();
@@ -436,8 +438,8 @@ class ClientsController extends Controller
         try
         {
             $client = clients::query()->where('id_clients', $id)->first();
-            $name_enterprise = $client->name_enterprise;
             $id_clients = $client->id_clients;
+            $name_enterprise = $client->name_enterprise;
             $fk_user = $data["fk_user"];
             $reason_transfer = $data["reason_transfer"];
             $fk_regoin = $data['fk_regoin'];
@@ -455,9 +457,99 @@ class ClientsController extends Controller
                     ->first();
                 $client->update($updateArray);
 
-                $resJson = array("result" => "success", "code" => "200", "message" => 'done');
+                $nameApprove = auth()->user()->nameUser;
+                $id_users = $this->getIdUsers($fk_regoin, 126);
+                $id_users->push((int) $data['fkuserclient']);
 
-                $nameApprove = auth()->user()->id_user;
+                $title = "قبول تحويل العميل";
+                $titlenameapprove = "تم قبول تحويل العميل";
+                $nametitle = "من قبل";
+
+                $message = "$titlenameapprove $name_enterprise \r$nametitle \r $nameApprove";
+                foreach($id_users as $user_id)
+                {
+                    $userToken = user_token::where('fkuser', $user_id)
+                        ->where('token', '!=', null)
+                        ->latest('date_create')
+                        ->first();
+
+                    Notification::send(
+                        null,
+                        new SendNotification(
+                            $title,
+                            $message,
+                            $message,
+                            ($userToken != null ? $userToken->token : null)
+                        )
+                    );
+
+                    notifiaction::create([
+                        'message' => $message,
+                        'type_notify' => 'ApproveDone',
+                        'to_user' => $id,
+                        'isread' => 0,
+                        'data' => $id_clients,
+                        'from_user' => $client->fkusertrasfer,
+                        'dateNotify' => Carbon::now('Asia/Riyadh')
+                    ]);
+                }
+                DB::commit();
+                $resJson = array("result" => "success", "code" => "200", "message" => 'done approved');
+                return response()->json($resJson, 200);
+            }
+            else
+            {
+                $updateArray = array();
+                $updateArray['reason_transfer'] = null;
+                $updateArray['fkusertrasfer'] = null;
+                $updateArray['date_transfer'] = null;
+
+                $client = clients::query()
+                    ->where('id_clients', $id)
+                    ->first();
+                $userTransfered = $client->fkusertrasfer;
+                $client->update($updateArray);
+
+                $nameRefused = auth()->user()->nameUser;
+                $id_users = $this->getIdUsers($fk_regoin, 126);
+                $id_users->push((int) $data['fkuserclient']);
+
+                $title = "رفض تحويل العميل";
+                $titlenameapprove = "تم رفض تحويل العميل";
+                $nametitle = "من قبل";
+
+                $message = "$titlenameapprove $name_enterprise \r$nametitle \r $nameRefused";
+
+                foreach($id_users as $user_id)
+                {
+                    $userToken = user_token::where('fkuser', $user_id)
+                        ->where('token', '!=', null)
+                        ->latest('date_create')
+                        ->first();
+
+                    Notification::send(
+                        null,
+                        new SendNotification(
+                            $title,
+                            $message,
+                            $message,
+                            ($userToken != null ? $userToken->token : null)
+                        )
+                    );
+
+                    notifiaction::create([
+                        'message' => $message,
+                        'type_notify' => 'TransferRefuse',
+                        'to_user' => $id,
+                        'isread' => 0,
+                        'data' => $id_clients,
+                        'from_user' => $userTransfered,
+                        'dateNotify' => Carbon::now('Asia/Riyadh')
+                    ]);
+                }
+                DB::commit();
+                $resJson = array("result" => "success", "code" => "200", "message" => 'done refused');
+                return response()->json($resJson, 200);
             }
         }
         catch(Exception $e)
@@ -465,5 +557,32 @@ class ClientsController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()]);
         }
+    }
+
+    public function getIdUsersByPrivilge($fk_privileg): Collection
+    {
+        return privg_level_user::query()
+            ->where('fk_privileg', $fk_privileg)
+            ->where('is_check', 1)
+            ->get()
+            ->pluck('fk_level');
+    }
+
+    public function getIdUsers($fk_regoin,$fk_privileg )
+    {
+        $levels = $this->getIdUsersByPrivilge($fk_privileg);
+        $id_users = users::query()
+            ->where(function ($query) use ($levels, $fk_regoin) {
+                $query->where('fk_regoin', $fk_regoin)
+                    ->whereIn('type_level', $levels);
+            })
+            ->orWhere(function ($query) use ($levels) {
+                $query->where('fk_regoin', 14)
+                    ->whereIn('type_level', $levels);
+            })
+            ->get()
+            ->pluck('id_user');
+
+        return $id_users;
     }
 }
