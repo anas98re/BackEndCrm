@@ -177,12 +177,13 @@ class ClientsController extends Controller
         }
     }
 
-    public function addClient(StoreclientsRequest $request)
+    public function addClient(Request $request)
     {
-        $data = $request->validated();
+        $data = $request->all();
         $serialnumber =
             $this->MyService->generate_serialnumber_InsertedClient(
                 Carbon::now(),
+                $data['date_create'],
             );
 
         $data = $request->all();
@@ -192,6 +193,21 @@ class ClientsController extends Controller
 
         $client = clients::create($data);
 
+        $client = clients::create($data);
+
+        $result = new ClientResource($client);
+
+        return response()->json(array("result" => "success", "code" => "200", "message" => $result));
+    }
+
+    public function updateClient(Request $request, string $id)
+    {
+        $data = $request->all();
+
+        $client = clients::query()->where('id_clients', $id)->first();
+
+        $client->fill($data);
+        $client->save();
         $result = new ClientResource($client);
 
         return response()->json(array("result" => "success", "code" => "200", "message" => $result));
@@ -215,9 +231,7 @@ class ClientsController extends Controller
     public function SimilarClientsNames(Request $request)
     {
         //Temporarily due to a malfunction
-        // return response()->json();
-
-        //..
+        return response()->json();
 
         $selectFields = [
             'name_client',
@@ -350,59 +364,6 @@ class ClientsController extends Controller
         }
         catch(Exception $e)
         {
-            return response()->json(['message' => $e->getMessage()]);
-        }
-    }
-
-    public function transferClient(Request $request, string $id)
-    {
-        DB::beginTransaction();
-        $data = $request->validate([
-            'fk_user' => 'required|numeric',
-            // 'fkusertrasfer' => 'required|numeric',
-            // 'name_enterprise' => 'required',
-            // 'nameusertransfer' => 'required',
-            // 'date_transfer' => 'required',
-        ]);
-        try
-        {
-            $data['fkusertrasfer'] = auth()->user()->id_user;
-
-            $update = array();
-            $user = User::query()->where('id_user', $data['fk_user'])->first();
-
-            $update['fk_regoin'] = $user->fk_regoin;
-            $update['fk_user'] = $data['fk_user'];
-            $update['date_transfer'] = Carbon::now();
-            $update['reason_transfer'] = $data['fk_user'];
-
-            $client = clients::query()->where('id_clients', $id)->first();
-            $client->fill($update);
-            $client->save();
-
-            $response = array("result" => "success", "code" => "200", "message" => new ClientResource($client));
-            DB::commit();
-            return response()->json($response);
-        }
-        catch(Exception $e)
-        {
-            DB::rollBack();
-            return response()->json(['message' => $e->getMessage()]);
-        }
-    }
-
-    public function approveOrRefuseTransferClient(Request $request, string $id)
-    {
-        DB::beginTransaction();
-        try
-        {
-            $name_enterprise = $_POST["name_enterprise"];
-            $id_clients = $_GET["id_clients"];
-            $fkuser = $_POST["fkuser"];
-        }
-        catch(Exception $e)
-        {
-            DB::rollBack();
             return response()->json(['message' => $e->getMessage()]);
         }
     }

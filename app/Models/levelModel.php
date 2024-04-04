@@ -6,11 +6,11 @@ use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Http\Request;
 
 class levelModel extends Model
 {
+    use HasFactory, Loggable;
     use HasFactory, Loggable;
 
     protected $table = 'level';
