@@ -6,7 +6,6 @@ use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Http\Request;
@@ -62,7 +61,7 @@ class clients extends Model
 
     public function userTransfer(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'fkusertrasfer', 'id_user');
+        return $this->belongsTo(users::class, 'fkusertrasfer', 'id_user');
     }
 
     public function cityRelation(): BelongsTo
@@ -90,8 +89,4 @@ class clients extends Model
         return $this->belongsTo(reason_client_reject::class, 'fk_rejectClient', 'id_rejectClient');
     }
 
-    public function transferTo(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'reason_transfer', 'id_user');
-    }
 }

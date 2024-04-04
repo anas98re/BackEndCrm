@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Constants;
 use App\Http\Resources\ClientResource;
-use App\Http\Resources\ClientResource;
 use App\Models\clients;
 use App\Http\Requests\StoreclientsRequest;
 use App\Http\Requests\UpdateClientRequest;
@@ -25,7 +24,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\SendNotification;
 use App\Services\clientSrevices;
-use Exception;
 use Exception;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -378,6 +376,7 @@ class ClientsController extends Controller
             $update['fk_regoin'] = $user?->fk_regoin;
             $update['fkusertrasfer'] = auth()->user()->id_user;
             $update['date_transfer'] = Carbon::now();
+            $update['reason_transfer'] = $data['fk_user'];
 
             $client = clients::query()->where('id_clients', $id)->first();
             $client->update($update);
@@ -416,6 +415,22 @@ class ClientsController extends Controller
             $response = array("result" => "success", "code" => "200", "message" => new ClientResource($client));
             DB::commit();
             return response()->json($response);
+        }
+        catch(Exception $e)
+        {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()]);
+        }
+    }
+
+    public function approveOrRefuseTransferClient(Request $request, string $id)
+    {
+        DB::beginTransaction();
+        try
+        {
+            $name_enterprise = $_POST["name_enterprise"];
+            $id_clients = $_GET["id_clients"];
+            $fkuser = $_POST["fkuser"];
         }
         catch(Exception $e)
         {
