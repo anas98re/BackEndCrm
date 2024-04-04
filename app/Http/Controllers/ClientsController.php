@@ -213,25 +213,12 @@ class ClientsController extends Controller
         return response()->json(array("result" => "success", "code" => "200", "message" => $result));
     }
 
-    public function updateClient(UpdateClientRequest $request, string $id)
-    {
-        $data = $request->validated();
-
-        $client = clients::query()->where('id_clients', $id)->first();
-
-        $client->fill($data);
-        $client->save();
-        $result = new ClientResource($client);
-
-        return response()->json(array("result" => "success", "code" => "200", "message" => $result));
-    }
-
-
 
     public function SimilarClientsNames(Request $request)
     {
         //Temporarily due to a malfunction
-        return response()->json();
+        // return response()->json();
+        
 
         $selectFields = [
             'name_client',
@@ -364,6 +351,90 @@ class ClientsController extends Controller
         }
         catch(Exception $e)
         {
+            return response()->json(['message' => $e->getMessage()]);
+        }
+    }
+
+    public function transferClient(Request $request, string $id)
+    {
+        DB::beginTransaction();
+        // $data = $request->validate([
+        //     'fk_user' => 'required|numeric',
+        //     // 'fkusertrasfer' => 'required|numeric',
+        //     // 'name_enterprise' => 'required',
+        //     // 'nameusertransfer' => 'required',
+        //     // 'date_transfer' => 'required',
+        // ]);
+        $data = $request->all();
+        try
+        {
+
+            $update = array();
+            $user = users::query()->where('id_user', $data['fk_user'])->first();
+            $user_transfer = users::query()->where('id_user', $data['fk_user'])->first();
+
+            $update['fk_regoin'] = $user?->fk_regoin;
+            $update['fkusertrasfer'] = auth()->user()->id_user;
+            $update['date_transfer'] = Carbon::now();
+            $update['reason_transfer'] = $data['fk_user'];
+
+            $client = clients::query()->where('id_clients', $id)->first();
+            $client->update($update);
+
+            $name_enterprise = $client->name_enterprise;
+            $nameApprove = $user_transfer->nameUser;
+
+            $titlenameapprove = "تم تحويل العميل ";
+            $nametitle = "من قبل";
+            $message = "$titlenameapprove $name_enterprise \r$nametitle \r $nameApprove";
+            $userToken = user_token::where('fkuser', $user->id_user)
+                        ->where('token', '!=', null)
+                        ->latest('date_create')
+                        ->first();
+
+            Notification::send(
+                null,
+                new SendNotification(
+                    'نقل عميل',
+                    $message,
+                    $message,
+                    ($userToken != null ? $userToken->token : null)
+                )
+            );
+
+            notifiaction::create([
+                'message' => $message,
+                'type_notify' => 'transfer',
+                'to_user' => $user->id_user,
+                'isread' => 0,
+                'data' => $id,
+                'from_user' => $user_transfer->id_user,
+                'dateNotify' => Carbon::now('Asia/Riyadh')
+            ]);
+
+            $response = array("result" => "success", "code" => "200", "message" => new ClientResource($client));
+            DB::commit();
+            return response()->json($response);
+        }
+        catch(Exception $e)
+        {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()]);
+        }
+    }
+
+    public function approveOrRefuseTransferClient(Request $request, string $id)
+    {
+        DB::beginTransaction();
+        try
+        {
+            $name_enterprise = $_POST["name_enterprise"];
+            $id_clients = $_GET["id_clients"];
+            $fkuser = $_POST["fkuser"];
+        }
+        catch(Exception $e)
+        {
+            DB::rollBack();
             return response()->json(['message' => $e->getMessage()]);
         }
     }
