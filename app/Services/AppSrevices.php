@@ -39,4 +39,16 @@ class AppSrevices extends JsonResponeService
         $generatedPath = $file->storeAs('invoiceFiles', $generatedFilename, 'public');
         return $generatedPath;
     }
+
+    public static function generateThreeLetters()
+    {
+        $length = 3;
+        $randomString = '';
+        $letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $letters[random_int(0, strlen($letters) - 1)];
+        }
+        return $randomString;
+    }
 }
