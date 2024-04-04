@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class company_comment extends Model
 {
-    use HasFactory, LogsActivity, Loggable;
+    use HasFactory, Loggable;
 
     protected $table = 'company_comment';
     public $timestamps = false;
@@ -24,36 +24,6 @@ class company_comment extends Model
         'date_comment'
     ];
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        $request = app(Request::class);
-        $routePattern = $request->route()->uri();
-        $ip = $request->ip();
-        $user = auth('sanctum')->user();
-        $userName = $user ? $user->nameUser : null;
-        return LogOptions::defaults()
-            ->logOnly(['*'])
-            ->logOnlyDirty()
-            ->useLogName('company_comment Log')
-            ->setDescriptionForEvent(function (string $eventName) use ($routePattern, $ip, $userName) {
-                // Provide the description for the event based on the event name, route pattern, and IP
-                if ($eventName === 'created') {
-                    return "company_comment created by $userName, using route: $routePattern from IP: $ip.";
-                } elseif ($eventName === 'updated') {
-                    return "company_comment updated by $userName, using route: $routePattern from IP: $ip.";
-                } elseif ($eventName === 'deleted') {
-                    return "company_comment deleted by $userName, using route: $routePattern from IP: $ip.";
-                }
-
-                // Default description if the event name is not recognized
-                return "company_comment action occurred by $userName, using route: $routePattern from IP: $ip.";
-            });
-    }
-
-    public function getQualifiedKeyName()
-    {
-        return $this->table . '.' . $this->primaryKey;
-    }
 
     public function Users()
     {

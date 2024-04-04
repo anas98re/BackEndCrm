@@ -6,6 +6,7 @@ use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Http\Request;
@@ -13,7 +14,6 @@ use Illuminate\Http\Request;
 class clients extends Model
 {
     use HasFactory, Loggable;
-    // use HasFactory;
 
     protected $table = 'clients';
     protected $primaryKey = 'id_clients';
@@ -23,6 +23,7 @@ class clients extends Model
         'id_clients', 'name_client', 'name_enterprise', 'type_job',
         'city', 'location', 'fk_regoin', 'date_create', 'type_client',
         'fk_user', 'date_transfer', 'fkusertrasfer', 'mobile', 'date_changetype',
+        'reason_change', 'reason_transfer', 'offer_price', 'date_price', 'date_price2', 'user_do',
         'reason_change', 'reason_transfer', 'offer_price', 'date_price', 'date_price2', 'user_do',
         'ismarketing', 'address_client', 'date_recive', 'userAdd_email', 'phone',
         'IDcustomer', 'descActivController', 'presystem', 'sourcclient',
@@ -34,9 +35,9 @@ class clients extends Model
     ];
 
 
-    public function getQualifiedKeyName()
+    public function transferTo(): BelongsTo
     {
-        return $this->table . '.' . $this->primaryKey;
+        return $this->belongsTo(User::class, 'reason_transfer', 'id_user');
     }
 
     public function clientSource(): BelongsTo

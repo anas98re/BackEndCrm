@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Constants;
 use App\Http\Resources\ClientResource;
+use App\Http\Resources\ClientResource;
 use App\Models\clients;
 use App\Http\Requests\StoreclientsRequest;
 use App\Http\Requests\UpdateClientRequest;
@@ -24,6 +25,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\SendNotification;
 use App\Services\clientSrevices;
+use Exception;
 use Exception;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -182,11 +184,16 @@ class ClientsController extends Controller
         $data = $request->all();
         $serialnumber =
             $this->MyService->generate_serialnumber_InsertedClient(
+                Carbon::now(),
                 $data['date_create'],
             );
 
         $data = $request->all();
         $data['SerialNumber'] = $serialnumber;
+        $data['date_create'] = Carbon::now();
+        $data['user_add'] = auth('sanctum')->user()->id_user;;
+
+        $client = clients::create($data);
 
         $client = clients::create($data);
 

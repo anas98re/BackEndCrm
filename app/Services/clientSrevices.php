@@ -224,9 +224,9 @@ class clientSrevices extends JsonResponeService
 
     public function filterByNameClientOrEnterprise($query, $nameClient, $nameEnterprise)
     {
-        if ($nameClient) {
-            $this->filterByNameClient($query, $nameClient);
-        }
+        // if ($nameClient) {
+        //     $this->filterByNameClient($query, $nameClient);
+        // }
 
         if ($nameEnterprise) {
             $this->filter_has_NameEnterprise($query, $nameEnterprise);

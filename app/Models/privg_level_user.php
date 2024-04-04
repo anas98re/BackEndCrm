@@ -22,9 +22,5 @@ class privg_level_user extends Model
         'is_check'
     ];
 
-    public function getQualifiedKeyName()
-    {
-        return $this->table . '.' . $this->primaryKey;
-    }
 
 }

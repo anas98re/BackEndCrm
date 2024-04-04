@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 class levelModel extends Model
 {
     use HasFactory, Loggable;
+    use HasFactory, Loggable;
 
     protected $table = 'level';
     public $timestamps = false;
@@ -21,9 +22,4 @@ class levelModel extends Model
         'periorty'
     ];
 
-
-    public function getQualifiedKeyName()
-    {
-        return $this->table . '.' . $this->primaryKey;
-    }
 }

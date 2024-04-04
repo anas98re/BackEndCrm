@@ -65,6 +65,7 @@ Route::post('addCommentClientMention', [ClientCommentMentionController::class, '
 Route::post('storageInvoicesUpdates', [UpdatesReportController::class, 'storageInvoicesUpdates']);
 Route::post('addInvoicesUpdateReport', [UpdatesReportController::class, 'addInvoicesUpdateReport']);
 Route::post('addInvoiceProductReport', [UpdatesReportController::class, 'addInvoiceProductReport']);
+Route::post('reportDeletedIdsFillesInvoice', [UpdatesReportController::class, 'reportDeletedIdsFillesInvoice']);
 //reports
 Route::post('addUserUpdateReport', [UpdatesReportController::class, 'addUserUpdateReport']);
 //cllients
