@@ -206,6 +206,12 @@ class ClientsController extends Controller
 
         $client = clients::query()->where('id_clients', $id)->first();
 
+        $type_record = key_exists($data['type_record']) ? $data['type_record']: $client->type_record;
+        if ($type_record == "صحيح")
+            $data['type_classification'] = null;
+        else
+            $data['type_classification'] = $data['type_classification'] == 'null' ?  $client->type_classification : data["type_classification"];
+
         $client->fill($data);
         $client->save();
         $result = new ClientResource($client);
@@ -425,12 +431,34 @@ class ClientsController extends Controller
 
     public function approveOrRefuseTransferClient(Request $request, string $id)
     {
+        $data = $request->all();
         DB::beginTransaction();
         try
         {
-            $name_enterprise = $_POST["name_enterprise"];
-            $id_clients = $_GET["id_clients"];
-            $fkuser = $_POST["fkuser"];
+            $client = clients::query()->where('id_clients', $id)->first();
+            $name_enterprise = $client->name_enterprise;
+            $id_clients = $client->id_clients;
+            $fk_user = $data["fk_user"];
+            $reason_transfer = $data["reason_transfer"];
+
+            if(! is_null($data['approve']?? null) )
+            {
+                $updateArray = array();
+
+                $updateArray['fk_user'] = $fk_user
+                //array_push($updateArray, htmlspecialchars(strip_tags($fkusertrasfer))); //
+                array_push($updateArray,  $reason_transfer);
+                //null
+                array_push($updateArray, ($_POST['fk_regoin']));
+                array_push($updateArray, htmlspecialchars(strip_tags($id_clients)));
+
+                $sql = "update clients
+            set  fk_user=?,reason_transfer=?,fk_regoin=?
+            where id_clients=?";
+                $result = dbExec($sql, $updateArray);
+                $resJson = array("result" => "success", "code" => "200", "message" => 'done');
+                echo json_encode($resJson, JSON_UNESCAPED_UNICODE);
+            }
         }
         catch(Exception $e)
         {
