@@ -27,8 +27,8 @@ use PhpParser\Node\Stmt\TryCatch;
 
 class TicketDetailSrevices extends JsonResponeService
 {
-
-    public function addOrReOpenTicketService($request)
+    // .. 
+    public function addTicketService($request)
     {
         try {
             DB::beginTransaction();
@@ -39,10 +39,14 @@ class TicketDetailSrevices extends JsonResponeService
             $requestHandle['notes_ticket'] =  $request->input('notes');
             $ticket = tickets::create($requestHandle);
             $ticketState = Constants::TICKET_OPEN;
+
+            $randomString = AppSrevices::generateThreeLetters();
+            $tag = $ticket->id_ticket . $randomString;
+
             ticket_detail::create([
                 'fk_ticket' => $ticket->id_ticket,
                 'fk_state' => $ticketState,
-                'tag' => Str::random(5),
+                'tag' => $tag,
                 'fk_user' => auth('sanctum')->user()->id_user,
                 'date_state' => Carbon::now('Asia/Riyadh')->toDateTimeString(),
                 'notes' => $request->notes
@@ -112,7 +116,8 @@ class TicketDetailSrevices extends JsonResponeService
     private function updateTicketState($ticketId, $state, $userId, $date, $notes)
     {
         if ($state == Constants::TICKET_REOPEN) {
-            $tag = Str::random(5);
+            $randomString = AppSrevices::generateThreeLetters();
+            $tag = $ticketId . $randomString;
         } else {
             $lastTicketState = ticket_detail::where('fk_ticket', $ticketId)
                 ->latest('date_state')

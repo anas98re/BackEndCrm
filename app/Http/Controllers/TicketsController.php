@@ -30,7 +30,7 @@ class TicketsController extends Controller
 
     public function addTicket(Request $request)
     {
-        $respons = $this->MyService->addOrReOpenTicketService($request);
+        $respons = $this->MyService->addTicketService($request);
         return $this->sendSucssas($respons);
     }
 

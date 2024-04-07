@@ -5,8 +5,6 @@ namespace App\Models;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Http\Request;
 
 class privg_level_user extends Model
