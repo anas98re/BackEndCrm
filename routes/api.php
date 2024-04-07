@@ -113,6 +113,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('convertClientsFromAnEmployeeToEmployee', [ClientsController::class, 'convertClientsFromAnEmployeeToEmployee']);
     Route::post('sendStactictesConvretClientsToEmail', [ClientsController::class, 'sendStactictesConvretClientsToEmail']);
     Route::get('editDatePriceDataToCorrectFormatt', [ClientsController::class, 'editDatePriceDataToCorrectFormatt']);
+    Route::get('getTransferClientsWithPrivileges', [ClientsController::class, 'getTransferClientsWithPrivileges']);
     Route::post('transferClient/{id}', [ClientsController::class, 'transferClient']);
     Route::post('approveOrRefuseTransferClient/{id}', [ClientsController::class, 'approveOrRefuseTransferClient']);
     //Clients Participate

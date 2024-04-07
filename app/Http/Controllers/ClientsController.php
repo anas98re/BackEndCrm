@@ -8,6 +8,7 @@ use App\Models\clients;
 use App\Http\Requests\StoreclientsRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Http\Requests\UpdateclientsRequest;
+use App\Http\Resources\ClientTransferedResource;
 use App\Imports\AnotherDateClientsImport;
 use App\Imports\ClientsImport;
 use App\Mail\sendStactictesConvretClientsToEmail;
@@ -26,6 +27,7 @@ use Illuminate\Support\Facades\Notification;
 use App\Notifications\SendNotification;
 use App\Services\clientSrevices;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -559,7 +561,7 @@ class ClientsController extends Controller
         }
     }
 
-    public function getIdUsersByPrivilge($fk_privileg): Collection
+    public function getIdLevelsByPrivilge($fk_privileg): Collection
     {
         return privg_level_user::query()
             ->where('fk_privileg', $fk_privileg)
@@ -568,9 +570,19 @@ class ClientsController extends Controller
             ->pluck('fk_level');
     }
 
+    public function getIdLevelsByPrivilges(array $fk_privilegs): Collection
+    {
+        return privg_level_user::query()
+            ->whereIn('fk_privileg', $fk_privilegs)
+            ->where('is_check', 1)
+            ->get()
+            ->pluck('fk_level')
+            ->unique();
+    }
+
     public function getIdUsers($fk_regoin,$fk_privileg )
     {
-        $levels = $this->getIdUsersByPrivilge($fk_privileg);
+        $levels = $this->getIdLevelsByPrivilge($fk_privileg);
         $id_users = users::query()
             ->where(function ($query) use ($levels, $fk_regoin) {
                 $query->where('fk_regoin', $fk_regoin)
@@ -584,5 +596,51 @@ class ClientsController extends Controller
             ->pluck('id_user');
 
         return $id_users;
+    }
+
+    public function getTransferClientsWithPrivileges(): JsonResponse
+    {
+        try
+        {
+            $user = auth()->user();
+
+            $allLevels = $this->getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_ALL']);
+            $employeeLevels = $this->getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_EMPLOYEE']);
+            $adminLevels = $this->getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_ADMIN']);
+
+            $is_all = false;
+            $is_admin = false;
+
+            $clients = collect();
+            if($allLevels->contains($user->type_level))
+            {
+                $clients = clients::query()->whereNotNull('reason_transfer')->get();
+                $is_all = true;
+            }
+
+            if($adminLevels->contains($user->type_level) && ! ($is_all) )
+            {
+                $clients = clients::query()
+                    ->where('reason_transfer', $user->id_user)
+                    ->orWhere(function ($query) use($user) {
+                        $query->where('fk_regoin', $user->fk_regoin)
+                            ->whereNotNull('reason_transfer');
+                    })
+                    ->get();
+                $is_admin = true;
+            }
+
+            if($employeeLevels->contains($user->type_level)  && (! $is_admin) && (! $is_all) )
+            {
+                $clients = clients::query()->where('reason_transfer', $user->id_user)->get();
+            }
+
+            $resJson = array("result" => "success", "code" => "200", "message" => ClientTransferedResource::collection($clients));
+            return response()->json($resJson);
+        }
+        catch(Exception $e)
+        {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 }
