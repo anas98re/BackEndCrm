@@ -13,6 +13,6 @@ pipelines:
                 USER: crmTest@test.smartcrm.ws
                 PASSWORD: HVmc3[?eP9lU
                 SERVER: ftp.smartcrm.ws
-                REMOTE_PATH: /home/smartcrm/public_html/TT_TestBackEndLaravelApi
+                REMOTE_PATH: /home/smartcrm/public_html/TestBackEndLaravelApi
                 DELETE_FLAG: 'false' # Don't delete existing files
                 EXTRA_ARGS: "--exclude=.bitbucket/ --exclude=.git/ --exclude=bitbucket-pipelines.yml --exclude=.gitignore" # Ignore these
