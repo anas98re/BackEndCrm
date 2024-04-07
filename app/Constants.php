@@ -19,4 +19,15 @@ class  Constants
     const TICKET_CLOSE = 3;
     const TICKET_SUSPEND = 4;
     const TICKET_RATE = 5;
+
+
+    const PRIVILEGES_IDS = [
+
+        "TRANSFER_CLIENTS_ADMIN" => 183,
+
+        "TRANSFER_CLIENTS_EMPLOYEE" => 184,
+
+        "TRANSFER_CLIENTS_ALL" => 185,
+
+    ];
 }
