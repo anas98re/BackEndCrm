@@ -174,6 +174,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('addTicket', [TicketsController::class, 'addTicket']);
     Route::post('editTicketType/{id}', [TicketsController::class, 'editTicketType']);
     Route::get('getTicketById/{id}', [TicketsController::class, 'getTicketById']);
+    Route::get('getTicketByIdClinet/{id}', [TicketsController::class, 'getTicketByIdClinet']);
     Route::get('getTickets', [TicketsController::class, 'getTickets']);
     Route::post('TransferTicket/{id}', [TicketsController::class, 'TransferTicket']);
     Route::get('reopenReportTickets', [TicketsController::class, 'reopenReport']);
