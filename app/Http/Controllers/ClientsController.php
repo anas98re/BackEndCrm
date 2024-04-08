@@ -196,7 +196,7 @@ class ClientsController extends Controller
 
         $data['SerialNumber'] = $serialnumber;
         $data['date_create'] = Carbon::now();
-        $data['user_add'] = auth('sanctum')->user()->id_user;;
+        $data['user_add'] = auth('sanctum')->user()->id_user;
 
         $client = clients::create($data);
 
@@ -622,11 +622,15 @@ class ClientsController extends Controller
 
             if($adminLevels->contains($user->type_level) && ! ($is_all) )
             {
+
                 $clients = clients::query()
                     ->where('reason_transfer', $user->id_user)
                     ->orWhere(function ($query) use($user) {
-                        $query->where('fk_regoin', $user->fk_regoin)
-                            ->whereNotNull('reason_transfer');
+                        if($user->fk_regoin == 14)
+                            $query->whereNotNull('reason_transfer');
+                        else
+                            $query->where('fk_regoin', $user->fk_regoin)
+                                ->whereNotNull('reason_transfer');
                     })
                     ->get();
                 $is_admin = true;
