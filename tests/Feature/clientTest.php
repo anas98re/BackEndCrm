@@ -145,4 +145,18 @@ class clientTest extends TestCase
         $response->assertStatus(200);
         $response->assertJson(["result" => "success"]);
     }
+
+    public function testApproveOrRefuseTransferClient()
+    {
+        $requestData = [
+            'approve' => 1,
+        ];
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->bearerToken,
+        ])->postJson('/api/approveOrRefuseTransferClient/'.clients::whereNotNull('fkusertrasfer')->inRandomOrder()->first()->id_clients, $requestData);
+
+        $response->assertStatus(200);
+        $response->assertJson(["result" => "success"]);
+    }
 }

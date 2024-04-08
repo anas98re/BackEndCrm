@@ -107,15 +107,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('editClientByTypeClient/{id_clients}', [ClientsController::class, 'editClientByTypeClient']);
     Route::post('clientAppproveAdmin/{id_clients}', [ClientsController::class, 'appproveAdmin']);
     Route::post('transformClientsFromMarketingIfOverrideLimit8Days', [ClientsController::class, 'transformClientsFromMarketingIfOverrideLimit8Days']);
-    Route::post('addClient', [ClientsController::class, 'addClient']);
-    Route::post('updateClient/{id}', [ClientsController::class, 'updateClient']);
+    Route::post('/addClient', [ClientsController::class, 'addClient']);
+    Route::post('/updateClient/{id}', [ClientsController::class, 'updateClient']);
     Route::post('SimilarClientsNames', [ClientsController::class, 'SimilarClientsNames']);
     Route::post('convertClientsFromAnEmployeeToEmployee', [ClientsController::class, 'convertClientsFromAnEmployeeToEmployee']);
     Route::post('sendStactictesConvretClientsToEmail', [ClientsController::class, 'sendStactictesConvretClientsToEmail']);
     Route::get('editDatePriceDataToCorrectFormatt', [ClientsController::class, 'editDatePriceDataToCorrectFormatt']);
-    Route::get('getTransferClientsWithPrivileges', [ClientsController::class, 'getTransferClientsWithPrivileges']);
-    Route::post('transferClient/{id}', [ClientsController::class, 'transferClient']);
-    Route::post('approveOrRefuseTransferClient/{id}', [ClientsController::class, 'approveOrRefuseTransferClient']);
+    Route::get('/getTransferClientsWithPrivileges', [ClientsController::class, 'getTransferClientsWithPrivileges']);
+    Route::post('/transferClient/{id}', [ClientsController::class, 'transferClient']);
+    Route::post('/approveOrRefuseTransferClient/{id}', [ClientsController::class, 'approveOrRefuseTransferClient']);
     //Clients Participate
     Route::get('getParticipateClints/{id}', [ParticipateController::class, 'getParticipateClints']);
     Route::get('getParticipateInvoices/{id}', [ParticipateController::class, 'getParticipateInvoices']);
@@ -129,7 +129,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //clients Date
     Route::post('rescheduleOrCancelVisitClient/{idclients_date}', [ClientsDateController::class, 'rescheduleOrCancelVisitClient']);
     Route::get('getDateVisitAgent/{agentId}', [ClientsDateController::class, 'getDateVisitAgentFromQuery']);
-    Route::post('updateStatusForVisit/{date_id}', [ClientsDateController::class, 'updateStatusForVisit']);
+    Route::post('/updateStatusForVisit/{date_id}', [ClientsDateController::class, 'updateStatusForVisit']);
     //Cities
     Route::post('getCitiesFromMainCitiesIds', [MaincityController::class, 'getCitiesFromMainCitiesIds']);
     //cllients Excel

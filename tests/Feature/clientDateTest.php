@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\agent;
+use App\Models\clients;
 use App\Models\clients_date;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -61,6 +62,21 @@ class clientDateTest extends TestCase
         $this->assertEquals($result, $responseData['data']);
     }
 
+    public function testUpdateStatusForVisit()
+    {
+        $requestData = [
+            // 'id_clients' => clients::inRandomOrder()->first()->id_clients,
+            'is_done' => 1,
+            'comment' => $this->faker->sentence,
+            'agent_id' => agent::inRandomOrder()->first()->id_agent,
+        ];
 
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->bearerToken,
+        ])->postJson('/api/updateStatusForVisit/'.clients_date::inRandomOrder()->first()->idclients_date, $requestData);
+
+        $response->assertStatus(200);
+        $response->assertJson(["result" => "success"]);
+    }
 
 }
