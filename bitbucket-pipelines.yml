@@ -1,6 +1,7 @@
 image: atlassian/default-image:2
 
 pipelines:
+
   branches:
     test_masterBitbucket:
       - step:
@@ -12,7 +13,19 @@ pipelines:
                 USER: $FTP_USERNAME
                 PASSWORD: $FTP_PASSWORD
                 SERVER: $FTP_HOST
-                PORT: 21
-                REMOTE_PATH: /home/smartcrm/public_html/test.smartcrm.ws
+                REMOTE_PATH: /public_html/TestBackEndLaravelApi
+                DELETE_FLAG: 'false' # Don't delete existing files
+                EXTRA_ARGS: "--exclude=.bitbucket/ --exclude=.git/ --exclude=bitbucket-pipelines.yml --exclude=.gitignore" # Ignore these
+    staging:
+      - step:
+          name: Deploy to Staging
+          deployment: staging
+          script:
+            - pipe: atlassian/ftp-deploy:0.3.7
+              variables:
+                USER: $STAGING_FTP_USERNAME
+                PASSWORD: $STAGING_FTP_PASSWORD
+                SERVER: $STAGING_FTP_HOST
+                REMOTE_PATH: /public_html/TestBackEndLaravelApi
                 DELETE_FLAG: 'false' # Don't delete existing files
                 EXTRA_ARGS: "--exclude=.bitbucket/ --exclude=.git/ --exclude=bitbucket-pipelines.yml --exclude=.gitignore" # Ignore these
