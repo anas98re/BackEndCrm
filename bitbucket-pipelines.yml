@@ -1,11 +1,10 @@
+image: atlassian/default-image:2
 
 pipelines:
-
   branches:
     test_masterBitbucket:
       - step:
           name: Deploy to Production
-          deployment: production
           script:
             - pipe: atlassian/ftp-deploy:0.7.0
               variables:
@@ -15,4 +14,5 @@ pipelines:
                 REMOTE_PATH: /public_html/TestBackEndLaravelApi
                 DELETE_FLAG: 'false' # Don't delete existing files
                 EXTRA_ARGS: "--exclude=.bitbucket/ --exclude=.git/ --exclude=bitbucket-pipelines.yml --exclude=.gitignore" # Ignore these
-   
+          only:
+            - push
