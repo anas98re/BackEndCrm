@@ -200,8 +200,6 @@ class ClientsController extends Controller
 
         $client = clients::create($data);
 
-        $client = clients::create($data);
-
         $result = new ClientResource($client);
 
         return response()->json(array("result" => "success", "code" => "200", "message" => $result));
