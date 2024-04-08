@@ -13,6 +13,6 @@ pipelines:
                 PASSWORD: $FTP_PASSWORD
                 SERVER: $FTP_HOST
                 PORT: 21
-                REMOTE_PATH: /public_html/TestBackEndLaravelApi
+                REMOTE_PATH: public_html/TestBackEndLaravelApi
                 DELETE_FLAG: 'false' # Don't delete existing files
                 EXTRA_ARGS: "--exclude=.bitbucket/ --exclude=.git/ --exclude=bitbucket-pipelines.yml --exclude=.gitignore" # Ignore these
