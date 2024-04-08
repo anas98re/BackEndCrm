@@ -8,11 +8,12 @@ pipelines:
           name: Deploy to Production
           deployment: production
           script:
-            - pipe: atlassian/ftp-deploy:0.7.0
-              variables:
-                USER: crmTest@test.smartcrm.ws
-                PASSWORD: HVmc3[?eP9lU
-                SERVER: ftp.smartcrm.ws
-                REMOTE_PATH: /home/smartcrm/public_html/TestBackEndLaravelApi
-                DELETE_FLAG: 'false' # Don't delete existing files
-                EXTRA_ARGS: "--exclude=.bitbucket/ --exclude=.git/ --exclude=bitbucket-pipelines.yml --exclude=.gitignore" # Ignore these
+          - pipe: atlassian/ftp-deploy:0.7.0
+            variables:
+              USER: crmTest@test.smartcrm.ws
+              PASSWORD: HVmc3[?eP9lU
+              SERVER: ftp.smartcrm.ws
+              REMOTE_PATH: /home/smartcrm/public_html/TestBackEndLaravelApi
+              DELETE_FLAG: 'false'
+              EXTRA_ARGS: "--exclude=.bitbucket/ --exclude=.git/ --exclude=bitbucket-pipelines.yml --exclude=.gitignore"
+              DEBUG: 'true'
