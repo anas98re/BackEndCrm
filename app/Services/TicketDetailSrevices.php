@@ -27,7 +27,7 @@ use PhpParser\Node\Stmt\TryCatch;
 
 class TicketDetailSrevices extends JsonResponeService
 {
-    // .. 
+    // ..
     public function addTicketService($request)
     {
         try {
@@ -199,6 +199,31 @@ class TicketDetailSrevices extends JsonResponeService
     }
 
     public function getTicketByIdService($ticket)
+    {
+        $client = clients::find($ticket->fk_client);
+        $name_enterprise = $client ? $client->name_enterprise : null;
+
+        $ticket_detail = ticket_detail::where('fk_ticket', $ticket->id_ticket)->first();
+        $UserId = $ticket_detail ? $ticket_detail->fk_user : null;
+        $User = users::find($UserId);
+        $nameUser = $User ? $User->nameUser : null;
+
+        $Subcategories = $this->getSubcategories($ticket->id_ticket);
+        $categories = $this->getCategories($ticket->id_ticket);
+        $status = $this->getStatusTicket($ticket->id_ticket);
+        $response = [
+            'ticket' => $ticket,
+            'name_enterprise' => $name_enterprise,
+            'nameUser' => $nameUser,
+            'Categories' => $categories,
+            'Subcategories' => $Subcategories,
+            'status' => $status
+        ];
+
+        return $response;
+    }
+
+    public function getTicketByIdClinetService($ticket)
     {
         $client = clients::find($ticket->fk_client);
         $name_enterprise = $client ? $client->name_enterprise : null;
