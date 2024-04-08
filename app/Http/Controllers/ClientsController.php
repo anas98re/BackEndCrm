@@ -186,7 +186,7 @@ class ClientsController extends Controller
         $data = $request->all();
         $serialnumber =
             $this->MyService->generate_serialnumber_InsertedClient(
-                Carbon::now()
+                Carbon::now(),
             );
 
         $data = $request->all();
@@ -196,10 +196,11 @@ class ClientsController extends Controller
 
         $data['SerialNumber'] = $serialnumber;
         $data['date_create'] = Carbon::now();
-        $data['user_add'] = auth('sanctum')->user()->id_user;
+        $data['user_add'] = auth('sanctum')->user()->id_user;;
 
         $client = clients::create($data);
-        $data['user_add'] = auth('sanctum')->user()->id_user;;
+
+        $client = clients::create($data);
 
         $result = new ClientResource($client);
 
@@ -597,5 +598,51 @@ class ClientsController extends Controller
             ->pluck('id_user');
 
         return $id_users;
+    }
+
+    public function getTransferClientsWithPrivileges(): JsonResponse
+    {
+        try
+        {
+            $user = auth()->user();
+
+            $allLevels = $this->getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_ALL']);
+            $employeeLevels = $this->getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_EMPLOYEE']);
+            $adminLevels = $this->getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_ADMIN']);
+
+            $is_all = false;
+            $is_admin = false;
+
+            $clients = collect();
+            if($allLevels->contains($user->type_level))
+            {
+                $clients = clients::query()->whereNotNull('reason_transfer')->get();
+                $is_all = true;
+            }
+
+            if($adminLevels->contains($user->type_level) && ! ($is_all) )
+            {
+                $clients = clients::query()
+                    ->where('reason_transfer', $user->id_user)
+                    ->orWhere(function ($query) use($user) {
+                        $query->where('fk_regoin', $user->fk_regoin)
+                            ->whereNotNull('reason_transfer');
+                    })
+                    ->get();
+                $is_admin = true;
+            }
+
+            if($employeeLevels->contains($user->type_level)  && (! $is_admin) && (! $is_all) )
+            {
+                $clients = clients::query()->where('reason_transfer', $user->id_user)->get();
+            }
+
+            $resJson = array("result" => "success", "code" => "200", "message" => ClientTransferedResource::collection($clients));
+            return response()->json($resJson);
+        }
+        catch(Exception $e)
+        {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 }
