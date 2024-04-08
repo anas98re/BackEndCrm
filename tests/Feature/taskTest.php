@@ -17,7 +17,7 @@ use Tests\TestCase;
 class taskTest extends TestCase
 {
     use WithFaker;
-    
+
     public function testAddTask()
     {
         $assignmentTypes = ['user', 'department', 'region'];
@@ -83,7 +83,7 @@ class taskTest extends TestCase
 
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer 13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465',
+            'Authorization' => 'Bearer '.$this->bearerToken,
         ])->post('/api/addTask', $requestData);
         info('wwww', array($response->getContent()));
         $response->assertStatus(200);

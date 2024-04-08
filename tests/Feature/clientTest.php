@@ -101,7 +101,7 @@ class clientTest extends TestCase
 
         // Assert the response contains the expected message
         $response->assertJson([
-            'message' => 'Client created successfully'
+            "result" => "success"
         ]);
     }
 
@@ -130,5 +130,33 @@ class clientTest extends TestCase
                 'SerialNumber'
             ]
         ]);
+    }
+
+    public function testTransferClient()
+    {
+        $requestData = [
+            'fk_user' => users::inRandomOrder()->first()->id_user,
+        ];
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->bearerToken,
+        ])->postJson('/api/transferClient/'.clients::inRandomOrder()->first()->id_clients, $requestData);
+
+        $response->assertStatus(200);
+        $response->assertJson(["result" => "success"]);
+    }
+
+    public function testApproveOrRefuseTransferClient()
+    {
+        $requestData = [
+            'approve' => 1,
+        ];
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->bearerToken,
+        ])->postJson('/api/approveOrRefuseTransferClient/'.clients::whereNotNull('fkusertrasfer')->inRandomOrder()->first()->id_clients, $requestData);
+
+        $response->assertStatus(200);
+        $response->assertJson(["result" => "success"]);
     }
 }

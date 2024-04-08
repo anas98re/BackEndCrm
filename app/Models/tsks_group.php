@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 
 class tsks_group extends Model
 {
-    use LogsActivity, Loggable;
+    use Loggable;
 
     protected static $activityLoggerClass = CustomActivityLogger::class;
 
