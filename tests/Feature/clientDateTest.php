@@ -65,10 +65,10 @@ class clientDateTest extends TestCase
     public function testUpdateStatusForVisit()
     {
         $requestData = [
-            // 'id_clients' => clients::inRandomOrder()->first()->id_clients,
+            // 'fk_client' => clients::inRandomOrder()->first()->id_clients,
             'is_done' => 1,
             'comment' => $this->faker->sentence,
-            'agent_id' => agent::inRandomOrder()->first()->id_agent,
+            'fk_agent' => agent::inRandomOrder()->first()->id_agent,
         ];
 
         $response = $this->withHeaders([

@@ -112,13 +112,13 @@ class ClientsDateController extends Controller
             {
                 return response()->json(['message' => 'client date not found'], 404);
             }
-            if(! is_null($data['id_clients']?? null))
+            if(! is_null($data['fk_client']?? null))
             {
-                $this->addComment($data['comment'], $data['id_clients'], auth()->user()->id_user, 'زيارة عميل');
+                $this->addComment($data['comment'], $data['fk_client'], auth()->user()->id_user, 'زيارة عميل');
             }
             else
             {
-                $this->addCommentAgent($data['comment'], $data['agent_id'], auth()->user()->id_user, 'زيارة وكيل');
+                $this->addCommentAgent($data['comment'], $data['fk_agent'], auth()->user()->id_user, 'زيارة وكيل');
             }
 
             $client_date->update([
