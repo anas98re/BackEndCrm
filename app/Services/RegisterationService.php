@@ -91,6 +91,7 @@ class RegisterationService extends Controller
             $UserData->id_user ? $UserData->id_user : 'code is wrong'
         );
         // return response()->json($arrJson, 200);
+        // ..
     }
 
     public function getUsersByTypeAdministrationAndRegion($request)
