@@ -20,7 +20,8 @@ class agentComment extends Model
         'agent_id',
         'content',
         'date_comment',
-        'user_id'
+        'user_id',
+        'type_comment',
     ];
 
     public function agents()
