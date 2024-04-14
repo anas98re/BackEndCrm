@@ -6,12 +6,5 @@ pipelines:
       - step:
           name: Deploy to Production
           script:
-            - git push
-            - pipe: atlassian/ftp-deploy:0.7.0
-              variables:
-                USER: $FTP_USERNAME
-                PASSWORD: $FTP_PASSWORD
-                SERVER: $FTP_HOST
-                REMOTE_PATH: /public_html/TestBackEndLaravelApi
-                DELETE_FLAG: 'false' # Don't delete existing files
-                EXTRA_ARGS: "--exclude=.bitbucket/ --exclude=.git/ --exclude=bitbucket-pipelines.yml --exclude=.gitignore --include=**" # Only include updated files
+            - apt-get update && apt-get install -y lftp
+            - lftp -c "open -u $FTP_USERNAME,$FTP_PASSWORD $FTP_HOST; mirror -Rnev --exclude-glob .git --exclude-glob bitbucket-pipelines.yml --exclude-glob .gitignore . /public_html/TestBackEndLaravelApi"
