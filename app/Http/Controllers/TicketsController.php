@@ -30,7 +30,7 @@ class TicketsController extends Controller
 
     public function addTicket(Request $request)
     {
-        $respons = $this->MyService->addOrReOpenTicketService($request);
+        $respons = $this->MyService->addTicketService($request);
         return $this->sendSucssas($respons);
     }
 
@@ -52,6 +52,16 @@ class TicketsController extends Controller
             return $this->sendError('wrong', 'This id not found');
         }
         $respons = $this->MyService->getTicketByIdService($ticket);
+        return $this->TicketResponseToGet($respons);
+    }
+
+    public function getTicketByIdClinet($id)
+    {
+        $ticket = tickets::where('fk_client', $id)->first();
+        if (!$ticket) {
+            return $this->sendError('wrong', 'This id not found');
+        }
+        $respons = $this->MyService->getTicketByIdClinetService($ticket);
         return $this->TicketResponseToGet($respons);
     }
 

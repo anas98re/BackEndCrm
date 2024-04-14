@@ -116,7 +116,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/getTransferClientsWithPrivileges', [ClientsController::class, 'getTransferClientsWithPrivileges']);
     Route::post('/transferClient/{id}', [ClientsController::class, 'transferClient']);
     Route::post('/approveOrRefuseTransferClient/{id}', [ClientsController::class, 'approveOrRefuseTransferClient']);
-    //Clients Participate
+    //Clients Participate .... TEST 2
     Route::get('getParticipateClints/{id}', [ParticipateController::class, 'getParticipateClints']);
     Route::get('getParticipateInvoices/{id}', [ParticipateController::class, 'getParticipateInvoices']);
     Route::post('addCommentParticipate', [CommentParticipateController::class, 'addCommentParticipate']);
@@ -174,6 +174,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('addTicket', [TicketsController::class, 'addTicket']);
     Route::post('editTicketType/{id}', [TicketsController::class, 'editTicketType']);
     Route::get('getTicketById/{id}', [TicketsController::class, 'getTicketById']);
+    Route::get('getTicketByIdClinet/{id}', [TicketsController::class, 'getTicketByIdClinet']);
     Route::get('getTickets', [TicketsController::class, 'getTickets']);
     Route::post('TransferTicket/{id}', [TicketsController::class, 'TransferTicket']);
     Route::get('reopenReportTickets', [TicketsController::class, 'reopenReport']);
@@ -186,6 +187,7 @@ Route::get('getCurrentUser', [RegisterController::class, 'getCurrentUser']);
 Route::get('getHashToken', [RegisterController::class, 'getHashToken']);
 Route::post('checkEmail', [RegisterController::class, 'checkEmail']);
 Route::post('login', [RegisterController::class, 'login']);
+Route::post('isTokenAuthenticated', [RegisterController::class, 'isTokenAuthenticated']);
 Route::post('updatePermissions', [PrivgLevelUserController::class, 'updatePermissions']);
 Route::post('sendupdatePermissionsReportToEmail', [PrivgLevelUserController::class, 'sendupdatePermissionsReportToEmail']);
 
