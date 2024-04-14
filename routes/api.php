@@ -25,6 +25,8 @@ use App\Http\Controllers\TaskProceduresController;
 use App\Http\Controllers\TicketsController;
 use App\Http\Controllers\UpdatesReportController;
 use Illuminate\Http\Request;
+use Illuminate\Process\Pool;
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Route;
 // use
 
@@ -116,7 +118,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/getTransferClientsWithPrivileges', [ClientsController::class, 'getTransferClientsWithPrivileges']);
     Route::post('/transferClient/{id}', [ClientsController::class, 'transferClient']);
     Route::post('/approveOrRefuseTransferClient/{id}', [ClientsController::class, 'approveOrRefuseTransferClient']);
-    //Clients Participate .... TEST 555
+    //Clients Participate .... TEST 2df
     Route::get('getParticipateClints/{id}', [ParticipateController::class, 'getParticipateClints']);
     Route::get('getParticipateInvoices/{id}', [ParticipateController::class, 'getParticipateInvoices']);
     Route::post('addCommentParticipate', [CommentParticipateController::class, 'addCommentParticipate']);
@@ -194,5 +196,15 @@ Route::post('sendupdatePermissionsReportToEmail', [PrivgLevelUserController::cla
 
 Route::get('getinvoiceTask', [TaskController::class, 'getinvoiceTask']);
 Route::get('testNotify', [NotifiactionController::class, 'testNotify']);
+
+Route::get('pullFromGit', function () {
+    $pool = Process::pool(function (Pool $pool) {
+        $pool->path(base_path())->command('git pull origin test_masterBitbucket');
+    })->start(function (string $type, string $output, int $key) {
+        dd($output);
+    });
+
+    $pool->wait();
+});
 
 //opt/cpanel/ea-php81/root/bin/php /usr/local/bin/composer update
