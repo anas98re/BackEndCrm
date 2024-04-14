@@ -118,7 +118,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/getTransferClientsWithPrivileges', [ClientsController::class, 'getTransferClientsWithPrivileges']);
     Route::post('/transferClient/{id}', [ClientsController::class, 'transferClient']);
     Route::post('/approveOrRefuseTransferClient/{id}', [ClientsController::class, 'approveOrRefuseTransferClient']);
-    //Clients Participate .... TEST 2df
+    //Clients Participate .... TEST 2
     Route::get('getParticipateClints/{id}', [ParticipateController::class, 'getParticipateClints']);
     Route::get('getParticipateInvoices/{id}', [ParticipateController::class, 'getParticipateInvoices']);
     Route::post('addCommentParticipate', [CommentParticipateController::class, 'addCommentParticipate']);
@@ -134,7 +134,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/updateStatusForVisit/{date_id}', [ClientsDateController::class, 'updateStatusForVisit']);
     //Cities
     Route::post('getCitiesFromMainCitiesIds', [MaincityController::class, 'getCitiesFromMainCitiesIds']);
-    //cllients Excel 12
+    //cllients Excel
     Route::post('importClints', [ClientsController::class, 'importClints']);
     Route::post('importAnotherClints', [ClientsController::class, 'importAnotherClints']);
 
