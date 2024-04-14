@@ -6,7 +6,7 @@ pipelines:
       - step:
           name: Deploy to Production
           script:
-            - git pull bitbucket test_masterBitbucket
+            - git pull
             - pipe: atlassian/ftp-deploy:0.7.0
               variables:
                 USER: $FTP_USERNAME
