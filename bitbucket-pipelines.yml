@@ -6,6 +6,7 @@ pipelines:
       - step:
           name: Deploy to Production
           script:
+            - git push
             - pipe: atlassian/ftp-deploy:0.7.0
               variables:
                 USER: $FTP_USERNAME
