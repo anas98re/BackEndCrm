@@ -118,7 +118,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/getTransferClientsWithPrivileges', [ClientsController::class, 'getTransferClientsWithPrivileges']);
     Route::post('/transferClient/{id}', [ClientsController::class, 'transferClient']);
     Route::post('/approveOrRefuseTransferClient/{id}', [ClientsController::class, 'approveOrRefuseTransferClient']);
-    //Clients Participate .... TEST 777
+    //Clients Participate .... TEST 8888
     Route::get('getParticipateClints/{id}', [ParticipateController::class, 'getParticipateClints']);
     Route::get('getParticipateInvoices/{id}', [ParticipateController::class, 'getParticipateInvoices']);
     Route::post('addCommentParticipate', [CommentParticipateController::class, 'addCommentParticipate']);
