@@ -90,7 +90,8 @@ class RegisterationService extends Controller
             $remember_token ? $remember_token : null,
             $UserData->id_user ? $UserData->id_user : 'code is wrong'
         );
-        return response()->json($arrJson, 200);
+        // return response()->json($arrJson, 200);
+        // ..
     }
 
     public function getUsersByTypeAdministrationAndRegion($request)

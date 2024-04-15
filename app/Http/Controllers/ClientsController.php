@@ -186,13 +186,17 @@ class ClientsController extends Controller
         $data = $request->all();
         $serialnumber =
             $this->MyService->generate_serialnumber_InsertedClient(
-                Carbon::now()
+                Carbon::now(),
             );
 
         $data = $request->all();
+
+        $data['fk_user'] = auth()->user()->id_user;
+        $data['fk_regoin'] = auth()->user()->fk_regoin;
+
         $data['SerialNumber'] = $serialnumber;
         $data['date_create'] = Carbon::now();
-        $data['user_add'] = auth('sanctum')->user()->id_user;;
+        $data['user_add'] = auth('sanctum')->user()->id_user;
 
         $client = clients::create($data);
 
@@ -439,16 +443,15 @@ class ClientsController extends Controller
             $client = clients::query()->where('id_clients', $id)->first();
             $id_clients = $client->id_clients;
             $name_enterprise = $client->name_enterprise;
-            $fk_user = $data["fk_user"];
-            $reason_transfer = $data["reason_transfer"];
-            $fk_regoin = $data['fk_regoin'];
+            $fk_user = $client->reason_transfer;
+            $fk_regoin = users::query()->where('id_user', $client->reason_transfer)?->first()?->fk_regoin;
 
             if(! is_null($data['approve']?? null) )
             {
                 $updateArray = array();
 
                 $updateArray['fk_user'] = $fk_user;
-                $updateArray['reason_transfer'] = $reason_transfer;
+                $updateArray['reason_transfer'] = null;
                 $updateArray['fk_regoin'] = $fk_regoin;
 
                 $client = clients::query()
@@ -458,7 +461,7 @@ class ClientsController extends Controller
 
                 $nameApprove = auth()->user()->nameUser;
                 $id_users = $this->getIdUsers($fk_regoin, 126);
-                $id_users->push((int) $data['fkuserclient']);
+                $id_users->push($fk_user);
 
                 $title = "قبول تحويل العميل";
                 $titlenameapprove = "تم قبول تحويل العميل";
@@ -511,7 +514,7 @@ class ClientsController extends Controller
 
                 $nameRefused = auth()->user()->nameUser;
                 $id_users = $this->getIdUsers($fk_regoin, 126);
-                $id_users->push((int) $data['fkuserclient']);
+                $id_users->push($fk_user);
 
                 $title = "رفض تحويل العميل";
                 $titlenameapprove = "تم رفض تحويل العميل";
@@ -617,11 +620,15 @@ class ClientsController extends Controller
 
             if($adminLevels->contains($user->type_level) && ! ($is_all) )
             {
+
                 $clients = clients::query()
                     ->where('reason_transfer', $user->id_user)
                     ->orWhere(function ($query) use($user) {
-                        $query->where('fk_regoin', $user->fk_regoin)
-                            ->whereNotNull('reason_transfer');
+                        if($user->fk_regoin == 14)
+                            $query->whereNotNull('reason_transfer');
+                        else
+                            $query->where('fk_regoin', $user->fk_regoin)
+                                ->whereNotNull('reason_transfer');
                     })
                     ->get();
                 $is_admin = true;

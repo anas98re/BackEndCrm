@@ -43,7 +43,7 @@ class groupTest extends TestCase
     {
         // Send a GET request to the API endpoint
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer 13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465',
+            'Authorization' => 'Bearer '.$this->bearerToken,
         ])->get('http://127.0.0.1:8000/api/getGroupsInfo');
 
         // Assert the response status code
@@ -68,7 +68,7 @@ class groupTest extends TestCase
         ];
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer 13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465',
+            'Authorization' => 'Bearer '.$this->bearerToken,
         ])->post('/api/addGroup', $requestData);
 
         // Assert the response status code

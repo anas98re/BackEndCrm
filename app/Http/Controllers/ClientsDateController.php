@@ -6,12 +6,14 @@ use App\Models\clients_date;
 use App\Http\Requests\Storeclients_dateRequest;
 use App\Http\Requests\Updateclients_dateRequest;
 use App\Models\agent;
+use App\Models\agentComment;
 use App\Models\client_comment;
 use App\Models\clients;
 use App\Models\notifiaction;
 use App\Notifications\SendNotification;
 use App\Services\ClientsDateService;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
@@ -97,5 +99,64 @@ class ClientsDateController extends Controller
             ->get();
 
         return $this->sendResponse($result, 'Done');
+    }
+
+    public function updateStatusForVisit(Request $request, $date_id)
+    {
+        DB::beginTransaction();
+        $data = $request->all();
+        try
+        {
+            $client_date = clients_date::query()->where('idclients_date', $date_id)->first();
+            if( is_null ($client_date) )
+            {
+                return response()->json(['message' => 'client date not found'], 404);
+            }
+            if(! is_null($data['fk_client']?? null))
+            {
+                $this->addComment($data['comment'], $data['fk_client'], auth()->user()->id_user, 'زيارة عميل');
+            }
+            else
+            {
+                $this->addCommentAgent($data['comment'], $data['fk_agent'], auth()->user()->id_user, 'زيارة وكيل');
+            }
+
+            $client_date->update([
+                'is_done' => $data['is_done'],
+                'fk_user_done' => auth()->user()->id_user,
+                'date_done' => Carbon::now()->format("Y-m-d H:i:s"),
+            ]);
+
+            $resJson = array("result" => "success", "code" => "200", "message" => 'done');
+            DB::commit();
+            return response()->json($resJson);
+        }
+        catch(Exception $e)
+        {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    protected function addComment($content,$fk_client,$fk_user,$type_comment)
+    {
+        $data['fk_client'] = $fk_client;
+        $data['fk_user'] = $fk_user;
+        $data['date_comment'] = Carbon::now()->format('Y-m-d H:i:s');
+        $data['content'] = $content;
+        $data['type_comment'] = $type_comment;
+
+        return client_comment::create($data);
+    }
+
+    protected function addCommentAgent($content,$agent_id,$fk_user,$type_comment)
+    {
+        $data['agent_id'] = $agent_id;
+        $data['user_id'] = $fk_user;
+        $data['date_comment'] = Carbon::now()->format('Y-m-d H:i:s');
+        $data['content'] = $content;
+        $data['type_comment'] = $type_comment;
+
+        return agentComment::create($data);
     }
 }

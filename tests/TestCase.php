@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
-    public $bearerToken = '13|DuShswbEYoveSyZitaXboyIbl3841qZbuGVNPM7qef237465';
+    public $bearerToken = '212|M5WRlcYoPrOPANDZlIZPYXe2EE03PtUs5qDglpAe6ae0aba0';
 
     protected function setUp(): void
     {
