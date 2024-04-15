@@ -1,4 +1,5 @@
 image: php:7.3
+
 pipelines:
   branches:
     test_masterBitbucket:
