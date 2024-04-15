@@ -20,5 +20,4 @@ pipelines:
             - echo "public/" >> .git-ftp-ignore
             - echo "vendor/" >> .git-ftp-ignore
             - echo "resources/" >> .git-ftp-ignore
-            - git ftp init --user $USER --passwd $PASSWORD ftp://$SERVER$REMOTE_PATH
             - git ftp push --user $USER --passwd $PASSWORD ftp://$SERVER$REMOTE_PATH
