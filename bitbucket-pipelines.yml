@@ -7,4 +7,4 @@ pipelines:
           script:
             - apt-get update
             - apt-get -qq install git-ftp
-            - git ftp push --user $FTP_USERNAME --passwd $FTP_PASSWORD --host $FTP_HOST
+            - git ftp push --user $FTP_USERNAME --passwd $FTP_PASSWORD --host ftp://matgr.smartlifesys.online/matgr.smartlifesys.online/
