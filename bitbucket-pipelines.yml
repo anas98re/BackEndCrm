@@ -10,8 +10,14 @@ pipelines:
             - export PASSWORD=$FTP_PASSWORD
             - export SERVER=$FTP_HOST
             - export REMOTE_PATH=/public_html/TestBackEndLaravelApi
-            - export DELETE_FLAG='false' # Don't delete existing files
-            - export EXTRA_ARGS="--exclude=.bitbucket/ --exclude=.git/ --exclude=bitbucket-pipelines.yml --exclude=.gitignore --exclude=storage/ --exclude=public/ --exclude=vendor/ --exclude=resources/"
             - apt-get update
             - apt-get -qq install git-ftp
-            - git ftp push --user $USER --passwd $PASSWORD ftp://$SERVER$REMOTE_PATH $EXTRA_ARGS
+            - echo ".bitbucket/" > .git-ftp-ignore
+            - echo ".git/" >> .git-ftp-ignore
+            - echo "bitbucket-pipelines.yml" >> .git-ftp-ignore
+            - echo ".gitignore" >> .git-ftp-ignore
+            - echo "storage/" >> .git-ftp-ignore
+            - echo "public/" >> .git-ftp-ignore
+            - echo "vendor/" >> .git-ftp-ignore
+            - echo "resources/" >> .git-ftp-ignore
+            - git ftp push --user $USER --passwd $PASSWORD ftp://$SERVER$REMOTE_PATH
