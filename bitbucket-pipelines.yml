@@ -6,13 +6,12 @@ pipelines:
       - step:
           name: Deploy to matgr.smartlifesys.online FTP
           script:
-            - variables:
-                USER: $FTP_USERNAME
-                PASSWORD: $FTP_PASSWORD
-                SERVER: $FTP_HOST
-                REMOTE_PATH: /public_html/TestBackEndLaravelApi
-                DELETE_FLAG: 'false' # Don't delete existing files
-                EXTRA_ARGS: "--exclude=.bitbucket/ --exclude=.git/ --exclude=bitbucket-pipelines.yml --exclude=.gitignore --exclude=storage/ --exclude=public/ --exclude=vendor/ --exclude=resources/"
+            - export USER=$FTP_USERNAME
+            - export PASSWORD=$FTP_PASSWORD
+            - export SERVER=$FTP_HOST
+            - export REMOTE_PATH=/public_html/TestBackEndLaravelApi
+            - export DELETE_FLAG='false' # Don't delete existing files
+            - export EXTRA_ARGS="--exclude=.bitbucket/ --exclude=.git/ --exclude=bitbucket-pipelines.yml --exclude=.gitignore --exclude=storage/ --exclude=public/ --exclude=vendor/ --exclude=resources/"
             - apt-get update
             - apt-get -qq install git-ftp
             - git ftp push --user $USER --passwd $PASSWORD ftp://$SERVER$REMOTE_PATH $EXTRA_ARGS
