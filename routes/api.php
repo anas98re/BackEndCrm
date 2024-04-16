@@ -120,6 +120,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/transferClient/{id}', [ClientsController::class, 'transferClient']);
     Route::post('/approveOrRefuseTransferClient/{id}', [ClientsController::class, 'approveOrRefuseTransferClient']);
     Route::post('/setDateInstall/{id_invoice}', [ClientCommunicationController::class, 'setDateInstall']);
+    Route::post('updateCommunication', [ClientCommunicationController::class, 'updateCommunication']);
     //Clients Participate .... TEST 2df
     Route::get('getParticipateClints/{id}', [ParticipateController::class, 'getParticipateClints']);
     Route::get('getParticipateInvoices/{id}', [ParticipateController::class, 'getParticipateInvoices']);

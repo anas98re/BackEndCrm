@@ -658,4 +658,68 @@ class TaskService extends JsonResponeService
             throw $th;
         }
     }
+
+    public function closeWelcomeTaskAfterUpdateCommunication($data)
+    {
+        try {
+            DB::beginTransaction();
+            $task = task::where('id_communication', $data['id_communication'])
+                ->where('public_Type', 'welcome')
+                ->first();
+            $statuse_task_fraction = DB::table('statuse_task_fraction')
+                ->where('task_id', $task->id)->first();
+            if ($statuse_task_fraction->task_statuse_id == 1) {
+                $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
+                $task->save();
+                DB::table('statuse_task_fraction')
+                    ->where('task_id', $task->id)
+                    ->update([
+                        'task_statuse_id' => 4,
+                        'changed_date' => Carbon::now('Asia/Riyadh'),
+                        'changed_by' => $data['iduser_updateed']
+                    ]);
+            } else {
+                return;
+            }
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
+
+    public function closeTaskafterCommunicateWithClient($data)
+    {
+        try {
+            DB::beginTransaction();
+            $task = task::where('invoice_id', $data['idInvoice'])
+                ->where('id_communication', $data['id_communication'])
+                ->where('public_Type', 'com_install_2')
+                ->first();
+            if ($task) {
+                $statuse_task_fraction = DB::table('statuse_task_fraction')
+                    ->where('task_id', $task->id)->first();
+                if ($statuse_task_fraction->task_statuse_id == 1) {
+                    $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
+                    $task->save();
+
+                    DB::table('statuse_task_fraction')
+                        ->where('task_id', $task->id)
+                        ->update([
+                            'task_statuse_id' => 4,
+                            'changed_date' => Carbon::now('Asia/Riyadh'),
+                            'changed_by' => $data['iduser_updateed']
+                        ]);
+                } else {
+                    return;
+                }
+            }
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
 }
