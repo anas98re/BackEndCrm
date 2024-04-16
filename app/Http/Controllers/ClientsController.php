@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Constants;
 use App\Http\Resources\ClientResource;
+use App\Http\Resources\InvoiceResource;
 use App\Models\clients;
 use App\Http\Requests\StoreclientsRequest;
 use App\Http\Requests\UpdateClientRequest;
@@ -14,10 +15,15 @@ use App\Imports\ClientsImport;
 use App\Mail\sendStactictesConvretClientsToEmail;
 use App\Mail\sendStactictesConvretClientsTothabetEmail;
 use App\Models\client_comment;
+use App\Models\client_communication;
+use App\Models\client_invoice;
+use App\Models\config_table;
 use App\Models\convertClintsStaticts;
 use App\Models\notifiaction;
 use App\Models\privg_level_user;
+use App\Models\task;
 use App\Models\User;
+use App\Models\user_maincity;
 use App\Models\user_token;
 use App\Models\users;
 use Carbon\Carbon;
@@ -26,11 +32,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\SendNotification;
 use App\Services\clientSrevices;
+use App\Services\TaskManangement\queriesService;
+use App\Services\TaskManangement\TaskProceduresService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
+
 
 class ClientsController extends Controller
 {
@@ -460,7 +469,7 @@ class ClientsController extends Controller
                 $client->update($updateArray);
 
                 $nameApprove = auth()->user()->nameUser;
-                $id_users = $this->getIdUsers($fk_regoin, 126);
+                $id_users = getIdUsers($fk_regoin, 126);
                 $id_users->push($fk_user);
 
                 $title = "قبول تحويل العميل";
@@ -513,7 +522,7 @@ class ClientsController extends Controller
                 $client->update($updateArray);
 
                 $nameRefused = auth()->user()->nameUser;
-                $id_users = $this->getIdUsers($fk_regoin, 126);
+                $id_users = getIdUsers($fk_regoin, 126);
                 $id_users->push($fk_user);
 
                 $title = "رفض تحويل العميل";
@@ -561,42 +570,6 @@ class ClientsController extends Controller
         }
     }
 
-    public function getIdLevelsByPrivilge($fk_privileg): Collection
-    {
-        return privg_level_user::query()
-            ->where('fk_privileg', $fk_privileg)
-            ->where('is_check', 1)
-            ->get()
-            ->pluck('fk_level');
-    }
-
-    public function getIdLevelsByPrivilges(array $fk_privilegs): Collection
-    {
-        return privg_level_user::query()
-            ->whereIn('fk_privileg', $fk_privilegs)
-            ->where('is_check', 1)
-            ->get()
-            ->pluck('fk_level')
-            ->unique();
-    }
-
-    public function getIdUsers($fk_regoin,$fk_privileg )
-    {
-        $levels = $this->getIdLevelsByPrivilge($fk_privileg);
-        $id_users = users::query()
-            ->where(function ($query) use ($levels, $fk_regoin) {
-                $query->where('fk_regoin', $fk_regoin)
-                    ->whereIn('type_level', $levels);
-            })
-            ->orWhere(function ($query) use ($levels) {
-                $query->where('fk_regoin', 14)
-                    ->whereIn('type_level', $levels);
-            })
-            ->get()
-            ->pluck('id_user');
-
-        return $id_users;
-    }
 
     public function getTransferClientsWithPrivileges(): JsonResponse
     {
@@ -604,9 +577,9 @@ class ClientsController extends Controller
         {
             $user = auth()->user();
 
-            $allLevels = $this->getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_ALL']);
-            $employeeLevels = $this->getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_EMPLOYEE']);
-            $adminLevels = $this->getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_ADMIN']);
+            $allLevels = getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_ALL']);
+            $employeeLevels = getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_EMPLOYEE']);
+            $adminLevels = getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_ADMIN']);
 
             $is_all = false;
             $is_admin = false;
@@ -647,4 +620,6 @@ class ClientsController extends Controller
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
+  
 }

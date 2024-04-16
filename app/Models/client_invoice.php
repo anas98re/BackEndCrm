@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Http\Request;
@@ -89,7 +90,66 @@ class client_invoice extends Model
         'approve_back_done',
         'TypeReadyClient',
         'notes_ready',
-        'reason_suspend'
+        'reason_suspend',
+        'reason_notReady',
+        'date_back_now',
+        'invoice_source',
+        'date_updatePayment',
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(users::class, 'fk_idUser');
+    }
+
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(clients::class, 'fk_idClient');
+    }
+
+    public function regoin(): BelongsTo
+    {
+        return $this->belongsTo(regoin::class, 'fk_regoin_invoice');
+    }
+
+    public function userUpdated(): BelongsTo
+    {
+        return $this->belongsTo(users::class, 'lastuserupdate');
+    }
+
+    public function userInstalled(): BelongsTo
+    {
+        return $this->belongsTo(users::class, 'userinstall');
+    }
+
+    public function userApproved(): BelongsTo
+    {
+        return $this->belongsTo(users::class, 'iduser_approve');
+    }
+
+    public function userBack(): BelongsTo
+    {
+        return $this->belongsTo(users::class, 'fkuser_back');
+    }
+
+    public function userReplay(): BelongsTo
+    {
+        return $this->belongsTo(users::class, 'fkuserdatareplay');
+    }
+
+    public function userTask(): BelongsTo
+    {
+        return $this->belongsTo(users::class, 'fkusertask');
+    }
+
+    public function userReadyInstall(): BelongsTo
+    {
+        return $this->belongsTo(users::class, 'user_ready_install');
+    }
+
+    public function userNotReadyInstall(): BelongsTo
+    {
+        return $this->belongsTo(users::class, 'user_not_ready_install');
+    }
 
 }

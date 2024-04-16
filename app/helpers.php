@@ -1,42 +1,72 @@
 <?php
 
+use App\Models\clients;
+use App\Models\privg_level_user;
+use App\Models\user_maincity;
+use App\Models\users;
+use Illuminate\Support\Collection;
 
-namespace App;
-
-use Spatie\Activitylog\Models\Activity;
-
-class helpers
+function getIdLevelsByPrivilge($fk_privileg): Collection
 {
-    public static function logActivity($logName, $description, $subjectId, $subjectType, $causerId, $causerType, $properties = [])
-    {
-        $activity = Activity::create([
-            'log_name' => $logName,
-            'description' => $description,
-            'subject_id' => $subjectId,
-            'subject_type' => $subjectType,
-            'causer_id' => $causerId,
-            'causer_type' => $causerType,
-            'properties' => $properties,
-        ]);
-
-        // You can also add custom attributes to the activity using the `setAttribute` method
-        // $activity->setAttribute('custom_attribute', 'custom_value');
-        $activity->save();
-    }
-
-    // helpers::logActivity(
-    //     'client',
-    //     'Client record updated',
-    //     $id_clients,
-    //     'App\Models\Clients',
-    //     auth()->user()->id_user,
-    //     'App\Models\User',
-    //     [
-    //         'type_client' => $request->type_client,
-    //         'offer_price' => $request->offer_price,
-    //         // Add more properties as needed
-    //     ]
-    // );
-
-    
+    return privg_level_user::query()
+        ->where('fk_privileg', $fk_privileg)
+        ->where('is_check', 1)
+        ->get()
+        ->pluck('fk_level');
 }
+
+function getIdLevelsByPrivilges(array $fk_privilegs): Collection
+{
+    return privg_level_user::query()
+        ->whereIn('fk_privileg', $fk_privilegs)
+        ->where('is_check', 1)
+        ->get()
+        ->pluck('fk_level')
+        ->unique();
+}
+
+function getIdUsers($fk_regoin, $fk_privileg, $fk_country = null)
+{
+    $levels = getIdLevelsByPrivilge($fk_privileg);
+    if(is_null($fk_country))
+        $id_users = users::query()
+            ->where(function ($query) use ($levels, $fk_regoin) {
+                $query->where('fk_regoin', $fk_regoin)
+                    ->whereIn('type_level', $levels);
+            })
+            ->orWhere(function ($query) use ($levels) {
+                $query->where('fk_regoin', 14)
+                    ->whereIn('type_level', $levels);
+            })
+            ->get()
+            ->pluck('id_user');
+    else
+        $id_users = users::query()
+            ->where(function ($query) use ($levels, $fk_regoin) {
+                $query->where('fk_regoin', $fk_regoin)
+                    ->whereIn('type_level', $levels);
+            })
+            ->orWhere(function ($query) use ($levels, $fk_country) {
+                $query->where('fk_regoin', 14)
+                    ->where('fk_country', $fk_country)
+                    ->whereIn('type_level', $levels);
+            })
+            ->get()
+            ->pluck('id_user');
+
+    return $id_users;
+}
+
+function getIdUsersRegoin($fkcountry,$fk_privileg,$fkclient )
+    {
+        $fkmaincity=  clients::where('id_clients', $fkclient)?->first()?->cityRelation?->fk_maincity;
+        $arraylevel = getIdLevelsByPrivilge($fk_privileg);
+
+        return user_maincity::select('users.id_user')
+        ->join('users', 'users.id_user', '=', 'user_maincity.fk_user')
+        ->where('users.fk_country', $fkcountry)
+        ->where('user_maincity.fk_maincity', $fkmaincity)
+        ->whereIn('users.type_level', $arraylevel)
+        ->get()
+        ->pluck('id_user');
+    }
