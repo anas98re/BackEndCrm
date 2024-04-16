@@ -7,6 +7,8 @@ use App\Http\Requests\Registeration\RegisterationRequest;
 use App\Http\Requests\TaskManagementRequests\TaskRequest;
 use App\Models\attachment;
 use App\Models\client_comment;
+use App\Models\clients;
+use App\Models\config_table;
 use App\Models\managements;
 use App\Models\regoin;
 use App\Models\statuse_task_fraction;
@@ -556,7 +558,7 @@ class TaskService extends JsonResponeService
         // Combine the filename and extension
         $generatedFilename = $modifiedFilename . '.' . $fileExtension;
 
-        $generatedPath = $request->file_path->storeAs('Files', $generatedFilename,'public');
+        $generatedPath = $request->file_path->storeAs('Files', $generatedFilename, 'public');
 
         $attachment->file_path = $generatedPath;
         $attachment->task_id = $task->id;
@@ -592,5 +594,68 @@ class TaskService extends JsonResponeService
     public function getGroupsInfo()
     {
         return tsks_group::select('id', 'groupName')->get();
+    }
+
+
+
+
+    // New TaskProcedures Services ...
+    public function afterInstallClient($data)
+    {
+        try {
+            $client_id = DB::table('client_invoice')->where('id_invoice', $data['idInvoice'])
+                ->first();
+            $welcomed_user_id = DB::table('client_communication')
+                ->where('fk_client', $client_id->fk_idClient)
+                ->where('type_communcation', 'تركيب')
+                ->where('type_install', 1)
+                ->where('id_invoice', $data['idInvoice'])
+                ->first();
+
+
+            $existingTask = task::where('invoice_id', $data['idInvoice'])
+                ->where('client_id', $client_id->fk_idClient)
+                ->where('public_Type', 'com_install_1')
+                ->first();
+
+            $time = config_table::where('name_config', 'period_commincation2')
+                ->first()->value_config;
+            $carbonDatetime = Carbon::parse(Carbon::now('Asia/Riyadh'))->addDays($time);
+            $newDatetime = $carbonDatetime->toDateTimeString();
+
+            $client = clients::where('id_clients', $client_id->fk_idClient)->first();
+            $message = 'عميل مشترك ( ? ) يحتاج لتواصل الجودة الأول له';
+            $messageDescription = str_replace('?', $client->name_enterprise, $message);
+
+            if (!$existingTask) {
+                $task = new task();
+                $task->title = 'تواصل جودة اول';
+                $task->description = $messageDescription;
+                $task->invoice_id = $data['idInvoice'];
+                $task->id_communication  = $welcomed_user_id->id_communication;
+                $task->client_id  = $client_id->fk_idClient;
+                $task->public_Type = 'com_install_1';
+                $task->main_type_task = 'ProccessAuto';
+                $task->assigend_department_from  = 3;
+                $task->assigned_to  = ($welcomed_user_id != null ? $welcomed_user_id->fk_user : null);
+                $task->start_date  = $newDatetime;
+                $task->save();
+
+                $service = new TaskProceduresService(new queriesService);
+                !empty($task) ? $service->addTaskStatus($task) : null;
+                $service->handleNotificationForTaskProcedures(
+                    $message = $task->title,
+                    $type = 'task',
+                    $to_user = $welcomed_user_id->fk_user,
+                    $invoice_id = $data['idInvoice'],
+                    $client_id = $client_id->fk_idClient
+                );
+            } else {
+                $task = null;
+            }
+            return $task;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }
