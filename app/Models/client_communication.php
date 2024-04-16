@@ -44,4 +44,18 @@ class client_communication extends Model
         'user_update',
     ];
 
+    public function client()
+    {
+        return $this->belongsTo(clients::class, 'fk_client', 'id_clients');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(users::class, 'fk_user', 'id_user');
+    }
+
+    public function invoice()
+    {
+        return $this->belongsTo(client_invoice::class, 'id_invoice', 'id_invoice');
+    }
 }
