@@ -192,7 +192,10 @@ class ClientCommunicationController extends Controller
         $id_invoice = $request->input('id_invoice');
 
         //Tasks ...
+        $lastCommunication = client_communication::latest('id_communication')->first();
+        $last_idCommuncation2 = $lastCommunication->id_communication;
         $data = [
+            'last_idCommuncation2' => $last_idCommuncation2,
             'id_communication' => $id_communication,
             'iduser_updateed' => auth()->user()->id_user,
             'idInvoice' => $id_invoice
@@ -232,7 +235,7 @@ class ClientCommunicationController extends Controller
         $data = $this->getCommunicationById($id_communication, $id_invoice);
         $fk_client = $communication->fk_client;
         if ($request->input('type_install') == 1 && $communication->type_communcation == 'تركيب' && !$updated) {
-            $this->handleInstallation($communication, $id_invoice, $type, $updated, $fk_client);
+            $this->handleInstallation($communication, $id_invoice, $type, $updated, $fk_client, $data);
         }
 
         if ($type && !$updated) {
@@ -242,7 +245,7 @@ class ClientCommunicationController extends Controller
         return $this->sendSucssas($data);
     }
 
-    private function handleInstallation(client_communication $communication, $id_invoice, $type, $updated, $fk_client)
+    private function handleInstallation(client_communication $communication,  $data, $id_invoice, $type, $updated, $fk_client)
     {
         $fk_regoin = $communication->client->fk_regoin;
         $fk_country = Regoin::where('id_regoin', $fk_regoin)->first()->fk_country;
@@ -260,6 +263,7 @@ class ClientCommunicationController extends Controller
         $communication1->date_last_com_install = $date_last_com_install;
         $communication1->save();
 
+        $this->TaskService->closeTaskAfterInstallClient($data);
         $this->updateFkUserCommunication($communication->fk_client, $date_last_com_install, $fk_country);
     }
 
