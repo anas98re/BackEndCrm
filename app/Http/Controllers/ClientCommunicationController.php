@@ -174,7 +174,7 @@ class ClientCommunicationController extends Controller
     }
 
 
-    
+
     // ......
     public function updateCommunication(Request $request)
     {
@@ -184,12 +184,15 @@ class ClientCommunicationController extends Controller
             ->where('id_communication', $id_communication)
             ->first();
         $id_invoice = $request->input('id_invoice');
+        $type = $request->input('type');
+        $updated = $request->input('updated');
         if ($communication) {
             $communication->date_communication = $request->input('date_communication', $communication->date_communication);
             $communication->type_communication = $request->input('type_communication', $communication->type_communication);
             $communication->fk_user = $request->input('fk_user', $communication->fk_user);
             $communication->result = $request->input('result', $communication->result);
-            $communication->rate = $request->input('rate', $communication->rate);
+            $communication->rate = $request->input('rate', $communication->rate) == '0,0' ?
+                null : $request->input('rate', $communication->rate);
             $communication->number_wrong = $request->input('number_wrong', $communication->number_wrong);
             $communication->client_repeat = $request->input('client_repeat', $communication->client_repeat);
             $communication->is_suspend = $request->input('is_suspend', $communication->is_suspend);
@@ -203,8 +206,7 @@ class ClientCommunicationController extends Controller
             $communication->save();
         }
 
-        $type = $request->input('type');
-        $updated = $request->input('updated');
+
         $data['communication'] = $communication;
         $data = $this->getCommunicationById($id_communication, $id_invoice);
 
@@ -252,7 +254,7 @@ class ClientCommunicationController extends Controller
 
         if ($result->isEmpty()) {
             $date_next = date('Y-m-d', strtotime($communication->date_communication . ' + ' . $valueConfig . ' days'));
-            $this->addCommunication($communication->fk_client, $date_next);
+            $this->addCommunicationFprUpdate($communication->fk_client, $date_next);
         }
     }
 
