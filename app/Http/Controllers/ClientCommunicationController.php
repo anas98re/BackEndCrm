@@ -332,5 +332,6 @@ class ClientCommunicationController extends Controller
         } else {
             return [];
         }
+    }
 
 }
