@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Constants;
 use App\Http\Resources\ClientResource;
+use App\Http\Resources\InvoiceResource;
 use App\Models\clients;
 use App\Http\Requests\StoreclientsRequest;
 use App\Http\Requests\UpdateClientRequest;
@@ -14,10 +15,15 @@ use App\Imports\ClientsImport;
 use App\Mail\sendStactictesConvretClientsToEmail;
 use App\Mail\sendStactictesConvretClientsTothabetEmail;
 use App\Models\client_comment;
+use App\Models\client_communication;
+use App\Models\client_invoice;
+use App\Models\config_table;
 use App\Models\convertClintsStaticts;
 use App\Models\notifiaction;
 use App\Models\privg_level_user;
+use App\Models\task;
 use App\Models\User;
+use App\Models\user_maincity;
 use App\Models\user_token;
 use App\Models\users;
 use Carbon\Carbon;
@@ -26,6 +32,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\SendNotification;
 use App\Services\clientSrevices;
+use App\Services\TaskManangement\queriesService;
+use App\Services\TaskManangement\TaskProceduresService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
@@ -580,20 +588,34 @@ class ClientsController extends Controller
             ->unique();
     }
 
-    public function getIdUsers($fk_regoin,$fk_privileg )
+    public function getIdUsers($fk_regoin, $fk_privileg, $fk_country = null)
     {
         $levels = $this->getIdLevelsByPrivilge($fk_privileg);
-        $id_users = users::query()
-            ->where(function ($query) use ($levels, $fk_regoin) {
-                $query->where('fk_regoin', $fk_regoin)
-                    ->whereIn('type_level', $levels);
-            })
-            ->orWhere(function ($query) use ($levels) {
-                $query->where('fk_regoin', 14)
-                    ->whereIn('type_level', $levels);
-            })
-            ->get()
-            ->pluck('id_user');
+        if(is_null($fk_country))
+            $id_users = users::query()
+                ->where(function ($query) use ($levels, $fk_regoin) {
+                    $query->where('fk_regoin', $fk_regoin)
+                        ->whereIn('type_level', $levels);
+                })
+                ->orWhere(function ($query) use ($levels) {
+                    $query->where('fk_regoin', 14)
+                        ->whereIn('type_level', $levels);
+                })
+                ->get()
+                ->pluck('id_user');
+        else
+            $id_users = users::query()
+                ->where(function ($query) use ($levels, $fk_regoin) {
+                    $query->where('fk_regoin', $fk_regoin)
+                        ->whereIn('type_level', $levels);
+                })
+                ->orWhere(function ($query) use ($levels, $fk_country) {
+                    $query->where('fk_regoin', 14)
+                        ->where('fk_country', $fk_country)
+                        ->whereIn('type_level', $levels);
+                })
+                ->get()
+                ->pluck('id_user');
 
         return $id_users;
     }
@@ -647,4 +669,219 @@ class ClientsController extends Controller
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
+    public function setDateInstall(Request $request, string $id_invoice)
+    {
+        DB::beginTransaction();
+        $data = $request->all();
+        try
+        {
+            $invoice = client_invoice::where('id_invoice', $id_invoice)?->first();
+            $client = $invoice->client;
+            $updateArray = array();
+            $updateArray['userinstall'] = auth()->user()->id_user;
+            $updateArray['clientusername'] = $client->name_client;
+            $updateArray['isdoneinstall'] = 1;
+            $updateArray['dateinstall_done'] = Carbon::now();
+
+            $invoice->update($updateArray);
+
+            $time = config_table::where('name_config', 'period_commincation3')
+                ->first()->value_config;
+
+            $insertArray = array();
+            $insertArray['fk_client'] = $client->id_clients;
+            $insertArray['date_next'] = Carbon::parse(Carbon::now())->addDays($time);
+            $insertArray['id_invoice'] = $id_invoice;
+            $insertArray['type_communcation'] = 'تركيب';
+            $insertArray['type_install'] = 1;
+
+            client_communication::create($insertArray);
+
+            $this->update_fkuser_communication($client->id_clients);
+
+            $time = config_table::where('name_config', 'period_commincation3')
+                ->first()->value_config;
+            $carbonDatetime = Carbon::parse(Carbon::now())->addDays($time);
+            $date_next = $carbonDatetime;
+
+            $arrJson_result = $this->getcommunication_repeatcheck($client->id_clients);
+            if (!$arrJson_result) // [] => false, ![] => true
+                $this->addcommunication($client->id_clients, $date_next);
+
+
+            $fk_regoin = $client->fk_regoin;
+            $fkcountry = $client->regoin?->fk_country;
+            $id_users =  $this->getIdUsers($fk_regoin, 21, $fkcountry);
+            $array2user = $this->getIdUsersRegoin($fkcountry, 21, $client->id_clients);
+            $id_users = array_merge($id_users->toArray(), $array2user->toArray());
+
+
+            $dataIn = [
+                'idInvoice' => $id_invoice,
+                'fkIdClient' => $client->id_clients
+            ];
+            $this->afterInstallClient($dataIn);
+
+            $name_enterprise = $client->name_enterprise;
+            $nameuserinstall = auth()->user()->nameUser;
+            $title = "تم التركيب";
+            $titlenameapprove = "الموظف الذي ركب للعميل ";
+            $id_users = collect($id_users)->unique();
+            $message = "$titlenameapprove $name_enterprise هو\r $nameuserinstall";
+            foreach($id_users as $user_id)
+            {
+                $userToken = user_token::where('fkuser', $user_id)
+                    ->where('token', '!=', null)
+                    ->latest('date_create')
+                    ->first();
+
+                Notification::send(
+                    null,
+                    new SendNotification(
+                        $title,
+                        $message,
+                        $message,
+                        ($userToken != null ? $userToken->token : null)
+                    )
+                );
+
+                notifiaction::create([
+                    'message' => $message,
+                    'type_notify' => 'Install',
+                    'to_user' => $user_id,
+                    'isread' => 0,
+                    'data' => $client->id_clients,
+                    'from_user' => auth()->user()->id_user,
+                    'dateNotify' => Carbon::now('Asia/Riyadh')
+                ]);
+            }
+
+            $invoice = client_invoice::where('id_invoice', $id_invoice)->first();
+            $arrJson = new InvoiceResource($invoice);
+
+            $resJson = array("result" => "success", "code" => "200", "message" => $arrJson);
+
+            DB::commit();
+            return response()->json($resJson);
+
+        }
+        catch(Exception $e)
+        {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()]);
+        }
+    }
+
+    protected function update_fkuser_communication($fkIdclient)
+    {
+        $result = client_communication::where('fk_client', $fkIdclient)
+            ->whereNotNull('fk_user')
+            ->where('type_communcation', 'ترحيب')
+            ->orderBy('date_communication', 'desc')
+            ?->first();
+
+        if(!is_null($result))
+        {
+            $communications = client_communication::where('fk_client', $fkIdclient)
+                ->whereNull('date_communication')
+                ->get();
+            foreach ($communications as $communication)
+                $communication->update(['fk_user' => $result->fk_user]);
+        }
+    }
+
+    protected function getcommunication_repeatcheck($fkclient)
+    {
+        return client_communication::where('fk_client', $fkclient)
+            ->where('type_communcation', 'دوري')
+            ->orderBy('date_communication', 'desc')
+            ->get();
+    }
+
+    protected function addcommunication($fk_client, $date_next)
+    {
+        client_communication::create([
+            'fk_client' => $fk_client,
+            'type_communcation' => 'دوري',
+            'date_next' => $date_next,
+        ]);
+
+
+        $this->update_fkuser_communication($fk_client);
+    }
+
+    protected function getIdUsersRegoin($fkcountry,$fk_privileg,$fkclient )
+    {
+        $fkmaincity=  clients::where('id_clients', $fkclient)?->first()?->cityRelation?->fk_maincity;
+        $arraylevel = $this->getIdLevelsByPrivilge($fk_privileg);
+
+        return user_maincity::select('users.id_user')
+        ->join('users', 'users.id_user', '=', 'user_maincity.fk_user')
+        ->where('users.fk_country', $fkcountry)
+        ->where('user_maincity.fk_maincity', $fkmaincity)
+        ->whereIn('users.type_level', $arraylevel)
+        ->get()
+        ->pluck('id_user');
+    }
+
+    protected function afterInstallClient($data)
+    {
+        try {
+            $client_id = DB::table('client_invoice')->where('id_invoice', $data['idInvoice'])
+                ->first();
+            $welcomed_user_id = DB::table('client_communication')
+                ->where('fk_client', $client_id->fk_idClient)
+                ->where('type_communcation', 'تركيب')
+                ->where('type_install', 1)
+                ->where('id_invoice', $data['idInvoice'])
+                ->first();
+
+
+            $existingTask = task::where('invoice_id', $data['idInvoice'])
+                ->where('client_id', $client_id->fk_idClient)
+                ->where('public_Type', 'com_install_1')
+                ->first();
+
+            $time = config_table::where('name_config', 'period_commincation2')
+                ->first()->value_config;
+            $carbonDatetime = Carbon::parse(Carbon::now('Asia/Riyadh'))->addDays($time);
+            $newDatetime = $carbonDatetime->toDateTimeString();
+
+            $client = clients::where('id_clients', $client_id->fk_idClient)->first();
+            $message = 'عميل مشترك ( ? ) يحتاج لتواصل الجودة الأول له';
+            $messageDescription = str_replace('?', $client->name_enterprise, $message);
+
+            if (!$existingTask) {
+                $task = new task();
+                $task->title = 'تواصل جودة اول';
+                $task->description = $messageDescription;
+                $task->invoice_id = $data['idInvoice'];
+                $task->id_communication  = $welcomed_user_id->id_communication;
+                $task->client_id  = $client_id->fk_idClient;
+                $task->public_Type = 'com_install_1';
+                $task->main_type_task = 'ProccessAuto';
+                $task->assigend_department_from  = 3;
+                $task->assigned_to  = ($welcomed_user_id != null ? $welcomed_user_id->fk_user : null);
+                $task->start_date  = $newDatetime;
+                $task->save();
+
+                $service = new TaskProceduresService(new queriesService);
+                !empty($task) ? $service->addTaskStatus($task) : null;
+                $service->handleNotificationForTaskProcedures(
+                    $message = $task->title,
+                    $type = 'task',
+                    $to_user = $welcomed_user_id->fk_user,
+                    $invoice_id = $data['idInvoice'],
+                    $client_id = $client_id->fk_idClient
+                );
+            } else {
+                $task = null;
+            }
+            return $task;
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
 }

@@ -118,6 +118,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/getTransferClientsWithPrivileges', [ClientsController::class, 'getTransferClientsWithPrivileges']);
     Route::post('/transferClient/{id}', [ClientsController::class, 'transferClient']);
     Route::post('/approveOrRefuseTransferClient/{id}', [ClientsController::class, 'approveOrRefuseTransferClient']);
+    Route::post('/setDateInstall/{id_invoice}', [ClientsController::class, 'setDateInstall']);
     //Clients Participate .... TEST 2df
     Route::get('getParticipateClints/{id}', [ParticipateController::class, 'getParticipateClints']);
     Route::get('getParticipateInvoices/{id}', [ParticipateController::class, 'getParticipateInvoices']);
