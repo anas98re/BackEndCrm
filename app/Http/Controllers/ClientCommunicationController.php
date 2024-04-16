@@ -189,29 +189,40 @@ class ClientCommunicationController extends Controller
     public function updateCommunication(Request $request)
     {
         $id_communication = request()->query('id_communication');
+        $id_invoice = $request->input('id_invoice');
+
+        //Tasks ...
+        $data = [
+            'id_communication' => $id_communication,
+            'iduser_updateed' => auth()->user()->id_user,
+            'idInvoice' => $id_invoice
+        ];
+        $this->TaskService->closeWelcomeTaskAfterUpdateCommunication($data);
+        $this->TaskService->closeTaskafterCommunicateWithClient($data);
 
         $communication = client_communication::with(['client', 'user', 'invoice'])
             ->where('id_communication', $id_communication)
             ->first();
-        $id_invoice = $request->input('id_invoice');
+
         $type = $request->input('type');
         $updated = $request->input('updated');
         if ($communication) {
-            $communication->date_communication = $request->input('date_communication', $communication->date_communication);
-            $communication->type_communication = $request->input('type_communication', $communication->type_communication);
-            $communication->fk_user = $request->input('fk_user', $communication->fk_user);
+            if (!$updated) {
+                $communication->date_next = $request->input('date_next', $communication->date_next);
+            } else {
+                $communication->user_update = auth()->user()->id_user;
+            }
+            $communication->date_communication =  Carbon::now();
+            $communication->type_communcation = $request->input('type_communcation', $communication->type_communcation);
+            $communication->fk_user = auth()->user()->id_user;
             $communication->result = $request->input('result', $communication->result);
-            $communication->rate = $request->input('rate', $communication->rate) == '0,0' ?
-                null : $request->input('rate', $communication->rate);
+            $communication->rate = $request->input('rate', $communication->rate) == '0,0' ?  null :
+                $request->input('rate', $communication->rate);
             $communication->number_wrong = $request->input('number_wrong', $communication->number_wrong);
             $communication->client_repeat = $request->input('client_repeat', $communication->client_repeat);
             $communication->is_suspend = $request->input('is_suspend', $communication->is_suspend);
             $communication->isRecommendation = $request->input('isRecommendation', $communication->isRecommendation);
             $communication->is_visit = $request->input('is_visit', $communication->is_visit);
-
-            if ($request->input('updated') == null) {
-                $communication->date_next = $request->input('date_next', $communication->date_next);
-            }
 
             $communication->save();
         }
@@ -219,9 +230,9 @@ class ClientCommunicationController extends Controller
 
         $data['communication'] = $communication;
         $data = $this->getCommunicationById($id_communication, $id_invoice);
-
-        if ($request->input('type_install') == 1 && $communication->type_communication == 'تركيب' && !$updated) {
-            $this->handleInstallation($communication, $id_invoice, $type, $updated);
+        $fk_client = $communication->fk_client;
+        if ($request->input('type_install') == 1 && $communication->type_communcation == 'تركيب' && !$updated) {
+            $this->handleInstallation($communication, $id_invoice, $type, $updated, $fk_client);
         }
 
         if ($type && !$updated) {
@@ -231,24 +242,25 @@ class ClientCommunicationController extends Controller
         return $this->sendSucssas($data);
     }
 
-    private function handleInstallation(client_communication $communication, $id_invoice, $type, $updated)
+    private function handleInstallation(client_communication $communication, $id_invoice, $type, $updated, $fk_client)
     {
-        $fk_country = $communication->client->fk_regoin;
+        $fk_regoin = $communication->client->fk_regoin;
+        $fk_country = Regoin::where('id_regoin', $fk_regoin)->first()->fk_country;
         $valueConfig = $this->getConfigValue($fk_country, 'install_second');
 
-        $date_last_com_install = $communication->date_communication;
-        $date_next = date('Y-m-d', strtotime($communication->date_communication . ' + ' . $valueConfig . ' days'));
+        $date_last_com_install = Carbon::parse($communication->date_communication);
+        $date_next = $date_last_com_install->addDays($valueConfig)->format('Y-m-d');
 
-        $communication->client->communications()->create([
-            'date_next' => $date_next,
-            'type_communication' => 'تركيب',
-            'id_invoice' => $id_invoice,
-            'type_install' => 2,
-            'date_last_com_install' => $date_last_com_install,
-        ]);
-        if ($type && !$updated) {
-            $this->updateFkUserCommunication($communication->fk_client, $date_last_com_install, $fk_country);
-        }
+        $communication1 = new client_communication();
+        $communication1->fk_client = $fk_client;
+        $communication1->date_next = $date_next;
+        $communication1->type_communcation = 'تركيب';
+        $communication1->id_invoice = $id_invoice;
+        $communication1->type_install = 2;
+        $communication1->date_last_com_install = $date_last_com_install;
+        $communication1->save();
+
+        $this->updateFkUserCommunication($communication->fk_client, $date_last_com_install, $fk_country);
     }
 
     private function handlePeriodCommunication(client_communication $communication)
@@ -259,7 +271,7 @@ class ClientCommunicationController extends Controller
         $result = client_communication::where('fk_client', $communication->fk_client)
             ->whereNotNull('date_next')
             ->whereNull('date_communication')
-            ->where('type_communication', 'دوري')
+            ->where('type_communcation', 'دوري')
             ->get();
 
         if ($result->isEmpty()) {
@@ -305,7 +317,7 @@ class ClientCommunicationController extends Controller
         client_communication::create([
             'fk_client' => $fk_client,
             'date_next' => $date_next,
-            'type_communication' => 'دوري',
+            'type_communcation' => 'دوري',
         ]);
     }
 
@@ -333,5 +345,4 @@ class ClientCommunicationController extends Controller
             return [];
         }
     }
-
 }
