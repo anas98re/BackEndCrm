@@ -12,7 +12,9 @@ class clientCommunicationTest extends TestCase
 
     public function testSetDateInstall()
     {
-        $requestData = [];
+        $requestData = [
+            'clientusername' => 'hello',
+        ];
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->bearerToken,
