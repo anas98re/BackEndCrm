@@ -40,6 +40,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 
+
 class ClientsController extends Controller
 {
     private $MyService;
@@ -468,7 +469,7 @@ class ClientsController extends Controller
                 $client->update($updateArray);
 
                 $nameApprove = auth()->user()->nameUser;
-                $id_users = $this->getIdUsers($fk_regoin, 126);
+                $id_users = getIdUsers($fk_regoin, 126);
                 $id_users->push($fk_user);
 
                 $title = "قبول تحويل العميل";
@@ -521,7 +522,7 @@ class ClientsController extends Controller
                 $client->update($updateArray);
 
                 $nameRefused = auth()->user()->nameUser;
-                $id_users = $this->getIdUsers($fk_regoin, 126);
+                $id_users = getIdUsers($fk_regoin, 126);
                 $id_users->push($fk_user);
 
                 $title = "رفض تحويل العميل";
@@ -569,56 +570,6 @@ class ClientsController extends Controller
         }
     }
 
-    public function getIdLevelsByPrivilge($fk_privileg): Collection
-    {
-        return privg_level_user::query()
-            ->where('fk_privileg', $fk_privileg)
-            ->where('is_check', 1)
-            ->get()
-            ->pluck('fk_level');
-    }
-
-    public function getIdLevelsByPrivilges(array $fk_privilegs): Collection
-    {
-        return privg_level_user::query()
-            ->whereIn('fk_privileg', $fk_privilegs)
-            ->where('is_check', 1)
-            ->get()
-            ->pluck('fk_level')
-            ->unique();
-    }
-
-    public function getIdUsers($fk_regoin, $fk_privileg, $fk_country = null)
-    {
-        $levels = $this->getIdLevelsByPrivilge($fk_privileg);
-        if(is_null($fk_country))
-            $id_users = users::query()
-                ->where(function ($query) use ($levels, $fk_regoin) {
-                    $query->where('fk_regoin', $fk_regoin)
-                        ->whereIn('type_level', $levels);
-                })
-                ->orWhere(function ($query) use ($levels) {
-                    $query->where('fk_regoin', 14)
-                        ->whereIn('type_level', $levels);
-                })
-                ->get()
-                ->pluck('id_user');
-        else
-            $id_users = users::query()
-                ->where(function ($query) use ($levels, $fk_regoin) {
-                    $query->where('fk_regoin', $fk_regoin)
-                        ->whereIn('type_level', $levels);
-                })
-                ->orWhere(function ($query) use ($levels, $fk_country) {
-                    $query->where('fk_regoin', 14)
-                        ->where('fk_country', $fk_country)
-                        ->whereIn('type_level', $levels);
-                })
-                ->get()
-                ->pluck('id_user');
-
-        return $id_users;
-    }
 
     public function getTransferClientsWithPrivileges(): JsonResponse
     {
@@ -626,9 +577,9 @@ class ClientsController extends Controller
         {
             $user = auth()->user();
 
-            $allLevels = $this->getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_ALL']);
-            $employeeLevels = $this->getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_EMPLOYEE']);
-            $adminLevels = $this->getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_ADMIN']);
+            $allLevels = getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_ALL']);
+            $employeeLevels = getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_EMPLOYEE']);
+            $adminLevels = getIdLevelsByPrivilge(Constants::PRIVILEGES_IDS['TRANSFER_CLIENTS_ADMIN']);
 
             $is_all = false;
             $is_admin = false;
@@ -712,8 +663,8 @@ class ClientsController extends Controller
 
             $fk_regoin = $client->fk_regoin;
             $fkcountry = $client->regoin?->fk_country;
-            $id_users =  $this->getIdUsers($fk_regoin, 21, $fkcountry);
-            $array2user = $this->getIdUsersRegoin($fkcountry, 21, $client->id_clients);
+            $id_users =  getIdUsers($fk_regoin, 21, $fkcountry);
+            $array2user = getIdUsersRegoin($fkcountry, 21, $client->id_clients);
             $id_users = array_merge($id_users->toArray(), $array2user->toArray());
 
 
@@ -809,20 +760,6 @@ class ClientsController extends Controller
 
 
         $this->update_fkuser_communication($fk_client);
-    }
-
-    protected function getIdUsersRegoin($fkcountry,$fk_privileg,$fkclient )
-    {
-        $fkmaincity=  clients::where('id_clients', $fkclient)?->first()?->cityRelation?->fk_maincity;
-        $arraylevel = $this->getIdLevelsByPrivilge($fk_privileg);
-
-        return user_maincity::select('users.id_user')
-        ->join('users', 'users.id_user', '=', 'user_maincity.fk_user')
-        ->where('users.fk_country', $fkcountry)
-        ->where('user_maincity.fk_maincity', $fkmaincity)
-        ->whereIn('users.type_level', $arraylevel)
-        ->get()
-        ->pluck('id_user');
     }
 
     protected function afterInstallClient($data)
