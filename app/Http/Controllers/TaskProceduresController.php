@@ -328,8 +328,8 @@ class TaskProceduresController extends Controller
             DB::commit();
             return $task;
         } catch (\Throwable $th) {
-            throw $th;
             DB::rollBack();
+            throw $th;
         }
     }
 
