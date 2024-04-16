@@ -112,6 +112,10 @@ class InvoiceResource extends JsonResource
             'id_maincity' => $this->client?->cityRelation?->mainCity?->id_maincity,
             'nameuser_ready_install' => $this->userReadyInstall?->nameUser,
             'nameuser_notready_install' => $this->userNotReadyInstall?->nameUser,
+            'participal_info' => $this->participate,
+            'agent_distibutor_info' => $this->agent,
+            'files_attach' => $this->files,
+            'products' => $this->products,
         ];
     }
 }

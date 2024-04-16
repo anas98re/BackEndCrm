@@ -23,7 +23,12 @@ class participate extends Model
         'name_participate',
         'mobile_participate',
         'namebank_participate',
-        'numberbank_participate'
+        'numberbank_participate',
+        'add_date',
+        'update_date',
+        'fk_user_add',
+        'fk_user_update',
+        'fk_city',
     ];
 
 }

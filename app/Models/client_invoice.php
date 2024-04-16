@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Traits\Loggable;
+use Illuminate\Database\Eloquent\Factories\BelongsToManyRelationship;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Http\Request;
@@ -150,6 +153,37 @@ class client_invoice extends Model
     public function userNotReadyInstall(): BelongsTo
     {
         return $this->belongsTo(users::class, 'user_not_ready_install');
+    }
+
+    public function participate(): BelongsTo
+    {
+        return $this->belongsTo(participate::class, 'participate_fk');
+    }
+
+    public function agent(): BelongsTo
+    {
+        return $this->belongsTo(agent::class, 'fk_agent');
+    }
+
+    public function files(): HasMany
+    {
+        return $this->hasMany(files_invoice::class, 'fk_invoice');
+    }
+
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(products::class, invoice_product::class, 'fk_id_invoice', 'fk_product')->withPivot([
+            'id_invoice_product' => 'id_invoice_product',
+            'fk_id_invoice' => 'fk_id_invoice',
+            'fk_product' => 'fk_product',
+            'amount' => 'amount',
+            'price' => 'price',
+            'taxtotal' => 'taxtotal',
+            'rate_admin' => 'rate_admin',
+            'rateUser' => 'rateUser',
+            'idinvoice' => 'idinvoice',
+            'name_prod' => 'name_prod'
+        ]);
     }
 
 }
