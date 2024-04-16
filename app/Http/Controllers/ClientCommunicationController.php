@@ -47,13 +47,13 @@ class ClientCommunicationController extends Controller
             $client = $invoice->client;
             $updateArray = array();
             $updateArray['userinstall'] = auth()->user()->id_user;
-            $updateArray['clientusername'] = $client->name_client;
+            $updateArray['clientusername'] = $data['clientusername'];
             $updateArray['isdoneinstall'] = 1;
             $updateArray['dateinstall_done'] = Carbon::now();
 
             $invoice->update($updateArray);
 
-            $time = config_table::where('name_config', 'period_commincation3')
+            $time = config_table::where('name_config', 'period_commincation2')
                 ->first()->value_config;
 
             $insertArray = array();
@@ -62,10 +62,11 @@ class ClientCommunicationController extends Controller
             $insertArray['id_invoice'] = $id_invoice;
             $insertArray['type_communcation'] = 'تركيب';
             $insertArray['type_install'] = 1;
+            $insertArray['fk_user'] = $this->get_fk_user_communication($client->id_clients);
 
             client_communication::create($insertArray);
 
-            $this->update_fkuser_communication($client->id_clients);
+            // $this->update_fkuser_communication($client->id_clients);
 
             $time = config_table::where('name_config', 'period_commincation3')
                 ->first()->value_config;
@@ -172,9 +173,18 @@ class ClientCommunicationController extends Controller
 
         $this->update_fkuser_communication($fk_client);
     }
+    protected function get_fk_user_communication($fk_client)
+    {
+        return client_communication::where('fk_client', $fk_client)
+            ->whereNotNull('fk_user')
+            ->where('type_communcation', 'ترحيب')
+            ->orderBy('date_communication', 'desc')
+            ?->first()
+            ?->fk_user;
+    }
 
 
-    
+
     // ......
     public function updateCommunication(Request $request)
     {
@@ -184,12 +194,15 @@ class ClientCommunicationController extends Controller
             ->where('id_communication', $id_communication)
             ->first();
         $id_invoice = $request->input('id_invoice');
+        $type = $request->input('type');
+        $updated = $request->input('updated');
         if ($communication) {
             $communication->date_communication = $request->input('date_communication', $communication->date_communication);
             $communication->type_communication = $request->input('type_communication', $communication->type_communication);
             $communication->fk_user = $request->input('fk_user', $communication->fk_user);
             $communication->result = $request->input('result', $communication->result);
-            $communication->rate = $request->input('rate', $communication->rate);
+            $communication->rate = $request->input('rate', $communication->rate) == '0,0' ?
+                null : $request->input('rate', $communication->rate);
             $communication->number_wrong = $request->input('number_wrong', $communication->number_wrong);
             $communication->client_repeat = $request->input('client_repeat', $communication->client_repeat);
             $communication->is_suspend = $request->input('is_suspend', $communication->is_suspend);
@@ -203,8 +216,7 @@ class ClientCommunicationController extends Controller
             $communication->save();
         }
 
-        $type = $request->input('type');
-        $updated = $request->input('updated');
+
         $data['communication'] = $communication;
         $data = $this->getCommunicationById($id_communication, $id_invoice);
 
@@ -252,7 +264,7 @@ class ClientCommunicationController extends Controller
 
         if ($result->isEmpty()) {
             $date_next = date('Y-m-d', strtotime($communication->date_communication . ' + ' . $valueConfig . ' days'));
-            $this->addCommunication($communication->fk_client, $date_next);
+            $this->addCommunicationFprUpdate($communication->fk_client, $date_next);
         }
     }
 
@@ -321,4 +333,5 @@ class ClientCommunicationController extends Controller
             return [];
         }
     }
+
 }
