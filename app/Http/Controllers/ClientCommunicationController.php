@@ -39,13 +39,13 @@ class ClientCommunicationController extends Controller
             $client = $invoice->client;
             $updateArray = array();
             $updateArray['userinstall'] = auth()->user()->id_user;
-            $updateArray['clientusername'] = $client->name_client;
+            $updateArray['clientusername'] = $data['clientusername'];
             $updateArray['isdoneinstall'] = 1;
             $updateArray['dateinstall_done'] = Carbon::now();
 
             $invoice->update($updateArray);
 
-            $time = config_table::where('name_config', 'period_commincation3')
+            $time = config_table::where('name_config', 'period_commincation2')
                 ->first()->value_config;
 
             $insertArray = array();
@@ -54,10 +54,11 @@ class ClientCommunicationController extends Controller
             $insertArray['id_invoice'] = $id_invoice;
             $insertArray['type_communcation'] = 'تركيب';
             $insertArray['type_install'] = 1;
+            $insertArray['fk_user'] = $this->get_fk_user_communication($client->id_clients);
 
             client_communication::create($insertArray);
 
-            $this->update_fkuser_communication($client->id_clients);
+            // $this->update_fkuser_communication($client->id_clients);
 
             $time = config_table::where('name_config', 'period_commincation3')
                 ->first()->value_config;
@@ -163,5 +164,15 @@ class ClientCommunicationController extends Controller
 
 
         $this->update_fkuser_communication($fk_client);
+    }
+
+    protected function get_fk_user_communication($fk_client)
+    {
+        return client_communication::where('fk_client', $fk_client)
+            ->whereNotNull('fk_user')
+            ->where('type_communcation', 'ترحيب')
+            ->orderBy('date_communication', 'desc')
+            ?->first()
+            ?->fk_user;
     }
 }

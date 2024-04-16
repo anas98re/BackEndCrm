@@ -6,7 +6,7 @@ use App\Models\client_invoice;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class clientCommunication extends TestCase
+class clientCommunicationTest extends TestCase
 {
     use WithFaker;
 
@@ -16,7 +16,7 @@ class clientCommunication extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->bearerToken,
-        ])->postJson('/api/setDateInstall/'.client_invoice::whereNotNull('fk_idUser')->inRandomOrder()->first()->id_invoice, $requestData);
+        ])->postJson('/api/setDateInstall/4690', $requestData);
 
         $response->assertStatus(200);
         $response->assertJson(["result" => "success"]);

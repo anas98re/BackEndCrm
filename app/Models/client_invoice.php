@@ -152,4 +152,8 @@ class client_invoice extends Model
         return $this->belongsTo(users::class, 'user_not_ready_install');
     }
 
+    // public function
+
+    
+
 }

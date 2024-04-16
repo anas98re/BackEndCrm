@@ -605,13 +605,13 @@ class TaskService extends JsonResponeService
         try {
             $client_id = DB::table('client_invoice')->where('id_invoice', $data['idInvoice'])
                 ->first();
+
             $welcomed_user_id = DB::table('client_communication')
                 ->where('fk_client', $client_id->fk_idClient)
                 ->where('type_communcation', 'تركيب')
                 ->where('type_install', 1)
                 ->where('id_invoice', $data['idInvoice'])
                 ->first();
-
 
             $existingTask = task::where('invoice_id', $data['idInvoice'])
                 ->where('client_id', $client_id->fk_idClient)
