@@ -30,4 +30,18 @@ class  Constants
         "TRANSFER_CLIENTS_ALL" => 185,
 
     ];
+
+    const TYPE_ADMINISTRATION = [
+
+        "HIGHER_MANAGEMENT" => 1,
+        "SALES_MANAGEMENT" => 2,
+        "SUPPORT_MANAGEMENT" => 3,
+        "CUSTOMER_CARE_MANAGEMENT" => 4,
+        "FINANCIAL_MANAGEMENT" => 5,
+        "COLLECTION_MANAGEMENT" => 6,
+        "OPERATION_MANAGEMENT" => 7,
+        "PROGRAMMING_MANAGEMENT" => 8,
+        "MARKETING_MANAGEMENT" => 8,
+
+    ];
 }
