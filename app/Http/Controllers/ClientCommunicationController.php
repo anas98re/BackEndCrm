@@ -235,13 +235,11 @@ class ClientCommunicationController extends Controller
         $data = $this->getCommunicationById($id_communication, $id_invoice);
         $fk_client = $communication->fk_client;
         if ($request->input('type_install') == 1 && $communication->type_communcation == 'تركيب' && !$updated) {
-            info('4444444444444');
             $this->handleInstallation($id_communication, $id_invoice, $type, $updated, $fk_client, $data);
 
         }
 
         if ($type && !$updated) {
-            info('jjjjjjjjjjjjj');
             $this->handlePeriodCommunication($id_communication);
         }
 
