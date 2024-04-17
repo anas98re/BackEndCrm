@@ -235,18 +235,25 @@ class ClientCommunicationController extends Controller
         $data = $this->getCommunicationById($id_communication, $id_invoice);
         $fk_client = $communication->fk_client;
         if ($request->input('type_install') == 1 && $communication->type_communcation == 'تركيب' && !$updated) {
-            $this->handleInstallation($communication, $id_invoice, $type, $updated, $fk_client, $data);
+            info('4444444444444');
+            $this->handleInstallation($id_communication, $id_invoice, $type, $updated, $fk_client, $data);
+            
         }
 
         if ($type && !$updated) {
-            $this->handlePeriodCommunication($communication);
+            info('jjjjjjjjjjjjj');
+            $this->handlePeriodCommunication($id_communication);
         }
 
         return $this->sendSucssas($data);
     }
 
-    private function handleInstallation(client_communication $communication,  $data, $id_invoice, $type, $updated, $fk_client)
+    private function handleInstallation($id_communication, $data, $id_invoice, $type, $updated, $fk_client)
     {
+        $communication = client_communication::with(['client', 'user', 'invoice'])
+            ->where('id_communication', $id_communication)
+            ->first();
+
         $fk_regoin = $communication->client->fk_regoin;
         $fk_country = Regoin::where('id_regoin', $fk_regoin)->first()->fk_country;
         $valueConfig = $this->getConfigValue($fk_country, 'install_second');
@@ -262,13 +269,16 @@ class ClientCommunicationController extends Controller
         $communication1->type_install = 2;
         $communication1->date_last_com_install = $date_last_com_install;
         $communication1->save();
-
+        info('PPPPPPP');
         $this->TaskService->closeTaskAfterInstallClient($data);
         $this->updateFkUserCommunication($communication->fk_client, $date_last_com_install, $fk_country);
     }
 
-    private function handlePeriodCommunication(client_communication $communication)
+    private function handlePeriodCommunication($id_communication)
     {
+        $communication = client_communication::with(['client', 'user', 'invoice'])
+            ->where('id_communication', $id_communication)
+            ->first();
         $fk_country = $communication->client->fk_regoin;
         $valueConfig = $this->getConfigValue($fk_country, 'period_commincation3');
 
