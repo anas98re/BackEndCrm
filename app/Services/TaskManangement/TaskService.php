@@ -626,7 +626,6 @@ class TaskService extends JsonResponeService
             $client = clients::where('id_clients', $client_id->fk_idClient)->first();
             $message = 'عميل مشترك ( ? ) يحتاج لتواصل الجودة الأول له';
             $messageDescription = str_replace('?', $client->name_enterprise, $message);
-
             if (!$existingTask) {
                 $task = new task();
                 $task->title = 'تواصل جودة اول';
@@ -637,19 +636,37 @@ class TaskService extends JsonResponeService
                 $task->public_Type = 'com_install_1';
                 $task->main_type_task = 'ProccessAuto';
                 $task->assigend_department_from  = 3;
-                $task->assigned_to  = ($welcomed_user_id != null ? $welcomed_user_id->fk_user : null);
+                if (is_null($welcomed_user_id?->fk_user))
+                    $task->assigend_department_to = Constants::TYPE_ADMINISTRATION['CUSTOMER_CARE_MANAGEMENT'];
+                else
+                    $task->assigned_to  = $welcomed_user_id?->fk_user;
                 $task->start_date  = $newDatetime;
                 $task->save();
 
                 $service = new TaskProceduresService(new queriesService);
                 !empty($task) ? $service->addTaskStatus($task) : null;
-                $service->handleNotificationForTaskProcedures(
-                    $message = $task->title,
-                    $type = 'task',
-                    $to_user = $welcomed_user_id->fk_user,
-                    $invoice_id = $data['idInvoice'],
-                    $client_id = $client_id->fk_idClient
-                );
+                if(is_null($welcomed_user_id?->fk_user))
+                {
+                    $user_ids = users::where('type_administration', Constants::TYPE_ADMINISTRATION['CUSTOMER_CARE_MANAGEMENT'])->get()->pluck('id_user');
+                    foreach($user_ids as $id_user)
+                    {
+                        $service->handleNotificationForTaskProcedures(
+                            $message = $task->title,
+                            $type = 'task',
+                            $to_user = $id_user,
+                            $invoice_id = $data['idInvoice'],
+                            $client_id = $client->id_clients
+                        );
+                    }
+                }
+                else
+                    $service->handleNotificationForTaskProcedures(
+                        $message = $task->title,
+                        $type = 'task',
+                        $to_user = $welcomed_user_id->fk_user,
+                        $invoice_id = $data['idInvoice'],
+                        $client_id = $client_id->fk_idClient
+                    );
             } else {
                 $task = null;
             }
