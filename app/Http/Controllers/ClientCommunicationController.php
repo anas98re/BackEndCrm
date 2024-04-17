@@ -237,7 +237,7 @@ class ClientCommunicationController extends Controller
         if ($request->input('type_install') == 1 && $communication->type_communcation == 'تركيب' && !$updated) {
             info('4444444444444');
             $this->handleInstallation($id_communication, $id_invoice, $type, $updated, $fk_client, $data);
-            
+
         }
 
         if ($type && !$updated) {
@@ -248,8 +248,9 @@ class ClientCommunicationController extends Controller
         return $this->sendSucssas($data);
     }
 
-    private function handleInstallation($id_communication, $data, $id_invoice, $type, $updated, $fk_client)
+    private function handleInstallation($id_communication, $id_invoice, $type, $updated, $fk_client, $data)
     {
+
         $communication = client_communication::with(['client', 'user', 'invoice'])
             ->where('id_communication', $id_communication)
             ->first();
@@ -261,15 +262,15 @@ class ClientCommunicationController extends Controller
         $date_last_com_install = Carbon::parse($communication->date_communication);
         $date_next = $date_last_com_install->addDays($valueConfig)->format('Y-m-d');
 
-        $communication1 = new client_communication();
-        $communication1->fk_client = $fk_client;
-        $communication1->date_next = $date_next;
-        $communication1->type_communcation = 'تركيب';
-        $communication1->id_invoice = $id_invoice;
-        $communication1->type_install = 2;
-        $communication1->date_last_com_install = $date_last_com_install;
-        $communication1->save();
-        info('PPPPPPP');
+        $client_communication = new client_communication();
+        $client_communication->fk_client = $fk_client;
+        $client_communication->date_next = $date_next;
+        $client_communication->type_communcation = 'تركيب';
+        $client_communication->id_invoice = $id_invoice;
+        $client_communication->type_install = 2;
+        $client_communication->date_last_com_install = $date_last_com_install;
+        $client_communication->save();
+
         $this->TaskService->closeTaskAfterInstallClient($data);
         $this->updateFkUserCommunication($communication->fk_client, $date_last_com_install, $fk_country);
     }
@@ -290,7 +291,7 @@ class ClientCommunicationController extends Controller
 
         if ($result->isEmpty()) {
             $date_next = date('Y-m-d', strtotime($communication->date_communication . ' + ' . $valueConfig . ' days'));
-            $this->addCommunicationFprUpdate($communication->fk_client, $date_next);
+            $this->addCommunicationFprUpdate($communication->fk_client, $date_next, $fk_country);
         }
     }
 
