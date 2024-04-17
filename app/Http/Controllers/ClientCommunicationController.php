@@ -230,13 +230,11 @@ class ClientCommunicationController extends Controller
             $communication->save();
         }
 
-
         $data['communication'] = $communication;
         $data = $this->getCommunicationById($id_communication, $id_invoice);
         $fk_client = $communication->fk_client;
         if ($request->input('type_install') == 1 && $communication->type_communcation == 'تركيب' && !$updated) {
             $this->handleInstallation($id_communication, $id_invoice, $type, $updated, $fk_client, $data);
-
         }
 
         if ($type && !$updated) {
@@ -269,7 +267,7 @@ class ClientCommunicationController extends Controller
         $client_communication->save();
 
         $this->TaskService->closeTaskAfterInstallClient($data);
-        $this->updateFkUserCommunication($communication->fk_client, $date_last_com_install, $fk_country);
+        $this->updateFkUserCommunication($communication->fk_client);
     }
 
     private function handlePeriodCommunication($id_communication)
@@ -277,7 +275,8 @@ class ClientCommunicationController extends Controller
         $communication = client_communication::with(['client', 'user', 'invoice'])
             ->where('id_communication', $id_communication)
             ->first();
-        $fk_country = $communication->client->fk_regoin;
+        $fk_regoin = $communication->client->fk_regoin;
+        $fk_country = Regoin::where('id_regoin', $fk_regoin)->first()->fk_country;
         $valueConfig = $this->getConfigValue($fk_country, 'period_commincation3');
 
         $result = client_communication::where('fk_client', $communication->fk_client)
@@ -287,7 +286,9 @@ class ClientCommunicationController extends Controller
             ->get();
 
         if ($result->isEmpty()) {
-            $date_next = date('Y-m-d', strtotime($communication->date_communication . ' + ' . $valueConfig . ' days'));
+            $date_next  = Carbon::parse($communication->date_communication)
+                ->addDays($valueConfig)
+                ->toDateString();
             $this->addCommunicationFprUpdate($communication->fk_client, $date_next, $fk_country);
         }
     }
@@ -302,26 +303,22 @@ class ClientCommunicationController extends Controller
     }
 
 
-    private function updateFkUserCommunication($fk_client, $date_comm, $fk_country)
+    private function updateFkUserCommunication($fk_client)
     {
-        $valueconfig = config_table::where('fk_country', $fk_country)
-            ->where('name_config', 'period_commincation3')
-            ->value('value_config');
+        $result = client_communication::where('fk_client', $fk_client)
+            ->whereNotNull('fk_user')
+            ->where('type_communcation', 'ترحيب')
+            ->orderByDesc('date_communication')
+            ->limit(1)
+            ->pluck('fk_user');
+        if ($result->count() > 0) {
+            $fk_user = $result->first();
 
-        if ($valueconfig) {
-            $existingCommunication = client_communication::where('fk_client', $fk_client)
-                ->whereNotNull('date_next')
+            client_communication::where('fk_client', $fk_client)
                 ->whereNull('date_communication')
-                ->where('type_communcation', 'دوري')
-                ->exists();
-
-            if (!$existingCommunication) {
-                $date_communication = $date_comm;
-                $date_next = date('Y-m-d', strtotime($date_communication . $valueconfig . ' days'));
-
-                $this->addCommunicationFprUpdate($fk_client, $date_next);
-            }
+                ->update(['fk_user' => $fk_user]);
         }
+
     }
 
     private function addCommunicationFprUpdate($fk_client, $date_next)
