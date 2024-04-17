@@ -248,7 +248,6 @@ class ClientCommunicationController extends Controller
 
     private function handleInstallation($id_communication, $id_invoice, $type, $updated, $fk_client, $data)
     {
-
         $communication = client_communication::with(['client', 'user', 'invoice'])
             ->where('id_communication', $id_communication)
             ->first();
@@ -348,10 +347,10 @@ class ClientCommunicationController extends Controller
             $data['date_create'] = $communication->invoice ? $communication->invoice->date_create : null;
             $data['date_approve'] = $communication->invoice ? $communication->invoice->date_approve : null;
             $data['dateinstall_done'] = $communication->invoice ? $communication->invoice->dateinstall_done : null;
-            $data['mobile'] = $communication->client->mobile;
-            $data['fk_regoin'] = $communication->client->fk_regoin;
-            $data['name_regoin'] = $communication->client->regoin->name_regoin;
-            $data['name_client'] = $communication->client->name_client;
+            $data['mobile'] = $communication->client?->mobile;
+            $data['fk_regoin'] = $communication->client?->fk_regoin;
+            $data['name_regoin'] = $communication->client->regoin?->name_regoin;
+            $data['name_client'] = $communication->client?->name_client;
 
             return $data;
         } else {
