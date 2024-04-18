@@ -21,6 +21,7 @@ use App\Services\TaskManangement\TaskService;
 use Exception;
 use App\Http\Requests\Storeclient_communicationRequest;
 use App\Http\Requests\Updateclient_communicationRequest;
+use App\Http\Resources\CommunicationResource;
 use App\Models\clientCommentMention;
 use App\Models\ClientCommunication;
 use App\Models\Regoin;
@@ -241,7 +242,7 @@ class ClientCommunicationController extends Controller
             $this->handlePeriodCommunication($id_communication);
         }
 
-        return $this->sendSucssas($data);
+        return new CommunicationResource($communication);
     }
 
     private function handleInstallation($id_communication, $id_invoice, $type, $updated, $fk_client, $data)
