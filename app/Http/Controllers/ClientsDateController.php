@@ -5,13 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\clients_date;
 use App\Http\Requests\Storeclients_dateRequest;
 use App\Http\Requests\Updateclients_dateRequest;
+use App\Http\Resources\clientsDateResource;
 use App\Models\agent;
 use App\Models\agentComment;
 use App\Models\client_comment;
+use App\Models\client_invoice;
 use App\Models\clients;
 use App\Models\notifiaction;
 use App\Notifications\SendNotification;
 use App\Services\ClientsDateService;
+use App\Services\TaskManangement\TaskService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,10 +24,12 @@ use Illuminate\Support\Facades\Notification;
 class ClientsDateController extends Controller
 {
     private $myService;
+    private $TaskService;
 
-    public function __construct(ClientsDateService $myService)
+    public function __construct(ClientsDateService $myService, TaskService $TaskService)
     {
         $this->myService = $myService;
+        $this->TaskService = $TaskService;
     }
 
     public function rescheduleOrCancelVisitClient(Request $request, $idclients_date)
@@ -105,19 +110,14 @@ class ClientsDateController extends Controller
     {
         DB::beginTransaction();
         $data = $request->all();
-        try
-        {
+        try {
             $client_date = clients_date::query()->where('idclients_date', $date_id)->first();
-            if( is_null ($client_date) )
-            {
+            if (is_null($client_date)) {
                 return response()->json(['message' => 'client date not found'], 404);
             }
-            if(! is_null($data['fk_client']?? null))
-            {
+            if (!is_null($data['fk_client'] ?? null)) {
                 $this->addComment($data['comment'], $data['fk_client'], auth()->user()->id_user, 'زيارة عميل');
-            }
-            else
-            {
+            } else {
                 $this->addCommentAgent($data['comment'], $data['fk_agent'], auth()->user()->id_user, 'زيارة وكيل');
             }
 
@@ -130,15 +130,13 @@ class ClientsDateController extends Controller
             $resJson = array("result" => "success", "code" => "200", "message" => 'done');
             DB::commit();
             return response()->json($resJson);
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
-    protected function addComment($content,$fk_client,$fk_user,$type_comment)
+    protected function addComment($content, $fk_client, $fk_user, $type_comment)
     {
         $data['fk_client'] = $fk_client;
         $data['fk_user'] = $fk_user;
@@ -149,7 +147,7 @@ class ClientsDateController extends Controller
         return client_comment::create($data);
     }
 
-    protected function addCommentAgent($content,$agent_id,$fk_user,$type_comment)
+    protected function addCommentAgent($content, $agent_id, $fk_user, $type_comment)
     {
         $data['agent_id'] = $agent_id;
         $data['user_id'] = $fk_user;
@@ -158,5 +156,25 @@ class ClientsDateController extends Controller
         $data['type_comment'] = $type_comment;
 
         return agentComment::create($data);
+    }
+
+    public function addDateInstall(Request $request)
+    {
+        $data = $request->all();
+        $data['fk_user_add'] = auth('sanctum')->user()->id_user;
+        $data['fk_client'] = client_invoice::find($request->fk_invoice)->fk_idClient;
+
+        $clients_date = clients_date::create($data);
+
+        //Tasks ..
+        $data = [
+            'idInvoice' => $request->fk_invoice,
+            'iduser_FApprove' => auth('sanctum')->user()->id_user,
+        ];
+        $this->TaskService->closeTaskAddVisitDateAfterApproveInvoice($data);
+
+        $clients_date = new clientsDateResource($clients_date);
+
+        return $this->sendSucssas($clients_date);
     }
 }

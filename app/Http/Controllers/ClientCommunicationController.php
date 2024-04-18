@@ -242,7 +242,9 @@ class ClientCommunicationController extends Controller
             $this->handlePeriodCommunication($id_communication);
         }
 
-        return new CommunicationResource($communication);
+        $communication = new CommunicationResource($communication);
+        return $this->sendSucssas($communication);
+
     }
 
     private function handleInstallation($id_communication, $id_invoice, $type, $updated, $fk_client, $data)
