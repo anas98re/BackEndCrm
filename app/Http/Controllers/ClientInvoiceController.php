@@ -20,7 +20,7 @@ class ClientInvoiceController extends Controller
 {
     public function deleteInvoice($id_invoice)
     {
-        $user_delete = auth()->user()->id_user;
+        $user_delete = auth('sanctum')->user()->id_user;
 
         $result = client_invoice::where('id_invoice', $id_invoice)
             ->update([
@@ -29,8 +29,10 @@ class ClientInvoiceController extends Controller
                 'user_delete' => $user_delete
             ]);
 
+        $invoice = client_invoice::where('id_invoice', $id_invoice)->first();
+
         $fk_user = $user_delete;
-        $fk_idClient = $result['fk_idClient'];
+        $fk_idClient = $invoice->fk_idClient;
         $data = $this->checkstate($fk_idClient);
         if (count($data) <= 0) {
             $client = clients::find($fk_idClient);
