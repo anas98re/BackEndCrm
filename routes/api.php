@@ -71,8 +71,6 @@ Route::post('addInvoicesUpdateReport', [UpdatesReportController::class, 'addInvo
 Route::post('addInvoiceProductReport', [UpdatesReportController::class, 'addInvoiceProductReport']);
 Route::post('reportDeletedIdsFillesInvoice', [UpdatesReportController::class, 'reportDeletedIdsFillesInvoice']);
 
-//ClientInvoiceController
-Route::post('deleteInvoice/{id}', [ClientInvoiceController::class, 'deleteInvoice']);
 //reports
 Route::post('addUserUpdateReport', [UpdatesReportController::class, 'addUserUpdateReport']);
 //cllients
@@ -154,6 +152,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //series invoice
     Route::get('getSeriesInvoiceAll', [SeriesInvoiceacceptController::class, 'getSeriesInvoiceAll']);
 
+
+    //ClientInvoice
+    Route::post('deleteInvoice/{id}', [ClientInvoiceController::class, 'deleteInvoice']);
 
     //company ...
     Route::post('addCommentToCompany/{fk_company}', [CompanyCommentController::class, 'addCommentToCompany']);

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\files_invoice;
 use App\Services\JsonResponeService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -42,6 +43,7 @@ class invoicesSrevices extends JsonResponeService
                     $fileInvoice[$index]->file_attach_invoice = $filsHandled;
                     $fileInvoice[$index]->fk_invoice = $invoiceId;
                     $fileInvoice[$index]->type_file = 1;
+                    $fileInvoice[$index]->add_date = Carbon::now()->toDateTimeString();
                     $fileInvoice[$index]->save();
                 }
                 $response = $fileInvoice;
