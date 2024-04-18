@@ -20,7 +20,8 @@ class files_invoice extends Model
         'id',
         'fk_invoice',
         'file_attach_invoice',
-        'type_file'
+        'type_file',
+        'add_date'
     ];
 
 }
