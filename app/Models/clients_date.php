@@ -35,4 +35,34 @@ class clients_date extends Model
         'date_update_visit'
     ];
 
+    public function client()
+    {
+        return $this->belongsTo(clients::class, 'fk_client', 'id_clients');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(users::class, 'fk_user', 'id_user');
+    }
+
+    public function userAdd()
+    {
+        return $this->belongsTo(users::class, 'fk_user_add', 'id_user');
+    }
+
+    public function userUpdate()
+    {
+        return $this->belongsTo(users::class, 'fk_user_update', 'id_user');
+    }
+
+    public function invoice()
+    {
+        return $this->belongsTo(client_invoice::class, 'fk_invoice', 'id_invoice');
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(agent::class, 'fk_agent', 'id_agent');
+    }
+
 }

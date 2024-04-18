@@ -645,11 +645,9 @@ class TaskService extends JsonResponeService
 
                 $service = new TaskProceduresService(new queriesService);
                 !empty($task) ? $service->addTaskStatus($task) : null;
-                if(is_null($welcomed_user_id?->fk_user))
-                {
+                if (is_null($welcomed_user_id?->fk_user)) {
                     $user_ids = users::where('type_administration', Constants::TYPE_ADMINISTRATION['CUSTOMER_CARE_MANAGEMENT'])->get()->pluck('id_user');
-                    foreach($user_ids as $id_user)
-                    {
+                    foreach ($user_ids as $id_user) {
                         $service->handleNotificationForTaskProcedures(
                             $message = $task->title,
                             $type = 'task',
@@ -658,8 +656,7 @@ class TaskService extends JsonResponeService
                             $client_id = $client->id_clients
                         );
                     }
-                }
-                else
+                } else
                     $service->handleNotificationForTaskProcedures(
                         $message = $task->title,
                         $type = 'task',
@@ -770,6 +767,37 @@ class TaskService extends JsonResponeService
                         $data['last_idCommuncation2'],
                         $data['iduser_updateed']
                     );
+                } else {
+                    return;
+                }
+            }
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+            throw $th;
+            DB::rollBack();
+        }
+    }
+
+    public function closeTaskAddVisitDateAfterApproveInvoice($data)
+    {
+        try {
+            DB::beginTransaction();
+            $task = task::where('invoice_id', $data['idInvoice'])
+                ->where('public_Type', 'AddVisitDate')->first();
+            if ($task) {
+                $statuse_task_fraction = DB::table('statuse_task_fraction')
+                    ->where('task_id', $task->id)->first();
+                if ($statuse_task_fraction->task_statuse_id == 1) {
+                    $task->actual_delivery_date = Carbon::now('Asia/Riyadh');
+                    $task->save();
+                    DB::table('statuse_task_fraction')
+                        ->where('task_id', $task->id)
+                        ->update([
+                            'task_statuse_id' => 4,
+                            'changed_date' => Carbon::now('Asia/Riyadh'),
+                            'changed_by' => $data['iduser_FApprove']
+                        ]);
                 } else {
                     return;
                 }
