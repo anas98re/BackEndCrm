@@ -4,6 +4,7 @@ use App\Http\Controllers\AgentCommentController;
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\ClientCommentMentionController;
 use App\Http\Controllers\ClientCommunicationController;
+use App\Http\Controllers\ClientInvoiceController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ClientsDateController;
 use App\Http\Controllers\ClientsUpdateReportController;
@@ -64,11 +65,14 @@ Route::post('addTaskafterAddPaymentToTheInvoiceForReviewInvoice', [TaskProcedure
 Route::post('addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days', [TaskProceduresController::class, 'addTaskWhenThereIsNoUpdateToTheLatestClientUpdatesFor5Days']);
 //clients comments mentions
 Route::post('addCommentClientMention', [ClientCommentMentionController::class, 'addCommentClientMention']);
-//cllients Invoices
+//cllients ClientInvoiceController
 Route::post('storageInvoicesUpdates', [UpdatesReportController::class, 'storageInvoicesUpdates']);
 Route::post('addInvoicesUpdateReport', [UpdatesReportController::class, 'addInvoicesUpdateReport']);
 Route::post('addInvoiceProductReport', [UpdatesReportController::class, 'addInvoiceProductReport']);
 Route::post('reportDeletedIdsFillesInvoice', [UpdatesReportController::class, 'reportDeletedIdsFillesInvoice']);
+
+//ClientInvoiceController
+Route::post('deleteInvoice/{id}', [ClientInvoiceController::class, 'deleteInvoice']);
 //reports
 Route::post('addUserUpdateReport', [UpdatesReportController::class, 'addUserUpdateReport']);
 //cllients
