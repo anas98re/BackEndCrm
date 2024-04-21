@@ -202,6 +202,26 @@ class FilesInvoiceController extends Controller
                     'user_ready_install' => null,
                 ]);
 
+            $client = clients::where('id_clients', $data['fk_idClient'])->first();
+            $client->update(['type_client' => 'مشترك']);
+
+            addComment($data['comment'], $data['fk_idClient'], $data['fk_idUser'], 'متطلبات العميل');
+
+            foreach($request['products'] as $product)
+            {
+                $insertArray = array();
+                $insertArray['amount'] = $product['amount']?? 0;
+                $insertArray['price'] = $product['price']?? 0;
+                $insertArray['fk_id_invoice'] = $invoice->id_invoice;
+                $insertArray['fk_product'] = $product['fk_product'];
+                $insertArray['taxtotal'] = $product['taxtotal']?? 0.0;
+                $insertArray['rate_admin'] = $product['rate_admin']?? 0.0;
+                $insertArray['rateUser'] = $product['rateUser']?? 0.0;
+
+                invoice_product::create($insertArray);
+            }
+
+            DB::commit();
             $data['image_record'] = '';
             $data['imagelogo'] = '';
             if(key_exists('file', $request->all()))
@@ -219,9 +239,6 @@ class FilesInvoiceController extends Controller
                 'imagelogo' => $data['imagelogo'],
             ]);
 
-            $client = clients::where('id_clients', $data['fk_idClient'])->first();
-            $client->update(['type_client' => 'مشترك']);
-
             if(key_exists('uploadfiles', $request->all()))
             {
                 foreach($request->uploadfiles as $file)
@@ -234,23 +251,9 @@ class FilesInvoiceController extends Controller
                 }
             }
 
-            addComment($data['comment'], $data['fk_idClient'], $data['fk_idUser'], 'متطلبات العميل');
-
             $this->addTaskToApproveAdminAfterAddInvoice($invoice->id_invoice, $data['fk_regoin']);
 
-            foreach($request['products'] as $product)
-            {
-                $insertArray = array();
-                $insertArray['amount'] = $product['amount']?? 0;
-                $insertArray['price'] = $product['price']?? 0;
-                $insertArray['fk_id_invoice'] = $invoice->id_invoice;
-                $insertArray['fk_product'] = $product['fk_product'];
-                $insertArray['taxtotal'] = $product['taxtotal']?? 0.0;
-                $insertArray['rate_admin'] = $product['rate_admin']?? 0.0;
-                $insertArray['rateUser'] = $product['rateUser']?? 0.0;
-
-                invoice_product::create($insertArray);
-            }
+            
 
             // ------------ notification -------------
             $fk_regoin = $_POST['fk_regoin']; //fk_regoin_invoice
@@ -283,7 +286,7 @@ class FilesInvoiceController extends Controller
                 $message,
             );
 
-            DB::commit();
+            
             $arrJson = getInvoicesIdinvoice($last_id);
             $arrJson[0]['error'] = $error;
     
