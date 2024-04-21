@@ -168,11 +168,14 @@ class ClientsDateController extends Controller
         $clients_date = clients_date::create($data);
 
         //Tasks ..
-        $data = [
-            'idInvoice' => $request->fk_invoice,
-            'iduser_FApprove' => auth('sanctum')->user()->id_user,
-        ];
-        $this->TaskService->closeTaskAddVisitDateAfterApproveInvoice($data);
+        if(key_exists('fk_invoice', $data))
+        {
+            $data = [
+                'idInvoice' => $request?->fk_invoice,
+                'iduser_FApprove' => auth('sanctum')->user()->id_user,
+            ];
+            $this->TaskService->closeTaskAddVisitDateAfterApproveInvoice($data);
+        }
 
         $clients_date = new clientsDateResource($clients_date);
 
