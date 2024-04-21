@@ -69,7 +69,7 @@ class AppSrevices extends JsonResponeService
         $allowed_extension = collect(["jpg", "png", "gif", "mp3", "pdf", "jpeg", "3gp", "docx", "doc"]);
 
         if (!$allowed_extension->contains($fileExtension))
-            return response()->json(['message' => 'صيغة الملف غير مدعومة'], 400);
+            return response()->json(['message' => 'format_error'], 400);
 
         // Remove the file extension from the original filename
         $filenameWithoutExtension = pathinfo($originalFilename, PATHINFO_FILENAME);
