@@ -3,8 +3,13 @@
 namespace App\Services;
 
 use App\Models\files_invoice;
+use App\Models\notifiaction;
+use App\Models\user_token;
+use App\Notifications\SendNotification;
 use App\Services\JsonResponeService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 
 class invoicesSrevices extends JsonResponeService
@@ -16,7 +21,32 @@ class invoicesSrevices extends JsonResponeService
         $this->myService = $myService;
     }
 
-    public function sendNotification($title, $message, )
+    public function sendNotification($tokens ,$id_client, $type ,$title, $message)
+    {
+        foreach($tokens as $token)
+        {
+
+            Notification::send(
+                null,
+                new SendNotification(
+                    $title,
+                    $message,
+                    $message,
+                    ($token != null ? $token : null)
+                )
+            );
+
+            notifiaction::create([
+                'message' => $message,
+                'type_notify' => $type,
+                'to_user' => user_token::query()->where('token', $token)->first()->fkuser,
+                'isread' => 0,
+                'data' => $id_client,
+                // 'from_user' => $userTransfered,
+                'dateNotify' => Carbon::now('Asia/Riyadh')
+            ]);
+        }
+    }
 
     public function addAndUpdateInvoiceFiles($filesDelete, $filesAdd, $invoiceId)
     {

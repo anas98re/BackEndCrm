@@ -88,10 +88,8 @@ function addComment($content,$fk_client,$fk_user,$type_comment)
 
 function getTokens(Collection $user_ids): Collection
 {
-    foreach ($user_ids as $Id) {
-        $userToken = user_token::where('fkuser', $Id)
-            ->where('token', '!=', null)
-            ->latest('date_create')
-            ->pluck('');
-    }
+    return user_token::whereIn('fkuser', $user_ids)
+        ->where('token', '!=', null)
+        ->pluck('token')
+        ->flatten();
 }

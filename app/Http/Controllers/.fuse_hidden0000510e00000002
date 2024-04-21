@@ -8,7 +8,6 @@ use App\Http\Requests\Storefiles_invoiceRequest;
 use App\Http\Requests\Updatefiles_invoiceRequest;
 use App\Models\client_invoice;
 use App\Models\clients;
-use App\Models\invoice_product;
 use App\Models\task;
 use App\Models\users;
 use App\Services\AppSrevices;
@@ -249,19 +248,6 @@ class FilesInvoiceController extends Controller
 
             $this->addTaskToApproveAdminAfterAddInvoice($invoice->id_invoice, $data['fk_regoin']);
 
-            foreach($request['products'] as $product)
-            {
-                $insertArray = array();
-                $insertArray['amount'] = $product['amount']?? 0;
-                $insertArray['price'] = $product['price']?? 0;
-                $insertArray['fk_id_invoice'] = $invoice->id_invoice;
-                $insertArray['fk_product'] = $product['fk_product'];
-                $insertArray['taxtotal'] = $product['taxtotal']?? 0.0;
-                $insertArray['rate_admin'] = $product['rate_admin']?? 0.0;
-                $insertArray['rateUser'] = $product['rateUser']?? 0.0;
-
-                invoice_product::create($insertArray);
-            }
 
             // ------------ notification -------------
             $fk_regoin = $_POST['fk_regoin']; //fk_regoin_invoice
@@ -270,29 +256,16 @@ class FilesInvoiceController extends Controller
             $title_name_approve = "تم إنشاء فاتورة للعميل ";
             $name_user = $_POST['nameUser']; //موظف المبيعات
             $message = "$title_name_approve $name_enterprise من قبل \r $name_user";
-
-
             $user_ids =  getIdUsers($fk_regoin, 10, $fk_country);
-            $tokens = getTokens($user_ids);
-            $title = "طلب موافقة";
-            $this->invoiceSrevice->sendNotification(
-                $tokens,
-                $client->id_clients,
-                'ApproveRequest',
-                $title,
-                $message,
+
+            $this->MyService->handleNotificationForTaskProcedures(
+                $message = $message,
+                $type = 'ApproveRequest',
+                $to_user = $user->id_user,
+                $invoice_id = $invoice_id,
+                $client_id = $client->id_clients
             );
 
-            $arrayUser =  getIdUsers($fk_regoin, 111, $fk_country);
-            $title = "طلب موافقة المالية";
-            $tokens =  getTokens($arrayUser);
-            $this->invoiceSrevice->sendNotification(
-                $tokens,
-                $client->id_clients,
-                'ApproveFRequest',
-                $title,
-                $message,
-            );
 
         }
         catch(Exception $e)
