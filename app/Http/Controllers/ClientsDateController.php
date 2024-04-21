@@ -162,8 +162,9 @@ class ClientsDateController extends Controller
     {
         $data = $request->all();
         $data['fk_user_add'] = auth('sanctum')->user()->id_user;
-        $data['fk_client'] = client_invoice::find($request->fk_invoice)->fk_idClient;
-
+        if(key_exists('fk_invoice', $data))
+            $data['fk_client'] = client_invoice::where('id_invoice', $request->fk_invoice)->first()->fk_idClient;
+        // else => this date for agent
         $clients_date = clients_date::create($data);
 
         //Tasks ..
