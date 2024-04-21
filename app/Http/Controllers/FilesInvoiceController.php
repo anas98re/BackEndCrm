@@ -6,6 +6,7 @@ use App\Constants;
 use App\Models\files_invoice;
 use App\Http\Requests\Storefiles_invoiceRequest;
 use App\Http\Requests\Updatefiles_invoiceRequest;
+use App\Http\Resources\InvoiceResource;
 use App\Models\client_invoice;
 use App\Models\clients;
 use App\Models\invoice_product;
@@ -221,7 +222,10 @@ class FilesInvoiceController extends Controller
                 invoice_product::create($insertArray);
             }
 
-            DB::commit();
+            // DB::commit();
+            // $resJson = array("result" => "success", "code" => "200", "message" => new InvoiceResource($invoice));
+            // echo json_encode($resJson, JSON_UNESCAPED_UNICODE);
+
             $data['image_record'] = '';
             $data['imagelogo'] = '';
             if(key_exists('file', $request->all()))
@@ -252,8 +256,6 @@ class FilesInvoiceController extends Controller
             }
 
             $this->addTaskToApproveAdminAfterAddInvoice($invoice->id_invoice, $data['fk_regoin']);
-
-            
 
             // ------------ notification -------------
             $fk_regoin = $_POST['fk_regoin']; //fk_regoin_invoice
@@ -286,12 +288,8 @@ class FilesInvoiceController extends Controller
                 $message,
             );
 
-            
-            $arrJson = getInvoicesIdinvoice($last_id);
-            $arrJson[0]['error'] = $error;
-    
-            $resJson = array("result" => "success", "code" => "200", "message" => $arrJson);
-
+            DB::commit();
+            return response()->json(['message' => new InvoiceResource($invoice), 'result' => 'success']);
         }
         catch(Exception $e)
         {
