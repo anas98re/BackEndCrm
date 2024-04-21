@@ -16,6 +16,8 @@ class invoicesSrevices extends JsonResponeService
         $this->myService = $myService;
     }
 
+    public function sendNotification($title, $message, )
+
     public function addAndUpdateInvoiceFiles($filesDelete, $filesAdd, $invoiceId)
     {
         try {
