@@ -403,7 +403,7 @@ class ClientsController extends Controller
             $client->update($update);
 
             $name_enterprise = $client->name_enterprise;
-            $nameApprove = $user_transfer->nameUser;
+            $nameApprove = $user->nameUser;
 
             $titlenameapprove = "تم تحويل العميل ";
             $nametitle = "من قبل";
