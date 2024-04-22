@@ -390,7 +390,8 @@ class ClientsController extends Controller
         {
 
             $update = array();
-            $user = users::query()->where('id_user', $data['fk_user'])->first();
+            // $user = users::query()->where('id_user', $data['fk_user'])->first();
+            $user = auth('sanctum')->user();
             $user_transfer = users::query()->where('id_user', $data['fk_user'])->first();
 
             $update['fk_regoin'] = $user?->fk_regoin;
@@ -407,7 +408,7 @@ class ClientsController extends Controller
             $titlenameapprove = "تم تحويل العميل ";
             $nametitle = "من قبل";
             $message = "$titlenameapprove $name_enterprise \r$nametitle \r $nameApprove";
-            $userToken = user_token::where('fkuser', $user->id_user)
+            $userToken = user_token::where('fkuser', $user_transfer->id_user)
                         ->where('token', '!=', null)
                         ->latest('date_create')
                         ->first();
@@ -425,10 +426,10 @@ class ClientsController extends Controller
             notifiaction::create([
                 'message' => $message,
                 'type_notify' => 'transfer',
-                'to_user' => $user->id_user,
+                'to_user' => $user_transfer->id_user,
                 'isread' => 0,
                 'data' => $id,
-                'from_user' => $user_transfer->id_user,
+                'from_user' => $user->id_user,
                 'dateNotify' => Carbon::now('Asia/Riyadh')
             ]);
 
@@ -621,5 +622,5 @@ class ClientsController extends Controller
         }
     }
 
-  
+
 }
