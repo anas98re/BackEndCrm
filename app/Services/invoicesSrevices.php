@@ -23,26 +23,33 @@ class invoicesSrevices extends JsonResponeService
 
     public function sendNotification($tokens ,$id_client, $type ,$title, $message)
     {
+        
         foreach($tokens as $token)
         {
-
             Notification::send(
                 null,
                 new SendNotification(
                     $title,
                     $message,
                     $message,
-                    ($token != null ? $token : null)
+                    $token,
                 )
             );
+        }
+        return $this;
+    }
 
-            notifiaction::create([
+    public function storeNotification($user_ids, $message, $type, $id_client)
+    {
+        foreach($user_ids as $user_id)
+        {
+            $notification = notifiaction::create([
                 'message' => $message,
                 'type_notify' => $type,
-                'to_user' => user_token::query()->where('token', $token)->first()->fkuser,
+                'to_user' => $user_id,
                 'isread' => 0,
                 'data' => $id_client,
-                // 'from_user' => $userTransfered,
+                'from_user' => auth()->user()->id_user,
                 'dateNotify' => Carbon::now('Asia/Riyadh')
             ]);
         }

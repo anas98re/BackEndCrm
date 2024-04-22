@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Traits\Loggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
@@ -78,5 +80,10 @@ class users extends Model
     public function regions()
     {
         return $this->belongsTo(regoin::class, 'fk_regoin', 'id_regoin');
+    }
+
+    public function fcmToken(): HasMany
+    {
+        return $this->hasMany(user_token::class, 'fkuser');
     }
 }

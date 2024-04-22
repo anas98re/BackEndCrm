@@ -248,7 +248,7 @@ class FilesInvoiceController extends Controller
                 foreach($request->uploadfiles as $file)
                 {
                     $filsHandled = $this->myService->storeFile($file, 'invoices');
-                    $fileInvoice = new files_invoice([
+                    $fileInvoice = files_invoice::create([
                         'fk_invoice' => $invoice->id_invoice,
                         'file_attach_invoice' => $filsHandled,
                     ]);
@@ -258,16 +258,19 @@ class FilesInvoiceController extends Controller
             $this->addTaskToApproveAdminAfterAddInvoice($invoice->id_invoice, $data['fk_regoin']);
 
             // ------------ notification -------------
-            $fk_regoin = $_POST['fk_regoin']; //fk_regoin_invoice
-            $fk_country = $_POST['fkcountry']; //owner not related in regoin
+            $fk_regoin = $data['fk_regoin']; //fk_regoin_invoice
+            $fk_country = $data['fk_country']; //owner not related in regoin
             $name_enterprise = $client->name_enterprise;
             $title_name_approve = "تم إنشاء فاتورة للعميل ";
-            $name_user = $_POST['nameUser']; //موظف المبيعات
+            $name_user = $data['nameUser']; //موظف المبيعات
             $message = "$title_name_approve $name_enterprise من قبل \r $name_user";
 
 
             $user_ids =  getIdUsers($fk_regoin, 10, $fk_country);
+            // dd($user_ids);
+            // $user_ids = collect([472, 418]);
             $tokens = getTokens($user_ids);
+            // dd($tokens);
             $title = "طلب موافقة";
             $this->invoiceSrevice->sendNotification(
                 $tokens,
@@ -275,7 +278,7 @@ class FilesInvoiceController extends Controller
                 'ApproveRequest',
                 $title,
                 $message,
-            );
+            )->storeNotification($user_ids, $message, 'ApproveRequest', $client->id_clients);
 
             $arrayUser =  getIdUsers($fk_regoin, 111, $fk_country);
             $title = "طلب موافقة المالية";
@@ -286,7 +289,7 @@ class FilesInvoiceController extends Controller
                 'ApproveFRequest',
                 $title,
                 $message,
-            );
+            )->storeNotification($arrayUser, $message, 'ApproveRequest', $client->id_clients);
 
             DB::commit();
             return response()->json(['message' => new InvoiceResource($invoice), 'result' => 'success']);

@@ -45,19 +45,19 @@ class AppSrevices extends JsonResponeService
     {
         // Store the file with the modified filename
         $generatedPath = $file->storeAs($folder, $this->handlingFileName($file), 'public');
-        return $generatedPath;
+        return 'storage/'.$generatedPath;
     }
 
     public function storeThumbnail($file, $folder, $thumbnail_width)
     {
         $generatedPath = ImageManager::imagick()
             ->read(public_path($this->storeFile($file, $folder)))
-            ->resize(width: $thumbnail_width)
+            ->resize($thumbnail_width, $thumbnail_width)
             ->save()
             ->origin()
             ->filePath();
         // Store the file with the modified filename
-        return $generatedPath;
+        return str($generatedPath)->after('public/');
     }
 
     public function handlingFileName($file)
