@@ -23,7 +23,7 @@ class invoicesSrevices extends JsonResponeService
 
     public function sendNotification($tokens ,$id_client, $type ,$title, $message)
     {
-        
+
         foreach($tokens as $token)
         {
             Notification::send(
@@ -81,7 +81,7 @@ class invoicesSrevices extends JsonResponeService
                     $fileInvoice[$index]->file_attach_invoice = $filsHandled;
                     $fileInvoice[$index]->fk_invoice = $invoiceId;
                     $fileInvoice[$index]->type_file = 1;
-                    // $fileInvoice[$index]->add_date = Carbon::now()->toDateTimeString();
+                    $fileInvoice[$index]->add_date = Carbon::now()->toDateTimeString();
                     $fileInvoice[$index]->save();
                 }
                 $response = $fileInvoice;
