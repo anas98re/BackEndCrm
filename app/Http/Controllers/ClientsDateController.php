@@ -162,7 +162,7 @@ class ClientsDateController extends Controller
     {
         $data = $request->all();
         $data['fk_user_add'] = auth('sanctum')->user()->id_user;
-        $data['fk_client'] = client_invoice::find($request->fk_invoice)->fk_idClient;
+        $data['fk_client'] = client_invoice::find($request->fk_invoice)?->fk_idClient;
 
         $clients_date = clients_date::create($data);
 
