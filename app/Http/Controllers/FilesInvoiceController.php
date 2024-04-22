@@ -396,55 +396,114 @@ class FilesInvoiceController extends Controller
         $data = $request->all();
         try
         {
-            $invoice = client_invoice::query()->where('id_invoice', $invoice_id)->first();
-            if(key_exists('file', $data))
-            {
-                $filsHandled = $this->myService->storeFile($request->file, 'invoices');
-                if(!str($invoice->image_record)->isEmpty())
-                {
-                    Storage::delete('public/'.$invoice->image_record);
-                }
-                $invoice->update(['image_record' => $filsHandled]);
-            }
-            if(key_exists('logo', $data))
-            {
-                $filsHandled = $this->myService->storeThumbnail($request->logo, 'logo_client', 200);;
-                if(!str($invoice->imagelogo)->isEmpty())
-                {
-                    // dd(Storage::delete(str($invoice->imagelogo)->after('storage/')));
-                    Storage::delete('public/'.$invoice->imagelogo);
-                }
-                $invoice->update(['imagelogo' => $filsHandled]);
-            }
-            if(key_exists('file_to_delete', $data))
-            {
-                foreach($data['file_to_delete'] as $file_id)
-                {
-                    $fileInvoice = files_invoice::where('id', $file_id)->first();
-                    if (!is_null($fileInvoice)) {
-                        Storage::delete('public/'.$fileInvoice->file_attach_invoice);
-                        $fileInvoice->delete();
-                    }
-                }
-            }
-            if(key_exists('file_to_attach', $data))
-            {
-                foreach($request->file_to_attach as $file)
-                {
-                    $filsHandled = $this->myService->storeFile($file, 'invoices');
-                    $fileInvoice = files_invoice::create([
-                        'fk_invoice' => $invoice->id_invoice,
-                        'file_attach_invoice' => $filsHandled,
-                    ]);
-                }
-            }
+            $invoice = crudMultiInvoiceFiles($request->all(), $invoice_id, $this->myService);
             DB::commit();
-            return response()->json(['message' => new InvoiceResource($invoice->refresh())]);
+            return response()->json(['message' => new InvoiceResource($invoice)]);
         }
         catch(Exception $e)
         {
             DB::rollBack();
             return response()->json(['message' => $e->getTrace()], 400);
+        }
+    }
+
+    public function updateInvoice(Request $request, string $invoice_id)
+    {
+        DB::beginTransaction();
+        $data = $request->all();
+        try
+        {
+            $invoice = client_invoice::where('id_invoice', $invoice_id)->first();
+
+            $invoice->update([
+                'date_create' => $request->input('date_create', $invoice->date_create),
+                'date_approve' => $request->input('date_approve', $invoice->date_approve),
+                'fk_regoin_invoice' => $request->input('fk_regoin_invoice', $invoice->fk_regoin_invoice),
+                'total' => $request->input('total', $invoice->total),
+                'type_pay' => $request->input('type_pay', $invoice->type_pay),
+                'renew_year' => $request->input('renew_year', $invoice->renew_year),
+                'renew2year' => $request->input('renew2year', $invoice->renew2year),
+                'renew_pluse' => $request->input('renew_pluse', $invoice->renew_pluse),
+                'participate_fk' => $request->input('participate_fk', $invoice->participate_fk),
+                'fk_agent' => $request->input('fk_agent', $invoice->fk_agent),
+                'type_seller' => $request->input('type_seller', $invoice->type_seller),
+                'rate_participate' => $request->input('rate_participate', $invoice->rate_participate),
+                'type_installation' => $request->input('type_installation', $invoice->type_installation),
+                'image_record' => $request->input('image_record', $invoice->image_record),
+                'fk_idClient' => $request->input('fk_idClient', $invoice->fk_idClient),
+                'fk_idUser' => $request->total != null ? $invoice->fk_idUser: $request->input('fk_idUser', $invoice->fk_idUser),
+                'amount_paid' => $request->input('amount_paid', $invoice->amount_paid),
+                'notes' => $request->input('notes', $invoice->notes),
+                'lastuserupdate' => $request->input('lastuserupdate', $invoice->lastuserupdate),
+                'date_lastuserupdate' => Carbon::now()->format('Y-m-d H:i:s'),
+                'address_invoice' => $request->input('address_invoice', $invoice->address_invoice),
+                'clientusername' => $request->input('clientusername', $invoice->clientusername),
+                'numbarnch' => $request->input('numbarnch', $invoice->numbarnch),
+                'nummostda' => $request->input('nummostda', $invoice->nummostda),
+                'numusers' => $request->input('numusers', $invoice->numusers),
+                'numTax' => $request->input('numTax', $invoice->numTax),
+                'currency_name' => $request->input('currency_name', $invoice->currency_name),
+                'imagelogo' => $request->input('imagelogo', $invoice->imagelogo),
+                'renew_agent' => $request->input('renew_agent', $invoice->renew_agent),
+                'invoice_source' => $request->input('invoice_source', $invoice->invoice_source),
+            ]);
+
+            if(key_exists('product_to_delete', $data))
+            {
+                foreach($data['product_to_delete'] as $product_id)
+                {
+                    invoice_product::where('fk_product', $product_id)
+                        ->where('fk_id_invoice', $invoice_id)
+                        ->first()?->delete();
+                }
+            }
+
+            if(key_exists('products', $data))
+            {
+                foreach($request['products'] as $product)
+                {
+                    $insertArray = array();
+                    $insertArray['amount'] = $product['amount']?? 0;
+                    $insertArray['price'] = $product['price']?? 0;
+                    $insertArray['fk_id_invoice'] = $invoice->id_invoice;
+                    $insertArray['fk_product'] = $product['fk_product'];
+                    $insertArray['taxtotal'] = $product['taxtotal']?? 0.0;
+                    $insertArray['rate_admin'] = $product['rate_admin']?? 0.0;
+                    $insertArray['rateUser'] = $product['rateUser']?? 0.0;
+
+                    invoice_product::create($insertArray);
+                }
+            }
+
+            $invoice = crudMultiInvoiceFiles($request->all(), $invoice_id, $this->myService);
+
+            $name_enterprise = clients::where('id_clients', $data['fk_idClient'])->first()?->name_enterprise;
+            $nameuser = auth()->user()->nameUser; //
+            $nametitle = "من قبل";
+            $titlenameapprove = "تم تعديل فاتورة العميل ";
+            $message = "$titlenameapprove $name_enterprise \r$nametitle \r $nameuser";
+            $fk_regoin = $_POST['fk_regoin']; //fk_regoin_invoice
+            $fkcountry = $_POST['fk_country']; //owner not related in regoin
+            $user_ids =  getIdUsers($fk_regoin, 57, $fkcountry);
+            $tokens = getTokens($user_ids);
+            $title = "تعديل فاتورة";
+
+            $this->invoiceSrevice->sendNotification(
+                $tokens,
+                $data['fk_idClient'],
+                'InvoiceUpdated',
+                $title,
+                $message,
+            );
+            $this->invoiceSrevice->storeNotification($user_ids, $message, 'InvoiceUpdated', $data['fk_idClient'], auth()->user()->id_user);
+
+            DB::commit();
+            return response()->json(['message' => new InvoiceResource($invoice)]);
+        }
+        catch(Exception $e)
+        {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 }

@@ -1,13 +1,16 @@
 <?php
 
 use App\Models\client_comment;
+use App\Models\client_invoice;
 use App\Models\clients;
+use App\Models\files_invoice;
 use App\Models\privg_level_user;
 use App\Models\user_maincity;
 use App\Models\user_token;
 use App\Models\users;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 function getIdLevelsByPrivilge($fk_privileg): Collection
 {
@@ -98,4 +101,53 @@ function getTokens(Collection $user_ids): Collection
         ->first()?->token;
     }
     return $tokens->flatten()->filter();
+}
+
+
+function crudMultiInvoiceFiles($data, $invoice_id, $service)
+{
+    $invoice = client_invoice::query()->where('id_invoice', $invoice_id)->first();
+    if(key_exists('file', $data))
+    {
+        $filsHandled = $service->storeFile($data['file'], 'invoices');
+        if(!str($invoice->image_record)->isEmpty())
+        {
+            Storage::delete('public/'.$invoice->image_record);
+        }
+        $invoice->update(['image_record' => $filsHandled]);
+    }
+    if(key_exists('logo', $data))
+    {
+        $filsHandled = $service->storeThumbnail($data['logo'], 'logo_client', 200);;
+        if(!str($invoice->imagelogo)->isEmpty())
+        {
+            // dd(Storage::delete(str($invoice->imagelogo)->after('storage/')));
+            Storage::delete('public/'.$invoice->imagelogo);
+        }
+        $invoice->update(['imagelogo' => $filsHandled]);
+    }
+    if(key_exists('file_to_delete', $data))
+    {
+        foreach($data['file_to_delete'] as $file_id)
+        {
+            $fileInvoice = files_invoice::where('id', $file_id)->first();
+            if (!is_null($fileInvoice)) {
+                Storage::delete('public/'.$fileInvoice->file_attach_invoice);
+                $fileInvoice->delete();
+            }
+        }
+    }
+    if(key_exists('file_to_attach', $data))
+    {
+        foreach($data['file_to_attach'] as $file)
+        {
+            $filsHandled = $service->storeFile($file, 'invoices');
+            $fileInvoice = files_invoice::create([
+                'fk_invoice' => $invoice->id_invoice,
+                'file_attach_invoice' => $filsHandled,
+            ]);
+        }
+    }
+
+    return $invoice->refresh();
 }

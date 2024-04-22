@@ -39,7 +39,7 @@ class invoicesSrevices extends JsonResponeService
         return $this;
     }
 
-    public function storeNotification($user_ids, $message, $type, $id_client)
+    public function storeNotification($user_ids, $message, $type, $id_client, $from_user = null)
     {
         foreach($user_ids as $user_id)
         {
@@ -49,7 +49,7 @@ class invoicesSrevices extends JsonResponeService
                 'to_user' => $user_id,
                 'isread' => 0,
                 'data' => $id_client,
-                'from_user' => auth()->user()->id_user,
+                'from_user' => is_null($from_user)? auth()->user()->id_user: $from_user,
                 'dateNotify' => Carbon::now('Asia/Riyadh')
             ]);
         }
