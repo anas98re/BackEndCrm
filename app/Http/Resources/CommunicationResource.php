@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,7 +19,7 @@ class CommunicationResource extends JsonResource
             'id_communication' => (string)$this->id_communication,
             'fk_client' => (string)$this->fk_client,
             'fk_user' => (string)$this->fk_user,
-            'date_communication' => $this->date_communication,
+            'date_communication' => Carbon::parse($this->date_communication)->format('Y-m-d H:i:s'),
             'result' => $this->result,
             'notes' => $this->notes,
             'rate' => $this->rate,
