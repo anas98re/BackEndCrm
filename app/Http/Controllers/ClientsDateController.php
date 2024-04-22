@@ -162,20 +162,20 @@ class ClientsDateController extends Controller
     {
         $data = $request->all();
         $data['fk_user_add'] = auth('sanctum')->user()->id_user;
-        if(!is_null($data['fk_invoice']?? null))
-            $data['fk_client'] = client_invoice::where('id_invoice', $request->fk_invoice)->first()->fk_idClient;
-        // else => this date for agent
+        $data['fk_invoice'] = ($request->fk_invoice === 'null') ? null : $request->fk_invoice;
+        if ($request->fk_invoice  !== null && $request->fk_invoice  !== 'null') {
+            $data['fk_client'] = client_invoice::find($request->fk_invoice)?->fk_idClient;
+            $data['fk_agent'] = null;
+        }
+
         $clients_date = clients_date::create($data);
 
         //Tasks ..
-        if(!is_null($data['fk_invoice']?? null))
-        {
-            $data = [
-                'idInvoice' => $request?->fk_invoice,
-                'iduser_FApprove' => auth('sanctum')->user()->id_user,
-            ];
-            $this->TaskService->closeTaskAddVisitDateAfterApproveInvoice($data);
-        }
+        $data = [
+            'idInvoice' => $request->fk_invoice,
+            'iduser_FApprove' => auth('sanctum')->user()->id_user,
+        ];
+        $this->TaskService->closeTaskAddVisitDateAfterApproveInvoice($data);
 
         $clients_date = new clientsDateResource($clients_date);
 
