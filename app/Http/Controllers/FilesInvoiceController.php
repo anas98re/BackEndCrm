@@ -389,4 +389,62 @@ class FilesInvoiceController extends Controller
             throw $th;
         }
     }
+
+    public function crudFileInvoice(Request $request, string $invoice_id)
+    {
+        DB::beginTransaction();
+        $data = $request->all();
+        try
+        {
+            $invoice = client_invoice::query()->where('id_invoice', $invoice_id)->first();
+            if(key_exists('file', $data))
+            {
+                $filsHandled = $this->myService->storeFile($request->file, 'invoices');
+                if(!str($invoice->image_record)->isEmpty())
+                {
+                    Storage::delete('public/'.$invoice->image_record);
+                }
+                $invoice->update(['image_record' => $filsHandled]);
+            }
+            if(key_exists('logo', $data))
+            {
+                $filsHandled = $this->myService->storeThumbnail($request->logo, 'logo_client', 200);;
+                if(!str($invoice->imagelogo)->isEmpty())
+                {
+                    // dd(Storage::delete(str($invoice->imagelogo)->after('storage/')));
+                    Storage::delete('public/'.$invoice->imagelogo);
+                }
+                $invoice->update(['imagelogo' => $filsHandled]);
+            }
+            if(key_exists('file_to_delete', $data))
+            {
+                foreach($data['file_to_delete'] as $file_id)
+                {
+                    $fileInvoice = files_invoice::where('id', $file_id)->first();
+                    if (!is_null($fileInvoice)) {
+                        Storage::delete('public/'.$fileInvoice->file_attach_invoice);
+                        $fileInvoice->delete();
+                    }
+                }
+            }
+            if(key_exists('file_to_attach', $data))
+            {
+                foreach($request->file_to_attach as $file)
+                {
+                    $filsHandled = $this->myService->storeFile($file, 'invoices');
+                    $fileInvoice = files_invoice::create([
+                        'fk_invoice' => $invoice->id_invoice,
+                        'file_attach_invoice' => $filsHandled,
+                    ]);
+                }
+            }
+            DB::commit();
+            return response()->json(['message' => new InvoiceResource($invoice->refresh())]);
+        }
+        catch(Exception $e)
+        {
+            DB::rollBack();
+            return response()->json(['message' => $e->getTrace()], 400);
+        }
+    }
 }
