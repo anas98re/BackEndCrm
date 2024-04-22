@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Constants;
 use App\Models\client_invoice;
 use App\Http\Requests\Storeclient_invoiceRequest;
 use App\Http\Requests\Updateclient_invoiceRequest;
+use App\Http\Resources\InvoiceResource;
 use App\Models\clients;
 use App\Models\notifiaction;
+use App\Models\privg_level_user;
 use App\Models\privileges;
 use App\Models\regoin;
 use App\Models\users;
@@ -97,5 +100,54 @@ class ClientInvoiceController extends Controller
             ->get();
 
         return $arrJson;
+    }
+
+    public function getInvoicesByPrivilages()
+    {
+        $user = auth('sanctum')->user();
+        $level = $user->type_level;
+
+        $levelPriviligeAllClientInvoices = privg_level_user::where(
+            'fk_privileg',
+            Constants::PRIVILEGES_IDS['ALL_CLIENT_INVOICES']
+        )
+            ->where('fk_level', $level)
+            ->first();
+
+        $levelPriviligeAllRegoinInvoices = privg_level_user::where(
+            'fk_privileg',
+            Constants::PRIVILEGES_IDS['ALL_CLIENT_REGOIN']
+        )
+            ->where('fk_level', $level)
+            ->first();
+
+        $levelPriviligeAllEmployeeInvoices = privg_level_user::where(
+            'fk_privileg',
+            Constants::PRIVILEGES_IDS['ALL_CLIENT_EMPLOYEE']
+        )
+            ->where('fk_level', $level)
+            ->first();
+
+
+        switch (true) {
+            case $levelPriviligeAllClientInvoices?->is_check == 1:
+                $data = client_invoice::all();
+                break;
+
+            case $levelPriviligeAllRegoinInvoices?->is_check == 1:
+                $data = client_invoice::where('fk_regoin_invoice', $user->fk_regoin)->get();
+                break;
+
+            case $levelPriviligeAllEmployeeInvoices?->is_check == 1:
+                $data = client_invoice::where('fk_idUser', $user->id_user)->get();
+                break;
+
+            default:
+                $data = collect();
+                break;
+        }
+
+        $response = InvoiceResource::collection($data);
+        return $this->sendSucssas($response);
     }
 }

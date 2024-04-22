@@ -146,7 +146,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //ClientInvoice
     Route::controller(ClientInvoiceController::class)->group(function () {
-        Route::post('/getInvoicesByPrivilages', 'getInvoicesByPrivilages');
+        Route::get('/getInvoicesByPrivilages', 'getInvoicesByPrivilages');
         Route::post('deleteInvoice/{id}','deleteInvoice');
     });
 
