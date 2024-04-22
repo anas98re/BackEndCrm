@@ -144,6 +144,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('importClints', [ClientsController::class, 'importClints']);
     Route::post('importAnotherClints', [ClientsController::class, 'importAnotherClints']);
 
+    //ClientInvoice
+    Route::controller(ClientInvoiceController::class)->group(function () {
+        Route::post('/getInvoicesByPrivilages', 'getInvoicesByPrivilages');
+        Route::post('deleteInvoice/{id}','deleteInvoice');
+    });
 
     //invoices
     Route::post('/addInvoice', [FilesInvoiceController::class, 'addInvoice']);
@@ -155,8 +160,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('getSeriesInvoiceAll', [SeriesInvoiceacceptController::class, 'getSeriesInvoiceAll']);
 
 
-    //ClientInvoice
-    Route::post('deleteInvoice/{id}', [ClientInvoiceController::class, 'deleteInvoice']);
 
     //company ...
     Route::post('addCommentToCompany/{fk_company}', [CompanyCommentController::class, 'addCommentToCompany']);
@@ -191,7 +194,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('TransferTicket/{id}', [TicketsController::class, 'TransferTicket']);
     Route::get('reopenReportTickets', [TicketsController::class, 'reopenReport']);
     Route::post('transferTicketsTable', [TicketsController::class, 'transferTable']);
-
 });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);
