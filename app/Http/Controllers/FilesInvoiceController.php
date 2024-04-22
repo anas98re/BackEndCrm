@@ -7,6 +7,7 @@ use App\Http\Requests\Storefiles_invoiceRequest;
 use App\Http\Requests\Updatefiles_invoiceRequest;
 use App\Services\AppSrevices;
 use App\Services\invoicesSrevices;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,7 +24,7 @@ class FilesInvoiceController extends Controller
     }
 
     //this is the api we use for all procesess add, update and delete..
-    public function InvoiceFiles(Storefiles_invoiceRequest $request)
+    public function InvoiceFiles(Request $request)
     {
         $filesDelete = json_decode($request->input('files_delete_ids'));
         $filesAdd = $request->file('file_attach_invoice');

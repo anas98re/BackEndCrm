@@ -20,7 +20,7 @@ class clientsDateResource extends JsonResource
             'date_end' => (string)  $this->date_end,
             'fk_user_add' => (string) $this->fk_user_add,
             'fk_userAddName' => (string) $this->userAdd?->nameUser,
-            'fk_client' => (string)  $this->fk_client,
+            'fk_client' => (string)  $this?->fk_client,
             'clientName' => (string) $this->client?->name_enterprise,
             'idclients_date' => (string) $this->idclients_date,
             'fk_user_update' => (string) $this->fk_user_update,

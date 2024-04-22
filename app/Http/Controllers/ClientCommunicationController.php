@@ -27,8 +27,7 @@ use App\Models\ClientCommunication;
 use App\Models\Regoin;
 use App\Models\Users;
 use App\Models\ClientInvoice;
-
-
+use Illuminate\Support\Collection;
 
 class ClientCommunicationController extends Controller
 {
@@ -75,7 +74,7 @@ class ClientCommunicationController extends Controller
             $date_next = $carbonDatetime;
 
             $arrJson_result = $this->getcommunication_repeatcheck($client->id_clients);
-            if (!$arrJson_result) // [] => false, ![] => true
+            if ($arrJson_result->count() == 0) // [] => false, ![] => true
                 $this->addcommunication($client->id_clients, $date_next);
 
 
@@ -155,7 +154,7 @@ class ClientCommunicationController extends Controller
         }
     }
 
-    protected function getcommunication_repeatcheck($fkclient)
+    protected function getcommunication_repeatcheck($fkclient): Collection
     {
         return client_communication::where('fk_client', $fkclient)
             ->where('type_communcation', 'دوري')

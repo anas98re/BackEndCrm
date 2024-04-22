@@ -1,17 +1,23 @@
-image: atlassian/default-image:2
+image: php:7.3
 
 pipelines:
   branches:
     test_masterBitbucket:
       - step:
-          name: Deploy to Production
+          name: Deploy to matgr.smartlifesys.online FTP
           script:
-            - git pull
-            - pipe: atlassian/ftp-deploy:0.7.0
-              variables:
-                USER: $FTP_USERNAME
-                PASSWORD: $FTP_PASSWORD
-                SERVER: $FTP_HOST
-                REMOTE_PATH: /public_html/TestBackEndLaravelApi
-                DELETE_FLAG: 'false' # Don't delete existing files
-                EXTRA_ARGS: "--quiet --include --exclude=.bitbucket/ --exclude=.git/ --exclude=bitbucket-pipelines.yml --exclude=.gitignore --exclude=storage/ --exclude=public/ --exclude=vendor/ --exclude=resources/"
+            - export USER=$FTP_USERNAME
+            - export PASSWORD=$FTP_PASSWORD
+            - export SERVER=$FTP_HOST
+            - export REMOTE_PATH=/public_html/TestBackEndLaravelApi
+            - apt-get update
+            - apt-get -qq install git-ftp
+            - echo ".bitbucket/" > .git-ftp-ignore
+            - echo ".git/" >> .git-ftp-ignore
+            - echo "bitbucket-pipelines.yml" >> .git-ftp-ignore
+            - echo ".gitignore" >> .git-ftp-ignore
+            - echo "storage/" >> .git-ftp-ignore
+            - echo "public/" >> .git-ftp-ignore
+            - echo "vendor/" >> .git-ftp-ignore
+            - echo "resources/" >> .git-ftp-ignore
+            - git ftp push --user $USER --passwd $PASSWORD ftp://$SERVER$REMOTE_PATH

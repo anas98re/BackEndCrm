@@ -140,7 +140,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/updateStatusForVisit/{date_id}', [ClientsDateController::class, 'updateStatusForVisit']);
     //Cities
     Route::post('getCitiesFromMainCitiesIds', [MaincityController::class, 'getCitiesFromMainCitiesIds']);
-    //cllients Excel 12
+    //cllients Excel
     Route::post('importClints', [ClientsController::class, 'importClints']);
     Route::post('importAnotherClints', [ClientsController::class, 'importAnotherClints']);
 
