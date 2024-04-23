@@ -12,6 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Http\Request;
+use Modules\MobileApp\Entities\level;
 
 class users extends Model
 {
@@ -48,42 +49,43 @@ class users extends Model
         'remember_token',
     ];
 
-    public function getActivitylogOptions(): LogOptions
-    {
-        $request = app(Request::class);
-        $routePattern = $request->route()->uri();
-        $ip = $request->ip();
-        if ($routePattern == 'api/checkEmail') {
-
-            $userName = 'New User';
-            return LogOptions::defaults()
-                ->logOnly(['*'])
-                ->logOnlyDirty()
-                ->useLogName('users Log')
-                ->setDescriptionForEvent(function (string $eventName) use ($routePattern, $ip, $userName) {
-                    // Provide the description for the event based on the event name, route pattern, and IP
-                    if ($eventName === 'updated')
-                        return "otp updated , using route: $routePattern from IP: $ip.";
-                });
-        }
-    }
-
-    public function getQualifiedKeyName()
-    {
-        return $this->table . '.' . $this->primaryKey;
-    }
 
     public function managements()
     {
         return $this->belongsTo(managements::class, 'type_administration', 'idmange');
     }
+
     public function regions()
     {
         return $this->belongsTo(regoin::class, 'fk_regoin', 'id_regoin');
     }
 
+    public function country()
+    {
+        return $this->belongsTo(country::class, 'fk_country', 'id_country');
+    }
+
+    public function level()
+    {
+        return $this->belongsTo(level::class, 'type_level', 'id_level');
+    }
+
     public function fcmToken(): HasMany
     {
         return $this->hasMany(user_token::class, 'fkuser');
+    }
+
+    public function privileges(): HasMany
+    {
+        return $this->hasMany(privg_level_user::class, 'fk_level', 'type_level')
+            ->join('privileges', 'privileges.id_privilege', '=', 'privg_level_user.fk_privileg')
+            ->orderBy('privileges.periorty', 'asc');
+    }
+
+    public function mainCity()
+    {
+        return $this->hasMany(user_maincity::class, 'fk_user')
+            ->join('users', 'users.id_user', '=', 'user_maincity.fk_user')
+            ->join('maincity', 'maincity.id_maincity', '=', 'user_maincity.fk_maincity');
     }
 }
