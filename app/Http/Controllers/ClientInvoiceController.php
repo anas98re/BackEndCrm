@@ -42,15 +42,14 @@ class ClientInvoiceController extends Controller
     {
         DB::beginTransaction();
         $data = $request->all();
-        try
-        {
+        try {
             $data['date_create'] = Carbon::now()->format("Y-m-d H:i:s");
             $data['type_pay'] = $data['type_pay'] ?? 0;
             $data['type_installation'] = $data['type_installation'] ?? 0;
             $data['amount_paid'] = $data['amount_paid'] ?? 0;
 
             // add invoice and get invoice_id
-            if(key_exists('date_not_readyinstall', $request->all()))
+            if (key_exists('date_not_readyinstall', $request->all()))
                 $invoice = client_invoice::create([
                     'date_create' => $data['date_create'],
                     'invoice_source' => $data['invoice_source'] ?? null,
@@ -64,12 +63,12 @@ class ClientInvoiceController extends Controller
                     'rate_participate' => $data['rate_participate'] ?? null,
                     'fk_regoin_invoice' => $data['fk_regoin_invoice'], // required
                     'type_installation' => $data['type_installation'],
-                    'image_record' => $data['image_record']?? '',
+                    'image_record' => $data['image_record'] ?? '',
                     'fk_idClient' => $data['fk_idClient'], // required
-                    'fk_idUser' => $data['fk_idUser'],// auth()->user()->id_user,
+                    'fk_idUser' => $data['fk_idUser'], // auth()->user()->id_user,
                     'amount_paid' => $data['amount_paid'],
                     'notes' => $data['notes'] ?? '',
-                    'total' => $data['total']?? '',
+                    'total' => $data['total'] ?? '',
                     'address_invoice' => $data['address_invoice'], // required,
                     'numbarnch' => $data['numbarnch'], // required
                     'nummostda' => $data['nummostda'], // required
@@ -79,7 +78,7 @@ class ClientInvoiceController extends Controller
                     'numTax' => $data['numTax'], // required,
                     'ready_install' => $data['ready_install'], // required
                     'currency_name' => $data['currency_name'], //required
-                    'renew_agent' => $data['renew_agent']?? null,
+                    'renew_agent' => $data['renew_agent'] ?? null,
                     'file_attach' => '',
                     'date_not_readyinstall' => $data['date_not_readyinstall'], // required,
                     'user_not_ready_install' => $data['user_not_ready_install'], // required
@@ -97,12 +96,12 @@ class ClientInvoiceController extends Controller
                     'rate_participate' => $data['rate_participate'] ?? null,
                     'fk_regoin_invoice' => $data['fk_regoin_invoice'], // required
                     'type_installation' => $data['type_installation'],
-                    'image_record' => $data['image_record']?? '',
+                    'image_record' => $data['image_record'] ?? '',
                     'fk_idClient' => $data['fk_idClient'], // required
-                    'fk_idUser' => $data['fk_idUser'],// auth()->user()->id_user,
+                    'fk_idUser' => $data['fk_idUser'], // auth()->user()->id_user,
                     'amount_paid' => $data['amount_paid'],
                     'notes' => $data['notes'] ?? '',
-                    'total' => $data['total']?? '',
+                    'total' => $data['total'] ?? '',
                     'address_invoice' => $data['address_invoice'], // required,
                     'numbarnch' => $data['numbarnch'], // required
                     'nummostda' => $data['nummostda'], // required
@@ -112,9 +111,9 @@ class ClientInvoiceController extends Controller
                     'numTax' => $data['numTax'], // required,
                     'ready_install' => $data['ready_install'], // required
                     'currency_name' => $data['currency_name'], //required
-                    'renew_agent' => $data['renew_agent']?? null,
+                    'renew_agent' => $data['renew_agent'] ?? null,
                     'file_attach' => '',
-                    'renew_pluse' => $data['renew_pluse']?? null,
+                    'renew_pluse' => $data['renew_pluse'] ?? null,
                     'date_readyinstall' => null,
                     'user_ready_install' => null,
                 ]);
@@ -124,16 +123,15 @@ class ClientInvoiceController extends Controller
 
             addComment($data['comment'], $data['fk_idClient'], $data['fk_idUser'], 'متطلبات العميل');
 
-            foreach($request['products'] as $product)
-            {
+            foreach ($request['products'] as $product) {
                 $insertArray = array();
-                $insertArray['amount'] = $product['amount']?? 0;
-                $insertArray['price'] = $product['price']?? 0;
+                $insertArray['amount'] = $product['amount'] ?? 0;
+                $insertArray['price'] = $product['price'] ?? 0;
                 $insertArray['fk_id_invoice'] = $invoice->id_invoice;
                 $insertArray['fk_product'] = $product['fk_product'];
-                $insertArray['taxtotal'] = $product['taxtotal']?? 0.0;
-                $insertArray['rate_admin'] = $product['rate_admin']?? 0.0;
-                $insertArray['rateUser'] = $product['rateUser']?? 0.0;
+                $insertArray['taxtotal'] = $product['taxtotal'] ?? 0.0;
+                $insertArray['rate_admin'] = $product['rate_admin'] ?? 0.0;
+                $insertArray['rateUser'] = $product['rateUser'] ?? 0.0;
 
                 invoice_product::create($insertArray);
             }
@@ -144,13 +142,11 @@ class ClientInvoiceController extends Controller
 
             $data['image_record'] = '';
             $data['imagelogo'] = '';
-            if(key_exists('file', $request->all()))
-            {
+            if (key_exists('file', $request->all())) {
                 $filsHandled = $this->myService->storeFile($request->file, 'invoices');
                 $data['image_record'] = $filsHandled;
             }
-            if(key_exists('logo', $request->all()))
-            {
+            if (key_exists('logo', $request->all())) {
                 $filsHandled = $this->myService->storeThumbnail($request->logo, 'logo_client', 200);
                 $data['imagelogo'] = $filsHandled;
             }
@@ -159,10 +155,8 @@ class ClientInvoiceController extends Controller
                 'imagelogo' => $data['imagelogo'],
             ]);
 
-            if(key_exists('uploadfiles', $request->all()))
-            {
-                foreach($request->uploadfiles as $file)
-                {
+            if (key_exists('uploadfiles', $request->all())) {
+                foreach ($request->uploadfiles as $file) {
                     $filsHandled = $this->myService->storeFile($file, 'invoices');
                     $fileInvoice = files_invoice::create([
                         'fk_invoice' => $invoice->id_invoice,
@@ -209,9 +203,7 @@ class ClientInvoiceController extends Controller
 
             DB::commit();
             return response()->json(['message' => new InvoiceResource($invoice), 'result' => 'success']);
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()]);
         }
@@ -310,8 +302,7 @@ class ClientInvoiceController extends Controller
     {
         DB::beginTransaction();
         $data = $request->all();
-        try
-        {
+        try {
             $invoice = client_invoice::where('id_invoice', $invoice_id)->first();
 
             $invoice->update([
@@ -330,7 +321,7 @@ class ClientInvoiceController extends Controller
                 'type_installation' => $request->input('type_installation', $invoice->type_installation),
                 'image_record' => $request->input('image_record', $invoice->image_record),
                 'fk_idClient' => $request->input('fk_idClient', $invoice->fk_idClient),
-                'fk_idUser' => $request->total != null ? $invoice->fk_idUser: $request->input('fk_idUser', $invoice->fk_idUser),
+                'fk_idUser' => $request->total != null ? $invoice->fk_idUser : $request->input('fk_idUser', $invoice->fk_idUser),
                 'amount_paid' => $request->input('amount_paid', $invoice->amount_paid),
                 'notes' => $request->input('notes', $invoice->notes),
                 'lastuserupdate' => $request->input('lastuserupdate', $invoice->lastuserupdate),
@@ -347,28 +338,24 @@ class ClientInvoiceController extends Controller
                 'invoice_source' => $request->input('invoice_source', $invoice->invoice_source),
             ]);
 
-            if(key_exists('product_to_delete', $data))
-            {
-                foreach($data['product_to_delete'] as $product_id)
-                {
+            if (key_exists('product_to_delete', $data)) {
+                foreach ($data['product_to_delete'] as $product_id) {
                     invoice_product::where('fk_product', $product_id)
                         ->where('fk_id_invoice', $invoice_id)
                         ->first()?->delete();
                 }
             }
 
-            if(key_exists('products', $data))
-            {
-                foreach($request['products'] as $product)
-                {
+            if (key_exists('products', $data)) {
+                foreach ($request['products'] as $product) {
                     $insertArray = array();
-                    $insertArray['amount'] = $product['amount']?? 0;
-                    $insertArray['price'] = $product['price']?? 0;
+                    $insertArray['amount'] = $product['amount'] ?? 0;
+                    $insertArray['price'] = $product['price'] ?? 0;
                     $insertArray['fk_id_invoice'] = $invoice->id_invoice;
                     $insertArray['fk_product'] = $product['fk_product'];
-                    $insertArray['taxtotal'] = $product['taxtotal']?? 0.0;
-                    $insertArray['rate_admin'] = $product['rate_admin']?? 0.0;
-                    $insertArray['rateUser'] = $product['rateUser']?? 0.0;
+                    $insertArray['taxtotal'] = $product['taxtotal'] ?? 0.0;
+                    $insertArray['rate_admin'] = $product['rate_admin'] ?? 0.0;
+                    $insertArray['rateUser'] = $product['rateUser'] ?? 0.0;
 
                     invoice_product::create($insertArray);
                 }
@@ -398,9 +385,7 @@ class ClientInvoiceController extends Controller
 
             DB::commit();
             return response()->json(['message' => new InvoiceResource($invoice)]);
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 400);
         }
@@ -514,23 +499,29 @@ class ClientInvoiceController extends Controller
             ->first();
 
 
+        $query = client_invoice::whereNull('isdelete')
+            ->where('stateclient', 'مشترك')
+            ->where('isApprove', 1)
+            ->orderByDesc('date_approve');
+
         switch (true) {
             case $levelPriviligeAllClientInvoices?->is_check == 1:
-                $data = client_invoice::all();
                 break;
 
             case $levelPriviligeAllRegoinInvoices?->is_check == 1:
-                $data = client_invoice::where('fk_regoin_invoice', $user->fk_regoin)->get();
+                $query->where('fk_regoin_invoice', $user->fk_regoin);
                 break;
 
             case $levelPriviligeAllEmployeeInvoices?->is_check == 1:
-                $data = client_invoice::where('fk_idUser', $user->id_user)->get();
+                $query->where('fk_idUser', $user->id_user);
                 break;
 
             default:
-                $data = collect();
+                $query->whereRaw('1 = 0'); 
                 break;
         }
+
+        $data = $query->get();
 
         $response = InvoiceResource::collection($data);
         return $this->sendSucssas($response);
