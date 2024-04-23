@@ -30,6 +30,16 @@ class Controller extends BaseController
         return response()->json($response, 200);
     }
 
+    public function Unauthenticated($result)
+    {
+        $response = [
+            'result' => 'success',
+            'code' => 200,
+            'message' => $result
+        ];
+        return response()->json($response, 200);
+    }
+
     public function sendError($error, $errorMessage = [], $code = 200)
     {
         $response = [

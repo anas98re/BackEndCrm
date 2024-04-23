@@ -11,7 +11,11 @@ class UsersController extends Controller
 {
     public function getCurrentUser()
     {
-        $userID = auth('sanctum')->user()->id_user;
+        $currentUser = auth('sanctum')->user();
+        if(!$currentUser){
+            return $this->Unauthenticated(null);
+        }
+        $userID = $currentUser?->id_user;
         $user = users::with([
             'country', 'regions', 'level', 'managements', 'privileges', 'mainCity'
         ])

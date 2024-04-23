@@ -198,9 +198,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('reopenReportTickets', [TicketsController::class, 'reopenReport']);
     Route::post('transferTicketsTable', [TicketsController::class, 'transferTable']);
 
-    Route::controller(UsersController::class)->group(function () {
-        Route::get('/returnCurrentUser', 'getCurrentUser');
-    });
+
+});
+Route::controller(UsersController::class)->group(function () {
+    Route::get('/returnCurrentUser', 'getCurrentUser');
 });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);
