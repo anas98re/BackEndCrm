@@ -148,11 +148,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::controller(ClientInvoiceController::class)->group(function () {
         Route::get('/getInvoicesByPrivilages', 'getInvoicesByPrivilages');
         Route::post('deleteInvoice/{id}','deleteInvoice');
+        Route::post('addInvoice','addInvoice');
+        Route::post('/updateInvoice/{invoice_id}','updateInvoice');
     });
 
-    //invoices
-    Route::post('/addInvoice', [ClientInvoiceController::class, 'addInvoice']);
-    Route::post('/updateInvoice/{invoice_id}', [ClientInvoiceController::class, 'updateInvoice']);
+    //FileInvoices
     Route::post('/crudFileInvoice/{invoice_id}', [FilesInvoiceController::class, 'crudFileInvoice']);
     Route::post('InvoiceFiles', [FilesInvoiceController::class, 'InvoiceFiles']);
     Route::get('getFilesInvoices', [FilesInvoiceController::class, 'getFilesInvoices']);
