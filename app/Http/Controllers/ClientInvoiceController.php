@@ -416,7 +416,7 @@ class ClientInvoiceController extends Controller
         }
 
 
-        $fk_regoin = clients::find($fk_idClient)->fk_regoin;
+        $fk_regoin = $invoice?->fk_regoin_invoice;
         $fkcountry = regoin::find($fk_regoin)->fk_country;
 
         $Ids =  getIdUsers($fk_regoin, 56, $fkcountry);
@@ -448,7 +448,7 @@ class ClientInvoiceController extends Controller
                 'type_notify' => $type,
                 'to_user' => $user_id,
                 'isread' => 0,
-                'data' => 'Tsk',
+                'data' => $id_invoice,
                 'from_user' => $fk_user,
                 'dateNotify' => Carbon::now('Asia/Riyadh')
             ]);
@@ -517,7 +517,7 @@ class ClientInvoiceController extends Controller
                 break;
 
             default:
-                $query->whereRaw('1 = 0'); 
+                $query->whereRaw('1 = 0');
                 break;
         }
 
