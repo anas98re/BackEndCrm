@@ -201,7 +201,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 });
 Route::controller(UsersController::class)->group(function () {
-    Route::get('/UetCurrentUser', 'getCurrentUser');
+    Route::get('/GetCurrentUser', 'getCurrentUser');
 });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);
