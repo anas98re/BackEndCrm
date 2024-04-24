@@ -522,9 +522,9 @@ class ClientInvoiceController extends Controller
                 break;
         }
 
-        $data = $query->get();
+        $data = $query->paginate(request()->limit?? 15);
 
-        $response = InvoiceResourceForGetInvoicesByPrivilages::collection($data);
+        $response = InvoiceResourceForGetInvoicesByPrivilages::collection($data)->response()->getData(true);
         return $this->sendSucssas($response);
     }
 }
