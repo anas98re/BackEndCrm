@@ -7,6 +7,7 @@ use App\Models\client_invoice;
 use App\Http\Requests\Storeclient_invoiceRequest;
 use App\Http\Requests\Updateclient_invoiceRequest;
 use App\Http\Resources\InvoiceResource;
+use App\Http\Resources\InvoiceResourceForGetInvoicesByPrivilages;
 use App\Models\clients;
 use App\Models\files_invoice;
 use App\Models\invoice_product;
@@ -523,7 +524,7 @@ class ClientInvoiceController extends Controller
 
         $data = $query->get();
 
-        $response = InvoiceResource::collection($data);
+        $response = InvoiceResourceForGetInvoicesByPrivilages::collection($data);
         return $this->sendSucssas($response);
     }
 }
