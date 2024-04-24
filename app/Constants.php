@@ -6,7 +6,7 @@ namespace App;
 class  Constants
 {
     const MAIDANI = 'ميداني';
-    const NOTICE_OF_TRANSFERRING_MARKETING_CLIENTS_TO_MY_FIELD_ID = 179;    
+    const NOTICE_OF_TRANSFERRING_MARKETING_CLIENTS_TO_MY_FIELD_ID = 179;
     const ALL_BRUNSHES = 14;
     const MARKETING_SALSE_ID = 18;
     const NEGOTIATION = 'تفاوض';
@@ -28,6 +28,10 @@ class  Constants
         "TRANSFER_CLIENTS_EMPLOYEE" => 184,
 
         "TRANSFER_CLIENTS_ALL" => 185,
+
+        "ALL_CLIENT_INVOICES" => 1,
+        "ALL_CLIENT_EMPLOYEE" => 6,
+        "ALL_CLIENT_REGOIN" => 38,
 
     ];
 

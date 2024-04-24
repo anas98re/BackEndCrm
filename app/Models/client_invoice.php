@@ -173,9 +173,9 @@ class client_invoice extends Model
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(products::class, invoice_product::class, 'fk_id_invoice', 'fk_product')->withPivot([
-            'id_invoice_product' => 'id_invoice_product',
+            'id_invoice_product' => (string) 'id_invoice_product',
             'fk_id_invoice' => 'fk_id_invoice',
-            'fk_product' => 'fk_product',
+            'fk_product' => (string)'fk_product',
             'amount' => 'amount',
             'price' => 'price',
             'taxtotal' => 'taxtotal',

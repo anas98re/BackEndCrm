@@ -251,7 +251,6 @@ class ClientCommunicationController extends Controller
 
         $communication = new CommunicationResource($communication);
         return $this->sendSucssas($communication);
-
     }
 
     private function handleInstallation($id_communication, $id_invoice, $type, $updated, $fk_client, $data)
@@ -267,14 +266,20 @@ class ClientCommunicationController extends Controller
         $date_last_com_install = Carbon::parse($communication->date_communication);
         $date_next = $date_last_com_install->addDays($valueConfig)->format('Y-m-d');
 
-        $client_communication = new client_communication();
-        $client_communication->fk_client = $fk_client;
-        $client_communication->date_next = $date_next;
-        $client_communication->type_communcation = 'تركيب';
-        $client_communication->id_invoice = $id_invoice;
-        $client_communication->type_install = 2;
-        $client_communication->date_last_com_install = $date_last_com_install;
-        $client_communication->save();
+        $existingClient_communication = client_communication::where('id_invoice', $id_invoice)
+            ->where('type_communcation', 'تركيب')
+            ->where('type_install', 2)
+            ->first();
+        if (!$existingClient_communication) {
+            $client_communication = new client_communication();
+            $client_communication->fk_client = $fk_client;
+            $client_communication->date_next = $date_next;
+            $client_communication->type_communcation = 'تركيب';
+            $client_communication->id_invoice = $id_invoice;
+            $client_communication->type_install = 2;
+            $client_communication->date_last_com_install = $date_last_com_install;
+            $client_communication->save();
+        }
 
         $this->TaskService->closeTaskAfterInstallClient($data);
         $this->updateFkUserCommunication($communication->fk_client);
@@ -328,7 +333,6 @@ class ClientCommunicationController extends Controller
                 ->whereNull('date_communication')
                 ->update(['fk_user' => $fk_user]);
         }
-
     }
 
     private function addCommunicationFprUpdate($fk_client, $date_next)

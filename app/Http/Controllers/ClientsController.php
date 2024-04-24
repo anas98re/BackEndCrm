@@ -622,5 +622,19 @@ class ClientsController extends Controller
         }
     }
 
+    public function getAllClients(Request $request)
+    {
+        $query = $request->all();
+        try
+        {
+            $clients = clients::filter($query)->paginate($query['limit'] ?? 15);
+
+            return response()->json(['message' => ClientResource::collection($clients), 'result' => 'success']);
+        }
+        catch(Exception $e)
+        {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
 
 }

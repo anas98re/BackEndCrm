@@ -27,6 +27,7 @@ use App\Http\Controllers\TaskController;
 use App\Http\Controllers\TaskProceduresController;
 use App\Http\Controllers\TicketsController;
 use App\Http\Controllers\UpdatesReportController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
 use Illuminate\Process\Pool;
 use Illuminate\Support\Facades\Process;
@@ -109,6 +110,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
     //Clients
+    Route::get('getAllClients', [ClientsController::class, 'getAllClients']);
     Route::get('getClientByID/{id}', [ClientsController::class, 'getClientByID']);
     Route::post('editClientByTypeClient/{id_clients}', [ClientsController::class, 'editClientByTypeClient']);
     Route::post('clientAppproveAdmin/{id_clients}', [ClientsController::class, 'appproveAdmin']);
@@ -147,13 +149,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     //ClientInvoice
     Route::controller(ClientInvoiceController::class)->group(function () {
-        Route::post('/getInvoicesByPrivilages', 'getInvoicesByPrivilages');
+        Route::get('/getInvoicesByPrivilages', 'getInvoicesByPrivilages');
         Route::post('deleteInvoice/{id}','deleteInvoice');
+        Route::post('addInvoice','addInvoice');
+        Route::post('/updateInvoice/{invoice_id}','updateInvoice');
     });
 
-    //invoices
-    Route::post('/addInvoice', [ClientInvoiceController::class, 'addInvoice']);
-    Route::post('/updateInvoice/{invoice_id}', [ClientInvoiceController::class, 'updateInvoice']);
+    //FileInvoices
     Route::post('/crudFileInvoice/{invoice_id}', [FilesInvoiceController::class, 'crudFileInvoice']);
     Route::post('InvoiceFiles', [FilesInvoiceController::class, 'InvoiceFiles']);
     Route::get('getFilesInvoices', [FilesInvoiceController::class, 'getFilesInvoices']);
@@ -197,6 +199,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('TransferTicket/{id}', [TicketsController::class, 'TransferTicket']);
     Route::get('reopenReportTickets', [TicketsController::class, 'reopenReport']);
     Route::post('transferTicketsTable', [TicketsController::class, 'transferTable']);
+
+
+});
+Route::controller(UsersController::class)->group(function () {
+    Route::get('/GetCurrentUser', 'getCurrentUser');
 });
 
 Route::post('addEmailFromAdmin', [RegisterController::class, 'addEmailFromAdmin']);
