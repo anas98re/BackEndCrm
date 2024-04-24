@@ -153,7 +153,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('deleteInvoice/{id}','deleteInvoice');
         Route::post('addInvoice','addInvoice');
         Route::post('/updateInvoice/{invoice_id}','updateInvoice');
-        Route::get('/getInvoiceMainCity','getInvoiceMainCity');
+        Route::post('/getInvoiceMainCity','getInvoiceMainCity');
     });
 
     //FileInvoices
