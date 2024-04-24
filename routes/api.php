@@ -11,6 +11,7 @@ use App\Http\Controllers\ClientsUpdateReportController;
 use App\Http\Controllers\CommentParticipateController;
 use App\Http\Controllers\CompanyCommentController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\FilesInvoiceController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\ImportantLinkController;
@@ -109,6 +110,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
     //Clients
+    Route::get('getAllClients', [ClientsController::class, 'getAllClients']);
     Route::get('getClientByID/{id}', [ClientsController::class, 'getClientByID']);
     Route::post('editClientByTypeClient/{id_clients}', [ClientsController::class, 'editClientByTypeClient']);
     Route::post('clientAppproveAdmin/{id_clients}', [ClientsController::class, 'appproveAdmin']);
@@ -218,14 +220,6 @@ Route::post('sendupdatePermissionsReportToEmail', [PrivgLevelUserController::cla
 Route::get('getinvoiceTask', [TaskController::class, 'getinvoiceTask']);
 Route::get('testNotify', [NotifiactionController::class, 'testNotify']);
 
-Route::get('pullFromGit', function () {
-    $pool = Process::pool(function (Pool $pool) {
-        $pool->path(base_path())->command('git pull origin test_masterBitbucket');
-    })->start(function (string $type, string $output, int $key) {
-        dd($output);
-    });
-
-    $pool->wait();
-});
+Route::get('/importClientToExcel', [ExcelController::class, 'importClient']);
 
 //opt/cpanel/ea-php81/root/bin/php /usr/local/bin/composer update
