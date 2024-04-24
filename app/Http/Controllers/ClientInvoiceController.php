@@ -130,8 +130,9 @@ class ClientInvoiceController extends Controller
                 $insertArray['price'] = $product['price'] ?? 0;
                 $insertArray['fk_id_invoice'] = $invoice->id_invoice;
                 $insertArray['fk_product'] = $product['fk_product'];
-                $insertArray['taxtotal'] = isset($product['taxtotal']) ? (double) $product['taxtotal'] : null;                $insertArray['rate_admin'] = $product['rate_admin'] ?? 0.0;
-                $insertArray['rateUser'] = $product['rateUser'] ?? 0.0;
+                $insertArray['taxtotal'] = isset($product['taxtotal']) ? (float) $product['taxtotal'] : 0.0;
+                $insertArray['rate_admin'] = isset($product['rate_admin']) ? (float) $product['rate_admin'] : 0.0;
+                $insertArray['rateUser'] = isset($product['rateUser']) ? (float) $product['rateUser'] : 0.0;
 
                 invoice_product::create($insertArray);
             }
@@ -353,9 +354,9 @@ class ClientInvoiceController extends Controller
                     $insertArray['price'] = $product['price'] ?? 0;
                     $insertArray['fk_id_invoice'] = $invoice->id_invoice;
                     $insertArray['fk_product'] = $product['fk_product'];
-                    $insertArray['taxtotal'] = $product['taxtotal'] ?? 0.0;
-                    $insertArray['rate_admin'] = $product['rate_admin'] ?? 0.0;
-                    $insertArray['rateUser'] = $product['rateUser'] ?? 0.0;
+                    $insertArray['taxtotal'] = isset($product['taxtotal']) ? (float) $product['taxtotal'] : 0.0;
+                    $insertArray['rate_admin'] = isset($product['rate_admin']) ? (float) $product['rate_admin'] : 0.0;
+                    $insertArray['rateUser'] = isset($product['rateUser']) ? (float) $product['rateUser'] : 0.0;
 
                     invoice_product::create($insertArray);
                 }
@@ -385,9 +386,7 @@ class ClientInvoiceController extends Controller
 
             DB::commit();
             return response()->json(['message' => new InvoiceResource($invoice), "result" => "success"]);
-        }
-        catch(Exception $e)
-        {
+        } catch (Exception $e) {
             return response()->json(['message' => new InvoiceResource($invoice)]);
         } catch (Exception $e) {
             DB::rollBack();
@@ -525,7 +524,7 @@ class ClientInvoiceController extends Controller
                 break;
         }
 
-        $data = $query->filter(request()->all())->paginate(request()->limit?? 15);
+        $data = $query->filter(request()->all())->paginate(request()->limit ?? 15);
 
         $response = InvoiceResourceForGetInvoicesByPrivilages::collection($data);
         return $this->sendSucssas($response);
