@@ -121,21 +121,29 @@ class clients extends Model
                 $query->where('type_record', $filter)
         );
 
-        // $query->when($filters['fk_user_prv'] ?? false, function ($query, $filter) use($filters) {
-        //     if(! is_null($filters['fk_regoin_prv']?? null))
-        //         $query->where(function($query) use($filter, $filters) {
-        //             $query->where('fk_user', $filter)
-        //             ->orWhere('')
-        //     });
-        // });
+        $query->when($filters['fk_user_prv'] ?? false, function ($query, $filter) use ($filters) {
+            if (!is_null($filters['fk_regoin_prv'] ?? null))
+                $query->where(function ($query) use ($filter, $filters) {
+                    $query->where('fk_user', $filter)
+                        ->orWhere('fk_region', $filters['fk_regoin_prv']);
+                });
+            else
+                $query->where(function ($query) use ($filter, $filters) {
+                    $query->where('fk_user', $filter)
+                        ->whereHas('regoin', fn($query) =>
+                            $query->where('fk_country', $filter)
+                        );
+                });
+        });
 
-
-
-        $query->when($filters['author'] ?? false, fn($query, $author) =>
-            $query->whereHas('author', fn ($query) =>
-                $query->where('username', $author)
-            )
+        $query->when($filters['fk_user'] ?? false, fn($query, $filter) =>
+                $query->where('fk_user', $filter)
         );
+
+        $query->when($filters['activity_type_fk'] ?? false, fn($query, $filter) =>
+                $query->where('activity_type_fk', $filter)
+        );
+
     }
 
 }
