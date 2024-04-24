@@ -62,7 +62,7 @@ class ClientInvoiceController extends Controller
                     'fk_agent' => $data['fk_agent'] ?? null,
                     'type_seller' => $data['type_seller'] ?? null,
                     'rate_participate' => $data['rate_participate'] ?? null,
-                    'fk_regoin_invoice' => $data['fk_regoin_invoice']?? null, // required
+                    'fk_regoin_invoice' => auth()->user()->fk_regoin, // required
                     'type_installation' => $data['type_installation'],
                     'image_record' => $data['image_record'] ?? '',
                     'fk_idClient' => $data['fk_idClient']?? null, // required
@@ -95,7 +95,7 @@ class ClientInvoiceController extends Controller
                     'fk_agent' => $data['fk_agent'] ?? null,
                     'type_seller' => $data['type_seller'] ?? null,
                     'rate_participate' => $data['rate_participate'] ?? null,
-                    'fk_regoin_invoice' => $data['fk_regoin_invoice'] ?? null, // required
+                    'fk_regoin_invoice' => auth()->user()->fk_regoin, // required
                     'type_installation' => $data['type_installation'],
                     'image_record' => $data['image_record'] ?? '',
                     'fk_idClient' => $data['fk_idClient'] ?? null, // required
