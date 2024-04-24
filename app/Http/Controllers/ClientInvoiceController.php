@@ -130,8 +130,7 @@ class ClientInvoiceController extends Controller
                 $insertArray['price'] = $product['price'] ?? 0;
                 $insertArray['fk_id_invoice'] = $invoice->id_invoice;
                 $insertArray['fk_product'] = $product['fk_product'];
-                $insertArray['taxtotal'] = $product['taxtotal'] ?? 0.0;
-                $insertArray['rate_admin'] = $product['rate_admin'] ?? 0.0;
+                $insertArray['taxtotal'] = isset($product['taxtotal']) ? (double) $product['taxtotal'] : null;                $insertArray['rate_admin'] = $product['rate_admin'] ?? 0.0;
                 $insertArray['rateUser'] = $product['rateUser'] ?? 0.0;
 
                 invoice_product::create($insertArray);
