@@ -527,4 +527,41 @@ class ClientInvoiceController extends Controller
         $response = InvoiceResourceForGetInvoicesByPrivilages::collection($data)->response()->getData(true);
         return $this->sendSucssas($response);
     }
+
+    public function getInvoiceMainCity(Request $request)
+    {
+        $fk_country = $request->query('fk_country');
+        $state_param = $request->query('state');
+        $maincity_fks_param = $request->query('maincity_fks');
+        $city_fks_param = $request->query('city_fks');
+
+        $data = [];
+
+        if ($request->has('allstate')) {
+            $mainCity = $maincity_fks_param;
+            $data[] = $this->invoiceSrevice->getInvoicesMaincityAllstate($fk_country, $mainCity);
+        }
+
+
+        if ($request->has('allmix')) {
+            $state = $state_param;
+            $mainCity = $maincity_fks_param;
+            $data[] = $this->invoiceSrevice->getInvoicesMaincityMix($fk_country, $mainCity, $state);
+        }
+
+        if ($request->has('allmixCity')) {
+            $state = $state_param;
+            $city = $city_fks_param;
+            $data[] = $this->invoiceSrevice->getInvoicesCityState($fk_country, $city, $state);
+        }
+
+        if ($request->has('allCityState')) {
+            $city = $city_fks_param;
+            $data[] = $this->invoiceSrevice->getInvoicesCity($fk_country, $city);
+        }
+
+        return $this->sendSucssas($data);
+        // $response = InvoiceResourceForGetInvoicesByPrivilages::collection($data);
+        // return $this->sendSucssas($response);
+    }
 }
