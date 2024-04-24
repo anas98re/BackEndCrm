@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\Loggable;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\BelongsToManyRelationship;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -184,6 +185,63 @@ class client_invoice extends Model
             'idinvoice' => 'idinvoice',
             'name_prod' => 'name_prod'
         ]);
+    }
+
+    public function scopeFilter($query, array $filters)
+    {
+        $filters['type_seller'] = $filters['type_seller'] == 'null' || $filters['type_seller'] == null ? false: $filters['type_seller'];
+        $filters['fk_regoin_invoice'] = $filters['fk_regoin_invoice'] == 'null' || $filters['fk_regoin_invoice'] == null ? false: $filters['fk_regoin_invoice'];
+        $filters['TypeReadyClient'] = $filters['TypeReadyClient'] == 'null' || $filters['TypeReadyClient'] == null ? false: $filters['TypeReadyClient'];
+        $filters['from'] = $filters['from'] == 'null' || $filters['from'] == null ? false: $filters['from'];
+        $filters['to'] = $filters['to'] == 'null' || $filters['to'] == null ? false: $filters['to'];
+        $filters['search_query'] = $filters['search_query'] == 'null' || $filters['search_query'] == null ? false: $filters['search_query'];
+        $filters['fk_agent'] = $filters['fk_agent'] == 'null' || $filters['fk_agent'] == null ? false: $filters['fk_agent'];
+        $filters['participate_fk'] = $filters['participate_fk'] == 'null' || $filters['participate_fk'] == null ? false: $filters['participate_fk'];
+        $filters['fk_idUser'] = $filters['fk_idUser'] == 'null' || $filters['fk_idUser'] == null ? false: $filters['fk_idUser'];
+
+        $query->when(
+            $filters['search_query'] ?? false,
+            fn($query, $search) =>
+            $query->where(
+                fn($query) =>
+                $query->where('client', function ($query) use ($search) {
+                    $query->where('name_enterprise', 'like', '%' . $search . '%')
+                        ->orWhere('mobile', 'like', '%' . $search . '%');
+                })
+                ->orWhereHas('regoin', function ($query) use ($search) {
+                    $query->where('name_regoin', 'like', '%' . $search . '%');
+                })
+            )
+        );
+
+        $query->when($filters['type_seller'] ?? false, fn($query, $filter) =>
+            $query->where('type_seller', $filter)
+        );
+
+        $query->when($filters['fk_regoin_invoice'] ?? false, fn($query, $filter) =>
+            $query->where('fk_regoin_invoice', $filter)
+        );
+
+        $query->when($filters['TypeReadyClient'] ?? false, fn($query, $filter) =>
+            $query->where('TypeReadyClient', $filter)
+        );
+
+        $query->when($filters['fk_agent'] ?? false, fn($query, $filter) =>
+            $query->where('fk_agent', $filter)
+        );
+
+        $query->when($filters['participate_fk'] ?? false, fn($query, $filter) =>
+            $query->where('participate_fk', $filter)
+        );
+
+        $query->when($filters['fk_idUser'] ?? false, fn($query, $filter) =>
+            $query->where('fk_idUser', $filter)
+        );
+
+        $query->when($filters['from'] ?? false, fn($query, $filter) =>
+            $query->whereBetween('date_approve', [$filters['from'], $filters['to'] == false? Carbon::now(): $filters['to']])
+        );
+
     }
 
 }
