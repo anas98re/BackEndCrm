@@ -90,6 +90,16 @@ class clients extends Model
 
     public function scopeFilter($query, array $filters)
     {
+        $filters['filter'] = $filters['filter'] == 'null' || $filters['filter'] == null ? false: $filters['filter'];
+        $filters['fk_regoin_prv'] = $filters['fk_regoin_prv'] == 'null' || $filters['fk_regoin_prv'] == null ? false: $filters['fk_regoin_prv'];
+        $filters['fk_country'] = $filters['fk_country'] == 'null' || $filters['fk_country'] == null ? false: $filters['fk_country'];
+        $filters['fk_regoin'] = $filters['fk_regoin'] == 'null' || $filters['fk_regoin'] == null ? false: $filters['fk_regoin'];
+        $filters['type_client'] = $filters['type_client'] == 'null' || $filters['type_client'] == null ? false: $filters['type_client'];
+        $filters['type_record'] = $filters['type_record'] == 'null' || $filters['type_record'] == null ? false: $filters['type_record'];
+        $filters['fk_user_prv'] = $filters['fk_user_prv'] == 'null' || $filters['fk_user_prv'] == null ? false: $filters['fk_user_prv'];
+        $filters['fk_user'] = $filters['fk_user'] == 'null' || $filters['fk_user'] == null ? false: $filters['fk_user'];
+        $filters['activity_type_fk'] = $filters['activity_type_fk'] == 'null' || $filters['activity_type_fk'] == null ? false: $filters['activity_type_fk'];
+
         $query->when($filters['filter'] ?? false, fn($query, $search) =>
             $query->where(fn($query) =>
                 $query->where('name_enterprise', 'like', '%' . $search . '%')
@@ -125,7 +135,7 @@ class clients extends Model
             if (!is_null($filters['fk_regoin_prv'] ?? null))
                 $query->where(function ($query) use ($filter, $filters) {
                     $query->where('fk_user', $filter)
-                        ->orWhere('fk_region', $filters['fk_regoin_prv']);
+                        ->orWhere('fk_regoin', $filters['fk_regoin_prv']);
                 });
             else
                 $query->where(function ($query) use ($filter, $filters) {
