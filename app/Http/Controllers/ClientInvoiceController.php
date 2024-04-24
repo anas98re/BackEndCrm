@@ -526,7 +526,7 @@ class ClientInvoiceController extends Controller
                 break;
         }
 
-        $data = $query->paginate(request()->limit?? 15);
+        $data = $query->filter(request()->all())->paginate(request()->limit?? 15);
 
         $response = InvoiceResourceForGetInvoicesByPrivilages::collection($data);
         return $this->sendSucssas($response);
@@ -542,26 +542,31 @@ class ClientInvoiceController extends Controller
         $data = [];
 
         if ($request->has('allstate')) {
+            info('1');
             $mainCity = $maincity_fks_param;
-            $data[] = $this->invoiceSrevice->getInvoicesMaincityAllstate($fk_country, $mainCity);
+            $data = $this->invoiceSrevice->getInvoicesMaincityAllstate($fk_country, $mainCity);
         }
 
 
         if ($request->has('allmix')) {
+            info('2');
             $state = $state_param;
             $mainCity = $maincity_fks_param;
-            $data[] = $this->invoiceSrevice->getInvoicesMaincityMix($fk_country, $mainCity, $state);
+            $data = $this->invoiceSrevice->getInvoicesMaincityMix($fk_country, $mainCity, $state);
         }
 
         if ($request->has('allmixCity')) {
+            info('3');
             $state = $state_param;
+            info($state);
             $city = $city_fks_param;
-            $data[] = $this->invoiceSrevice->getInvoicesCityState($fk_country, $city, $state);
+            $data = $this->invoiceSrevice->getInvoicesCityState($fk_country, $city, $state);
         }
 
         if ($request->has('allCityState')) {
+            info('4');
             $city = $city_fks_param;
-            $data[] = $this->invoiceSrevice->getInvoicesCity($fk_country, $city);
+            $data = $this->invoiceSrevice->getInvoicesCity($fk_country, $city);
         }
 
         return $this->sendSucssas($data);
