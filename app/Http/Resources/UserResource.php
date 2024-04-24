@@ -32,12 +32,13 @@ class UserResource extends JsonResource
             'nameCountry' => $this->country?->nameCountry,
             'name_regoin' => $this->regions?->name_regoin,
             'name_level' => $this->level?->name_level,
-            'periorty' => $this->level?->pivot?->periorty,
+            'periorty' => $this->level->pivot ? $this->level->pivot->periorty : "0",
+            // 'periorty' => $this->level?->pivot?->periorty,
             'currency' => $this->country?->currency,
             'nameuserAdd' => (string)$this->fkuserAdd,
             'name_mange' => $this->managements?->name_mange,
             'nameuserupdate' => $this->fkuserupdate,
-            'privilegelist' => PrivilegeResource::collection($this->privileges),
+            'privilgelist' => PrivilegeResource::collection($this->privileges),
             'maincitylist_user' => MainCityResource::collection($this->mainCity),
         ];
     }
