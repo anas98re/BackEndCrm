@@ -64,73 +64,81 @@ class ClientCommunicationController extends Controller
             $insertArray['type_install'] = 1;
             $insertArray['fk_user'] = $this->get_fk_user_communication($client->id_clients);
 
-            client_communication::create($insertArray);
+            $communicationExists = client_communication::where('fk_client', $client->id_clients)
+                ->where('id_invoice', $id_invoice)
+                ->where('type_communcation', 'تركيب')
+                ->where('type_install', 1)
+                ->exists();
+            if(!$communicationExists)
+            {
+                client_communication::create($insertArray);
 
-            // $this->update_fkuser_communication($client->id_clients);
+                // $this->update_fkuser_communication($client->id_clients);
 
-            $time = config_table::where('name_config', 'period_commincation3')
-                ->first()->value_config;
-            $carbonDatetime = Carbon::parse(Carbon::now())->addDays($time);
-            $date_next = $carbonDatetime;
+                $time = config_table::where('name_config', 'period_commincation3')
+                    ->first()->value_config;
+                $carbonDatetime = Carbon::parse(Carbon::now())->addDays($time);
+                $date_next = $carbonDatetime;
 
-            $arrJson_result = $this->getcommunication_repeatcheck($client->id_clients);
-            if ($arrJson_result->count() == 0) // [] => false, ![] => true
-                $this->addcommunication($client->id_clients, $date_next);
-
-
-            $fk_regoin = $client->fk_regoin;
-            $fkcountry = $client->regoin?->fk_country;
-            $id_users =  getIdUsers($fk_regoin, 21, $fkcountry);
-            $array2user = getIdUsersRegoin($fkcountry, 21, $client->id_clients);
-            $id_users = array_merge($id_users->toArray(), $array2user->toArray());
+                $arrJson_result = $this->getcommunication_repeatcheck($client->id_clients);
+                if ($arrJson_result->count() == 0) // [] => false, ![] => true
+                    $this->addcommunication($client->id_clients, $date_next);
 
 
-            $dataIn = [
-                'idInvoice' => $id_invoice,
-                'fkIdClient' => $client->id_clients
-            ];
-            $this->TaskService->afterInstallClient($dataIn);
+                $fk_regoin = $client->fk_regoin;
+                $fkcountry = $client->regoin?->fk_country;
+                $id_users =  getIdUsers($fk_regoin, 21, $fkcountry);
+                $array2user = getIdUsersRegoin($fkcountry, 21, $client->id_clients);
+                $id_users = array_merge($id_users->toArray(), $array2user->toArray());
 
-            $name_enterprise = $client->name_enterprise;
-            $nameuserinstall = auth()->user()->nameUser;
-            $title = "تم التركيب";
-            $titlenameapprove = "الموظف الذي ركب للعميل ";
-            $id_users = collect($id_users)->unique();
-            $message = "$titlenameapprove $name_enterprise هو\r $nameuserinstall";
-            foreach ($id_users as $user_id) {
-                $userToken = user_token::where('fkuser', $user_id)
-                    ->where('token', '!=', null)
-                    ->latest('date_create')
-                    ->first();
 
-                Notification::send(
-                    null,
-                    new SendNotification(
-                        $title,
-                        $message,
-                        $message,
-                        ($userToken != null ? $userToken->token : null)
-                    )
-                );
+                $dataIn = [
+                    'idInvoice' => $id_invoice,
+                    'fkIdClient' => $client->id_clients
+                ];
+                $this->TaskService->afterInstallClient($dataIn);
 
-                notifiaction::create([
-                    'message' => $message,
-                    'type_notify' => 'Install',
-                    'to_user' => $user_id,
-                    'isread' => 0,
-                    'data' => $client->id_clients,
-                    'from_user' => auth()->user()->id_user,
-                    'dateNotify' => Carbon::now('Asia/Riyadh')
-                ]);
+                $name_enterprise = $client->name_enterprise;
+                $nameuserinstall = auth()->user()->nameUser;
+                $title = "تم التركيب";
+                $titlenameapprove = "الموظف الذي ركب للعميل ";
+                $id_users = collect($id_users)->unique();
+                $message = "$titlenameapprove $name_enterprise هو\r $nameuserinstall";
+                foreach ($id_users as $user_id) {
+                    $userToken = user_token::where('fkuser', $user_id)
+                        ->where('token', '!=', null)
+                        ->latest('date_create')
+                        ->first();
+
+                    Notification::send(
+                        null,
+                        new SendNotification(
+                            $title,
+                            $message,
+                            $message,
+                            ($userToken != null ? $userToken->token : null)
+                        )
+                    );
+
+                    notifiaction::create([
+                        'message' => $message,
+                        'type_notify' => 'Install',
+                        'to_user' => $user_id,
+                        'isread' => 0,
+                        'data' => $client->id_clients,
+                        'from_user' => auth()->user()->id_user,
+                        'dateNotify' => Carbon::now('Asia/Riyadh')
+                    ]);
+                }
+
+                $invoice = client_invoice::where('id_invoice', $id_invoice)->first();
+                $arrJson = new InvoiceResource($invoice);
+
+                $resJson = array("result" => "success", "code" => "200", "message" => $arrJson);
+
+                DB::commit();
+                return response()->json($resJson);
             }
-
-            $invoice = client_invoice::where('id_invoice', $id_invoice)->first();
-            $arrJson = new InvoiceResource($invoice);
-
-            $resJson = array("result" => "success", "code" => "200", "message" => $arrJson);
-
-            DB::commit();
-            return response()->json($resJson);
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()]);

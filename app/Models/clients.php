@@ -88,4 +88,54 @@ class clients extends Model
         return $this->belongsTo(reason_client_reject::class, 'fk_rejectClient', 'id_rejectClient');
     }
 
+    public function scopeFilter($query, array $filters)
+    {
+        $query->when($filters['filter'] ?? false, fn($query, $search) =>
+            $query->where(fn($query) =>
+                $query->where('name_enterprise', 'like', '%' . $search . '%')
+                    ->orWhere('mobile', 'like', '%' . $search . '%')
+                    ->orWhere('name_client', 'like', '%' . $search . '%')
+                    ->orWhere('SerialNumber', 'like', '%' . $search . '%')
+            )
+        );
+
+        $query->when(($filters['fk_regoin_prv'] ?? false) && (is_null($filters['fk_user_prv'] ?? null)), fn($query, $filter) =>
+                $query->where('fk_regoin', $filter)
+        );
+
+        $query->when((($filters['fk_country'] ?? false) && (is_null($filters['fk_user_prv'] ?? null))), fn($query, $filter) =>
+                $query->whereHas('regoin', fn($query) =>
+                    $query->where('fk_country', $filter)
+                )
+        );
+
+        $query->when($filters['fk_regoin'] ?? false, fn($query, $filter) =>
+                $query->where('fk_regoin', $filter)
+        );
+
+        $query->when($filters['type_client'] ?? false, fn($query, $filter) =>
+                $query->where('type_client', $filter)
+        );
+
+        $query->when($filters['type_record'] ?? false, fn($query, $filter) =>
+                $query->where('type_record', $filter)
+        );
+
+        // $query->when($filters['fk_user_prv'] ?? false, function ($query, $filter) use($filters) {
+        //     if(! is_null($filters['fk_regoin_prv']?? null))
+        //         $query->where(function($query) use($filter, $filters) {
+        //             $query->where('fk_user', $filter)
+        //             ->orWhere('')
+        //     });
+        // });
+
+
+
+        $query->when($filters['author'] ?? false, fn($query, $author) =>
+            $query->whereHas('author', fn ($query) =>
+                $query->where('username', $author)
+            )
+        );
+    }
+
 }
