@@ -149,64 +149,67 @@ class sqlService extends JsonResponeService
 
     public function sqlForGetInvoicesCityState($fk_country, $city, $param)
     {
-        return
-            " SELECT
-            inv.*,
-            us.nameUser,
-            cc.name_client,
-            cc.name_enterprise,
-            cc.fk_regoin,
-            rr.name_regoin,
-            rrgoin.name_regoin AS name_regoin_invoice,
-            cc.type_client,
-            cc.mobile,
-            cc.ismarketing,
-            usr.nameUser AS lastuserupdateName,
-            usr1.nameUser AS nameuserinstall,
-            usr2.nameUser AS nameuserApprove,
-            rr.fk_country,
-            usrback.nameUser AS nameuserback,
-            userreplay.nameUser AS nameuserreplay,
-            usertask.nameUser AS nameusertask,
-            cc.city,
-            cy.name_city,
-            mcit.namemaincity,
-            mcit.id_maincity,
-            usrinst.nameUser AS nameuser_ready_install,
-            usrninst.nameUser AS nameuser_notready_install,
-            cc.tag
-        FROM
-            client_invoice AS inv
-            JOIN users AS us ON us.id_user = inv.fk_idUser
-            LEFT JOIN users AS usr ON usr.id_user = inv.lastuserupdate
-            LEFT JOIN users AS usr1 ON usr1.id_user = inv.userinstall
-            LEFT JOIN users AS usrinst ON usrinst.id_user = inv.user_ready_install
-            LEFT JOIN users AS usrninst ON usrninst.id_user = inv.user_not_ready_install
-            JOIN clients AS cc ON cc.id_clients = inv.fk_idClient
-            JOIN city AS cy ON cy.id_city = cc.city
-            LEFT JOIN maincity AS mcit ON mcit.id_maincity = cy.fk_maincity
-            LEFT JOIN users AS usr2 ON usr2.id_user = inv.iduser_approve
-            LEFT JOIN users AS usrback ON usrback.id_user = inv.fkuser_back
-            LEFT JOIN users AS userreplay ON userreplay.id_user = inv.fkuserdatareplay
-            LEFT JOIN users AS usertask ON usertask.id_user = inv.fkusertask
-            JOIN regoin AS rr ON rr.id_regoin = cc.fk_regoin
-            JOIN regoin AS rrgoin ON rrgoin.id_regoin = inv.fk_regoin_invoice
-        WHERE
-            rr.fk_country = $fk_country
-            AND inv.isdelete IS NULL
-            AND inv.stateclient = 'مشترك'
-            AND inv.isApprove = 1
-            AND inv.type_seller != 1
-            $param
+        $cityString = implode(',', $city); // Convert the array to a comma-separated string
 
-            AND cy.id_city IN ($city)
-        ORDER BY
-            inv.date_create DESC
-    ";
+        return "
+            SELECT
+                inv.*,
+                us.nameUser,
+                cc.name_client,
+                cc.name_enterprise,
+                cc.fk_regoin,
+                rr.name_regoin,
+                rrgoin.name_regoin AS name_regoin_invoice,
+                cc.type_client,
+                cc.mobile,
+                cc.ismarketing,
+                usr.nameUser AS lastuserupdateName,
+                usr1.nameUser AS nameuserinstall,
+                usr2.nameUser AS nameuserApprove,
+                rr.fk_country,
+                usrback.nameUser AS nameuserback,
+                userreplay.nameUser AS nameuserreplay,
+                usertask.nameUser AS nameusertask,
+                cc.city,
+                cy.name_city,
+                mcit.namemaincity,
+                mcit.id_maincity,
+                usrinst.nameUser AS nameuser_ready_install,
+                usrninst.nameUser AS nameuser_notready_install,
+                cc.tag
+            FROM
+                client_invoice AS inv
+                JOIN users AS us ON us.id_user = inv.fk_idUser
+                LEFT JOIN users AS usr ON usr.id_user = inv.lastuserupdate
+                LEFT JOIN users AS usr1 ON usr1.id_user = inv.userinstall
+                LEFT JOIN users AS usrinst ON usrinst.id_user = inv.user_ready_install
+                LEFT JOIN users AS usrninst ON usrninst.id_user = inv.user_not_ready_install
+                JOIN clients AS cc ON cc.id_clients = inv.fk_idClient
+                JOIN city AS cy ON cy.id_city = cc.city
+                LEFT JOIN maincity AS mcit ON mcit.id_maincity = cy.fk_maincity
+                LEFT JOIN users AS usr2 ON usr2.id_user = inv.iduser_approve
+                LEFT JOIN users AS usrback ON usrback.id_user = inv.fkuser_back
+                LEFT JOIN users AS userreplay ON userreplay.id_user = inv.fkuserdatareplay
+                LEFT JOIN users AS usertask ON usertask.id_user = inv.fkusertask
+                JOIN regoin AS rr ON rr.id_regoin = cc.fk_regoin
+                JOIN regoin AS rrgoin ON rrgoin.id_regoin = inv.fk_regoin_invoice
+            WHERE
+                rr.fk_country = $fk_country
+                AND inv.isdelete IS NULL
+                AND inv.stateclient = 'مشترك'
+                AND inv.isApprove = 1
+                AND inv.type_seller != 1
+                $param
+                AND cy.id_city IN ('$cityString')
+            ORDER BY
+                inv.date_create DESC
+        ";
     }
 
     public function sqlForGetInvoicesCity($fk_country, $city)
     {
+        $placeholders = implode(',', array_fill(0, count(array($city)), '?'));
+        $inClause = "AND cy.id_city IN ($placeholders)";
         return "SELECT
         inv.*,
         us.nameUser,
@@ -263,12 +266,12 @@ class sqlService extends JsonResponeService
     JOIN
         regoin AS rrgoin ON rrgoin.id_regoin = inv.fk_regoin_invoice
     WHERE
-        rr.fk_country = $fk_country
+        rr.fk_country = ?
         AND inv.isdelete IS NULL
         AND inv.stateclient = 'مشترك'
         AND inv.isApprove = 1
         AND inv.type_seller <> 1
-        AND cy.id_city IN ($city)
+        $inClause
     ORDER BY
         inv.date_create DESC";
     }

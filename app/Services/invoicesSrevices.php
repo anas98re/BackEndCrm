@@ -211,7 +211,9 @@ class invoicesSrevices extends JsonResponeService
         }
         info($param);
 
-        $query = $this->sqlService->sqlForGetInvoicesCityState($fk_country, $city, $param);
+        $cityArray = explode(',', $city);
+
+        $query = $this->sqlService->sqlForGetInvoicesCityState($fk_country, $cityArray, $param);
 
         $result = DB::select($query);
 
@@ -223,66 +225,11 @@ class invoicesSrevices extends JsonResponeService
 
     public function getInvoicesCity($fk_country, $city)
     {
-
         $query = $this->sqlService->sqlForGetInvoicesCity($fk_country, $city);
-
-        // $query = DB::table('client_invoice AS inv')
-        //     ->select(
-        //         'inv.*',
-        //         'us.nameUser',
-        //         'cc.name_client',
-        //         'cc.name_enterprise',
-        //         'cc.fk_regoin',
-        //         'rr.name_regoin',
-        //         'rrgoin.name_regoin as name_regoin_invoice',
-        //         'cc.type_client',
-        //         'cc.mobile',
-        //         'cc.ismarketing',
-        //         'usr.nameUser as lastuserupdateName',
-        //         'usr1.nameUser as nameuserinstall',
-        //         'usr2.nameUser as nameuserApprove',
-        //         'rr.fk_country',
-        //         'usrback.nameUser as nameuserback',
-        //         'userreplay.nameUser as nameuserreplay',
-        //         'usertask.nameUser as nameusertask',
-        //         'cc.city',
-        //         'cy.name_city',
-        //         'mcit.namemaincity',
-        //         'mcit.id_maincity',
-        //         'usrinst.nameUser as nameuser_ready_install',
-        //         'usrninst.nameUser as nameuser_notready_install',
-        //         'cc.tag'
-        //     )
-        //     ->join('users AS us', 'us.id_user', '=', 'inv.fk_idUser')
-        //     ->leftJoin('users AS usr', 'usr.id_user', '=', 'inv.lastuserupdate')
-        //     ->leftJoin('users AS usr1', 'usr1.id_user', '=', 'inv.userinstall')
-        //     ->leftJoin('users AS usrinst', 'usrinst.id_user', '=', 'inv.user_ready_install')
-        //     ->leftJoin('users AS usrninst', 'usrninst.id_user', '=', 'inv.user_not_ready_install')
-        //     ->join('clients AS cc', 'cc.id_clients', '=', 'inv.fk_idClient')
-        //     ->join('city AS cy', 'cy.id_city', '=', 'cc.city')
-        //     ->leftJoin('maincity AS mcit', 'mcit.id_maincity', '=', 'cy.fk_maincity')
-        //     ->leftJoin('users AS usr2', 'usr2.id_user', '=', 'inv.iduser_approve')
-        //     ->leftJoin('users AS usrback', 'usrback.id_user', '=', 'inv.fkuser_back')
-        //     ->leftJoin('users AS userreplay', 'userreplay.id_user', '=', 'inv.fkuserdatareplay')
-        //     ->leftJoin('users AS usertask', 'usertask.id_user', '=', 'inv.fkusertask')
-        //     ->join('regoin AS rr', 'rr.id_regoin', '=', 'cc.fk_regoin')
-        //     ->join('regoin AS rrgoin', 'rrgoin.id_regoin', '=', 'inv.fk_regoin_invoice')
-        //     ->where('rr.fk_country', $fk_country)
-        //     ->whereNull('inv.isdelete')
-        //     ->where('inv.stateclient', 'مشترك')
-        //     ->where('inv.isApprove', 1)
-        //     ->where('inv.type_seller', '<>', 1)
-        //     ->whereIn('cy.id_city', $city)
-        //     ->orderBy('inv.date_create', 'desc');
-
-        $result = DB::select($query);
+        $result = DB::select($query, [$fk_country, $city]);
 
         $arrJson = json_decode(json_encode($result), true);
 
         return $arrJson;
-        // $result = $query->get();
-        // $arrJson = $result->toArray();
-
-        // return $arrJson;
     }
 }
