@@ -739,9 +739,9 @@ class TaskService extends JsonResponeService
         }
     }
 
-    public function closeTaskAfterInstallClient($data)
+    public function closeTaskAfterInstallClient(string $data)
     {
-
+        info('$data in fun is:',$data );
         $dataArray = json_decode($data, true);
         info('$dataArray is:',$dataArray );
         info('$dataArray[id_communication] is: ',$dataArray['id_communication'] );
