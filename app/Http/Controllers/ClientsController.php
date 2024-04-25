@@ -589,7 +589,7 @@ class ClientsController extends Controller
             if($allLevels->contains($user->type_level))
             {
                 $clients = clients::query()->whereNotNull('reason_transfer')->get();
-                $is_all = false;
+                $is_all = true;
             }
 
             if($adminLevels->contains($user->type_level) && ! ($is_all) )
@@ -605,7 +605,6 @@ class ClientsController extends Controller
                                 ->whereNotNull('reason_transfer');
                     })
                     ->get();
-                dd($clients);
                 $is_admin = true;
             }
 
