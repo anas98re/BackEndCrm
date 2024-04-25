@@ -758,7 +758,7 @@ class TaskService extends JsonResponeService
                         ->update([
                             'task_statuse_id' => 4,
                             'changed_date' => Carbon::now('Asia/Riyadh'),
-                            'changed_by' => $data['iduser_updateed']
+                            'changed_by' => isset($data['iduser_updateed']) ? $data['iduser_updateed'] : null,
                         ]);
 
                     $this->MyService->afterCommunicateWithClient(
