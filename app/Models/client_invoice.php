@@ -214,7 +214,7 @@ class client_invoice extends Model
             fn($query, $search) =>
             $query->where(
                 fn($query) =>
-                $query->where('client', function ($query) use ($search) {
+                $query->whereHas('client', function ($query) use ($search) {
                     $query->where('name_enterprise', 'like', '%' . $search . '%')
                         ->orWhere('mobile', 'like', '%' . $search . '%');
                 })
