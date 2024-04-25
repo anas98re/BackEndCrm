@@ -31,4 +31,9 @@ class participate extends Model
         'fk_city',
     ];
 
+    public function clientInvoices()
+    {
+        return $this->hasMany(client_invoice::class, 'fk_idUser');
+    }
+
 }

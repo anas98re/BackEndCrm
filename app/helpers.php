@@ -116,9 +116,9 @@ function crudMultiInvoiceFiles($data, $invoice_id, $service)
         }
         $invoice->update(['image_record' => $filsHandled]);
     }
-    if(key_exists('logo', $data))
+    if(key_exists('filelogo', $data))
     {
-        $filsHandled = $service->storeThumbnail($data['logo'], 'logo_client', 200);;
+        $filsHandled = $service->storeThumbnail($data['filelogo'], 'logo_client', 200);;
         if(!str($invoice->imagelogo)->isEmpty())
         {
             // dd(Storage::delete(str($invoice->imagelogo)->after('storage/')));
@@ -126,9 +126,9 @@ function crudMultiInvoiceFiles($data, $invoice_id, $service)
         }
         $invoice->update(['imagelogo' => $filsHandled]);
     }
-    if(key_exists('file_to_delete', $data))
+    if(key_exists('id_files', $data))
     {
-        foreach($data['file_to_delete'] as $file_id)
+        foreach($data['id_files'] as $file_id)
         {
             $fileInvoice = files_invoice::where('id', $file_id)->first();
             if (!is_null($fileInvoice)) {
@@ -137,9 +137,9 @@ function crudMultiInvoiceFiles($data, $invoice_id, $service)
             }
         }
     }
-    if(key_exists('file_to_attach', $data))
+    if(key_exists('uploadfiles', $data))
     {
-        foreach($data['file_to_attach'] as $file)
+        foreach($data['uploadfiles'] as $file)
         {
             $filsHandled = $service->storeFile($file, 'invoices');
             $fileInvoice = files_invoice::create([

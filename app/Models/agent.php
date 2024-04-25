@@ -36,6 +36,11 @@ class agent extends Model
         'date_training',
     ];
 
+    public function clientInvoices()
+    {
+        return $this->hasMany(client_invoice::class, 'fk_idUser');
+    }
+
 }
 
 

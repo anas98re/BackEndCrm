@@ -62,27 +62,27 @@ class ClientInvoiceController extends Controller
                     'fk_agent' => $data['fk_agent'] ?? null,
                     'type_seller' => $data['type_seller'] ?? null,
                     'rate_participate' => $data['rate_participate'] ?? null,
-                    'fk_regoin_invoice' => $data['fk_regoin_invoice'], // required
+                    'fk_regoin_invoice' => auth()->user()->fk_regoin, // required
                     'type_installation' => $data['type_installation'],
                     'image_record' => $data['image_record'] ?? '',
-                    'fk_idClient' => $data['fk_idClient'], // required
+                    'fk_idClient' => $data['fk_idClient']?? null, // required
                     'fk_idUser' => $data['fk_idUser'], // auth()->user()->id_user,
                     'amount_paid' => $data['amount_paid'],
                     'notes' => $data['notes'] ?? '',
                     'total' => $data['total'] ?? '',
-                    'address_invoice' => $data['address_invoice'], // required,
-                    'numbarnch' => $data['numbarnch'], // required
-                    'nummostda' => $data['nummostda'], // required
-                    'numusers' => $data['numusers'], // required
+                    'address_invoice' => $data['address_invoice'] ?? null, // required,
+                    'numbarnch' => $data['numbarnch'] ?? null, // required
+                    'nummostda' => $data['nummostda'] ?? null, // required
+                    'numusers' => $data['numusers'] ?? null, // required
                     'imagelogo' => $data['imagelogo'] ?? '',
                     'stateclient' => 'مشترك',
-                    'numTax' => $data['numTax'], // required,
-                    'ready_install' => $data['ready_install'], // required
-                    'currency_name' => $data['currency_name'], //required
+                    'numTax' => $data['numTax'] ?? null, // required,
+                    'ready_install' => $data['ready_install'] ?? null, // required
+                    'currency_name' => $data['currency_name'] ?? null, //required
                     'renew_agent' => $data['renew_agent'] ?? null,
                     'file_attach' => '',
-                    'date_not_readyinstall' => $data['date_not_readyinstall'], // required,
-                    'user_not_ready_install' => $data['user_not_ready_install'], // required
+                    'date_not_readyinstall' => $data['date_not_readyinstall'] ?? null, // required,
+                    'user_not_ready_install' => $data['user_not_ready_install'] ?? null, // required
                 ]);
             else
                 $invoice = client_invoice::create([
@@ -95,23 +95,23 @@ class ClientInvoiceController extends Controller
                     'fk_agent' => $data['fk_agent'] ?? null,
                     'type_seller' => $data['type_seller'] ?? null,
                     'rate_participate' => $data['rate_participate'] ?? null,
-                    'fk_regoin_invoice' => $data['fk_regoin_invoice'], // required
+                    'fk_regoin_invoice' => auth()->user()->fk_regoin, // required
                     'type_installation' => $data['type_installation'],
                     'image_record' => $data['image_record'] ?? '',
-                    'fk_idClient' => $data['fk_idClient'], // required
+                    'fk_idClient' => $data['fk_idClient'] ?? null, // required
                     'fk_idUser' => $data['fk_idUser'], // auth()->user()->id_user,
                     'amount_paid' => $data['amount_paid'],
                     'notes' => $data['notes'] ?? '',
                     'total' => $data['total'] ?? '',
-                    'address_invoice' => $data['address_invoice'], // required,
-                    'numbarnch' => $data['numbarnch'], // required
-                    'nummostda' => $data['nummostda'], // required
-                    'numusers' => $data['numusers'], // required
+                    'address_invoice' => $data['address_invoice'] ?? null, // required,
+                    'numbarnch' => $data['numbarnch'] ?? null, // required
+                    'nummostda' => $data['nummostda'] ?? null, // required
+                    'numusers' => $data['numusers'] ?? null, // required
                     'imagelogo' => $data['imagelogo'] ?? '',
                     'stateclient' => 'مشترك',
-                    'numTax' => $data['numTax'], // required,
-                    'ready_install' => $data['ready_install'], // required
-                    'currency_name' => $data['currency_name'], //required
+                    'numTax' => $data['numTax'] ?? null, // required,
+                    'ready_install' => $data['ready_install'] ?? null, // required
+                    'currency_name' => $data['currency_name'] ?? null, //required
                     'renew_agent' => $data['renew_agent'] ?? null,
                     'file_attach' => '',
                     'renew_pluse' => $data['renew_pluse'] ?? null,
@@ -147,8 +147,8 @@ class ClientInvoiceController extends Controller
                 $filsHandled = $this->myService->storeFile($request->file, 'invoices');
                 $data['image_record'] = $filsHandled;
             }
-            if (key_exists('logo', $request->all())) {
-                $filsHandled = $this->myService->storeThumbnail($request->logo, 'logo_client', 200);
+            if (key_exists('filelogo', $request->all())) {
+                $filsHandled = $this->myService->storeThumbnail($request->filelogo, 'logo_client', 200);
                 $data['imagelogo'] = $filsHandled;
             }
             $invoice->update([
@@ -385,10 +385,9 @@ class ClientInvoiceController extends Controller
             $this->invoiceSrevice->storeNotification($user_ids, $message, 'InvoiceUpdated', $data['fk_idClient'], auth()->user()->id_user);
 
             DB::commit();
-            return response()->json(['message' => new InvoiceResource($invoice), "result" => "success"]);
-        } catch (Exception $e) {
-            return response()->json(['message' => new InvoiceResource($invoice)]);
-        } catch (Exception $e) {
+            return response()->json(['result' => 'success', 'message' => new InvoiceResource($invoice)]);
+        }
+        catch (Exception $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 400);
         }

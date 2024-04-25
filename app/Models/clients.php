@@ -88,6 +88,16 @@ class clients extends Model
         return $this->belongsTo(reason_client_reject::class, 'fk_rejectClient', 'id_rejectClient');
     }
 
+    public function clientInvoices()
+    {
+        return $this->hasMany(client_invoice::class, 'fk_idUser');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(city::class, 'city');
+    }
+
     public function scopeFilter($query, array $filters)
     {
         $filters['filter'] = $filters['filter'] == 'null' || $filters['filter'] == null ? false: $filters['filter'];

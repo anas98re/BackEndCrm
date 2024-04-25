@@ -88,4 +88,9 @@ class users extends Model
             ->join('users', 'users.id_user', '=', 'user_maincity.fk_user')
             ->join('maincity', 'maincity.id_maincity', '=', 'user_maincity.fk_maincity');
     }
+
+    public function clientInvoices()
+    {
+        return $this->hasMany(client_invoice::class, 'fk_idUser');
+    }
 }

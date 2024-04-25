@@ -33,4 +33,9 @@ class city extends Model
     {
         return $this->belongsTo(maincity::class, 'fk_maincity', 'id_maincity');
     }
+
+    public function regoin()
+    {
+        return $this->hasMany(regoin::class, 'id_regoin');
+    }
 }
