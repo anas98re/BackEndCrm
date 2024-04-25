@@ -21,7 +21,7 @@ class clientCommunicationTest extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->bearerToken,
-        ])->postJson('/api/setDateInstall/4690', $requestData);
+        ])->postJson('/api/setDateInstall/'.client_invoice::inRandomOrder()->first()->id_invoice, $requestData);
 
         $response->assertStatus(200);
         $response->assertJson(["result" => "success"]);

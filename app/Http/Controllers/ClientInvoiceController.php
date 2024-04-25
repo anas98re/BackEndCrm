@@ -385,12 +385,9 @@ class ClientInvoiceController extends Controller
             $this->invoiceSrevice->storeNotification($user_ids, $message, 'InvoiceUpdated', $data['fk_idClient'], auth()->user()->id_user);
 
             DB::commit();
-            return response()->json(['message' => new InvoiceResource($invoice), "result" => "success"]);
+            return response()->json(['result' => 'success', 'message' => new InvoiceResource($invoice)]);
         }
-        catch(Exception $e)
-        {
-            return response()->json(['message' => new InvoiceResource($invoice)]);
-        } catch (Exception $e) {
+        catch (Exception $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 400);
         }
