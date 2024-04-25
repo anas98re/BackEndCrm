@@ -148,7 +148,7 @@ class ClientInvoiceController extends Controller
                 $data['image_record'] = $filsHandled;
             }
             if (key_exists('filelogo', $request->all())) {
-                $filsHandled = $this->myService->storeThumbnail($request->filelogo, 'logo_client', 200);
+                $filsHandled = $this->myService->storeFile($request->filelogo, 'logo_client');
                 $data['imagelogo'] = $filsHandled;
             }
             $invoice->update([
