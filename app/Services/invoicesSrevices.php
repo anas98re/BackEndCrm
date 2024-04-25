@@ -295,7 +295,7 @@ class invoicesSrevices extends JsonResponeService
     public  function getInvoicesmaincityMix($fk_country, $maincity, $state)
     {
         $index = 0;
-        $maincityparam = implode(', ', $maincity);
+        $maincityparam = implode(', ', array($maincity));
         $selectArray = [$fk_country];
         $param = '';
 
@@ -361,7 +361,7 @@ class invoicesSrevices extends JsonResponeService
             ->where('inv.stateclient', 'مشترك')
             ->where('inv.isApprove', 1)
             ->whereRaw($param)
-            ->whereIn('mcit.id_maincity', $maincity)
+            ->whereIn('mcit.id_maincity', array($maincity))
             ->where('inv.type_seller', '<>', 1)
             ->orderBy('inv.date_create', 'desc');
 
