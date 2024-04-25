@@ -118,7 +118,7 @@ function crudMultiInvoiceFiles($data, $invoice_id, $service)
     }
     if(key_exists('filelogo', $data))
     {
-        $filsHandled = $service->storeThumbnail($data['filelogo'], 'logo_client', 200);;
+        $filsHandled = $service->storeFile($data['filelogo'], 'logo_client');
         if(!str($invoice->imagelogo)->isEmpty())
         {
             // dd(Storage::delete(str($invoice->imagelogo)->after('storage/')));
