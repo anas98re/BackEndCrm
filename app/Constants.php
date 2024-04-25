@@ -23,7 +23,7 @@ class  Constants
 
     const PRIVILEGES_IDS = [
 
-        "TRANSFER_CLIENTS_ADMIN" => 183,
+        "TRANSFER_CLIENTS_ADMIN" => 150,
 
         "TRANSFER_CLIENTS_EMPLOYEE" => 184,
 

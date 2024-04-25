@@ -18,29 +18,29 @@ class invoiceTest extends TestCase
     public function testAddInvoice()
     {
         $data = [
-            'fk_idClient' => '100',
-            'fk_idUser' => '1',
-            'fk_regoin_invoice' => '1',
+            'fk_idClient' => 100,
+            'fk_idUser' => 1,
+            'fk_regoin_invoice' => 1,
             'address_invoice' => 'Hayden',
-            'numbarnch' => '22',
-            'nummostda' => '21',
-            'numusers' => '2',
-            'numTax' => '87',
-            'ready_install' => '1',
+            'numbarnch' => 22,
+            'nummostda' => 21,
+            'numusers' => 2,
+            'numTax' => 87,
+            'ready_install' => 1,
             'currency_name' => 'USD',
             'comment' => 'qui-vitae-ea',
-            'products' => [
+            'products' => collect([
                 [
-                    'fk_product' => '148',
-                    'amount' => '15',
-                    'price' => '15',
-                    'taxtotal' => '34',
-                    'rate_admin' => '2',
-                    'rateUser' => '4',
+                    'fk_product' => 148,
+                    'amount' => 15,
+                    'price' => 15,
+                    'taxtotal' => 34,
+                    'rate_admin' => 2,
+                    'rateUser' => 4,
                 ]
-            ],
-            'fk_regoin' => '3',
-            'fk_country' => '1',
+            ]),
+            'fk_regoin' => 3,
+            'fk_country' => 1,
             'nameUser' => 'fg',
             // 'file' => new CURLFile('/home/mustafa/Pictures/Screenshots/Screenshot from 2024-04-17 11-41-07.png'),
             // 'logo' => new CURLFile('/home/mustafa/Pictures/Screenshots/Screenshot from 2024-04-17 11-40-09.png'),
@@ -71,7 +71,7 @@ class invoiceTest extends TestCase
             'ready_install' => '1',
             'currency_name' => 'USD',
             'comment' => 'qui-vitae-ea',
-            'products' => [
+            'products' => collect([
                 [
                     'fk_product' => '148',
                     'amount' => '15',
@@ -80,10 +80,10 @@ class invoiceTest extends TestCase
                     'rate_admin' => '2',
                     'rateUser' => '4',
                 ]
-            ],
-            'product_to_delete' => [
+            ]),
+            'product_to_delete' => collect([
                 150,
-            ],
+            ]),
             'fk_regoin' => '3',
             'fk_country' => '1',
             'nameUser' => 'fg',
@@ -95,7 +95,7 @@ class invoiceTest extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->bearerToken,
-        ])->post('/api/updateInvoice/'. client_invoice::latest('id_invoice')->first()->id_invoice, $data);
+        ])->post('/api/updateInvoice/'. client_invoice::inRandomOrder()->first()->id_invoice, $data);
 
         $responseData = $response->json();
         $response->assertStatus(200);
