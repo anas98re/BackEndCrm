@@ -208,6 +208,7 @@ class ClientCommunicationController extends Controller
             'iduser_updateed' => auth()->user()->id_user,
             'idInvoice' => $id_invoice
         ];
+        info('$data is:',$data);
         $this->TaskService->closeWelcomeTaskAfterUpdateCommunication($data);
         $this->TaskService->closeTaskafterCommunicateWithClient($data);
 

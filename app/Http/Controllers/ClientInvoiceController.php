@@ -564,6 +564,7 @@ class ClientInvoiceController extends Controller
             info('4');
             $city = $city_fks_param;
             $data = $this->invoiceSrevice->getInvoicesCity($fk_country, $city);
+            return $this->sendSucssas($data);
         }
 
         return $this->sendSucssas($data);

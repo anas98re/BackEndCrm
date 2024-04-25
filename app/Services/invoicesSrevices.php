@@ -786,7 +786,7 @@ class invoicesSrevices extends JsonResponeService
             ->where('inv.stateclient', 'مشترك')
             ->where('inv.isApprove', 1)
             ->where('inv.type_seller', '<>', 1)
-            ->whereIn('cy.id_city', array($city))
+            ->whereIn('cy.id_city', [$city])
             ->orderBy('inv.date_create', 'desc');
 
         $result = $query->get();
