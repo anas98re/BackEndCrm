@@ -65,7 +65,7 @@ class ClientInvoiceController extends Controller
                     'fk_regoin_invoice' => auth()->user()->fk_regoin, // required
                     'type_installation' => $data['type_installation'],
                     'image_record' => $data['image_record'] ?? '',
-                    'fk_idClient' => $data['fk_idClient']?? null, // required
+                    'fk_idClient' => $data['fk_idClient'] ?? null, // required
                     'fk_idUser' => $data['fk_idUser'], // auth()->user()->id_user,
                     'amount_paid' => $data['amount_paid'],
                     'notes' => $data['notes'] ?? '',
@@ -386,8 +386,7 @@ class ClientInvoiceController extends Controller
 
             DB::commit();
             return response()->json(['result' => 'success', 'message' => new InvoiceResource($invoice)]);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 400);
         }
