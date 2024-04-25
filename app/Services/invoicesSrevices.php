@@ -145,57 +145,57 @@ class invoicesSrevices extends JsonResponeService
     //     return $arrJson;
     // }
 
-    // public function getInvoicesMaincityAllstate($fk_country, $maincity)
-    // {
+    public function getInvoicesMaincityAllstate($fk_country, $maincity)
+    {
 
-    //     $data = client_invoice::with(['user', 'client.regoin', 'client.city.mainCity', 'regoinInvoice', 'invoiceProducts'])
-    //         ->whereHas('client.city.mainCity', function ($query) use ($maincity) {
-    //             if (is_array($maincity)) {
-    //                 $query->whereIn('id_maincity', $maincity);
-    //             } else {
-    //                 $query->where('id_maincity', $maincity);
-    //             }
-    //         })
-    //         ->whereHas('client.city.regoin', function ($query) use ($fk_country) {
-    //             $query->where('fk_country', $fk_country);
-    //         })
-    //         ->where('isdelete', NULL)
-    //         ->where('stateclient', 'مشترك')
-    //         ->where('isApprove', 1)
-    //         ->where('type_seller', '<>', 1)
-    //         ->orderByDesc('date_create')
-    //         ->get();
+        $data = client_invoice::with(['user', 'client.regoin', 'client.city.mainCity', 'regoinInvoice', 'invoiceProducts'])
+            ->whereHas('client.city.mainCity', function ($query) use ($maincity) {
+                if (is_array($maincity)) {
+                    $query->whereIn('id_maincity', $maincity);
+                } else {
+                    $query->where('id_maincity', $maincity);
+                }
+            })
+            ->whereHas('client.city.regoin', function ($query) use ($fk_country) {
+                $query->where('fk_country', $fk_country);
+            })
+            ->where('isdelete', NULL)
+            ->where('stateclient', 'مشترك')
+            ->where('isApprove', 1)
+            ->where('type_seller', '<>', 1)
+            ->orderByDesc('date_create')
+            ->get();
 
-    //     $arrJson = [];
+        $arrJson = [];
 
-    //     foreach ($data as $clientInvoice) {
-    //         $invoiceData = $clientInvoice->toArray();
+        foreach ($data as $clientInvoice) {
+            $invoiceData = $clientInvoice->toArray();
 
-    //         $participate_fk = $invoiceData['participate_fk'];
-    //         $fk_agent = $invoiceData['fk_agent'];
+            $participate_fk = $invoiceData['participate_fk'];
+            $fk_agent = $invoiceData['fk_agent'];
 
-    //         if ($participate_fk != null) {
-    //             $participateData = participate::where('id_participate', $participate_fk)->get()->toArray();
-    //             $invoiceData['participal_info'] = $participateData;
-    //         }
+            if ($participate_fk != null) {
+                $participateData = participate::where('id_participate', $participate_fk)->get()->toArray();
+                $invoiceData['participal_info'] = $participateData;
+            }
 
-    //         if ($fk_agent != null) {
-    //             $agentData = agent::where('id_agent', $fk_agent)->get()->toArray();
-    //             $invoiceData['agent_distibutor_info'] = $agentData;
-    //         }
+            if ($fk_agent != null) {
+                $agentData = agent::where('id_agent', $fk_agent)->get()->toArray();
+                $invoiceData['agent_distibutor_info'] = $agentData;
+            }
 
-    //         $id_invoice = $invoiceData['id_invoice'];
-    //         $productData = invoice_product::with('product')
-    //             ->where('fk_id_invoice', $id_invoice)
-    //             ->get()
-    //             ->toArray();
+            $id_invoice = $invoiceData['id_invoice'];
+            $productData = invoice_product::with('product')
+                ->where('fk_id_invoice', $id_invoice)
+                ->get()
+                ->toArray();
 
-    //         $invoiceData['products'] = $productData;
-    //         $arrJson[] = $invoiceData;
-    //     }
+            $invoiceData['products'] = $productData;
+            $arrJson[] = $invoiceData;
+        }
 
-    //     return $arrJson;
-    // }
+        return $arrJson;
+    }
 
 
 
