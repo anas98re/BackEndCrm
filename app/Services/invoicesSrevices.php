@@ -471,7 +471,8 @@ class invoicesSrevices extends JsonResponeService
             $query->where('inv.isdoneinstall', null)
                 ->where('inv.ready_install', 0)
                 ->where('inv.TypeReadyClient', 'suspend');
-        } elseif ($state == 'wait') {
+        }
+        if ($state == 'wait') {
             $query->where('inv.isdoneinstall', null)
                 ->where('inv.ready_install', 1);
         }
@@ -676,7 +677,8 @@ class invoicesSrevices extends JsonResponeService
             $query->where('inv.isdoneinstall', null)
                 ->where('inv.ready_install', 0)
                 ->where('inv.TypeReadyClient', 'suspend');
-        } elseif ($state == 'wait') {
+        }
+        if ($state == 'wait') {
             $query->where('inv.isdoneinstall', null)
                 ->where('inv.ready_install', 1);
         }
