@@ -25,4 +25,9 @@ class regoin extends Model
     {
         return $this->belongsTo(country::class, 'fk_country', 'id_country');
     }
+
+    public function clientInvoices()
+    {
+        return $this->hasManyThrough(client_invoice::class, clients::class, 'fk_regoin', 'fk_idClient');
+    }
 }

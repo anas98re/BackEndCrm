@@ -171,6 +171,16 @@ class client_invoice extends Model
         return $this->hasMany(files_invoice::class, 'fk_invoice');
     }
 
+    public function regoinInvoice()
+    {
+        return $this->belongsTo(regoin::class, 'fk_regoin_invoice', 'id_regoin');
+    }
+
+    public function invoiceProducts()
+    {
+        return $this->hasMany(invoice_product::class, 'fk_id_invoice');
+    }
+
     public function products(): BelongsToMany
     {
         return $this->belongsToMany(products::class, invoice_product::class, 'fk_id_invoice', 'fk_product')->withPivot([

@@ -30,5 +30,10 @@ class invoice_product extends Model
         'name_prod'
     ];
 
+    public function product()
+    {
+        return $this->belongsTo(products::class, 'fk_product');
+    }
+
 
 }
