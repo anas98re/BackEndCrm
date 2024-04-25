@@ -148,7 +148,7 @@ class ClientInvoiceController extends Controller
                 $data['image_record'] = $filsHandled;
             }
             if (key_exists('filelogo', $request->all())) {
-                $filsHandled = $this->myService->storeFile($request->filelogo, 'logo_client');
+                $filsHandled = $this->myService->storeThumbnail($request->filelogo, 'logo_client', 200);
                 $data['imagelogo'] = $filsHandled;
             }
             $invoice->update([
@@ -559,7 +559,6 @@ class ClientInvoiceController extends Controller
         if ($request->has('allCityState')) {
             $city = $city_fks_param;
             $data = $this->invoiceSrevice->getInvoicesCity($fk_country, $city);
-            return $this->sendSucssas($data);
         }
 
         return $this->sendSucssas($data);
