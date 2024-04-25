@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Resources\InvoiceResource;
+use App\Http\Resources\InvoiceResourceForGetInvoicesByPrivilages;
 use App\Models\agent;
 use App\Models\client_invoice;
 use App\Models\files_invoice;
@@ -154,7 +155,7 @@ class invoicesSrevices extends JsonResponeService
         }
 
 
-        return InvoiceResource::collection($arrJson);
+        return InvoiceResourceForGetInvoicesByPrivilages::collection($arrJson);
     }
 
 
@@ -208,7 +209,7 @@ class invoicesSrevices extends JsonResponeService
 
         $data = $invoices->get();
 
-        return InvoiceResource::collection($data);
+        return InvoiceResourceForGetInvoicesByPrivilages::collection($data);
     }
 
 
@@ -258,7 +259,7 @@ class invoicesSrevices extends JsonResponeService
         $invoices = $invoices->orderBy('date_create', 'desc')
             ->get();
 
-        return InvoiceResource::collection($invoices);
+        return InvoiceResourceForGetInvoicesByPrivilages::collection($invoices);
     }
 
     function getInvoicesCity($fk_country, $city)
@@ -297,6 +298,6 @@ class invoicesSrevices extends JsonResponeService
             ->orderBy('date_create', 'desc')
             ->get();
 
-        return InvoiceResource::collection($arrJson);
+        return InvoiceResourceForGetInvoicesByPrivilages::collection($arrJson);
     }
 }
