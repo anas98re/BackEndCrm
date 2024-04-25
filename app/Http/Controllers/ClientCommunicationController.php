@@ -202,15 +202,14 @@ class ClientCommunicationController extends Controller
         //Tasks ...
         $lastCommunication = client_communication::latest('id_communication')->first();
         $last_idCommuncation2 = $lastCommunication->id_communication;
-        $data = [
+        $dataTask = [
             'last_idCommuncation2' => $last_idCommuncation2,
             'id_communication' => $id_communication,
             'iduser_updateed' => auth()->user()->id_user,
             'idInvoice' => $id_invoice
         ];
-        info('$data is:',$data);
-        $this->TaskService->closeWelcomeTaskAfterUpdateCommunication($data);
-        $this->TaskService->closeTaskafterCommunicateWithClient($data);
+        $this->TaskService->closeWelcomeTaskAfterUpdateCommunication($dataTask);
+        $this->TaskService->closeTaskafterCommunicateWithClient($dataTask);
 
         $communication = client_communication::with(['client', 'user', 'invoice'])
             ->where('id_communication', $id_communication)
@@ -243,7 +242,7 @@ class ClientCommunicationController extends Controller
         $data = $this->getCommunicationById($id_communication, $id_invoice);
         $fk_client = $communication->fk_client;
         if ($request->input('type_install') == 1 && $communication->type_communcation == 'تركيب' && !$updated) {
-            $this->handleInstallation($id_communication, $id_invoice, $type, $updated, $fk_client, $data);
+            $this->handleInstallation($id_communication, $id_invoice, $type, $updated, $fk_client, $dataTask);
         }
 
         if ($type && !$updated) {
