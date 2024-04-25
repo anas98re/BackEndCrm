@@ -200,7 +200,9 @@ class invoicesSrevices extends JsonResponeService
     function getInvoicesmaincityAllstate($fk_country, $maincity)
     {
         $index = 0;
-        $maincityparam = implode(', ', array($maincity));
+        $numbers = explode(',', $maincity);
+        $numbers = array_map('trim', $numbers);
+        $result1 = array_map('intval', $numbers);
 
         $query = DB::table('client_invoice as inv')
             ->select(
@@ -247,7 +249,7 @@ class invoicesSrevices extends JsonResponeService
             ->whereNull('inv.isdelete')
             ->where('inv.stateclient', 'مشترك')
             ->where('inv.isApprove', 1)
-            ->whereIn('mcit.id_maincity', array($maincity));
+            ->whereIn('mcit.id_maincity', $result1);
 
         $query->where('inv.type_seller', '<>', 1)
             ->orderBy('inv.date_create', 'desc');
@@ -414,9 +416,9 @@ class invoicesSrevices extends JsonResponeService
     public  function getInvoicesmaincityMix($fk_country, $maincity, $state)
     {
         $index = 0;
-        $maincityparam = implode(', ', array($maincity));
-        $selectArray = [$fk_country];
-        $param = '';
+        $numbers = explode(',', $maincity);
+        $numbers = array_map('trim', $numbers);
+        $result1 = array_map('intval', $numbers);
         $query = DB::table('client_invoice as inv')
             ->select(
                 'inv.*',
@@ -474,7 +476,7 @@ class invoicesSrevices extends JsonResponeService
                 ->where('inv.ready_install', 1);
         }
 
-        $query->whereIn('mcit.id_maincity', array($maincity))
+        $query->whereIn('mcit.id_maincity', $result1)
             ->where('inv.type_seller', '<>', 1)
             ->orderBy('inv.date_create', 'desc');
 
@@ -618,8 +620,9 @@ class invoicesSrevices extends JsonResponeService
 
     function getInvoicesCityState($fk_country, $state, $city)
     {
-        $selectArray = [$fk_country];
-        $param = '';
+        $numbers = explode(',', $city);
+        $numbers = array_map('trim', $numbers);
+        $result1 = array_map('intval', $numbers);
 
         $query = DB::table('client_invoice as inv')
             ->select(
@@ -678,7 +681,7 @@ class invoicesSrevices extends JsonResponeService
                 ->where('inv.ready_install', 1);
         }
 
-        $query->whereIn('cy.id_city', array($city))
+        $query->whereIn('cy.id_city', $result1)
             ->where('inv.type_seller', '!=', 1)
             ->orderBy('inv.date_create', 'desc');
 
@@ -738,7 +741,9 @@ class invoicesSrevices extends JsonResponeService
 
     function getInvoicesCity($fk_country, $city)
     {
-        $selectArray = [$fk_country];
+        $numbers = explode(',', $city);
+        $numbers = array_map('trim', $numbers);
+        $result = array_map('intval', $numbers);
 
         $query = DB::table('client_invoice as inv')
             ->select(
@@ -786,7 +791,7 @@ class invoicesSrevices extends JsonResponeService
             ->where('inv.stateclient', 'مشترك')
             ->where('inv.isApprove', 1)
             ->where('inv.type_seller', '<>', 1)
-            ->whereIn('cy.id_city', [$city])
+            ->whereIn('cy.id_city', $result)
             ->orderBy('inv.date_create', 'desc');
 
         $result = $query->get();
