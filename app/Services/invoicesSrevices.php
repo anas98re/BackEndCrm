@@ -789,10 +789,11 @@ class invoicesSrevices extends JsonResponeService
             ->join('regoin as rr', 'rr.id_regoin', '=', 'cc.fk_regoin')
             ->join('regoin as rrgoin', 'rrgoin.id_regoin', '=', 'inv.fk_regoin_invoice')
             ->where('rr.fk_country', $fk_country)
-            ->whereNull('inv.isdelete')
+            // ->whereNull('inv.isdelete')
+            ->where('inv.isdelete', null)
             ->where('inv.stateclient', 'مشترك')
             ->where('inv.isApprove', 1)
-            ->where('inv.type_seller', '<>', 1)
+            ->where('inv.type_seller', '!=', 1)
             ->whereIn('cy.id_city', $result)
             ->orderBy('inv.date_create', 'desc');
 
