@@ -741,10 +741,14 @@ class TaskService extends JsonResponeService
 
     public function closeTaskAfterInstallClient($data)
     {
+
+        $dataArray = json_decode($data, true);
+        info('$dataArray is:',$dataArray );
+        info('$dataArray[id_communication] is: ',$dataArray['id_communication'] );
         try {
             DB::beginTransaction();
 
-            $task = task::where('id_communication', $data['id_communication'])
+            $task = task::where('id_communication', $dataArray['id_communication'])
                 ->where('public_Type', 'com_install_1')
                 ->first();
             if ($task) {
@@ -758,14 +762,14 @@ class TaskService extends JsonResponeService
                         ->update([
                             'task_statuse_id' => 4,
                             'changed_date' => Carbon::now('Asia/Riyadh'),
-                            'changed_by' => isset($data['iduser_updateed']) ? $data['iduser_updateed'] : null,
+                            'changed_by' => isset($dataArray['iduser_updateed']) ? $dataArray['iduser_updateed'] : null,
                         ]);
 
                     $this->MyService->afterCommunicateWithClient(
-                        $data['idInvoice'],
+                        $dataArray['idInvoice'],
                         $task->client_id,
-                        $data['last_idCommuncation2'],
-                        $data['iduser_updateed']
+                        $dataArray['last_idCommuncation2'],
+                        $dataArray['iduser_updateed']
                     );
                 } else {
                     return;
