@@ -340,25 +340,42 @@ class ClientInvoiceController extends Controller
             ]);
 
             if (key_exists('product_to_delete', $data)) {
-                foreach ($data['product_to_delete'] as $product_id) {
-                    invoice_product::where('fk_product', $product_id)
-                        ->where('fk_id_invoice', $invoice_id)
+                foreach ($data['product_to_delete'] as $id) {
+                    invoice_product::where('id_invoice_product', $id)
                         ->first()?->delete();
                 }
             }
 
             if (key_exists('products', $data)) {
                 foreach ($request['products'] as $product) {
-                    $insertArray = array();
-                    $insertArray['amount'] = $product['amount'] ?? 0;
-                    $insertArray['price'] = $product['price'] ?? 0;
-                    $insertArray['fk_id_invoice'] = $invoice->id_invoice;
-                    $insertArray['fk_product'] = $product['fk_product'];
-                    $insertArray['taxtotal'] = isset($product['taxtotal']) ? (float) $product['taxtotal'] : 0.0;
-                    $insertArray['rate_admin'] = isset($product['rate_admin']) ? (float) $product['rate_admin'] : 0.0;
-                    $insertArray['rateUser'] = isset($product['rateUser']) ? (float) $product['rateUser'] : 0.0;
+                    if($product['id_invoice_product'] == 'null' || $product['id_invoice_product'] == null)
+                    {
+                        $insertArray = array();
+                        $insertArray['amount'] = $product['amount'] ?? 0;
+                        $insertArray['price'] = $product['price'] ?? 0;
+                        $insertArray['fk_id_invoice'] = $invoice->id_invoice;
+                        $insertArray['fk_product'] = $product['fk_product'];
+                        $insertArray['taxtotal'] = isset($product['taxtotal']) ? (float) $product['taxtotal'] : 0.0;
+                        $insertArray['rate_admin'] = isset($product['rate_admin']) ? (float) $product['rate_admin'] : 0.0;
+                        $insertArray['rateUser'] = isset($product['rateUser']) ? (float) $product['rateUser'] : 0.0;
 
-                    invoice_product::create($insertArray);
+                        invoice_product::create($insertArray);
+                    }
+                    else
+                    {
+                        $invoice_product = invoice_product::where('id_invoice_product', $product['id_invoice_product'])->first();
+
+                        $updateArray = array();
+                        $updateArray['amount'] = $product['amount'] ?? $invoice_product->amount;
+                        $updateArray['price'] = $product['price'] ?? $invoice_product->price;
+                        $updateArray['fk_id_invoice'] = $invoice->id_invoice;
+                        $updateArray['fk_product'] = isset($product['fk_product']) ? $product['fk_product'] : $invoice_product->fk_product;
+                        $updateArray['taxtotal'] = isset($product['taxtotal']) ? (float) $product['taxtotal'] : $invoice_product->taxtotal;
+                        $updateArray['rate_admin'] = isset($product['rate_admin']) ? (float) $product['rate_admin'] : $invoice_product->rate_admin;
+                        $updateArray['rateUser'] = isset($product['rateUser']) ? (float) $product['rateUser'] : $invoice_product->rateUser;
+
+                        $invoice_product->update($updateArray);
+                    }
                 }
             }
 
