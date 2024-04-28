@@ -141,20 +141,14 @@ class ClientInvoiceController extends Controller
             // $resJson = array("result" => "success", "code" => "200", "message" => new InvoiceResource($invoice));
             // echo json_encode($resJson, JSON_UNESCAPED_UNICODE);
 
-            $data['image_record'] = '';
-            $data['imagelogo'] = '';
             if (key_exists('file', $request->all())) {
                 $filsHandled = $this->myService->storeFile($request->file, 'invoices');
-                $data['image_record'] = $filsHandled;
+                $invoice->update(['image_record' => $filsHandled]);
             }
             if (key_exists('filelogo', $request->all())) {
                 $filsHandled = $this->myService->storeFile($request->filelogo, 'logo_client');
-                $data['imagelogo'] = $filsHandled;
+                $invoice->update(['imagelogo' => $filsHandled]);
             }
-            $invoice->update([
-                'image_record' => $data['image_record'],
-                'imagelogo' => $data['imagelogo'],
-            ]);
 
             if (key_exists('uploadfiles', $request->all())) {
                 foreach ($request->uploadfiles as $file) {
