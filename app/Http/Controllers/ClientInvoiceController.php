@@ -169,7 +169,7 @@ class ClientInvoiceController extends Controller
             $this->addTaskToApproveAdminAfterAddInvoice($invoice->id_invoice, $data['fk_regoin']);
 
             // ------------ notification -------------
-            $fk_regoin = $data['fk_regoin']; //fk_regoin_invoice
+            $fk_regoin = $invoice->fk_regoin_invoice; //fk_regoin_invoice
             $fk_country = $data['fk_country']; //owner not related in regoin
             $name_enterprise = $client->name_enterprise;
             $title_name_approve = "تم إنشاء فاتورة للعميل ";
@@ -386,7 +386,7 @@ class ClientInvoiceController extends Controller
             $nametitle = "من قبل";
             $titlenameapprove = "تم تعديل فاتورة العميل ";
             $message = "$titlenameapprove $name_enterprise \r$nametitle \r $nameuser";
-            $fk_regoin = $data['fk_regoin']; //fk_regoin_invoice
+            $fk_regoin = $invoice->fk_regoin_invoice; //fk_regoin_invoice
             $fkcountry = $data['fk_country']; //owner not related in regoin
             $user_ids =  getIdUsers($fk_regoin, 57, $fkcountry);
             $tokens = getTokens($user_ids);
