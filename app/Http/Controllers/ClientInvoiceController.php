@@ -392,14 +392,14 @@ class ClientInvoiceController extends Controller
             $tokens = getTokens($user_ids);
             $title = "تعديل فاتورة";
 
-            $this->invoiceSrevice->sendNotification(
-                $tokens,
-                $data['fk_idClient'],
-                'InvoiceUpdated',
-                $title,
-                $message,
-            );
-            $this->invoiceSrevice->storeNotification($user_ids, $message, 'InvoiceUpdated', $data['fk_idClient'], auth()->user()->id_user);
+            // $this->invoiceSrevice->sendNotification(
+            //     $tokens,
+            //     $data['fk_idClient'],
+            //     'InvoiceUpdated',
+            //     $title,
+            //     $message,
+            // );
+            // $this->invoiceSrevice->storeNotification($user_ids, $message, 'InvoiceUpdated', $data['fk_idClient'], auth()->user()->id_user);
 
             DB::commit();
             return response()->json(['result' => 'success', 'message' => new InvoiceResource($invoice)]);
