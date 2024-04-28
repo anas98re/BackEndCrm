@@ -183,18 +183,7 @@ class client_invoice extends Model
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(products::class, invoice_product::class, 'fk_id_invoice', 'fk_product')->withPivot([
-            'id_invoice_product' => (string) 'id_invoice_product',
-            'fk_id_invoice' => 'fk_id_invoice',
-            'fk_product' => (string)'fk_product',
-            'amount' => 'amount',
-            'price' => 'price',
-            'taxtotal' => 'taxtotal',
-            'rate_admin' => 'rate_admin',
-            'rateUser' => 'rateUser',
-            'idinvoice' => 'idinvoice',
-            'name_prod' => 'name_prod'
-        ]);
+        return $this->belongsToMany(products::class, invoice_product::class, 'fk_id_invoice', 'fk_product');
     }
 
     public function scopeFilter($query, array $filters)

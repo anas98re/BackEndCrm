@@ -155,7 +155,7 @@ class invoicesSrevices extends JsonResponeService
         }
 
 
-        return InvoiceResourceForGetInvoicesByPrivilages::collection($arrJson);
+        return InvoiceResource::collection($arrJson);
     }
 
 
@@ -209,7 +209,7 @@ class invoicesSrevices extends JsonResponeService
 
         $data = $invoices->get();
 
-        return InvoiceResourceForGetInvoicesByPrivilages::collection($data);
+        return InvoiceResource::collection($data);
     }
 
 
@@ -259,7 +259,7 @@ class invoicesSrevices extends JsonResponeService
         $invoices = $invoices->orderBy('date_create', 'desc')
             ->get();
 
-        return InvoiceResourceForGetInvoicesByPrivilages::collection($invoices);
+        return InvoiceResource::collection($invoices);
     }
 
     function getInvoicesCity($fk_country, $city)
@@ -298,6 +298,6 @@ class invoicesSrevices extends JsonResponeService
             ->orderBy('date_create', 'desc')
             ->get();
 
-        return InvoiceResourceForGetInvoicesByPrivilages::collection($arrJson);
+        return InvoiceResource::collection($arrJson);
     }
 }
