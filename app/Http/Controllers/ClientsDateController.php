@@ -56,7 +56,7 @@ class ClientsDateController extends Controller
 
                 $this->myService->handleNotificationAndComments(
                     $privilage_id = 59,
-                    $typeProcess = 'اعادة جدولة زيارة',
+                    $typeProcess = 'إعادة جدولة زيارة',
                     $idclients_date,
                     $processReason = $request->processReason
                 );
