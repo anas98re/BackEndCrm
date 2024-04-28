@@ -107,8 +107,25 @@ function getTokens(Collection $user_ids): Collection
 function crudMultiInvoiceFiles($data, $invoice_id, $service)
 {
     $invoice = client_invoice::query()->where('id_invoice', $invoice_id)->first();
+    if(key_exists('isDeleteFile', $data))
+    {
+        if($data['isDeletedFile'] === true || $data['isDeletedFile'] === 'true')
+        {
+            Storage::delete('public/'.$invoice->image_record);
+            $invoice->update(['image_record' => '']);
+        }
+    }
+    if(key_exists('idDeleteLogo', $data))
+    {
+        if($data['idDeleteLogo'] === true || $data['idDeleteLogo'] === 'true')
+        {
+            Storage::delete('public/'.$invoice->imagelogo);
+            $invoice->update(['imagelogo' => '']);
+        }
+    }
     if(key_exists('file', $data))
     {
+        // $data['file']
         $filsHandled = $service->storeFile($data['file'], 'invoices');
         if(!str($invoice->image_record)->isEmpty())
         {
