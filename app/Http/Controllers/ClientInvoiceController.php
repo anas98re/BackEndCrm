@@ -386,20 +386,20 @@ class ClientInvoiceController extends Controller
             $nametitle = "من قبل";
             $titlenameapprove = "تم تعديل فاتورة العميل ";
             $message = "$titlenameapprove $name_enterprise \r$nametitle \r $nameuser";
-            $fk_regoin = $_POST['fk_regoin']; //fk_regoin_invoice
-            $fkcountry = $_POST['fk_country']; //owner not related in regoin
+            $fk_regoin = $data['fk_regoin']; //fk_regoin_invoice
+            $fkcountry = $data['fk_country']; //owner not related in regoin
             $user_ids =  getIdUsers($fk_regoin, 57, $fkcountry);
             $tokens = getTokens($user_ids);
             $title = "تعديل فاتورة";
 
-            // $this->invoiceSrevice->sendNotification(
-            //     $tokens,
-            //     $data['fk_idClient'],
-            //     'InvoiceUpdated',
-            //     $title,
-            //     $message,
-            // );
-            // $this->invoiceSrevice->storeNotification($user_ids, $message, 'InvoiceUpdated', $data['fk_idClient'], auth()->user()->id_user);
+            $this->invoiceSrevice->sendNotification(
+                $tokens,
+                $data['fk_idClient'],
+                'InvoiceUpdated',
+                $title,
+                $message,
+            );
+            $this->invoiceSrevice->storeNotification($user_ids, $message, 'InvoiceUpdated', $data['fk_idClient'], auth()->user()->id_user);
 
             DB::commit();
             return response()->json(['result' => 'success', 'message' => new InvoiceResource($invoice)]);

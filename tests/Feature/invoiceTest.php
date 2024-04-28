@@ -60,9 +60,9 @@ class invoiceTest extends TestCase
     public function testUpdateInvoice()
     {
         $data = [
-            'fk_idClient' => '100',
-            'fk_idUser' => '1',
-            'fk_regoin_invoice' => '1',
+            'fk_idClient' => 100,
+            'fk_idUser' => 1,
+            'fk_regoin_invoice' => 1,
             'address_invoice' => 'Hayden',
             'numbarnch' => '22',
             'nummostda' => '21',
@@ -73,6 +73,7 @@ class invoiceTest extends TestCase
             'comment' => 'qui-vitae-ea',
             'products' => collect([
                 [
+                    'id_invoice_product' => null,
                     'fk_product' => '148',
                     'amount' => '15',
                     'price' => '15',
@@ -84,8 +85,8 @@ class invoiceTest extends TestCase
             'product_to_delete' => collect([
                 150,
             ]),
-            'fk_regoin' => '3',
-            'fk_country' => '1',
+            'fk_regoin' => 3,
+            'fk_country' => 1,
             'nameUser' => 'fg',
             // 'file' => new CURLFile('/home/mustafa/Pictures/Screenshots/Screenshot from 2024-04-17 11-41-07.png'),
             // 'logo' => new CURLFile('/home/mustafa/Pictures/Screenshots/Screenshot from 2024-04-17 11-40-09.png'),
@@ -97,7 +98,6 @@ class invoiceTest extends TestCase
             'Authorization' => 'Bearer ' . $this->bearerToken,
         ])->post('/api/updateInvoice/'. client_invoice::inRandomOrder()->first()->id_invoice, $data);
 
-        $responseData = $response->json();
         $response->assertStatus(200);
         $response->assertJson(["result" => "success"]);
     }
