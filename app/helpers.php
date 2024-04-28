@@ -109,15 +109,15 @@ function crudMultiInvoiceFiles($data, $invoice_id, $service)
     $invoice = client_invoice::query()->where('id_invoice', $invoice_id)->first();
     if(key_exists('isDeleteFile', $data))
     {
-        if($data['isDeletedFile'] === true || $data['isDeletedFile'] === 'true')
+        if($data['isDeleteFile'] == true || $data['isDeleteFile'] == 'true')
         {
             Storage::delete('public/'.$invoice->image_record);
             $invoice->update(['image_record' => '']);
         }
     }
-    if(key_exists('idDeleteLogo', $data))
+    if(key_exists('isDeleteLogo', $data))
     {
-        if($data['idDeleteLogo'] === true || $data['idDeleteLogo'] === 'true')
+        if($data['isDeleteLogo'] == true || $data['isDeleteLogo'] == 'true')
         {
             Storage::delete('public/'.$invoice->imagelogo);
             $invoice->update(['imagelogo' => '']);
