@@ -141,14 +141,20 @@ class ClientInvoiceController extends Controller
             // $resJson = array("result" => "success", "code" => "200", "message" => new InvoiceResource($invoice));
             // echo json_encode($resJson, JSON_UNESCAPED_UNICODE);
 
+            $data['image_record'] = '';
+            $data['imagelogo'] = '';
             if (key_exists('file', $request->all())) {
                 $filsHandled = $this->myService->storeFile($request->file, 'invoices');
-                $invoice->update(['image_record' => $filsHandled]);
+                $data['image_record'] = $filsHandled;
             }
             if (key_exists('filelogo', $request->all())) {
                 $filsHandled = $this->myService->storeFile($request->filelogo, 'logo_client');
-                $invoice->update(['imagelogo' => $filsHandled]);
+                $data['imagelogo'] = $filsHandled;
             }
+            $invoice->update([
+                'image_record' => $data['image_record'],
+                'imagelogo' => $data['imagelogo'],
+            ]);
 
             if (key_exists('uploadfiles', $request->all())) {
                 foreach ($request->uploadfiles as $file) {
@@ -314,7 +320,7 @@ class ClientInvoiceController extends Controller
                 'type_seller' => $request->input('type_seller', $invoice->type_seller),
                 'rate_participate' => $request->input('rate_participate', $invoice->rate_participate),
                 'type_installation' => $request->input('type_installation', $invoice->type_installation),
-                'image_record' => $request->input('image_record', $invoice->image_record),
+                // 'image_record' => $request->input('image_record', $invoice->image_record),
                 'fk_idClient' => $request->input('fk_idClient', $invoice->fk_idClient),
                 'fk_idUser' => $request->total != null ? $invoice->fk_idUser : $request->input('fk_idUser', $invoice->fk_idUser),
                 'amount_paid' => $request->input('amount_paid', $invoice->amount_paid),
@@ -328,7 +334,7 @@ class ClientInvoiceController extends Controller
                 'numusers' => $request->input('numusers', $invoice->numusers),
                 'numTax' => $request->input('numTax', $invoice->numTax),
                 'currency_name' => $request->input('currency_name', $invoice->currency_name),
-                'imagelogo' => $request->input('imagelogo', $invoice->imagelogo),
+                // 'imagelogo' => $request->input('imagelogo', $invoice->imagelogo),
                 'renew_agent' => $request->input('renew_agent', $invoice->renew_agent),
                 'invoice_source' => $request->input('invoice_source', $invoice->invoice_source),
             ]);
