@@ -8,9 +8,11 @@ use App\Http\Requests\UpdateupdatesReportRequest;
 use App\Jobs\StorageClientsUpdatesJob;
 use App\Jobs\StorageFilesInvoiseDeletedJob;
 use App\Jobs\StorageUpdates;
+use App\Jobs\StorageUpdatesLaravel;
 use App\Models\ChangeLog;
 use App\Models\files_invoice;
 use App\Models\users;
+use App\Services\ReportSrevices;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -19,13 +21,16 @@ class UpdatesReportController extends Controller
     protected $routePattern;
     protected $userName;
     protected $ip;
+    protected $reportSrevices;
 
-    public function __construct()
+    public function __construct(ReportSrevices $reportSrevices)
     {
         $request = app(Request::class);
         // $this->routePattern = $request->route()->uri();
         $this->ip = $request->ip();
         // $this->userName = auth('sanctum')->user()->nameUser;
+
+        $this->reportSrevices = $reportSrevices;
     }
 
     public function addUserUpdateReport(Request $request)
@@ -179,7 +184,7 @@ class UpdatesReportController extends Controller
         );
     }
 
-    public function addInvoicesUpdateReport(Request $request)
+    public function addInvoicesUpdateReport(Request $request) //For PHP
     {
         $modelId = $request->input('id_invoice');
         $dataBeforeUpdate = json_decode($request->input('dataBeforeUpdate'), true)[0];
@@ -226,6 +231,8 @@ class UpdatesReportController extends Controller
             $isApprove
         );
     }
+
+
 
     public function addInvoiceProductReport(Request $request)
     {
@@ -343,5 +350,56 @@ class UpdatesReportController extends Controller
             'afterApprove' => null,
             'ip' => null
         ]);
+    }
+
+
+
+    // Laravel Reports
+
+    public function addInvoicesUpdateReportService($data) //For Laravel
+    {
+        $modelId = $data['id_invoice'];
+        $dataBeforeUpdate = $data['dataBeforeUpdate'];
+        $dataAfterUpdate = $data['dataAfterUpdate'];
+        $userId = $data['fk_idUser'];
+
+        $userName = null;
+        if ($userId) {
+            $user = users::where('id_user', $userId)->first();
+            if ($user) {
+                $userName = $user->nameUser;
+            }
+        }
+        $isApprove = null;
+
+        if ($data['IsAprrove'] !== null && count(array($data['IsAprrove'])) > 0 && isset($data['IsAprrove'])) {
+            if ($data['IsAprrove'] === '1') {
+                $isApprove = 'true';
+            } else {
+                $isApprove = 'false';
+            }
+        } else {
+            $isApprove = 'Not Found';
+        }
+
+        $routePattern = 'api/updateInvoice/{invoice_id}';
+        $description = "Invoice updated by $userName, using route: $routePattern from IP: $this->ip.";
+        $update_source = 'تعديل الفاتورة';
+        $model = 'App\Models\client_invoice';
+
+        $nameMainCitiesBefor = null;
+
+        $this->reportSrevices->handle(
+            $modelId,
+            $model,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $userId,
+            $update_source,
+            $routePattern,
+            $description,
+            $nameMainCitiesBefor,
+            $isApprove
+        );
     }
 }

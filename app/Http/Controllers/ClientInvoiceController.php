@@ -32,12 +32,18 @@ class ClientInvoiceController extends Controller
     private $myService;
     private $MyService;
     private $invoiceSrevice;
+    private $ReportService;
 
-    public function __construct(AppSrevices $myService, invoicesSrevices $invoiceSrevice, TaskProceduresService $MyService)
-    {
+    public function __construct(
+        AppSrevices $myService,
+        invoicesSrevices $invoiceSrevice,
+        TaskProceduresService $MyService,
+        UpdatesReportController $ReportService
+    ) {
         $this->myService = $myService;
         $this->MyService = $MyService;
         $this->invoiceSrevice = $invoiceSrevice;
+        $this->ReportService = $ReportService;
     }
     public function addInvoice(Request $request)
     {
@@ -306,6 +312,10 @@ class ClientInvoiceController extends Controller
         try {
             $invoice = client_invoice::where('id_invoice', $invoice_id)->first();
 
+            //For Archive
+            $IsAprrove = client_invoice::where('id_invoice', $invoice_id)->first()->isApprove;
+            $invoiceBeforeUpdate = client_invoice::where('id_invoice', $invoice_id)->first();
+
             $invoice->update([
                 'date_create' => $request->input('date_create', $invoice->date_create),
                 'date_approve' => $request->input('date_approve', $invoice->date_approve),
@@ -348,8 +358,7 @@ class ClientInvoiceController extends Controller
 
             if (key_exists('products', $data)) {
                 foreach ($request['products'] as $product) {
-                    if($product['id_invoice_product'] == 'null' || $product['id_invoice_product'] == null)
-                    {
+                    if ($product['id_invoice_product'] == 'null' || $product['id_invoice_product'] == null) {
                         $insertArray = array();
                         $insertArray['amount'] = $product['amount'] ?? 0;
                         $insertArray['price'] = $product['price'] ?? 0;
@@ -360,9 +369,7 @@ class ClientInvoiceController extends Controller
                         $insertArray['rateUser'] = isset($product['rateUser']) ? (float) $product['rateUser'] : 0.0;
 
                         invoice_product::create($insertArray);
-                    }
-                    else
-                    {
+                    } else {
                         $invoice_product = invoice_product::where('id_invoice_product', $product['id_invoice_product'])->first();
 
                         $updateArray = array();
@@ -401,6 +408,18 @@ class ClientInvoiceController extends Controller
             );
             $this->invoiceSrevice->storeNotification($user_ids, $message, 'InvoiceUpdated', $data['fk_idClient'], auth()->user()->id_user);
 
+            //For Archive
+            $invoiceAfterUpdate = client_invoice::where('id_invoice', $invoice_id)->first();
+            $dataArchive = [
+                'IsAprrove' => $IsAprrove,
+                'id_invoice' => $invoice_id,
+                'fk_idUser' => auth('sanctum')->user()->id_user,
+                'dataBeforeUpdate' => $invoiceBeforeUpdate,
+                'dateUpdate' => Carbon::now()->format('Y-m-d H:i:s'),
+                'dataAfterUpdate' => $invoiceAfterUpdate
+            ];
+            $this->ReportService->addInvoicesUpdateReportService($dataArchive);
+            
             DB::commit();
             return response()->json(['result' => 'success', 'message' => new InvoiceResource($invoice)]);
         } catch (Exception $e) {

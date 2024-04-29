@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 
 class client_invoice extends Model
 {
-    use HasFactory, Loggable;
+    use HasFactory;
 
     protected $primaryKey = 'id_invoice';
 
