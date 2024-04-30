@@ -211,7 +211,7 @@ class client_invoice extends Model
                 ->orWhereHas('regoin', function ($query) use ($search) {
                     $query->where('name_regoin', 'like', '%' . $search . '%');
                 })
-                ->orWhere('id_invoice', 'like', '%'. $search. '%')
+                ->orWhere('id_invoice', $search)
             )
         );
 
