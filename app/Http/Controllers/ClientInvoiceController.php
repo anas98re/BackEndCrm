@@ -558,10 +558,19 @@ class ClientInvoiceController extends Controller
                 break;
         }
 
-        $data = $query->filter(request()->all());
+        $data = $query->filter(request()->except(['page']));
+        $dataCount = $data;
+        $count = $dataCount->count();
 
         $response = InvoiceResource::collection($data->paginate(request()->limit ?? 15));
-        return $this->sendSucssas($response, $data->count());
+        // if (array_key_exists('page', $query)) {
+        //     unset($query['page']);
+        // }
+
+        // if (array_key_exists('limit', $query)) {
+        //     unset($query['limit']);
+        // }
+        return $this->sendSucssas($response, $count);
     }
 
     public function getInvoiceMainCity(Request $request)
