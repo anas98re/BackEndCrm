@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\App;
 class CustomActivityLogger extends ActivityLogger
 {
     protected $subject;
-    
+
     public function __construct($subject)
     {
         $this->subject = $subject;
