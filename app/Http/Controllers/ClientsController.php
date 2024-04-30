@@ -394,7 +394,7 @@ class ClientsController extends Controller
             $user = auth('sanctum')->user();
             $user_transfer = users::query()->where('id_user', $data['fk_user'])->first();
 
-            $update['fk_regoin'] = $user?->fk_regoin;
+            // $update['fk_regoin'] = $user?->fk_regoin;
             $update['fkusertrasfer'] = auth()->user()->id_user;
             $update['date_transfer'] = Carbon::now();
             $update['reason_transfer'] = $data['fk_user'];
