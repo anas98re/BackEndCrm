@@ -409,7 +409,7 @@ class UpdatesReportController extends Controller
         $dataBeforeUpdate = $data['dataBeforeUpdate'];
         $dataAfterUpdate = $data['dataAfterUpdate'];
         $userId = $data['fk_user_update'];
-
+        info('wwwwwwwwwww');
         $userName = null;
         if ($userId) {
             $user = users::where('id_user', $userId)->first();
@@ -418,16 +418,7 @@ class UpdatesReportController extends Controller
             }
         }
         $isApprove = null;
-
-        if ($data['IsAprrove'] !== null && count(array($data['IsAprrove'])) > 0 && isset($data['IsAprrove'])) {
-            if ($data['IsAprrove'] === '1') {
-                $isApprove = 'true';
-            } else {
-                $isApprove = 'false';
-            }
-        } else {
-            $isApprove = 'Not Found';
-        }
+        info('zzzzzzzzz');
 
         $routePattern = 'api/updateInvoice/{invoice_id}';
         $description = "Invoice Product updated by $userName, using route: $routePattern from IP: $this->ip.";
@@ -448,5 +439,6 @@ class UpdatesReportController extends Controller
             $nameMainCitiesBefor,
             $isApprove
         );
+        info('vvvvvvvvvvvvv');
     }
 }
