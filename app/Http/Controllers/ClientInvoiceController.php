@@ -310,118 +310,136 @@ class ClientInvoiceController extends Controller
         DB::beginTransaction();
         $data = $request->all();
         try {
-            $invoice = client_invoice::where('id_invoice', $invoice_id)->first();
+        $invoice = client_invoice::where('id_invoice', $invoice_id)->first();
 
-            //For Archive
-            $IsAprrove = client_invoice::where('id_invoice', $invoice_id)->first()->isApprove;
-            $invoiceBeforeUpdate = client_invoice::where('id_invoice', $invoice_id)->first();
+        //For Archive
+        $IsAprrove = client_invoice::where('id_invoice', $invoice_id)->first()->isApprove;
+        $invoiceBeforeUpdate = client_invoice::where('id_invoice', $invoice_id)->first();
 
-            $invoice->update([
-                'date_create' => $request->input('date_create', $invoice->date_create),
-                'date_approve' => $request->input('date_approve', $invoice->date_approve),
-                'fk_regoin_invoice' => $request->input('fk_regoin_invoice', $invoice->fk_regoin_invoice),
-                'total' => $request->input('total', $invoice->total),
-                'type_pay' => $request->input('type_pay', $invoice->type_pay),
-                'renew_year' => $request->input('renew_year', $invoice->renew_year),
-                'renew2year' => $request->input('renew2year', $invoice->renew2year),
-                'renew_pluse' => $request->input('renew_pluse', $invoice->renew_pluse),
-                'participate_fk' => $request->input('participate_fk', $invoice->participate_fk),
-                'fk_agent' => $request->input('fk_agent', $invoice->fk_agent),
-                'type_seller' => $request->input('type_seller', $invoice->type_seller),
-                'rate_participate' => $request->input('rate_participate', $invoice->rate_participate),
-                'type_installation' => $request->input('type_installation', $invoice->type_installation),
-                // 'image_record' => $request->input('image_record', $invoice->image_record),
-                'fk_idClient' => $request->input('fk_idClient', $invoice->fk_idClient),
-                'fk_idUser' => $request->total != null ? $invoice->fk_idUser : $request->input('fk_idUser', $invoice->fk_idUser),
-                'amount_paid' => $request->input('amount_paid', $invoice->amount_paid),
-                'notes' => $request->input('notes', $invoice->notes),
-                'lastuserupdate' => $request->input('lastuserupdate', $invoice->lastuserupdate),
-                'date_lastuserupdate' => Carbon::now()->format('Y-m-d H:i:s'),
-                'address_invoice' => $request->input('address_invoice', $invoice->address_invoice),
-                'clientusername' => $request->input('clientusername', $invoice->clientusername),
-                'numbarnch' => $request->input('numbarnch', $invoice->numbarnch),
-                'nummostda' => $request->input('nummostda', $invoice->nummostda),
-                'numusers' => $request->input('numusers', $invoice->numusers),
-                'numTax' => $request->input('numTax', $invoice->numTax),
-                'currency_name' => $request->input('currency_name', $invoice->currency_name),
-                // 'imagelogo' => $request->input('imagelogo', $invoice->imagelogo),
-                'renew_agent' => $request->input('renew_agent', $invoice->renew_agent),
-                'invoice_source' => $request->input('invoice_source', $invoice->invoice_source),
-            ]);
+        $invoice->update([
+            'date_create' => $request->input('date_create', $invoice->date_create),
+            'date_approve' => $request->input('date_approve', $invoice->date_approve),
+            'fk_regoin_invoice' => $request->input('fk_regoin_invoice', $invoice->fk_regoin_invoice),
+            'total' => $request->input('total', $invoice->total),
+            'type_pay' => $request->input('type_pay', $invoice->type_pay),
+            'renew_year' => $request->input('renew_year', $invoice->renew_year),
+            'renew2year' => $request->input('renew2year', $invoice->renew2year),
+            'renew_pluse' => $request->input('renew_pluse', $invoice->renew_pluse),
+            'participate_fk' => $request->input('participate_fk', $invoice->participate_fk),
+            'fk_agent' => $request->input('fk_agent', $invoice->fk_agent),
+            'type_seller' => $request->input('type_seller', $invoice->type_seller),
+            'rate_participate' => $request->input('rate_participate', $invoice->rate_participate),
+            'type_installation' => $request->input('type_installation', $invoice->type_installation),
+            // 'image_record' => $request->input('image_record', $invoice->image_record),
+            'fk_idClient' => $request->input('fk_idClient', $invoice->fk_idClient),
+            'fk_idUser' => $request->total != null ? $invoice->fk_idUser : $request->input('fk_idUser', $invoice->fk_idUser),
+            'amount_paid' => $request->input('amount_paid', $invoice->amount_paid),
+            'notes' => $request->input('notes', $invoice->notes),
+            'lastuserupdate' => $request->input('lastuserupdate', $invoice->lastuserupdate),
+            'date_lastuserupdate' => Carbon::now()->format('Y-m-d H:i:s'),
+            'address_invoice' => $request->input('address_invoice', $invoice->address_invoice),
+            'clientusername' => $request->input('clientusername', $invoice->clientusername),
+            'numbarnch' => $request->input('numbarnch', $invoice->numbarnch),
+            'nummostda' => $request->input('nummostda', $invoice->nummostda),
+            'numusers' => $request->input('numusers', $invoice->numusers),
+            'numTax' => $request->input('numTax', $invoice->numTax),
+            'currency_name' => $request->input('currency_name', $invoice->currency_name),
+            // 'imagelogo' => $request->input('imagelogo', $invoice->imagelogo),
+            'renew_agent' => $request->input('renew_agent', $invoice->renew_agent),
+            'invoice_source' => $request->input('invoice_source', $invoice->invoice_source),
+        ]);
 
-            if (key_exists('product_to_delete', $data)) {
-                foreach ($data['product_to_delete'] as $id) {
-                    invoice_product::where('id_invoice_product', $id)
-                        ->first()?->delete();
+        if (key_exists('product_to_delete', $data)) {
+            foreach ($data['product_to_delete'] as $id) {
+                invoice_product::where('id_invoice_product', $id)
+                    ->first()?->delete();
+            }
+        }
+        $invoice_productBeforUpdate = null;
+        $invoice_productAfterUpdate = null;
+        if (key_exists('products', $data)) {
+            foreach ($request['products'] as $product) {
+                if ($product['id_invoice_product'] == 'null' || $product['id_invoice_product'] == null) {
+                    $insertArray = array();
+                    $insertArray['amount'] = $product['amount'] ?? 0;
+                    $insertArray['price'] = $product['price'] ?? 0;
+                    $insertArray['fk_id_invoice'] = $invoice->id_invoice;
+                    $insertArray['fk_product'] = $product['fk_product'];
+                    $insertArray['taxtotal'] = isset($product['taxtotal']) ? (float) $product['taxtotal'] : 0.0;
+                    $insertArray['rate_admin'] = isset($product['rate_admin']) ? (float) $product['rate_admin'] : 0.0;
+                    $insertArray['rateUser'] = isset($product['rateUser']) ? (float) $product['rateUser'] : 0.0;
+
+                    invoice_product::create($insertArray);
+                } else {
+                    $invoice_productBeforUpdate = invoice_product::where('id_invoice_product', $product['id_invoice_product'])->first();
+
+                    $invoice_product = invoice_product::where('id_invoice_product', $product['id_invoice_product'])->first();
+
+                    $updateArray = array();
+                    $updateArray['amount'] = $product['amount'] ?? $invoice_product->amount;
+                    $updateArray['price'] = $product['price'] ?? $invoice_product->price;
+                    $updateArray['fk_id_invoice'] = $invoice->id_invoice;
+                    $updateArray['fk_product'] = isset($product['fk_product']) ? $product['fk_product'] : $invoice_product->fk_product;
+                    $updateArray['taxtotal'] = isset($product['taxtotal']) ? (float) $product['taxtotal'] : $invoice_product->taxtotal;
+                    $updateArray['rate_admin'] = isset($product['rate_admin']) ? (float) $product['rate_admin'] : $invoice_product->rate_admin;
+                    $updateArray['rateUser'] = isset($product['rateUser']) ? (float) $product['rateUser'] : $invoice_product->rateUser;
+
+                    $invoice_product->update($updateArray);
+
+                    $invoice_productAfterUpdate = invoice_product::where('id_invoice_product', $product['id_invoice_product'])->first();
                 }
             }
+        }
 
-            if (key_exists('products', $data)) {
-                foreach ($request['products'] as $product) {
-                    if ($product['id_invoice_product'] == 'null' || $product['id_invoice_product'] == null) {
-                        $insertArray = array();
-                        $insertArray['amount'] = $product['amount'] ?? 0;
-                        $insertArray['price'] = $product['price'] ?? 0;
-                        $insertArray['fk_id_invoice'] = $invoice->id_invoice;
-                        $insertArray['fk_product'] = $product['fk_product'];
-                        $insertArray['taxtotal'] = isset($product['taxtotal']) ? (float) $product['taxtotal'] : 0.0;
-                        $insertArray['rate_admin'] = isset($product['rate_admin']) ? (float) $product['rate_admin'] : 0.0;
-                        $insertArray['rateUser'] = isset($product['rateUser']) ? (float) $product['rateUser'] : 0.0;
+        $invoice = crudMultiInvoiceFiles($request->all(), $invoice_id, $this->myService);
 
-                        invoice_product::create($insertArray);
-                    } else {
-                        $invoice_product = invoice_product::where('id_invoice_product', $product['id_invoice_product'])->first();
+        $name_enterprise = clients::where('id_clients', $data['fk_idClient'])->first()?->name_enterprise;
+        $nameuser = auth()->user()->nameUser; //
+        $nametitle = "من قبل";
+        $titlenameapprove = "تم تعديل فاتورة العميل ";
+        $message = "$titlenameapprove $name_enterprise \r$nametitle \r $nameuser";
+        $fk_regoin = $invoice->fk_regoin_invoice; //fk_regoin_invoice
+        $fkcountry = $data['fk_country']; //owner not related in regoin
+        $user_ids =  getIdUsers($fk_regoin, 57, $fkcountry);
+        $tokens = getTokens($user_ids);
+        $title = "تعديل فاتورة";
 
-                        $updateArray = array();
-                        $updateArray['amount'] = $product['amount'] ?? $invoice_product->amount;
-                        $updateArray['price'] = $product['price'] ?? $invoice_product->price;
-                        $updateArray['fk_id_invoice'] = $invoice->id_invoice;
-                        $updateArray['fk_product'] = isset($product['fk_product']) ? $product['fk_product'] : $invoice_product->fk_product;
-                        $updateArray['taxtotal'] = isset($product['taxtotal']) ? (float) $product['taxtotal'] : $invoice_product->taxtotal;
-                        $updateArray['rate_admin'] = isset($product['rate_admin']) ? (float) $product['rate_admin'] : $invoice_product->rate_admin;
-                        $updateArray['rateUser'] = isset($product['rateUser']) ? (float) $product['rateUser'] : $invoice_product->rateUser;
+        $this->invoiceSrevice->sendNotification(
+            $tokens,
+            $data['fk_idClient'],
+            'InvoiceUpdated',
+            $title,
+            $message,
+        );
+        $this->invoiceSrevice->storeNotification($user_ids, $message, 'InvoiceUpdated', $data['fk_idClient'], auth()->user()->id_user);
 
-                        $invoice_product->update($updateArray);
-                    }
-                }
-            }
+        //For Invoice Archive
+        $invoiceAfterUpdate = client_invoice::where('id_invoice', $invoice_id)->first();
+        $invoiceDataArchive = [
+            'IsAprrove' => $IsAprrove,
+            'id_invoice' => $invoice_id,
+            'fk_idUser' => auth('sanctum')->user()->id_user,
+            'dataBeforeUpdate' => $invoiceBeforeUpdate,
+            'dateUpdate' => Carbon::now()->format('Y-m-d H:i:s'),
+            'dataAfterUpdate' => $invoiceAfterUpdate
+        ];
+        $this->ReportService->addInvoicesUpdateReportService($invoiceDataArchive);
 
-            $invoice = crudMultiInvoiceFiles($request->all(), $invoice_id, $this->myService);
-
-            $name_enterprise = clients::where('id_clients', $data['fk_idClient'])->first()?->name_enterprise;
-            $nameuser = auth()->user()->nameUser; //
-            $nametitle = "من قبل";
-            $titlenameapprove = "تم تعديل فاتورة العميل ";
-            $message = "$titlenameapprove $name_enterprise \r$nametitle \r $nameuser";
-            $fk_regoin = $invoice->fk_regoin_invoice; //fk_regoin_invoice
-            $fkcountry = $data['fk_country']; //owner not related in regoin
-            $user_ids =  getIdUsers($fk_regoin, 57, $fkcountry);
-            $tokens = getTokens($user_ids);
-            $title = "تعديل فاتورة";
-
-            $this->invoiceSrevice->sendNotification(
-                $tokens,
-                $data['fk_idClient'],
-                'InvoiceUpdated',
-                $title,
-                $message,
-            );
-            $this->invoiceSrevice->storeNotification($user_ids, $message, 'InvoiceUpdated', $data['fk_idClient'], auth()->user()->id_user);
-
-            //For Archive
-            $invoiceAfterUpdate = client_invoice::where('id_invoice', $invoice_id)->first();
-            $dataArchive = [
-                'IsAprrove' => $IsAprrove,
-                'id_invoice' => $invoice_id,
-                'fk_idUser' => auth('sanctum')->user()->id_user,
-                'dataBeforeUpdate' => $invoiceBeforeUpdate,
-                'dateUpdate' => Carbon::now()->format('Y-m-d H:i:s'),
-                'dataAfterUpdate' => $invoiceAfterUpdate
+        //For Invoice Product Archive
+        if ($invoice_productBeforUpdate && $invoice_productAfterUpdate) {
+            $invoiceProductDataArchive = [
+                'id_invoice_product' => $invoice_id,
+                'dataBeforeUpdate' => $invoice_productBeforUpdate,
+                'fk_user_update' => auth('sanctum')->user()->id_user,
+                'dataAfterUpdate' => $invoice_productAfterUpdate
             ];
-            $this->ReportService->addInvoicesUpdateReportService($dataArchive);
+            $this->ReportService->addInvoiceProductReportService($invoiceProductDataArchive);
+        }
 
-            DB::commit();
-            return response()->json(['result' => 'success', 'message' => new InvoiceResource($invoice)]);
+
+
+        DB::commit();
+        return response()->json(['result' => 'success', 'message' => new InvoiceResource($invoice)]);
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 400);
