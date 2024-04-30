@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\Loggable;
+use App\Traits\LoggableTask;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
