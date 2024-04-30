@@ -20,12 +20,13 @@ class Controller extends BaseController
         return response()->json($response, 200);
     }
 
-    public function sendSucssas($result)
+    public function sendSucssas($result, $count = 0)
     {
         $response = [
             'result' => 'success',
             'code' => 200,
-            'message' => $result
+            'message' => $result,
+            'count' => $count,
         ];
         return response()->json($response, 200);
     }

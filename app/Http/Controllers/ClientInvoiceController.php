@@ -419,7 +419,7 @@ class ClientInvoiceController extends Controller
                 'dataAfterUpdate' => $invoiceAfterUpdate
             ];
             $this->ReportService->addInvoicesUpdateReportService($dataArchive);
-            
+
             DB::commit();
             return response()->json(['result' => 'success', 'message' => new InvoiceResource($invoice)]);
         } catch (Exception $e) {
@@ -558,10 +558,10 @@ class ClientInvoiceController extends Controller
                 break;
         }
 
-        $data = $query->filter(request()->all())->paginate(request()->limit ?? 15);
+        $data = $query->filter(request()->all());
 
-        $response = InvoiceResource::collection($data);
-        return $this->sendSucssas($response);
+        $response = InvoiceResource::collection($data->paginate(request()->limit ?? 15));
+        return $this->sendSucssas($response, $data->count());
     }
 
     public function getInvoiceMainCity(Request $request)
