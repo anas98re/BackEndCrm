@@ -456,7 +456,7 @@ class ClientsController extends Controller
             $fk_user = $client->reason_transfer;
             $fk_regoin = users::query()->where('id_user', $client->reason_transfer)?->first()?->fk_regoin;
 
-            if(! is_null($data['approve']?? null) )
+            if( $data['approve'] == 1 )
             {
                 $updateArray = array();
 
