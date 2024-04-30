@@ -402,4 +402,51 @@ class UpdatesReportController extends Controller
             $isApprove
         );
     }
+
+    public function addInvoiceProductReportService($data) //For Laravel
+    {
+        $modelId = $data['id_invoice_product'];
+        $dataBeforeUpdate = $data['dataBeforeUpdate'];
+        $dataAfterUpdate = $data['dataAfterUpdate'];
+        $userId = $data['fk_user_update'];
+
+        $userName = null;
+        if ($userId) {
+            $user = users::where('id_user', $userId)->first();
+            if ($user) {
+                $userName = $user->nameUser;
+            }
+        }
+        $isApprove = null;
+
+        if ($data['IsAprrove'] !== null && count(array($data['IsAprrove'])) > 0 && isset($data['IsAprrove'])) {
+            if ($data['IsAprrove'] === '1') {
+                $isApprove = 'true';
+            } else {
+                $isApprove = 'false';
+            }
+        } else {
+            $isApprove = 'Not Found';
+        }
+
+        $routePattern = 'api/updateInvoice/{invoice_id}';
+        $description = "Invoice Product updated by $userName, using route: $routePattern from IP: $this->ip.";
+        $update_source = 'تعديل منتجات الفاتورة';
+        $model = 'App\Models\client_invoice';
+
+        $nameMainCitiesBefor = null;
+
+        $this->reportSrevices->handle(
+            $modelId,
+            $model,
+            $dataBeforeUpdate,
+            $dataAfterUpdate,
+            $userId,
+            $update_source,
+            $routePattern,
+            $description,
+            $nameMainCitiesBefor,
+            $isApprove
+        );
+    }
 }
